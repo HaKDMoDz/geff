@@ -39,7 +39,7 @@ namespace ThreadAStar.Model
         {
             this.ListTimeLineData = new List<TimelineData>();
             this.ListThreadData = new Dictionary<String, ThreadData>();
-            _refreshRate = 500;
+            _refreshRate = 50;
             _ucMonitoring = ucMonitoring;
 
             _backgroundWorker = new BackgroundWorker();
