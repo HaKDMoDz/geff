@@ -7,9 +7,9 @@ namespace ThreadAStar.Model
 {
     public struct TimelineData
     {
-        public Int16 Time;
+        public double Time;
         public Byte CPU;
-        public Int16 RAM;
-        public Boolean NewCalcul;
+        public long RAM;
+        public Int16 CountNewCalcul;
     }
 }

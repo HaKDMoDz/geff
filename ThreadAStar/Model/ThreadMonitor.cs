@@ -22,7 +22,18 @@ namespace ThreadAStar.Model
         private Boolean _cancelMonitoring = false;
         private TimeSpan _lastRefresh;
         private Int16 _refreshRate;
+        private TimeSpan _firstRefresh;
         private List<String> _listInstanceThread;
+
+        PerformanceCounter perfCounterCPU;
+
+        public Int32 ElapsedTimePart
+        {
+            get
+            {
+                return (Int32)_lastRefresh.Subtract(_firstRefresh).TotalMilliseconds / _refreshRate;
+            }
+        }
 
         public ThreadMonitor(UCMonitoring ucMonitoring)
         {
@@ -40,6 +51,13 @@ namespace ThreadAStar.Model
         {
             RefreshThreadInstanceNames();
 
+            ListTimeLineData = new List<TimelineData>();
+
+            perfCounterCPU = new PerformanceCounter("Process", "% Processor Time", Process.GetCurrentProcess().ProcessName);
+            
+            //PerformanceCounterCategory.GetCategories()[0].
+
+            _firstRefresh = DateTime.Now.TimeOfDay;
             _lastRefresh = DateTime.Now.TimeOfDay;
             _backgroundWorker.RunWorkerAsync();
         }
@@ -53,12 +71,23 @@ namespace ThreadAStar.Model
         {
             while (!_cancelMonitoring)
             {
-                RefreshThreadInstanceNames();
+                //RefreshThreadInstanceNames();
 
-                SurveyThreads();
+                _lastRefresh = DateTime.Now.TimeOfDay;
+
+                //---
+                TimelineData timelineData = new TimelineData();
+
+                timelineData.Time = DateTime.Now.TimeOfDay.Subtract(_firstRefresh).TotalMilliseconds / _refreshRate;
+                timelineData.CPU = SurveyCPU();
+                timelineData.RAM = SurveyRAM();
+                timelineData.CountNewCalcul = 0; //TODO
+
+                ListTimeLineData.Add(timelineData);
+                //---
 
                 _ucMonitoring.RefreshGraph();
-                
+
                 Thread.Sleep(_refreshRate);
             }
         }
@@ -72,6 +101,24 @@ namespace ThreadAStar.Model
             _listInstanceThread = new List<string>();
             _listInstanceThread.AddRange(instanceNames.ToList().FindAll(s => s.StartsWith(Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName))));
             //---
+        }
+
+        private byte SurveyCPU()
+        {
+            byte cpu = 0;
+
+            cpu = (byte)(perfCounterCPU.NextValue() / (float)Environment.ProcessorCount);
+            
+            return cpu;
+        }
+
+        private long SurveyRAM()
+        {
+            long ram = 0;
+
+            ram = Process.GetCurrentProcess().WorkingSet64 / Environment.WorkingSet*100;
+
+            return ram;
         }
 
         private void SurveyThreads()

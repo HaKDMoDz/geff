@@ -58,27 +58,52 @@ namespace ThreadAStar.UC
             //else
             {
                 gImg.Clear(Color.White);
-                
-                Pen penBlack = new Pen(Brushes.Black, 3f);
-                Pen penRed = new Pen(Brushes.Red, 3f);
-                Pen penBlue = new Pen(Brushes.Blue, 3f);
+
+                Pen penBlack = new Pen(Brushes.Black, 1f);
+                Pen penRed = new Pen(Brushes.Red, 1f);
+                Pen penBlue = new Pen(Brushes.Blue, 1f);
 
                 int numThread = 0;
-                foreach (ThreadData threadData in  monitor.ListThreadData.Values)
-                {
-                    numThread++;
+                //foreach (ThreadData threadData in  monitor.ListThreadData.Values)
+                //{
+                //    numThread++;
 
-                    gImg.DrawLine(penBlack, numThread * 5, 0, numThread * 5, (int)threadData.CPUMax+1);
-                    gImg.DrawLine(penRed, numThread * 5, 0, numThread * 5, (int)threadData.CPUAverage+1);
-                    gImg.DrawLine(penBlue, numThread * 5, 0, numThread * 5, (int)threadData.CPUMin+1);
+                //    gImg.DrawLine(penBlack, numThread * 5, 0, numThread * 5, (int)threadData.CPUMax+1);
+                //    gImg.DrawLine(penRed, numThread * 5, 0, numThread * 5, (int)threadData.CPUAverage+1);
+                //    gImg.DrawLine(penBlue, numThread * 5, 0, numThread * 5, (int)threadData.CPUMin+1);
+                //}
+                TimelineData prevTimeLineData = new TimelineData();
+
+                foreach (TimelineData timelineData in monitor.ListTimeLineData)
+                {
+                    gImg.DrawLine(penBlack, 
+                        ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CPU),
+                        ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CPU));
+                    gImg.DrawLine(penRed, 
+                        ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.RAM),
+                        ConvertPointToGraph((int)timelineData.Time, (int)timelineData.RAM));
+                    //gImg.DrawLine(penRed, prevTimeLineData.Time, 0, numThread * 5, (int)threadData.CPUAverage + 1);
+                    //gImg.DrawLine(penBlue, prevTimeLineData.Time, 0, numThread * 5, (int)threadData.CPUMin + 1);
+
+                    prevTimeLineData = timelineData;
                 }
-                
-                gImg.DrawString(DateTime.Now.TimeOfDay.ToString(), this.Font, Brushes.Black, new PointF(this.Width-150,50));
+
+                //gImg.DrawString(DateTime.Now.TimeOfDay.ToString(), this.Font, Brushes.Black, new PointF(this.Width - 150, 50));
 
                 Monitor.Enter(g);
                 g.DrawImage(img, 0, 0);
                 Monitor.Exit(g);
             }
+        }
+
+        private PointF ConvertPointToGraph(int x, int y)
+        {
+            PointF point = Point.Empty;
+
+            point.X = this.pictureBox.Width + x - monitor.ElapsedTimePart;//  - x;
+            point.Y = this.pictureBox.Height - y;
+
+            return point;
         }
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)
