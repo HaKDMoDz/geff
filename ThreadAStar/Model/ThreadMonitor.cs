@@ -14,18 +14,16 @@ namespace ThreadAStar.Model
 {
     public class ThreadMonitor
     {
-        volatile public List<TimelineData> ListTimeLineData;// { get; set; }
-        volatile public Dictionary<String, ThreadData> ListThreadData;// { get; set; }
-
         private UCMonitoring _ucMonitoring;
         private BackgroundWorker _backgroundWorker;
         private Boolean _cancelMonitoring = false;
         private TimeSpan _lastRefresh;
         private Int16 _refreshRate;
         private TimeSpan _firstRefresh;
-        private List<String> _listInstanceThread;
+        private List<int> _listPreviousThread;
+        private PerformanceCounter perfCounterCPU;
 
-        PerformanceCounter perfCounterCPU;
+        public List<TimelineData> ListTimeLineData { get; set; }
 
         public Int32 ElapsedTimePart
         {
@@ -38,7 +36,6 @@ namespace ThreadAStar.Model
         public ThreadMonitor(UCMonitoring ucMonitoring)
         {
             this.ListTimeLineData = new List<TimelineData>();
-            this.ListThreadData = new Dictionary<String, ThreadData>();
             _refreshRate = 50;
             _ucMonitoring = ucMonitoring;
 
@@ -49,14 +46,10 @@ namespace ThreadAStar.Model
 
         public void StartMonitoring()
         {
-            RefreshThreadInstanceNames();
+            perfCounterCPU = new PerformanceCounter("Process", "% Processor Time", Process.GetCurrentProcess().ProcessName);
 
             ListTimeLineData = new List<TimelineData>();
-
-            perfCounterCPU = new PerformanceCounter("Process", "% Processor Time", Process.GetCurrentProcess().ProcessName);
-            
-            //PerformanceCounterCategory.GetCategories()[0].
-
+            _listPreviousThread = new List<int>();
             _firstRefresh = DateTime.Now.TimeOfDay;
             _lastRefresh = DateTime.Now.TimeOfDay;
             _backgroundWorker.RunWorkerAsync();
@@ -71,8 +64,6 @@ namespace ThreadAStar.Model
         {
             while (!_cancelMonitoring)
             {
-                //RefreshThreadInstanceNames();
-
                 _lastRefresh = DateTime.Now.TimeOfDay;
 
                 //---
@@ -81,7 +72,7 @@ namespace ThreadAStar.Model
                 timelineData.Time = DateTime.Now.TimeOfDay.Subtract(_firstRefresh).TotalMilliseconds / _refreshRate;
                 timelineData.CPU = SurveyCPU();
                 timelineData.RAM = SurveyRAM();
-                timelineData.CountNewCalcul = 0; //TODO
+                SurveyThreads(ref timelineData);
 
                 ListTimeLineData.Add(timelineData);
                 //---
@@ -92,23 +83,11 @@ namespace ThreadAStar.Model
             }
         }
 
-        private void RefreshThreadInstanceNames()
-        {
-            //--- Détermine les instances de thread de l'application
-            PerformanceCounterCategory perfCategorie = new PerformanceCounterCategory("Thread");
-            string[] instanceNames = perfCategorie.GetInstanceNames();
-
-            _listInstanceThread = new List<string>();
-            _listInstanceThread.AddRange(instanceNames.ToList().FindAll(s => s.StartsWith(Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName))));
-            //---
-        }
-
         private byte SurveyCPU()
         {
             byte cpu = 0;
 
             cpu = (byte)(perfCounterCPU.NextValue() / (float)Environment.ProcessorCount);
-            
             return cpu;
         }
 
@@ -116,50 +95,26 @@ namespace ThreadAStar.Model
         {
             long ram = 0;
 
-            ram = Process.GetCurrentProcess().WorkingSet64 / Environment.WorkingSet*100;
-
+            ram = Process.GetCurrentProcess().PagedMemorySize64;
             return ram;
         }
 
-        private void SurveyThreads()
+        private void SurveyThreads(ref TimelineData timelineData)
         {
-            Random rnd = new Random();
+            List<int> listCurrentThread = new List<int>();
 
-            foreach (string threadInstanceName in _listInstanceThread)
+            foreach (ProcessThread processThread in Process.GetCurrentProcess().Threads)
             {
-                ThreadData threadData = new ThreadData();
-
-                if (ListThreadData.ContainsKey(threadInstanceName))
-                {
-                    threadData = ListThreadData[threadInstanceName];
-                }
-                else
-                {
-                    threadData.CPUMin = 255;
-                    threadData.CPUMax = 0;
-
-                    ListThreadData.Add(threadInstanceName, threadData);
-
-                    threadData.PerformanceCounter = new PerformanceCounter("Thread", "% Processor time", threadInstanceName);
-                    threadData.PerformanceCounter.BeginInit();
-                }
-
-                threadData.CountRefresh++;
-
-                byte percentProcessorTime = (byte)threadData.PerformanceCounter.NextValue();
-
-                if (percentProcessorTime < threadData.CPUMin)
-                    threadData.CPUMin = percentProcessorTime;
-
-                if (percentProcessorTime > threadData.CPUMax)
-                    threadData.CPUMax = percentProcessorTime;
-
-                //TODo : calcul de la moyenne sur un flottant
-                //threadData.CPUAverage = (byte)(((short)threadData.CPUAverage * (threadData.CountRefresh - 1) + (short)percentProcessorTime) / threadData.CountRefresh);
-                threadData.CPUAverage = percentProcessorTime;
-
-                ListThreadData[threadInstanceName] = threadData;
+                listCurrentThread.Add(processThread.Id);
             }
+
+            timelineData.CountThreads = (byte)listCurrentThread.Count;
+            timelineData.CountNewThreads = (byte)listCurrentThread.Count(t => _listPreviousThread.Contains(t));
+            
+            if(_listPreviousThread.Count>0)
+                timelineData.CountDeadThreads = (byte)(timelineData.CountThreads - timelineData.CountNewThreads);
+
+            _listPreviousThread = listCurrentThread;
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)

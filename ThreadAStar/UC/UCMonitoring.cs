@@ -47,63 +47,105 @@ namespace ThreadAStar.UC
             monitor.StartMonitoring();
         }
 
+        int maxRamValue = 0;
+        int maxCountThreads = 0;
+        int maxCountNewThreads = 0;
+        int maxCountDeadThreads = 0;
 
         public void RefreshGraph()
         {
-            //if (this.pictureBox.InvokeRequired)
-            //{
-            //    Refresh_UCMonitoringCallback call = new Refresh_UCMonitoringCallback(RefreshGraph);
-            //    pictureBox.Invoke(call);
-            //}
-            //else
+            try
             {
-                gImg.Clear(Color.White);
-
-                Pen penBlack = new Pen(Brushes.Black, 1f);
-                Pen penRed = new Pen(Brushes.Red, 1f);
-                Pen penBlue = new Pen(Brushes.Blue, 1f);
-
-                int numThread = 0;
-                //foreach (ThreadData threadData in  monitor.ListThreadData.Values)
+                //if (this.pictureBox.InvokeRequired)
                 //{
-                //    numThread++;
-
-                //    gImg.DrawLine(penBlack, numThread * 5, 0, numThread * 5, (int)threadData.CPUMax+1);
-                //    gImg.DrawLine(penRed, numThread * 5, 0, numThread * 5, (int)threadData.CPUAverage+1);
-                //    gImg.DrawLine(penBlue, numThread * 5, 0, numThread * 5, (int)threadData.CPUMin+1);
+                //    Refresh_UCMonitoringCallback call = new Refresh_UCMonitoringCallback(RefreshGraph);
+                //    pictureBox.Invoke(call);
                 //}
-                TimelineData prevTimeLineData = new TimelineData();
-
-                foreach (TimelineData timelineData in monitor.ListTimeLineData)
+                //else
                 {
-                    gImg.DrawLine(penBlack, 
-                        ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CPU),
-                        ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CPU));
-                    gImg.DrawLine(penRed, 
-                        ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.RAM),
-                        ConvertPointToGraph((int)timelineData.Time, (int)timelineData.RAM));
-                    //gImg.DrawLine(penRed, prevTimeLineData.Time, 0, numThread * 5, (int)threadData.CPUAverage + 1);
-                    //gImg.DrawLine(penBlue, prevTimeLineData.Time, 0, numThread * 5, (int)threadData.CPUMin + 1);
+                    gImg.Clear(Color.White);
 
-                    prevTimeLineData = timelineData;
+                    Pen penBlack = new Pen(Brushes.Black, 1f);
+                    Pen penRed = new Pen(Brushes.Red, 1f);
+                    Pen penBlueNew = new Pen(Brushes.SkyBlue, 1f);
+                    Pen penBlueCur = new Pen(Brushes.DodgerBlue, 1f);
+                    Pen penBlueDead = new Pen(Brushes.DarkBlue, 1f);
+
+
+                    TimelineData prevTimeLineData = new TimelineData();
+
+                    //--- Calcul les valeurs hautes
+                    maxRamValue = (int)monitor.ListTimeLineData.Max(t => t.RAM);
+                    maxCountThreads = (int)monitor.ListTimeLineData.Max(t => t.CountThreads);
+                    maxCountNewThreads = (int)monitor.ListTimeLineData.Max(t => t.CountNewThreads);
+                    maxCountDeadThreads = (int)monitor.ListTimeLineData.Max(t => t.CountDeadThreads);
+                    //---
+
+                    foreach (TimelineData timelineData in monitor.ListTimeLineData)
+                    {
+                        //--- Courbe de la charge CPU
+                        gImg.DrawLine(penBlack,
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CPU, 100),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CPU, 100));
+                        //---
+
+                        //--- Courbe de la charge RAM
+                        gImg.DrawLine(penRed,
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.RAM, maxRamValue),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.RAM, maxRamValue));
+                        //---
+
+                        //=== Courbe des threads
+                        //---> Total
+                        gImg.DrawLine(penBlueCur,
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountThreads, maxCountThreads),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountThreads, maxCountThreads));
+
+                        //---> Nouveaux
+                        gImg.DrawLine(penBlueNew,
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountNewThreads, maxCountNewThreads),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountNewThreads, maxCountNewThreads));
+
+                        //---> Morts
+                        gImg.DrawLine(penBlueDead,
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountDeadThreads, maxCountDeadThreads),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountDeadThreads, maxCountDeadThreads));
+                        //===
+
+                        prevTimeLineData = timelineData;
+                    }
+
+                    //Monitor.Enter(g);
+                    g.DrawImage(img, 0, 0);
+                    //Monitor.Exit(g);
                 }
-
-                //gImg.DrawString(DateTime.Now.TimeOfDay.ToString(), this.Font, Brushes.Black, new PointF(this.Width - 150, 50));
-
-                Monitor.Enter(g);
-                g.DrawImage(img, 0, 0);
-                Monitor.Exit(g);
             }
+            catch
+            {
+            }
+        }
+
+        private PointF ConvertPointToGraph(int x, int y, int maxY)
+        {
+            PointF point = Point.Empty;
+
+            point.X = this.pictureBox.Width + x - monitor.ElapsedTimePart;
+
+            if (maxY > 0)
+            {
+                point.Y = this.pictureBox.Height - (0.95f * (float)this.pictureBox.Height * (float)y) / (float)maxY;
+            }
+            else
+            {
+                point.Y = this.pictureBox.Height - y;
+            }
+
+            return point;
         }
 
         private PointF ConvertPointToGraph(int x, int y)
         {
-            PointF point = Point.Empty;
-
-            point.X = this.pictureBox.Width + x - monitor.ElapsedTimePart;//  - x;
-            point.Y = this.pictureBox.Height - y;
-
-            return point;
+            return ConvertPointToGraph(x, y, 0);
         }
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)

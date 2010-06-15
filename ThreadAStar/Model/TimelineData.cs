@@ -10,6 +10,8 @@ namespace ThreadAStar.Model
         public double Time;
         public Byte CPU;
         public long RAM;
-        public Int16 CountNewCalcul;
+        public byte CountNewThreads;
+        public byte CountDeadThreads;
+        public byte CountThreads;
     }
 }
