@@ -63,7 +63,7 @@ namespace ThreadAStar.UC
                 //}
                 //else
                 {
-                    gImg.Clear(Color.White);
+                    gImg.Clear(Color.DimGray);
 
                     Pen penBlack = new Pen(Brushes.Black, 1f);
                     Pen penRed = new Pen(Brushes.Red, 1f);
