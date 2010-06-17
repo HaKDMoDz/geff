@@ -8,10 +8,12 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using System.ComponentModel;
+using ThreadAStar.ThreadManager;
+using ThreadAStar.Model;
 
-namespace ThreadAStar.Model
+namespace ThreadAStar.ThreadManager
 {
-    public class ThreadManagerSimple
+    public class ThreadManagerSimple : IThreadManager
     {
         public List<ThreadingBaseMethod> ListThread { get; set; }
         public Int32 NombreThread { get; set; }
@@ -30,6 +32,7 @@ namespace ThreadAStar.Model
             this.ListComputable = listComputable;
 
             _backgroundWorker = new BackgroundWorker();
+            _backgroundWorker.WorkerSupportsCancellation = true; 
             _backgroundWorker.DoWork += new DoWorkEventHandler(backgroundWorker_DoWork);
             _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
         }
@@ -60,15 +63,24 @@ namespace ThreadAStar.Model
             _backgroundWorker.RunWorkerAsync();
         }
 
-        public void StopStartComputation()
+        public void StopComputation()
         {
+            _backgroundWorker.CancelAsync();
+
+            foreach (ThreadingBaseMethod threadingMethod in this.ListThread)
+            {
+                threadingMethod.Stop();
+            }
         }
 
         public void CalculCompleted(ThreadingBaseMethod threadingMethod)
         {
-            this.ListThread.Remove(threadingMethod);
+            if (_backgroundWorker.CancellationPending)
+            {
+                return;
+            }
 
-            //Monitor.Enter(CountCalculated);
+            this.ListThread.Remove(threadingMethod);
 
             if (CountCalculated < this.ListComputable.Count)
             {
@@ -81,8 +93,6 @@ namespace ThreadAStar.Model
             {
                 AllCalculCompleted();
             }
-
-            //Monitor.Enter(CountCalculated);
         }
 
         private void AllCalculCompleted()
@@ -94,7 +104,7 @@ namespace ThreadAStar.Model
         {
             for (int i = 0; i < NombreThread; i++)
             {
-                if (CountCalculated < this.ListComputable.Count)
+                if (CountCalculated < this.ListComputable.Count && !_backgroundWorker.CancellationPending)
                 {
                     ThreadingBaseMethod newThreadingMethod = CreateThreads(this.ListComputable[CountCalculated]);
                     newThreadingMethod.Start();

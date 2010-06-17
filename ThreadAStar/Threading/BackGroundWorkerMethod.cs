@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.ComponentModel;
 using ThreadAStar.Model;
+using ThreadAStar.ThreadManager;
 
 namespace ThreadAStar.Threading
 {
@@ -16,6 +17,7 @@ namespace ThreadAStar.Threading
             : base(threadManager, computable)
         {
             _backgroundWorker = new BackgroundWorker();
+            _backgroundWorker.WorkerSupportsCancellation = true;
             _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_backgroundWorker_RunWorkerCompleted);
             _backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(_backgroundWorker_ProgressChanged);
             _backgroundWorker.DoWork += new DoWorkEventHandler(_backgroundWorker_DoWork);
@@ -43,6 +45,7 @@ namespace ThreadAStar.Threading
 
         public override void Stop()
         {
+            _backgroundWorker.CancelAsync();
         }
     }
 }

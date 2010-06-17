@@ -44,7 +44,7 @@ namespace ThreadAStar.UC
 
         public void StopMonitoring()
         {
-            monitor.StartMonitoring();
+            monitor.StopMonitoring();
         }
 
         int maxRamValue = 0;

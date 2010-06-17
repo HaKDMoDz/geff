@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using ThreadAStar.Model;
 using System.Threading;
+using ThreadAStar.ThreadManager;
 //using System.Diagnostics;
 
 namespace ThreadAStar.Threading
@@ -33,6 +34,7 @@ namespace ThreadAStar.Threading
 
         public override void Stop()
         {
+            _thread.Abort();
         }
     }
 }

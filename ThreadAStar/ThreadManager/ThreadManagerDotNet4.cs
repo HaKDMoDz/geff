@@ -8,9 +8,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace ThreadAStar.Model
+namespace ThreadAStar.ThreadManager
 {
-    public class ThreadManagerDotNet4
+    public class ThreadManagerDotNet4 : IThreadManager
     {
         /*public List<ThreadingBaseMethod> ListThread { get; set; }
         public Int32 NombreThread { get; set; }
@@ -137,5 +137,14 @@ namespace ThreadAStar.Model
         public void Stop()
         {
         }*/
+        public void StartComputation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StopComputation()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -46,6 +46,8 @@ namespace ThreadAStar.Model
 
         public void StartMonitoring()
         {
+            _cancelMonitoring = false;
+
             perfCounterCPU = new PerformanceCounter("Process", "% Processor Time", Process.GetCurrentProcess().ProcessName);
 
             ListTimeLineData = new List<TimelineData>();
