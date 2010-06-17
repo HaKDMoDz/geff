@@ -13,23 +13,14 @@ using ThreadAStar.Model;
 
 namespace ThreadAStar.ThreadManager
 {
-    public class ThreadManagerSimple : IThreadManager
+    public class ThreadManagerSimple : ThreadManagerBase
     {
-        public List<ThreadingBaseMethod> ListThread { get; set; }
-        public Int32 NombreThread { get; set; }
         public TypeThreading TypeThreading { get; set; }
-        public List<IComputable> ListComputable { get; set; }
-        public Int32 CountCalculated { get; set; }
-        public Boolean IsAllCalculCompleted = false;
-
         private BackgroundWorker _backgroundWorker;
 
-        public ThreadManagerSimple(int nombreThread, TypeThreading typeThreading, List<IComputable> listComputable)
+        public ThreadManagerSimple(int nombreThread, List<IComputable> listComputable, TypeThreading typeThreading) : base(nombreThread, listComputable)
         {
-            this.ListThread = new List<ThreadingBaseMethod>();
-            this.NombreThread = nombreThread;
             this.TypeThreading = typeThreading;
-            this.ListComputable = listComputable;
 
             _backgroundWorker = new BackgroundWorker();
             _backgroundWorker.WorkerSupportsCancellation = true; 
@@ -58,12 +49,12 @@ namespace ThreadAStar.ThreadManager
             return threadingMethod;
         }
 
-        public void StartComputation()
+        public override void StartComputation()
         {
             _backgroundWorker.RunWorkerAsync();
         }
 
-        public void StopComputation()
+        public override void StopComputation()
         {
             _backgroundWorker.CancelAsync();
 

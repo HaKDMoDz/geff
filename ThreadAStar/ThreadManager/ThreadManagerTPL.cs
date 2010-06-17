@@ -7,11 +7,23 @@ using System.Management;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
+using System.Threading.Tasks;
+using ThreadAStar.Model;
 
 namespace ThreadAStar.ThreadManager
 {
-    public class ThreadManagerDotNet4 : IThreadManager
+    public class ThreadManagerTPL : ThreadManagerBase
     {
+        ParallelOptions parallelOptions;
+        CancellationTokenSource cancellationToken;
+
+        //private bool _cancelComputation = false;
+
+        public ThreadManagerTPL(int nombreThread, List<IComputable> listComputable)
+            : base(nombreThread, listComputable)
+        {
+        }
+
         /*public List<ThreadingBaseMethod> ListThread { get; set; }
         public Int32 NombreThread { get; set; }
         public TypeThreading TypeThreading { get; set; }
@@ -137,14 +149,52 @@ namespace ThreadAStar.ThreadManager
         public void Stop()
         {
         }*/
-        public void StartComputation()
+
+        private void ParallelComputBody(int index)
         {
-            throw new NotImplementedException();
+            this.ListComputable[index].Compute();
+
+            CountCalculated++;
         }
 
-        public void StopComputation()
+        private void ParallelComputBody(IComputable computable)
         {
-            throw new NotImplementedException();
+            computable.Compute();
+
+            CountCalculated++;
+        }
+
+        private void ParallelComputeFinally(int index)
+        {
+
+        }
+
+        public override void StartComputation()
+        {
+            parallelOptions = new ParallelOptions();
+            parallelOptions.MaxDegreeOfParallelism = this.NombreThread;
+            
+            cancellationToken = new CancellationTokenSource();
+            parallelOptions.CancellationToken = cancellationToken.Token;
+            
+            Task.Factory.StartNew(() =>
+            {
+
+                //parallelOptions.CancellationToken.
+
+                //Parallel.For(0, this.ListComputable.Count, parallelOptions, 
+                //    i => {ParallelComputBody(i);},
+                //    i => { ParallelComputeFinally(i); });
+
+                Parallel.ForEach<IComputable>(this.ListComputable, parallelOptions, computable => { ParallelComputBody(computable); });
+            }, parallelOptions.CancellationToken);
+
+        }
+
+        public override void StopComputation()
+        {
+            //_cancelComputation = true;
+            cancellationToken.Cancel();
         }
     }
 }

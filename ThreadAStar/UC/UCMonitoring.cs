@@ -37,9 +37,9 @@ namespace ThreadAStar.UC
             gImg = Graphics.FromImage(img);
         }
 
-        public void StartMonitoring()
+        public void StartMonitoring(short refreshRate)
         {
-            monitor.StartMonitoring();
+            monitor.StartMonitoring(refreshRate);
         }
 
         public void StopMonitoring()

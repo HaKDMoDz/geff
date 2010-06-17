@@ -17,7 +17,7 @@ namespace ThreadAStar
         #region Propriétés
         private const String BUTTON_START = "Démarrer";
         private const String BUTTON_STOP = "Arrêter";
-        private IThreadManager currentThreadManager;
+        private ThreadManagerBase currentThreadManager;
 
         public static FrmParallelAStar frm; 
         #endregion
@@ -46,30 +46,30 @@ namespace ThreadAStar
             //---
 
             //--- Démarre le monitoring de thread
-            ucMonitoring.StartMonitoring();
+            ucMonitoring.StartMonitoring((short)this.numRereshRate.Value);
             //---
 
             //--- Création du threadManager pour le type Natif
             if (chkMethodeNative.Checked)
             {
-                currentThreadManager = new ThreadManagerSimple(10, TypeThreading.Natif, ListMap);
+                currentThreadManager = new ThreadManagerSimple((int)this.numNmbThread.Value, ListMap, TypeThreading.Natif);
                 currentThreadManager.StartComputation();
             }
             //---
 
             //--- Création du threadManager pour le type BackGroundworker
-            //if (chkMethodeBackgroundWorker.Checked)
-            //{
-            //    currentThreadManager = new ThreadManagerSimple(10, TypeThreading.BackgroundWorker, ListMap);
-            //    currentThreadManager.StartComputation();
-            //}
+            if (chkMethodeBackgroundWorker.Checked)
+            {
+                currentThreadManager = new ThreadManagerSimple((int)this.numNmbThread.Value, ListMap, TypeThreading.BackgroundWorker);
+                currentThreadManager.StartComputation();
+            }
             //---
 
             //--- Création du threadManager pour le type Natif .Net 4
-            if (chkMethodeNativeDotNet4.Checked)
+            if (chkMethodeTaskParallelLibrary.Checked)
             {
-                //currentThreadManager = new ThreadManagerDotNet4(10, TypeThreading.DotNet4, ListMap);
-                //currentThreadManager.StartComputation();
+                currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, ListMap);
+                currentThreadManager.StartComputation();
             }
             //---
         }
@@ -80,7 +80,7 @@ namespace ThreadAStar
         private void StopResolving()
         {
             //---> Arrête la surveillance de l'application
-            ucMonitoring.StopMonitoring();
+            //ucMonitoring.StopMonitoring();
 
             //---> Arrête la résolution des map pour la méthode de parallélisation courante
             currentThreadManager.StopComputation();

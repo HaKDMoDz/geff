@@ -9,6 +9,6 @@ namespace ThreadAStar.Model
     {
         Natif = 1,
         BackgroundWorker = 2,
-        DotNet4 = 3
+        TaskParallelLibrary = 3
     }
 }

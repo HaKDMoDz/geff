@@ -30,7 +30,7 @@
         {
             this.btnStartResolving = new System.Windows.Forms.Button();
             this.pnlMethode = new System.Windows.Forms.Panel();
-            this.chkMethodeNativeDotNet4 = new System.Windows.Forms.CheckBox();
+            this.chkMethodeTaskParallelLibrary = new System.Windows.Forms.CheckBox();
             this.chkMethodeBackgroundWorker = new System.Windows.Forms.CheckBox();
             this.chkMethodeNative = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -46,9 +46,9 @@
             this.label6 = new System.Windows.Forms.Label();
             this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.numRereshRate = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.numNmbThread = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.btnShowMapResolving = new System.Windows.Forms.Button();
@@ -61,8 +61,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRereshRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numNmbThread)).BeginInit();
             this.SuspendLayout();
             // 
             // btnStartResolving
@@ -81,7 +81,7 @@
             // pnlMethode
             // 
             this.pnlMethode.BackColor = System.Drawing.Color.DimGray;
-            this.pnlMethode.Controls.Add(this.chkMethodeNativeDotNet4);
+            this.pnlMethode.Controls.Add(this.chkMethodeTaskParallelLibrary);
             this.pnlMethode.Controls.Add(this.chkMethodeBackgroundWorker);
             this.pnlMethode.Controls.Add(this.chkMethodeNative);
             this.pnlMethode.Controls.Add(this.label1);
@@ -90,18 +90,18 @@
             this.pnlMethode.Size = new System.Drawing.Size(200, 206);
             this.pnlMethode.TabIndex = 2;
             // 
-            // chkMethodeNativeDotNet4
+            // chkMethodeTaskParallelLibrary
             // 
-            this.chkMethodeNativeDotNet4.AutoSize = true;
-            this.chkMethodeNativeDotNet4.Checked = true;
-            this.chkMethodeNativeDotNet4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkMethodeNativeDotNet4.ForeColor = System.Drawing.Color.White;
-            this.chkMethodeNativeDotNet4.Location = new System.Drawing.Point(14, 94);
-            this.chkMethodeNativeDotNet4.Name = "chkMethodeNativeDotNet4";
-            this.chkMethodeNativeDotNet4.Size = new System.Drawing.Size(89, 17);
-            this.chkMethodeNativeDotNet4.TabIndex = 3;
-            this.chkMethodeNativeDotNet4.Text = "Native .Net 4";
-            this.chkMethodeNativeDotNet4.UseVisualStyleBackColor = true;
+            this.chkMethodeTaskParallelLibrary.AutoSize = true;
+            this.chkMethodeTaskParallelLibrary.Checked = true;
+            this.chkMethodeTaskParallelLibrary.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMethodeTaskParallelLibrary.ForeColor = System.Drawing.Color.White;
+            this.chkMethodeTaskParallelLibrary.Location = new System.Drawing.Point(14, 94);
+            this.chkMethodeTaskParallelLibrary.Name = "chkMethodeTaskParallelLibrary";
+            this.chkMethodeTaskParallelLibrary.Size = new System.Drawing.Size(121, 17);
+            this.chkMethodeTaskParallelLibrary.TabIndex = 3;
+            this.chkMethodeTaskParallelLibrary.Text = "Task Parallel Library";
+            this.chkMethodeTaskParallelLibrary.UseVisualStyleBackColor = true;
             // 
             // chkMethodeBackgroundWorker
             // 
@@ -155,9 +155,9 @@
             this.pnlParametrage.Controls.Add(this.label6);
             this.pnlParametrage.Controls.Add(this.numericUpDown3);
             this.pnlParametrage.Controls.Add(this.label5);
-            this.pnlParametrage.Controls.Add(this.numericUpDown2);
+            this.pnlParametrage.Controls.Add(this.numRereshRate);
             this.pnlParametrage.Controls.Add(this.label4);
-            this.pnlParametrage.Controls.Add(this.numericUpDown1);
+            this.pnlParametrage.Controls.Add(this.numNmbThread);
             this.pnlParametrage.Controls.Add(this.label2);
             this.pnlParametrage.Location = new System.Drawing.Point(219, 30);
             this.pnlParametrage.Name = "pnlParametrage";
@@ -284,25 +284,25 @@
             this.label5.TabIndex = 5;
             this.label5.Text = "Taux de rafraichissement (ms) :";
             // 
-            // numericUpDown2
+            // numRereshRate
             // 
-            this.numericUpDown2.BackColor = System.Drawing.Color.DarkGray;
-            this.numericUpDown2.Location = new System.Drawing.Point(172, 56);
-            this.numericUpDown2.Maximum = new decimal(new int[] {
+            this.numRereshRate.BackColor = System.Drawing.Color.DarkGray;
+            this.numRereshRate.Location = new System.Drawing.Point(172, 56);
+            this.numRereshRate.Maximum = new decimal(new int[] {
             60000,
             0,
             0,
             0});
-            this.numericUpDown2.Minimum = new decimal(new int[] {
+            this.numRereshRate.Minimum = new decimal(new int[] {
             10,
             0,
             0,
             0});
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(150, 20);
-            this.numericUpDown2.TabIndex = 4;
-            this.numericUpDown2.Value = new decimal(new int[] {
-            500,
+            this.numRereshRate.Name = "numRereshRate";
+            this.numRereshRate.Size = new System.Drawing.Size(150, 20);
+            this.numRereshRate.TabIndex = 4;
+            this.numRereshRate.Value = new decimal(new int[] {
+            100,
             0,
             0,
             0});
@@ -317,14 +317,14 @@
             this.label4.TabIndex = 3;
             this.label4.Text = "Nombre de threads :";
             // 
-            // numericUpDown1
+            // numNmbThread
             // 
-            this.numericUpDown1.BackColor = System.Drawing.Color.DarkGray;
-            this.numericUpDown1.Location = new System.Drawing.Point(6, 56);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(150, 20);
-            this.numericUpDown1.TabIndex = 2;
-            this.numericUpDown1.Value = new decimal(new int[] {
+            this.numNmbThread.BackColor = System.Drawing.Color.DarkGray;
+            this.numNmbThread.Location = new System.Drawing.Point(6, 56);
+            this.numNmbThread.Name = "numNmbThread";
+            this.numNmbThread.Size = new System.Drawing.Size(150, 20);
+            this.numNmbThread.TabIndex = 2;
+            this.numNmbThread.Value = new decimal(new int[] {
             10,
             0,
             0,
@@ -418,8 +418,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRereshRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numNmbThread)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -434,14 +434,14 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private ThreadAStar.UC.UCMonitoring ucMonitoring;
-        private System.Windows.Forms.CheckBox chkMethodeNativeDotNet4;
+        private System.Windows.Forms.CheckBox chkMethodeTaskParallelLibrary;
         private System.Windows.Forms.CheckBox chkMethodeBackgroundWorker;
         private System.Windows.Forms.CheckBox chkMethodeNative;
         private System.Windows.Forms.Button btnShowMapResolving;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.NumericUpDown numRereshRate;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown numNmbThread;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.NumericUpDown numericUpDown6;
         private System.Windows.Forms.CheckBox chkUtiliserGraine;

@@ -36,7 +36,6 @@ namespace ThreadAStar.Model
         public ThreadMonitor(UCMonitoring ucMonitoring)
         {
             this.ListTimeLineData = new List<TimelineData>();
-            _refreshRate = 50;
             _ucMonitoring = ucMonitoring;
 
             _backgroundWorker = new BackgroundWorker();
@@ -44,9 +43,10 @@ namespace ThreadAStar.Model
             _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
         }
 
-        public void StartMonitoring()
+        public void StartMonitoring(short refreshRate)
         {
             _cancelMonitoring = false;
+            _refreshRate = refreshRate;
 
             perfCounterCPU = new PerformanceCounter("Process", "% Processor Time", Process.GetCurrentProcess().ProcessName);
 
@@ -54,7 +54,9 @@ namespace ThreadAStar.Model
             _listPreviousThread = new List<int>();
             _firstRefresh = DateTime.Now.TimeOfDay;
             _lastRefresh = DateTime.Now.TimeOfDay;
-            _backgroundWorker.RunWorkerAsync();
+            
+            if(!_backgroundWorker.IsBusy)
+                _backgroundWorker.RunWorkerAsync();
         }
 
         public void StopMonitoring()
