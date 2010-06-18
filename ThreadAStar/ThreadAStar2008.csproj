@@ -60,8 +60,7 @@
     <Compile Include="Model\MatrixMultiply.cs" />
     <Compile Include="Model\ThreadMonitor.cs" />
     <Compile Include="Model\ThreadEntity.cs" />
-    <Compile Include="ThreadManager\IThreadManager.cs" />
-    <Compile Include="ThreadManager\ThreadManagerDotNet4.cs" />
+    <Compile Include="ThreadManager\ThreadManagerBase.cs" />
     <Compile Include="ThreadManager\ThreadManagerSimple.cs" />
     <Compile Include="Model\TimelineData.cs" />
     <Compile Include="Model\TypeThreading.cs" />
@@ -94,6 +93,9 @@
     <Compile Include="Threading\BackGroundWorkerMethod.cs" />
     <Compile Include="Threading\ThreadingBaseMethod.cs" />
     <Compile Include="Threading\ThreadingNativeMethod.cs" />
+    <Compile Include="UC\ThreadSafeLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UC\UCMonitoring.cs">
       <SubType>UserControl</SubType>
     </Compile>

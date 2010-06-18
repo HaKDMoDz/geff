@@ -68,8 +68,8 @@ namespace ThreadAStar
             //--- Création du threadManager pour le type Natif .Net 4
             if (chkMethodeTaskParallelLibrary.Checked)
             {
-                currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, ListMap);
-                currentThreadManager.StartComputation();
+                //currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, ListMap);
+                //currentThreadManager.StartComputation();
             }
             //---
         }
@@ -80,7 +80,8 @@ namespace ThreadAStar
         private void StopResolving()
         {
             //---> Arrête la surveillance de l'application
-            //ucMonitoring.StopMonitoring();
+            if(chkSynchroMonitoring.Checked)
+                ucMonitoring.StopMonitoring();
 
             //---> Arrête la résolution des map pour la méthode de parallélisation courante
             currentThreadManager.StopComputation();
@@ -113,6 +114,14 @@ namespace ThreadAStar
         private void FrmParallelAStar_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (btnStartResolving.Text == BUTTON_STOP)
+            {
+                StopResolving();
+            }
+        }
+
+        private void chkSynchroMonitoring_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkSynchroMonitoring.Checked && btnStartResolving.Text == BUTTON_START)
             {
                 StopResolving();
             }

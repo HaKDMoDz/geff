@@ -54,6 +54,7 @@
             this.btnShowMapResolving = new System.Windows.Forms.Button();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.chkSynchroMonitoring = new System.Windows.Forms.CheckBox();
             this.ucMonitoring = new ThreadAStar.UC.UCMonitoring();
             this.pnlMethode.SuspendLayout();
             this.pnlParametrage.SuspendLayout();
@@ -70,6 +71,7 @@
             this.btnStartResolving.BackColor = System.Drawing.Color.Gray;
             this.btnStartResolving.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
             this.btnStartResolving.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStartResolving.ForeColor = System.Drawing.Color.Black;
             this.btnStartResolving.Location = new System.Drawing.Point(362, 242);
             this.btnStartResolving.Name = "btnStartResolving";
             this.btnStartResolving.Size = new System.Drawing.Size(75, 23);
@@ -87,14 +89,12 @@
             this.pnlMethode.Controls.Add(this.label1);
             this.pnlMethode.Location = new System.Drawing.Point(13, 30);
             this.pnlMethode.Name = "pnlMethode";
-            this.pnlMethode.Size = new System.Drawing.Size(200, 206);
+            this.pnlMethode.Size = new System.Drawing.Size(203, 206);
             this.pnlMethode.TabIndex = 2;
             // 
             // chkMethodeTaskParallelLibrary
             // 
             this.chkMethodeTaskParallelLibrary.AutoSize = true;
-            this.chkMethodeTaskParallelLibrary.Checked = true;
-            this.chkMethodeTaskParallelLibrary.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMethodeTaskParallelLibrary.ForeColor = System.Drawing.Color.White;
             this.chkMethodeTaskParallelLibrary.Location = new System.Drawing.Point(14, 94);
             this.chkMethodeTaskParallelLibrary.Name = "chkMethodeTaskParallelLibrary";
@@ -106,8 +106,6 @@
             // chkMethodeBackgroundWorker
             // 
             this.chkMethodeBackgroundWorker.AutoSize = true;
-            this.chkMethodeBackgroundWorker.Checked = true;
-            this.chkMethodeBackgroundWorker.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMethodeBackgroundWorker.ForeColor = System.Drawing.Color.White;
             this.chkMethodeBackgroundWorker.Location = new System.Drawing.Point(14, 70);
             this.chkMethodeBackgroundWorker.Name = "chkMethodeBackgroundWorker";
@@ -136,7 +134,7 @@
             this.label1.ForeColor = System.Drawing.Color.Black;
             this.label1.Location = new System.Drawing.Point(-1, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(201, 23);
+            this.label1.Size = new System.Drawing.Size(204, 23);
             this.label1.TabIndex = 0;
             this.label1.Text = "Méthodes de parallélisation";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -159,9 +157,9 @@
             this.pnlParametrage.Controls.Add(this.label4);
             this.pnlParametrage.Controls.Add(this.numNmbThread);
             this.pnlParametrage.Controls.Add(this.label2);
-            this.pnlParametrage.Location = new System.Drawing.Point(219, 30);
+            this.pnlParametrage.Location = new System.Drawing.Point(222, 30);
             this.pnlParametrage.Name = "pnlParametrage";
-            this.pnlParametrage.Size = new System.Drawing.Size(342, 206);
+            this.pnlParametrage.Size = new System.Drawing.Size(339, 206);
             this.pnlParametrage.TabIndex = 3;
             // 
             // label9
@@ -337,7 +335,7 @@
             this.label2.ForeColor = System.Drawing.Color.Black;
             this.label2.Location = new System.Drawing.Point(0, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(342, 23);
+            this.label2.Size = new System.Drawing.Size(339, 23);
             this.label2.TabIndex = 1;
             this.label2.Text = "Paramétrage";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -359,6 +357,7 @@
             this.btnShowMapResolving.BackColor = System.Drawing.Color.Gray;
             this.btnShowMapResolving.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
             this.btnShowMapResolving.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnShowMapResolving.ForeColor = System.Drawing.Color.Black;
             this.btnShowMapResolving.Location = new System.Drawing.Point(443, 242);
             this.btnShowMapResolving.Name = "btnShowMapResolving";
             this.btnShowMapResolving.Size = new System.Drawing.Size(118, 23);
@@ -370,17 +369,29 @@
             // 
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(573, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(571, 25);
             this.toolStrip1.TabIndex = 7;
             this.toolStrip1.Text = "toolStrip";
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 538);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 590);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(573, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(571, 22);
             this.statusStrip1.TabIndex = 8;
             this.statusStrip1.Text = "statusStrip";
+            // 
+            // chkSynchroMonitoring
+            // 
+            this.chkSynchroMonitoring.AutoSize = true;
+            this.chkSynchroMonitoring.ForeColor = System.Drawing.Color.White;
+            this.chkSynchroMonitoring.Location = new System.Drawing.Point(175, 246);
+            this.chkSynchroMonitoring.Name = "chkSynchroMonitoring";
+            this.chkSynchroMonitoring.Size = new System.Drawing.Size(181, 17);
+            this.chkSynchroMonitoring.TabIndex = 14;
+            this.chkSynchroMonitoring.Text = "Synchroniser l\'arrêt du monitoring";
+            this.chkSynchroMonitoring.UseVisualStyleBackColor = true;
+            this.chkSynchroMonitoring.CheckedChanged += new System.EventHandler(this.chkSynchroMonitoring_CheckedChanged);
             // 
             // ucMonitoring
             // 
@@ -388,7 +399,7 @@
             this.ucMonitoring.Location = new System.Drawing.Point(12, 294);
             this.ucMonitoring.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.ucMonitoring.Name = "ucMonitoring";
-            this.ucMonitoring.Size = new System.Drawing.Size(549, 236);
+            this.ucMonitoring.Size = new System.Drawing.Size(549, 293);
             this.ucMonitoring.TabIndex = 5;
             // 
             // FrmParallelAStar
@@ -396,7 +407,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(573, 560);
+            this.ClientSize = new System.Drawing.Size(571, 612);
+            this.Controls.Add(this.chkSynchroMonitoring);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.btnShowMapResolving);
@@ -408,7 +420,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "FrmParallelAStar";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Parallélisation et Algorithme A*";
+            this.Text = "Parallélisation et algorithme A*";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmParallelAStar_FormClosing);
             this.pnlMethode.ResumeLayout(false);
             this.pnlMethode.PerformLayout();
@@ -454,6 +466,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDown3;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.CheckBox chkSynchroMonitoring;
     }
 }
 
