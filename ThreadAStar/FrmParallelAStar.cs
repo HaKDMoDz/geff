@@ -68,8 +68,8 @@ namespace ThreadAStar
             //--- Création du threadManager pour le type Natif .Net 4
             if (chkMethodeTaskParallelLibrary.Checked)
             {
-                //currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, ListMap);
-                //currentThreadManager.StartComputation();
+                currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, ListMap);
+                currentThreadManager.StartComputation();
             }
             //---
         }
