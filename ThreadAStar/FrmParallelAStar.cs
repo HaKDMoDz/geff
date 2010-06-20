@@ -68,6 +68,7 @@ namespace ThreadAStar
                 InitUI();
 
                 currentThreadManager = new ThreadManagerBackgroundWorker((int)this.numNmbThread.Value, ListMap);
+                currentThreadManager.CalculCompletedEvent += new EventHandler(currentThreadManager_CalculCompletedEvent);
                 currentThreadManager.StartComputation();
             }
             //---
