@@ -44,7 +44,7 @@
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label6 = new System.Windows.Forms.Label();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.numCountMap = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.numRereshRate = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
@@ -55,13 +55,14 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.chkSynchroMonitoring = new System.Windows.Forms.CheckBox();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.ucMonitoring = new ThreadAStar.UC.UCMonitoring();
             this.pnlMethode.SuspendLayout();
             this.pnlParametrage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCountMap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRereshRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numNmbThread)).BeginInit();
             this.SuspendLayout();
@@ -151,7 +152,7 @@
             this.pnlParametrage.Controls.Add(this.numericUpDown4);
             this.pnlParametrage.Controls.Add(this.panel1);
             this.pnlParametrage.Controls.Add(this.label6);
-            this.pnlParametrage.Controls.Add(this.numericUpDown3);
+            this.pnlParametrage.Controls.Add(this.numCountMap);
             this.pnlParametrage.Controls.Add(this.label5);
             this.pnlParametrage.Controls.Add(this.numRereshRate);
             this.pnlParametrage.Controls.Add(this.label4);
@@ -259,15 +260,25 @@
             this.label6.TabIndex = 7;
             this.label6.Text = "Nombre de map :";
             // 
-            // numericUpDown3
+            // numCountMap
             // 
-            this.numericUpDown3.BackColor = System.Drawing.Color.DarkGray;
-            this.numericUpDown3.Location = new System.Drawing.Point(6, 111);
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(150, 20);
-            this.numericUpDown3.TabIndex = 6;
-            this.numericUpDown3.Value = new decimal(new int[] {
+            this.numCountMap.BackColor = System.Drawing.Color.DarkGray;
+            this.numCountMap.Location = new System.Drawing.Point(6, 111);
+            this.numCountMap.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numCountMap.Minimum = new decimal(new int[] {
             10,
+            0,
+            0,
+            0});
+            this.numCountMap.Name = "numCountMap";
+            this.numCountMap.Size = new System.Drawing.Size(150, 20);
+            this.numCountMap.TabIndex = 6;
+            this.numCountMap.Value = new decimal(new int[] {
+            1000,
             0,
             0,
             0});
@@ -385,13 +396,20 @@
             // 
             this.chkSynchroMonitoring.AutoSize = true;
             this.chkSynchroMonitoring.ForeColor = System.Drawing.Color.White;
-            this.chkSynchroMonitoring.Location = new System.Drawing.Point(175, 246);
+            this.chkSynchroMonitoring.Location = new System.Drawing.Point(178, 249);
             this.chkSynchroMonitoring.Name = "chkSynchroMonitoring";
             this.chkSynchroMonitoring.Size = new System.Drawing.Size(181, 17);
             this.chkSynchroMonitoring.TabIndex = 14;
             this.chkSynchroMonitoring.Text = "Synchroniser l\'arrêt du monitoring";
             this.chkSynchroMonitoring.UseVisualStyleBackColor = true;
             this.chkSynchroMonitoring.CheckedChanged += new System.EventHandler(this.chkSynchroMonitoring_CheckedChanged);
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(15, 253);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(156, 10);
+            this.progressBar.TabIndex = 15;
             // 
             // ucMonitoring
             // 
@@ -408,6 +426,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(571, 612);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.chkSynchroMonitoring);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
@@ -429,7 +448,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCountMap)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRereshRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numNmbThread)).EndInit();
             this.ResumeLayout(false);
@@ -463,10 +482,11 @@
         private System.Windows.Forms.NumericUpDown numericUpDown4;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown numericUpDown3;
+        private System.Windows.Forms.NumericUpDown numCountMap;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.CheckBox chkSynchroMonitoring;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
 

@@ -14,6 +14,8 @@ namespace ThreadAStar
 {
     public partial class FrmParallelAStar : Form
     {
+        delegate void RefreshProgression_Callback(int count);
+
         #region Propriétés
         private const String BUTTON_START = "Démarrer";
         private const String BUTTON_STOP = "Arrêter";
@@ -39,7 +41,7 @@ namespace ThreadAStar
         {
              //--- Création des Map
             List<IComputable> ListMap = new List<IComputable>();
-            for (int i = 0; i < 20000; i++)
+            for (int i = 0; i < this.numCountMap.Value; i++)
             {
                 ListMap.Add(new MatrixMultiply());
             }
@@ -52,7 +54,10 @@ namespace ThreadAStar
             //--- Création du threadManager pour le type Natif
             if (chkMethodeNative.Checked)
             {
-                currentThreadManager = new ThreadManagerSimple((int)this.numNmbThread.Value, ListMap, TypeThreading.Natif);
+                InitUI();
+
+                currentThreadManager = new ThreadManagerNative((int)this.numNmbThread.Value, ListMap);
+                currentThreadManager.CalculCompletedEvent += new EventHandler(currentThreadManager_CalculCompletedEvent);
                 currentThreadManager.StartComputation();
             }
             //---
@@ -60,7 +65,9 @@ namespace ThreadAStar
             //--- Création du threadManager pour le type BackGroundworker
             if (chkMethodeBackgroundWorker.Checked)
             {
-                currentThreadManager = new ThreadManagerSimple((int)this.numNmbThread.Value, ListMap, TypeThreading.BackgroundWorker);
+                InitUI();
+
+                currentThreadManager = new ThreadManagerBackgroundWorker((int)this.numNmbThread.Value, ListMap);
                 currentThreadManager.StartComputation();
             }
             //---
@@ -68,10 +75,36 @@ namespace ThreadAStar
             //--- Création du threadManager pour le type Natif .Net 4
             if (chkMethodeTaskParallelLibrary.Checked)
             {
+                InitUI();
+
                 currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, ListMap);
                 currentThreadManager.StartComputation();
             }
             //---
+        }
+
+        private void InitUI()
+        {
+            this.progressBar.Maximum = (int)this.numCountMap.Value;
+            this.progressBar.Value = 0;
+        }
+
+        public void currentThreadManager_CalculCompletedEvent(object sender, EventArgs e)
+        {
+            if (this.InvokeRequired)
+            {
+                RefreshProgression_Callback call = new RefreshProgression_Callback(RefreshProgression);
+                this.Invoke(call, ((ThreadManagerBase)sender).CountCalculated);
+            }
+            else
+            {
+                RefreshProgression(((ThreadManagerBase)sender).CountCalculated);
+            }
+        }
+
+        private void RefreshProgression(int count)
+        {
+            progressBar.Value = count;
         }
 
         /// <summary>
@@ -84,7 +117,8 @@ namespace ThreadAStar
                 ucMonitoring.StopMonitoring();
 
             //---> Arrête la résolution des map pour la méthode de parallélisation courante
-            currentThreadManager.StopComputation();
+            if(currentThreadManager != null)
+                currentThreadManager.StopComputation();
         }
         #endregion
 
