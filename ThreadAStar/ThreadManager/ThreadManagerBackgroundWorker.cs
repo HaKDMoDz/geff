@@ -14,7 +14,8 @@ namespace ThreadAStar.ThreadManager
 {
     public class ThreadManagerBackgroundWorker : ThreadManagerBase
     {
-        private BackgroundWorker _backgroundWorker;
+        private BackgroundWorker _backgroundWorker { get; set; }
+        private int _nextIdToCompute { get; set; }
 
         public ThreadManagerBackgroundWorker(int countThread, List<IComputable> listComputable)
             : base(countThread, listComputable)
@@ -27,7 +28,6 @@ namespace ThreadAStar.ThreadManager
             _backgroundWorker = new BackgroundWorker();
             _backgroundWorker.WorkerSupportsCancellation = true;
             _backgroundWorker.DoWork += new DoWorkEventHandler(backgroundWorker_DoWork);
-            _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
 
             _backgroundWorker.RunWorkerAsync();
         }
@@ -46,6 +46,8 @@ namespace ThreadAStar.ThreadManager
         #region Méthodes protégées
         protected override void CalculCompleted(IComputable computable)
         {
+            CountCalculated++;
+
             base.CalculCompleted(computable);
 
             if (!IsThreadAlive())
@@ -64,27 +66,25 @@ namespace ThreadAStar.ThreadManager
         #region Méthodes privées
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            _nextIdToCompute = 0;
+
             CreateNewThread(this.CountThread);
 
             e.Result = true;
-        }
-
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
         }
 
         private void CreateNewThread(int countThread)
         {
             for (int i = 0; i < countThread; i++)
             {
-                if (CountCalculated < this.ListComputable.Count && IsThreadAlive())
+                if (_nextIdToCompute < this.ListComputable.Count && IsThreadAlive())
                 {
-                    ThreadingBackgroundWorkerMethod threadingMethod = new ThreadingBackgroundWorkerMethod(this, this.ListComputable[CountCalculated]);
+                    ThreadingBackgroundWorkerMethod threadingMethod = new ThreadingBackgroundWorkerMethod(this, this.ListComputable[_nextIdToCompute]);
 
                     threadingMethod.CalculCompletedEvent += new EventHandler(threadingMethod_CalculCompletedEvent);
                     this.ListThread.Add(threadingMethod);
 
-                    CountCalculated++;
+                    _nextIdToCompute++;
 
                     threadingMethod.Start();
                 }
@@ -101,9 +101,9 @@ namespace ThreadAStar.ThreadManager
             return !_backgroundWorker.CancellationPending;
         }
 
-        private void AllCalculCompleted()
+        protected override void AllCalculCompleted()
         {
-            AreAllCalculCompleted = true;
+            base.AllCalculCompleted();
         }
 
         private void threadingMethod_CalculCompletedEvent(object sender, EventArgs e)

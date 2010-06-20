@@ -16,11 +16,6 @@ namespace ThreadAStar.ThreadingMethod
         public ThreadingBackgroundWorkerMethod(ThreadManagerBackgroundWorker threadManager, IComputable computable)
             : base(threadManager, computable)
         {
-            _backgroundWorker = new BackgroundWorker();
-            _backgroundWorker.WorkerSupportsCancellation = true;
-            _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_backgroundWorker_RunWorkerCompleted);
-            _backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(_backgroundWorker_ProgressChanged);
-            _backgroundWorker.DoWork += new DoWorkEventHandler(_backgroundWorker_DoWork);
         }
 
         void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -28,19 +23,19 @@ namespace ThreadAStar.ThreadingMethod
             computable.Compute();
             e.Result = true;
         }
-
-        void _backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-        }
-
+    
         void _backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //threadManager.CalculCompleted(this.computable);
             base.CalculCompleted();
         }
 
         public override void Start(params object[] parameter)
         {
+            _backgroundWorker = new BackgroundWorker();
+            _backgroundWorker.WorkerSupportsCancellation = true;
+            _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_backgroundWorker_RunWorkerCompleted);
+            _backgroundWorker.DoWork += new DoWorkEventHandler(_backgroundWorker_DoWork);
+
             _backgroundWorker.RunWorkerAsync(parameter);
         }
 

@@ -14,36 +14,44 @@ namespace ThreadAStar
 {
     public partial class FrmParallelAStar : Form
     {
+        #region Callback
         delegate void RefreshProgression_Callback(int count);
+        delegate void AppendText_Callback(RichTextBox ctrl, string text);
+        delegate void SetText_Callback(Control ctrl, string text);
+        delegate void SetEnabled_Callback(Control ctrl, bool enabled);
+        delegate void Empty_Callback();
+        #endregion
 
         #region Propriétés
         private const String BUTTON_START = "Démarrer";
         private const String BUTTON_STOP = "Arrêter";
         private ThreadManagerBase currentThreadManager;
-
-        public static FrmParallelAStar frm; 
+        private DateTime startParallel = DateTime.MinValue;
+        private TypeThreading methodToStart = TypeThreading.None;
+        private List<IComputable> listMap = new List<IComputable>();
         #endregion
 
         #region Constructeur
         public FrmParallelAStar()
         {
             InitializeComponent();
-
-            FrmParallelAStar.frm = this;
-        } 
+        }
         #endregion
 
         #region Méthodes privées
-        /// <summary>
-        /// Démarre la résolution des map A* selon les modèles de parallélisation choisies
-        /// </summary>
-        private void StartResolving()
+        private void InitResolving()
         {
-             //--- Création des Map
-            List<IComputable> ListMap = new List<IComputable>();
+            //--- Initialise le formulaire
+            SetText(btnStartResolving, BUTTON_STOP);
+            SetEnabled(pnlMethode, false);
+            SetEnabled(pnlParametrage, false);
+            //---
+
+            //--- Création des Map
+            listMap = new List<IComputable>();
             for (int i = 0; i < this.numCountMap.Value; i++)
             {
-                ListMap.Add(new MatrixMultiply());
+                listMap.Add(new MatrixMultiply());
             }
             //---
 
@@ -51,46 +59,80 @@ namespace ThreadAStar
             ucMonitoring.StartMonitoring((short)this.numRereshRate.Value);
             //---
 
-            //--- Création du threadManager pour le type Natif
-            if (chkMethodeNative.Checked)
-            {
-                InitUI();
+            methodToStart = TypeThreading.Natif;
+        }
 
-                currentThreadManager = new ThreadManagerNative((int)this.numNmbThread.Value, ListMap);
-                currentThreadManager.CalculCompletedEvent += new EventHandler(currentThreadManager_CalculCompletedEvent);
-                currentThreadManager.StartComputation();
+        /// <summary>
+        /// Démarre la résolution des map A* selon les modèles de parallélisation choisies
+        /// </summary>
+        private void StartResolving()
+        {
+            //--- Création du threadManager pour le type Natif
+            if (chkMethodeNative.Checked && methodToStart == TypeThreading.Natif)
+            {
+                AddLog("Parallélisation mode natif - Début");
+                currentThreadManager = new ThreadManagerNative((int)this.numNmbThread.Value, listMap);
+            }
+            else if (!chkMethodeNative.Checked && methodToStart == TypeThreading.Natif)
+            {
+                methodToStart = TypeThreading.BackgroundWorker;
             }
             //---
 
             //--- Création du threadManager pour le type BackGroundworker
-            if (chkMethodeBackgroundWorker.Checked)
+            if (chkMethodeBackgroundWorker.Checked && methodToStart == TypeThreading.BackgroundWorker)
             {
-                InitUI();
-
-                currentThreadManager = new ThreadManagerBackgroundWorker((int)this.numNmbThread.Value, ListMap);
-                currentThreadManager.CalculCompletedEvent += new EventHandler(currentThreadManager_CalculCompletedEvent);
-                currentThreadManager.StartComputation();
+                AddLog("Parallélisation mode BackgroundWorker - Début");
+                currentThreadManager = new ThreadManagerBackgroundWorker((int)this.numNmbThread.Value, listMap);
+            }
+            else if (!chkMethodeBackgroundWorker.Checked && methodToStart == TypeThreading.BackgroundWorker)
+            {
+                methodToStart = TypeThreading.TaskParallelLibrary;
             }
             //---
 
-            //--- Création du threadManager pour le type Natif .Net 4
-            if (chkMethodeTaskParallelLibrary.Checked)
+            //--- Création du threadManager pour le type TPL
+            //if (chkMethodeTaskParallelLibrary.Checked && methodToStart == TypeThreading.TaskParallelLibrary)
+            //{
+            //    AddLog("Parallélisation mode Task Parallel Library - Début");
+            //    currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, listMap);
+            //}
+            //else if (!chkMethodeTaskParallelLibrary.Checked && methodToStart == TypeThreading.TaskParallelLibrary)
+            //{
+            //    methodToStart = TypeThreading.None;
+            //}
+            //---
+
+            if (methodToStart != TypeThreading.None)
             {
                 InitUI();
-
-                currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, ListMap);
+                currentThreadManager.CalculCompletedEvent += new EventHandler<ComputableEventArgs>(currentThreadManager_CalculCompletedEvent);
+                currentThreadManager.AllCalculCompletedEvent += new EventHandler(currentThreadManager_AllCalculCompletedEvent);
                 currentThreadManager.StartComputation();
             }
-            //---
+            else
+            {
+                StopResolving();
+            }
         }
 
         private void InitUI()
         {
-            this.progressBar.Maximum = (int)this.numCountMap.Value;
-            this.progressBar.Value = 0;
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Empty_Callback(InitUI));
+            }
+            else
+            {
+                this.progressBar.Maximum = (int)this.numCountMap.Value;
+                this.progressBar.Value = 0;
+                startParallel = DateTime.Now;
+                timer.Enabled = true;
+                timer.Start();
+            }
         }
 
-        public void currentThreadManager_CalculCompletedEvent(object sender, EventArgs e)
+        private void currentThreadManager_CalculCompletedEvent(object sender, ComputableEventArgs e)
         {
             if (this.InvokeRequired)
             {
@@ -100,7 +142,42 @@ namespace ThreadAStar
             else
             {
                 RefreshProgression(((ThreadManagerBase)sender).CountCalculated);
+                //DrawResolvedMap(e.Computable)
             }
+        }
+
+        private void currentThreadManager_AllCalculCompletedEvent(object sender, EventArgs e)
+        {
+            switch (methodToStart)
+            {
+                case TypeThreading.None:
+                    break;
+                case TypeThreading.Natif:
+                    AddLog("Parallélisation mode natif - Fin");
+                    break;
+                case TypeThreading.BackgroundWorker:
+                    AddLog("Parallélisation mode BackgroundWorker - Fin");
+                    break;
+                case TypeThreading.TaskParallelLibrary:
+                    AddLog("Parallélisation mode Task Parallel Library - Fin");
+                    break;
+                default:
+                    break;
+            }
+
+            //---> Afffiche la durée de résolution
+            AddLog(String.Format("Durée : {0}", DateTime.Now.Subtract(startParallel).ToString()));
+
+            //---> Passe à la méthode de parallélisation suivante
+            methodToStart++;
+
+            //--- Pause de 500 ms du thread Application
+            //    les threads précédents ont ainsi le temps de se terminer
+            Thread.Sleep(500);
+            //---
+
+            //---> Démarre la méthode de parallélisation
+            StartResolving();
         }
 
         private void RefreshProgression(int count)
@@ -113,13 +190,67 @@ namespace ThreadAStar
         /// </summary>
         private void StopResolving()
         {
+            //--- Initialise le formulaire
+            timer.Stop();
+            SetText(lblDureeCalcul, String.Empty);
+            SetText(btnStartResolving, BUTTON_START);
+            SetEnabled(pnlMethode, true);
+            SetEnabled(pnlParametrage, true);
+            //---
+
             //---> Arrête la surveillance de l'application
-            if(chkSynchroMonitoring.Checked)
+            if (chkSynchroMonitoring.Checked)
                 ucMonitoring.StopMonitoring();
 
             //---> Arrête la résolution des map pour la méthode de parallélisation courante
-            if(currentThreadManager != null)
+            if (currentThreadManager != null)
                 currentThreadManager.StopComputation();
+        }
+
+        private void AddLog(string text)
+        {
+            AppendText(txtLog, String.Format("{0} : {1}\r\n", DateTime.Now.ToShortTimeString(), text));
+        }
+        #endregion
+
+        #region Méthodes callbacks
+        private void AppendText(RichTextBox ctrl, string text)
+        {
+            if (ctrl.InvokeRequired)
+            {
+                AppendText_Callback call = new AppendText_Callback(AppendText);
+                ctrl.Invoke(call, ctrl, text);
+            }
+            else
+            {
+                ctrl.AppendText(text);
+            }
+        }
+
+        private void SetText(Control ctrl, string text)
+        {
+            if (ctrl.InvokeRequired)
+            {
+                SetText_Callback call = new SetText_Callback(SetText);
+                ctrl.Invoke(call, ctrl, text);
+            }
+            else
+            {
+                ctrl.Text = text;
+            }
+        }
+
+        private void SetEnabled(Control ctrl, bool enabled)
+        {
+            if (ctrl.InvokeRequired)
+            {
+                SetEnabled_Callback call = new SetEnabled_Callback(SetEnabled);
+                ctrl.Invoke(call, ctrl, enabled);
+            }
+            else
+            {
+                ctrl.Enabled = enabled;
+            }
         }
         #endregion
 
@@ -128,21 +259,12 @@ namespace ThreadAStar
         {
             if (btnStartResolving.Text == BUTTON_START)
             {
-                btnStartResolving.Text = BUTTON_STOP;
-
-                pnlMethode.Enabled = false;
-                pnlParametrage.Enabled = false;
-
+                InitResolving();
                 StartResolving();
             }
             else
             {
-                btnStartResolving.Text = BUTTON_START;
-
                 StopResolving();
-
-                pnlMethode.Enabled = true;
-                pnlParametrage.Enabled = true;
             }
         }
 
@@ -160,6 +282,16 @@ namespace ThreadAStar
             {
                 StopResolving();
             }
+        }
+
+        private void bntEffacerLog_Click(object sender, EventArgs e)
+        {
+            txtLog.Clear();
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            lblDureeCalcul.Text = String.Format("Durée du calcul : {0}", DateTime.Now.Subtract(startParallel).ToString());
         }
         #endregion
     }

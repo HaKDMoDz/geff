@@ -5,7 +5,8 @@ using System.Text;
 
 namespace ThreadAStar.Model
 {
-    class ThreadEntity
+    public class ComputableEventArgs : EventArgs
     {
+        public IComputable Computable { get; set; }
     }
 }

@@ -20,15 +20,21 @@ namespace ThreadAStar.ThreadingMethod
 
         public override void Start(params object[] parameter)
         {
+            //--- Initialise le thread de la résolution du calcul
             _threadStart = new ThreadStart(computable.Compute);
             _thread = new Thread(_threadStart);
+            //---
 
+            //---> démarre le thread
             _thread.Start();
 
+            //--- Attends tant que le thread est en activité
             while (_thread.ThreadState == ThreadState.Running || _thread.ThreadState == ThreadState.WaitSleepJoin)
-            {
-            }
+            { }
+            //--
 
+            //---> Une fois le thread terminé, le calcul est terminé
+            //     Appel des évènements CalculCompleted
             base.CalculCompleted();
         }
 

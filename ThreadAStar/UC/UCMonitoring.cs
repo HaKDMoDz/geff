@@ -173,17 +173,17 @@ namespace ThreadAStar.UC
         }
 
         private long GetMinDiskSize(long diskSize, ref int pas)
-		{
-			if (diskSize > 1024)
-			{
-				pas++;
-				return GetMinDiskSize(diskSize / 1024, ref pas);
-			}
-			else
-			{
-				return diskSize;
-			}
-		}
+        {
+            if (diskSize > 1024)
+            {
+                pas++;
+                return GetMinDiskSize(diskSize / 1024, ref pas);
+            }
+            else
+            {
+                return diskSize;
+            }
+        }
 
         private PointF ConvertPointToGraph(int x, int y, int maxY)
         {

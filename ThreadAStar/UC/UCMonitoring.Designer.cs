@@ -132,9 +132,8 @@
             this.lblTotalThread.ForeColor = System.Drawing.Color.Silver;
             this.lblTotalThread.Location = new System.Drawing.Point(3, 253);
             this.lblTotalThread.Name = "lblTotalThread";
-            this.lblTotalThread.Size = new System.Drawing.Size(56, 26);
+            this.lblTotalThread.Size = new System.Drawing.Size(0, 13);
             this.lblTotalThread.TabIndex = 10;
-            this.lblTotalThread.Text = "Max : 95%\r\nCur : 90%";
             // 
             // lblDeadThread
             // 
@@ -142,9 +141,8 @@
             this.lblDeadThread.ForeColor = System.Drawing.Color.Silver;
             this.lblDeadThread.Location = new System.Drawing.Point(3, 195);
             this.lblDeadThread.Name = "lblDeadThread";
-            this.lblDeadThread.Size = new System.Drawing.Size(56, 26);
+            this.lblDeadThread.Size = new System.Drawing.Size(0, 13);
             this.lblDeadThread.TabIndex = 9;
-            this.lblDeadThread.Text = "Max : 95%\r\nCur : 90%";
             // 
             // lblNewThread
             // 
@@ -152,9 +150,8 @@
             this.lblNewThread.ForeColor = System.Drawing.Color.Silver;
             this.lblNewThread.Location = new System.Drawing.Point(3, 136);
             this.lblNewThread.Name = "lblNewThread";
-            this.lblNewThread.Size = new System.Drawing.Size(56, 26);
+            this.lblNewThread.Size = new System.Drawing.Size(0, 13);
             this.lblNewThread.TabIndex = 8;
-            this.lblNewThread.Text = "Max : 95%\r\nCur : 90%";
             // 
             // lblRAM
             // 
@@ -162,9 +159,8 @@
             this.lblRAM.ForeColor = System.Drawing.Color.Silver;
             this.lblRAM.Location = new System.Drawing.Point(3, 81);
             this.lblRAM.Name = "lblRAM";
-            this.lblRAM.Size = new System.Drawing.Size(56, 26);
+            this.lblRAM.Size = new System.Drawing.Size(0, 13);
             this.lblRAM.TabIndex = 7;
-            this.lblRAM.Text = "Max : 95%\r\nCur : 90%";
             // 
             // lblCPU
             // 
@@ -172,9 +168,8 @@
             this.lblCPU.ForeColor = System.Drawing.Color.Silver;
             this.lblCPU.Location = new System.Drawing.Point(3, 23);
             this.lblCPU.Name = "lblCPU";
-            this.lblCPU.Size = new System.Drawing.Size(56, 26);
+            this.lblCPU.Size = new System.Drawing.Size(0, 13);
             this.lblCPU.TabIndex = 6;
-            this.lblCPU.Text = "Max : 95%\r\nCur : 90%";
             // 
             // UCMonitoring
             // 

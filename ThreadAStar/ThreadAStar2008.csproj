@@ -55,13 +55,16 @@
     <Compile Include="FrmParallelAStar.Designer.cs">
       <DependentUpon>FrmParallelAStar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\ComputableEventArgs.cs" />
     <Compile Include="Model\IComputable.cs" />
     <Compile Include="Model\Map.cs" />
     <Compile Include="Model\MatrixMultiply.cs" />
     <Compile Include="Model\ThreadMonitor.cs" />
-    <Compile Include="Model\ThreadEntity.cs" />
+    <Compile Include="ThreadingMethod\ThreadingBackgroundWorkerMethod.cs" />
+    <Compile Include="ThreadingMethod\ThreadingBaseMethod.cs" />
+    <Compile Include="ThreadingMethod\ThreadingNativeMethod.cs" />
+    <Compile Include="ThreadManager\ThreadManagerBackgroundWorker.cs" />
     <Compile Include="ThreadManager\ThreadManagerBase.cs" />
-    <Compile Include="ThreadManager\ThreadManagerSimple.cs" />
     <Compile Include="Model\TimelineData.cs" />
     <Compile Include="Model\TypeThreading.cs" />
     <Compile Include="Program.cs" />
@@ -90,9 +93,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Threading\BackGroundWorkerMethod.cs" />
-    <Compile Include="Threading\ThreadingBaseMethod.cs" />
-    <Compile Include="Threading\ThreadingNativeMethod.cs" />
+    <Compile Include="ThreadManager\ThreadManagerNative.cs" />
     <Compile Include="UC\ThreadSafeLabel.cs">
       <SubType>Component</SubType>
     </Compile>

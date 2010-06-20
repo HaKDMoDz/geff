@@ -17,6 +17,7 @@ namespace ThreadAStar.ThreadManager
     {
         private Thread _thread { get; set; }
         private ThreadStart _threadStart { get; set; }
+        private int _nextIdToCompute { get; set; }
 
         public ThreadManagerNative(int countThread, List<IComputable> listComputable)
             : base(countThread, listComputable)
@@ -28,6 +29,8 @@ namespace ThreadAStar.ThreadManager
         {
             _threadStart = new ThreadStart(LaunchPrimaryThread);
             _thread = new Thread(_threadStart);
+
+            _nextIdToCompute = 0;
 
             _thread.Start();
         }
@@ -46,6 +49,8 @@ namespace ThreadAStar.ThreadManager
         #region Méthodes protégées
         protected override void CalculCompleted(IComputable computable)
         {
+            CountCalculated++;
+
             base.CalculCompleted(computable);
 
             if (!IsThreadAlive())
@@ -71,14 +76,14 @@ namespace ThreadAStar.ThreadManager
         {
             for (int i = 0; i < countThread; i++)
             {
-                if (CountCalculated < this.ListComputable.Count && IsThreadAlive())
+                if (_nextIdToCompute < this.ListComputable.Count && IsThreadAlive())
                 {
-                    ThreadingNativeMethod threadingMethod = new ThreadingNativeMethod(this, this.ListComputable[CountCalculated]);
+                    ThreadingNativeMethod threadingMethod = new ThreadingNativeMethod(this, this.ListComputable[_nextIdToCompute]);
 
                     threadingMethod.CalculCompletedEvent += new EventHandler(threadingMethod_CalculCompletedEvent);
                     this.ListThread.Add(threadingMethod);
 
-                    CountCalculated++;
+                    _nextIdToCompute++;
 
                     threadingMethod.Start();
                 }
@@ -95,9 +100,9 @@ namespace ThreadAStar.ThreadManager
             return (_thread.ThreadState == System.Threading.ThreadState.Running || _thread.ThreadState == System.Threading.ThreadState.WaitSleepJoin);
         }
 
-        private void AllCalculCompleted()
+        protected override void AllCalculCompleted()
         {
-            AreAllCalculCompleted = true;
+            base.AllCalculCompleted();
         }
 
         private void threadingMethod_CalculCompletedEvent(object sender, EventArgs e)

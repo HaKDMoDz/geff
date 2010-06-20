@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnStartResolving = new System.Windows.Forms.Button();
             this.pnlMethode = new System.Windows.Forms.Panel();
             this.chkMethodeTaskParallelLibrary = new System.Windows.Forms.CheckBox();
@@ -52,10 +53,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.btnShowMapResolving = new System.Windows.Forms.Button();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.chkSynchroMonitoring = new System.Windows.Forms.CheckBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.txtLog = new System.Windows.Forms.RichTextBox();
+            this.bntEffacerLog = new System.Windows.Forms.Button();
+            this.lblDureeCalcul = new System.Windows.Forms.Label();
+            this.timer = new System.Windows.Forms.Timer(this.components);
             this.ucMonitoring = new ThreadAStar.UC.UCMonitoring();
             this.pnlMethode.SuspendLayout();
             this.pnlParametrage.SuspendLayout();
@@ -73,7 +76,7 @@
             this.btnStartResolving.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
             this.btnStartResolving.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStartResolving.ForeColor = System.Drawing.Color.Black;
-            this.btnStartResolving.Location = new System.Drawing.Point(362, 242);
+            this.btnStartResolving.Location = new System.Drawing.Point(361, 223);
             this.btnStartResolving.Name = "btnStartResolving";
             this.btnStartResolving.Size = new System.Drawing.Size(75, 23);
             this.btnStartResolving.TabIndex = 0;
@@ -88,7 +91,7 @@
             this.pnlMethode.Controls.Add(this.chkMethodeBackgroundWorker);
             this.pnlMethode.Controls.Add(this.chkMethodeNative);
             this.pnlMethode.Controls.Add(this.label1);
-            this.pnlMethode.Location = new System.Drawing.Point(13, 30);
+            this.pnlMethode.Location = new System.Drawing.Point(12, 11);
             this.pnlMethode.Name = "pnlMethode";
             this.pnlMethode.Size = new System.Drawing.Size(203, 206);
             this.pnlMethode.TabIndex = 2;
@@ -158,7 +161,7 @@
             this.pnlParametrage.Controls.Add(this.label4);
             this.pnlParametrage.Controls.Add(this.numNmbThread);
             this.pnlParametrage.Controls.Add(this.label2);
-            this.pnlParametrage.Location = new System.Drawing.Point(222, 30);
+            this.pnlParametrage.Location = new System.Drawing.Point(221, 11);
             this.pnlParametrage.Name = "pnlParametrage";
             this.pnlParametrage.Size = new System.Drawing.Size(339, 206);
             this.pnlParametrage.TabIndex = 3;
@@ -356,7 +359,7 @@
             this.label3.BackColor = System.Drawing.Color.CornflowerBlue;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.Black;
-            this.label3.Location = new System.Drawing.Point(12, 271);
+            this.label3.Location = new System.Drawing.Point(12, 382);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(549, 23);
             this.label3.TabIndex = 4;
@@ -369,34 +372,18 @@
             this.btnShowMapResolving.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
             this.btnShowMapResolving.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnShowMapResolving.ForeColor = System.Drawing.Color.Black;
-            this.btnShowMapResolving.Location = new System.Drawing.Point(443, 242);
+            this.btnShowMapResolving.Location = new System.Drawing.Point(442, 223);
             this.btnShowMapResolving.Name = "btnShowMapResolving";
             this.btnShowMapResolving.Size = new System.Drawing.Size(118, 23);
             this.btnShowMapResolving.TabIndex = 6;
             this.btnShowMapResolving.Text = "Afficher les maps";
             this.btnShowMapResolving.UseVisualStyleBackColor = false;
             // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(571, 25);
-            this.toolStrip1.TabIndex = 7;
-            this.toolStrip1.Text = "toolStrip";
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 590);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(571, 22);
-            this.statusStrip1.TabIndex = 8;
-            this.statusStrip1.Text = "statusStrip";
-            // 
             // chkSynchroMonitoring
             // 
             this.chkSynchroMonitoring.AutoSize = true;
             this.chkSynchroMonitoring.ForeColor = System.Drawing.Color.White;
-            this.chkSynchroMonitoring.Location = new System.Drawing.Point(178, 249);
+            this.chkSynchroMonitoring.Location = new System.Drawing.Point(177, 230);
             this.chkSynchroMonitoring.Name = "chkSynchroMonitoring";
             this.chkSynchroMonitoring.Size = new System.Drawing.Size(181, 17);
             this.chkSynchroMonitoring.TabIndex = 14;
@@ -406,15 +393,52 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(15, 253);
+            this.progressBar.Location = new System.Drawing.Point(12, 369);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(156, 10);
+            this.progressBar.Size = new System.Drawing.Size(548, 10);
             this.progressBar.TabIndex = 15;
+            // 
+            // txtLog
+            // 
+            this.txtLog.BackColor = System.Drawing.Color.DarkGray;
+            this.txtLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtLog.Location = new System.Drawing.Point(12, 253);
+            this.txtLog.Name = "txtLog";
+            this.txtLog.Size = new System.Drawing.Size(337, 110);
+            this.txtLog.TabIndex = 16;
+            this.txtLog.Text = "";
+            // 
+            // bntEffacerLog
+            // 
+            this.bntEffacerLog.BackColor = System.Drawing.Color.Gray;
+            this.bntEffacerLog.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
+            this.bntEffacerLog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bntEffacerLog.ForeColor = System.Drawing.Color.Black;
+            this.bntEffacerLog.Location = new System.Drawing.Point(12, 223);
+            this.bntEffacerLog.Name = "bntEffacerLog";
+            this.bntEffacerLog.Size = new System.Drawing.Size(118, 23);
+            this.bntEffacerLog.TabIndex = 17;
+            this.bntEffacerLog.Text = "Effacer log";
+            this.bntEffacerLog.UseVisualStyleBackColor = false;
+            this.bntEffacerLog.Click += new System.EventHandler(this.bntEffacerLog_Click);
+            // 
+            // lblDureeCalcul
+            // 
+            this.lblDureeCalcul.AutoSize = true;
+            this.lblDureeCalcul.ForeColor = System.Drawing.Color.White;
+            this.lblDureeCalcul.Location = new System.Drawing.Point(358, 263);
+            this.lblDureeCalcul.Name = "lblDureeCalcul";
+            this.lblDureeCalcul.Size = new System.Drawing.Size(0, 13);
+            this.lblDureeCalcul.TabIndex = 18;
+            // 
+            // timer
+            // 
+            this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
             // ucMonitoring
             // 
             this.ucMonitoring.BackColor = System.Drawing.Color.DimGray;
-            this.ucMonitoring.Location = new System.Drawing.Point(12, 294);
+            this.ucMonitoring.Location = new System.Drawing.Point(12, 405);
             this.ucMonitoring.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.ucMonitoring.Name = "ucMonitoring";
             this.ucMonitoring.Size = new System.Drawing.Size(549, 293);
@@ -425,11 +449,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(571, 612);
+            this.ClientSize = new System.Drawing.Size(571, 709);
+            this.Controls.Add(this.lblDureeCalcul);
+            this.Controls.Add(this.bntEffacerLog);
+            this.Controls.Add(this.txtLog);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.chkSynchroMonitoring);
-            this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.btnShowMapResolving);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnStartResolving);
@@ -483,10 +508,12 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown numCountMap;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.CheckBox chkSynchroMonitoring;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.RichTextBox txtLog;
+        private System.Windows.Forms.Button bntEffacerLog;
+        private System.Windows.Forms.Label lblDureeCalcul;
+        private System.Windows.Forms.Timer timer;
     }
 }
 

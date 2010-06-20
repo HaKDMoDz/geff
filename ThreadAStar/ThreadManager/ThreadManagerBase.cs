@@ -9,7 +9,8 @@ namespace ThreadAStar.ThreadManager
 {
     public abstract class ThreadManagerBase
     {
-        public event EventHandler CalculCompletedEvent;
+        public event EventHandler<ComputableEventArgs> CalculCompletedEvent;
+        public event EventHandler AllCalculCompletedEvent;
 
         public List<ThreadingBaseMethod> ListThread { get; set; }
         public Int32 CountThread { get; set; }
@@ -31,8 +32,19 @@ namespace ThreadAStar.ThreadManager
 
         protected virtual void CalculCompleted(IComputable computable)
         {
-            EventHandler handler = this.CalculCompletedEvent;
-            if (handler != null) handler(this, null);
+            if (CalculCompletedEvent != null)
+            {
+                ComputableEventArgs eventArgs = new ComputableEventArgs();
+                eventArgs.Computable = computable;
+
+                CalculCompletedEvent(this, eventArgs);
+            }
+        }
+
+        protected virtual void AllCalculCompleted()
+        {
+            if (AllCalculCompletedEvent != null) 
+                AllCalculCompletedEvent(this, null);
         }
     }
 }

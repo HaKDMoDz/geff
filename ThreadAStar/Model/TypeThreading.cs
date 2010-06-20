@@ -7,8 +7,9 @@ namespace ThreadAStar.Model
 {
     public enum TypeThreading : int
     {
+        None = 0,
         Natif = 1,
         BackgroundWorker = 2,
-        TaskParallelLibrary = 3
+        TaskParallelLibrary = 3,
     }
 }

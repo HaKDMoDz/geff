@@ -38,29 +38,86 @@ namespace ThreadAStar.ThreadManager
             CountCalculated++;
         }
 
+        private void ParallelComputBody2(IComputable computable)
+        {
+            computable.Compute();
+
+            CountCalculated++;
+        }
+
+
         private void ParallelComputeFinally(int index)
         {
+            base.CalculCompleted(this.ListComputable[index]);
 
+            if (CountCalculated >= this.ListComputable.Count)
+                base.AllCalculCompleted();
         }
 
         public override void StartComputation()
         {
             parallelOptions = new ParallelOptions();
-            parallelOptions.MaxDegreeOfParallelism = this.CountThread;
-            
+            parallelOptions.MaxDegreeOfParallelism = this.CountThread+20;
+
             cancellationToken = new CancellationTokenSource();
             parallelOptions.CancellationToken = cancellationToken.Token;
-            
+
+
+            //---
+            //         Parallel.For(0, 100, 1,
+            //     () =>
+            //     {
+            //         return new ThreadTimeTracker()
+            //         {
+            //             ThreadGuid = Guid.NewGuid()
+            //         };
+            //     },
+            //     (i, loopState) =>
+            //     {
+            //         doWork(i, loopState.ThreadLocalState);
+            //     },
+            //    (threadLocalState) =>
+            //    {
+            //        Console.WriteLine(String.Format(
+            //            "Thread {0} processed for {1} ms.",
+            //            threadLocalState.ThreadGuid.ToString(),
+            //            threadLocalState.CumulativeThreadTime
+            //            ));
+            //    }
+            //);
+            //---
+
             Task.Factory.StartNew(() =>
             {
 
                 //parallelOptions.CancellationToken.
 
-                //Parallel.For(0, this.ListComputable.Count, parallelOptions, 
-                //    i => {ParallelComputBody(i);},
-                //    i => { ParallelComputeFinally(i); });
+                Parallel.For<int>(0, this.ListComputable.Count, parallelOptions,
+                    () => { return 0; },
+                    (i,loopState, j) =>
+                    {
+                        ParallelComputBody(i);
 
-                Parallel.ForEach<IComputable>(this.ListComputable, parallelOptions, computable => { ParallelComputBody(computable); });
+                        return i;
+                    },
+                    i =>
+                    {
+                        ParallelComputeFinally(i);
+                    }
+                );
+
+
+
+                //i => {ParallelComputBody(i);},
+                //j => { ParallelComputeFinally(j); });
+
+                //Parallel.ForEach<IComputable>(
+                //    this.ListComputable,
+                //    parallelOptions,
+                //    computable => { ParallelComputBody(computable); }
+
+                //    );
+
             }, parallelOptions.CancellationToken);
 
         }
@@ -75,5 +132,6 @@ namespace ThreadAStar.ThreadManager
         {
             base.CalculCompleted(computable);
         }
+
     }
 }
