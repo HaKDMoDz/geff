@@ -54,6 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AStar\AStarCell.cs" />
+    <Compile Include="AStar\AStarMap.cs" />
+    <Compile Include="AStar\Cell.cs" />
     <Compile Include="FrmParallelAStar.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,7 +65,6 @@
     </Compile>
     <Compile Include="Model\ComputableEventArgs.cs" />
     <Compile Include="Model\IComputable.cs" />
-    <Compile Include="Model\Map.cs" />
     <Compile Include="Model\MatrixMultiply.cs" />
     <Compile Include="Model\ThreadMonitor.cs" />
     <Compile Include="ThreadManager\ThreadManagerNative.cs" />

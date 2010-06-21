@@ -109,15 +109,15 @@ namespace ThreadAStar
             //---
 
             //--- Création du threadManager pour le type TPL
-            //if (chkMethodeTaskParallelLibrary.Checked && methodToStart == TypeThreading.TaskParallelLibrary)
-            //{
-            //    AddLog("Parallélisation mode Task Parallel Library - Début");
-            //    currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, listMap);
-            //}
-            //else if (!chkMethodeTaskParallelLibrary.Checked && methodToStart == TypeThreading.TaskParallelLibrary)
-            //{
-            //    methodToStart = TypeThreading.None;
-            //}
+            if (chkMethodeTaskParallelLibrary.Checked && methodToStart == TypeThreading.TaskParallelLibrary)
+            {
+                AddLog("Parallélisation mode Task Parallel Library - Début");
+                currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, listMap);
+            }
+            else if (!chkMethodeTaskParallelLibrary.Checked && methodToStart == TypeThreading.TaskParallelLibrary)
+            {
+                methodToStart = TypeThreading.None;
+            }
             //---
 
             if (methodToStart != TypeThreading.None)

@@ -388,7 +388,7 @@
             this.btnShowMapResolving.Name = "btnShowMapResolving";
             this.btnShowMapResolving.Size = new System.Drawing.Size(118, 23);
             this.btnShowMapResolving.TabIndex = 6;
-            this.btnShowMapResolving.Text = "Afficher les maps";
+            this.btnShowMapResolving.Text = "Cacher les maps";
             this.btnShowMapResolving.UseVisualStyleBackColor = false;
             this.btnShowMapResolving.Click += new System.EventHandler(this.btnShowMapResolving_Click);
             // 
@@ -472,7 +472,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(571, 709);
+            this.ClientSize = new System.Drawing.Size(1146, 709);
             this.Controls.Add(this.picMap);
             this.Controls.Add(this.lblDureeCalcul);
             this.Controls.Add(this.bntEffacerLog);
@@ -492,8 +492,8 @@
             this.Name = "FrmParallelAStar";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Parallélisation et algorithme A*";
-            this.Load += new System.EventHandler(this.FrmParallelAStar_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmParallelAStar_FormClosing);
+            this.Load += new System.EventHandler(this.FrmParallelAStar_Load);
             this.pnlMethode.ResumeLayout(false);
             this.pnlMethode.PerformLayout();
             this.pnlParametrage.ResumeLayout(false);
