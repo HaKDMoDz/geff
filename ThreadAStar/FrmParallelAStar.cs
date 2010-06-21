@@ -9,13 +9,14 @@ using System.Windows.Forms;
 using ThreadAStar.Model;
 using System.Threading;
 using ThreadAStar.ThreadManager;
+using ThreadAStar.AStar;
 
 namespace ThreadAStar
 {
     public partial class FrmParallelAStar : Form
     {
         #region Callback
-        delegate void RefreshProgression_Callback(int count);
+        delegate void RefreshProgression_Callback(int count, IComputable computable);
         delegate void AppendText_Callback(RichTextBox ctrl, string text);
         delegate void SetText_Callback(Control ctrl, string text);
         delegate void SetEnabled_Callback(Control ctrl, bool enabled);
@@ -25,10 +26,14 @@ namespace ThreadAStar
         #region Propriétés
         private const String BUTTON_START = "Démarrer";
         private const String BUTTON_STOP = "Arrêter";
+        private const String BUTTON_MAP_ON = "Afficher les maps";
+        private const String BUTTON_MAP_OFF = "Cacher les maps";
+
         private ThreadManagerBase currentThreadManager;
         private DateTime startParallel = DateTime.MinValue;
         private TypeThreading methodToStart = TypeThreading.None;
         private List<IComputable> listMap = new List<IComputable>();
+        private Graphics gMap;
         #endregion
 
         #region Constructeur
@@ -47,13 +52,25 @@ namespace ThreadAStar
             SetEnabled(pnlParametrage, false);
             //---
 
+            //--- Création des MatrixMultiply
+            //listMap = new List<IComputable>();
+            //for (int i = 0; i < this.numCountMap.Value; i++)
+            //{
+            //    listMap.Add(new MatrixMultiply());
+            //}
+            //---
+
+            AddLog("Calcul la liste des map");
+
             //--- Création des Map
             listMap = new List<IComputable>();
             for (int i = 0; i < this.numCountMap.Value; i++)
             {
-                listMap.Add(new MatrixMultiply());
+                listMap.Add(new AStarMap(picMap.Width, picMap.Height, chkUtiliserGraine.Checked?  (int)numSeed.Value : int.MinValue, (int)numCountNode.Value, (int)numDistanceMax.Value));
             }
             //---
+
+            AddLog("Démarrage du monitoring");
 
             //--- Démarre le monitoring de thread
             ucMonitoring.StartMonitoring((short)this.numRereshRate.Value);
@@ -137,12 +154,11 @@ namespace ThreadAStar
             if (this.InvokeRequired)
             {
                 RefreshProgression_Callback call = new RefreshProgression_Callback(RefreshProgression);
-                this.Invoke(call, ((ThreadManagerBase)sender).CountCalculated);
+                this.Invoke(call, ((ThreadManagerBase)sender).CountCalculated, e.Computable);
             }
             else
             {
-                RefreshProgression(((ThreadManagerBase)sender).CountCalculated);
-                //DrawResolvedMap(e.Computable)
+                RefreshProgression(((ThreadManagerBase)sender).CountCalculated, e.Computable);
             }
         }
 
@@ -180,9 +196,12 @@ namespace ThreadAStar
             StartResolving();
         }
 
-        private void RefreshProgression(int count)
+        private void RefreshProgression(int count, IComputable computable)
         {
             progressBar.Value = count;
+
+            if (btnShowMapResolving.Text == BUTTON_MAP_OFF)
+                computable.Draw(gMap);
         }
 
         /// <summary>
@@ -190,6 +209,8 @@ namespace ThreadAStar
         /// </summary>
         private void StopResolving()
         {
+            AddLog("Arrêt de la résolution");
+
             //--- Initialise le formulaire
             timer.Stop();
             SetText(lblDureeCalcul, String.Empty);
@@ -209,7 +230,7 @@ namespace ThreadAStar
 
         private void AddLog(string text)
         {
-            AppendText(txtLog, String.Format("{0} : {1}\r\n", DateTime.Now.ToShortTimeString(), text));
+            AppendText(txtLog, String.Format("{0} : {1}\r\n", DateTime.Now.ToLongTimeString(), text));
         }
         #endregion
 
@@ -255,6 +276,19 @@ namespace ThreadAStar
         #endregion
 
         #region Évènements
+        private void FrmParallelAStar_Load(object sender, EventArgs e)
+        {
+            gMap = picMap.CreateGraphics();
+        }
+
+        private void FrmParallelAStar_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (btnStartResolving.Text == BUTTON_STOP)
+            {
+                StopResolving();
+            }
+        }
+
         private void btnStartResolving_Click(object sender, EventArgs e)
         {
             if (btnStartResolving.Text == BUTTON_START)
@@ -268,12 +302,22 @@ namespace ThreadAStar
             }
         }
 
-        private void FrmParallelAStar_FormClosing(object sender, FormClosingEventArgs e)
+        private void btnShowMapResolving_Click(object sender, EventArgs e)
         {
-            if (btnStartResolving.Text == BUTTON_STOP)
+            if (btnShowMapResolving.Text == BUTTON_MAP_ON)
             {
-                StopResolving();
+                btnShowMapResolving.Text = BUTTON_MAP_OFF;
+
+                this.Width = picMap.Right + 10;
             }
+            else
+            {
+                btnShowMapResolving.Text = BUTTON_MAP_ON;
+
+                this.Width = picMap.Left + 6;
+            }
+
+            this.CenterToScreen();
         }
 
         private void chkSynchroMonitoring_CheckedChanged(object sender, EventArgs e)

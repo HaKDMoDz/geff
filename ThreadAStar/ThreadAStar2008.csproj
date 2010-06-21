@@ -12,6 +12,8 @@
     <AssemblyName>ThreadAStar</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <StartupObject>ThreadAStar.Program</StartupObject>
+    <TargetFrameworkSubset>Full</TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AStar\AStarCell.cs" />
+    <Compile Include="AStar\AStarMap.cs" />
+    <Compile Include="AStar\Cell.cs" />
     <Compile Include="FrmParallelAStar.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -57,7 +62,6 @@
     </Compile>
     <Compile Include="Model\ComputableEventArgs.cs" />
     <Compile Include="Model\IComputable.cs" />
-    <Compile Include="Model\Map.cs" />
     <Compile Include="Model\MatrixMultiply.cs" />
     <Compile Include="Model\ThreadMonitor.cs" />
     <Compile Include="ThreadingMethod\ThreadingBackgroundWorkerMethod.cs" />

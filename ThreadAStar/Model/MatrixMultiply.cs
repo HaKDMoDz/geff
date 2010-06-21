@@ -36,5 +36,9 @@ namespace ThreadAStar.Model
                 Thread.Sleep(1);
             }
         }
+
+        public void Draw(Graphics g)
+        {
+        }
     }
 }

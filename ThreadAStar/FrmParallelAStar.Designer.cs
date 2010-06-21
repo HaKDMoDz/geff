@@ -37,12 +37,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.pnlParametrage = new System.Windows.Forms.Panel();
             this.label9 = new System.Windows.Forms.Label();
-            this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
+            this.numDistanceMax = new System.Windows.Forms.NumericUpDown();
             this.chkUtiliserGraine = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
+            this.numSeed = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
-            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
+            this.numCountNode = new System.Windows.Forms.NumericUpDown();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label6 = new System.Windows.Forms.Label();
             this.numCountMap = new System.Windows.Forms.NumericUpDown();
@@ -59,20 +59,22 @@
             this.bntEffacerLog = new System.Windows.Forms.Button();
             this.lblDureeCalcul = new System.Windows.Forms.Label();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.picMap = new System.Windows.Forms.PictureBox();
             this.ucMonitoring = new ThreadAStar.UC.UCMonitoring();
             this.pnlMethode.SuspendLayout();
             this.pnlParametrage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDistanceMax)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSeed)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCountNode)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numCountMap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRereshRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numNmbThread)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
             this.SuspendLayout();
             // 
             // btnStartResolving
             // 
-            this.btnStartResolving.BackColor = System.Drawing.Color.Gray;
+            this.btnStartResolving.BackColor = System.Drawing.Color.DarkGray;
             this.btnStartResolving.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
             this.btnStartResolving.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStartResolving.ForeColor = System.Drawing.Color.Black;
@@ -147,12 +149,12 @@
             // 
             this.pnlParametrage.BackColor = System.Drawing.Color.DimGray;
             this.pnlParametrage.Controls.Add(this.label9);
-            this.pnlParametrage.Controls.Add(this.numericUpDown6);
+            this.pnlParametrage.Controls.Add(this.numDistanceMax);
             this.pnlParametrage.Controls.Add(this.chkUtiliserGraine);
             this.pnlParametrage.Controls.Add(this.label8);
-            this.pnlParametrage.Controls.Add(this.numericUpDown5);
+            this.pnlParametrage.Controls.Add(this.numSeed);
             this.pnlParametrage.Controls.Add(this.label7);
-            this.pnlParametrage.Controls.Add(this.numericUpDown4);
+            this.pnlParametrage.Controls.Add(this.numCountNode);
             this.pnlParametrage.Controls.Add(this.panel1);
             this.pnlParametrage.Controls.Add(this.label6);
             this.pnlParametrage.Controls.Add(this.numCountMap);
@@ -176,14 +178,14 @@
             this.label9.TabIndex = 15;
             this.label9.Text = "Distance maximum de liaison :";
             // 
-            // numericUpDown6
+            // numDistanceMax
             // 
-            this.numericUpDown6.BackColor = System.Drawing.Color.DarkGray;
-            this.numericUpDown6.Location = new System.Drawing.Point(175, 153);
-            this.numericUpDown6.Name = "numericUpDown6";
-            this.numericUpDown6.Size = new System.Drawing.Size(150, 20);
-            this.numericUpDown6.TabIndex = 14;
-            this.numericUpDown6.Value = new decimal(new int[] {
+            this.numDistanceMax.BackColor = System.Drawing.Color.Silver;
+            this.numDistanceMax.Location = new System.Drawing.Point(175, 153);
+            this.numDistanceMax.Name = "numDistanceMax";
+            this.numDistanceMax.Size = new System.Drawing.Size(150, 20);
+            this.numDistanceMax.TabIndex = 14;
+            this.numDistanceMax.Value = new decimal(new int[] {
             100,
             0,
             0,
@@ -208,15 +210,15 @@
             this.label8.TabIndex = 12;
             this.label8.Text = "Graine du générateur aléatoire :";
             // 
-            // numericUpDown5
+            // numSeed
             // 
-            this.numericUpDown5.BackColor = System.Drawing.Color.DarkGray;
-            this.numericUpDown5.Enabled = false;
-            this.numericUpDown5.Location = new System.Drawing.Point(193, 111);
-            this.numericUpDown5.Name = "numericUpDown5";
-            this.numericUpDown5.Size = new System.Drawing.Size(129, 20);
-            this.numericUpDown5.TabIndex = 11;
-            this.numericUpDown5.Value = new decimal(new int[] {
+            this.numSeed.BackColor = System.Drawing.Color.Silver;
+            this.numSeed.Enabled = false;
+            this.numSeed.Location = new System.Drawing.Point(193, 111);
+            this.numSeed.Name = "numSeed";
+            this.numSeed.Size = new System.Drawing.Size(129, 20);
+            this.numSeed.TabIndex = 11;
+            this.numSeed.Value = new decimal(new int[] {
             10,
             0,
             0,
@@ -232,15 +234,25 @@
             this.label7.TabIndex = 10;
             this.label7.Text = "Nombre de noeuds par map :";
             // 
-            // numericUpDown4
+            // numCountNode
             // 
-            this.numericUpDown4.BackColor = System.Drawing.Color.DarkGray;
-            this.numericUpDown4.Location = new System.Drawing.Point(6, 153);
-            this.numericUpDown4.Name = "numericUpDown4";
-            this.numericUpDown4.Size = new System.Drawing.Size(150, 20);
-            this.numericUpDown4.TabIndex = 9;
-            this.numericUpDown4.Value = new decimal(new int[] {
+            this.numCountNode.BackColor = System.Drawing.Color.Silver;
+            this.numCountNode.Location = new System.Drawing.Point(6, 153);
+            this.numCountNode.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numCountNode.Minimum = new decimal(new int[] {
             10,
+            0,
+            0,
+            0});
+            this.numCountNode.Name = "numCountNode";
+            this.numCountNode.Size = new System.Drawing.Size(150, 20);
+            this.numCountNode.TabIndex = 9;
+            this.numCountNode.Value = new decimal(new int[] {
+            100,
             0,
             0,
             0});
@@ -265,7 +277,7 @@
             // 
             // numCountMap
             // 
-            this.numCountMap.BackColor = System.Drawing.Color.DarkGray;
+            this.numCountMap.BackColor = System.Drawing.Color.Silver;
             this.numCountMap.Location = new System.Drawing.Point(6, 111);
             this.numCountMap.Maximum = new decimal(new int[] {
             10000,
@@ -281,7 +293,7 @@
             this.numCountMap.Size = new System.Drawing.Size(150, 20);
             this.numCountMap.TabIndex = 6;
             this.numCountMap.Value = new decimal(new int[] {
-            1000,
+            100,
             0,
             0,
             0});
@@ -298,7 +310,7 @@
             // 
             // numRereshRate
             // 
-            this.numRereshRate.BackColor = System.Drawing.Color.DarkGray;
+            this.numRereshRate.BackColor = System.Drawing.Color.Silver;
             this.numRereshRate.Location = new System.Drawing.Point(172, 56);
             this.numRereshRate.Maximum = new decimal(new int[] {
             60000,
@@ -314,7 +326,7 @@
             this.numRereshRate.Size = new System.Drawing.Size(150, 20);
             this.numRereshRate.TabIndex = 4;
             this.numRereshRate.Value = new decimal(new int[] {
-            100,
+            10,
             0,
             0,
             0});
@@ -331,7 +343,7 @@
             // 
             // numNmbThread
             // 
-            this.numNmbThread.BackColor = System.Drawing.Color.DarkGray;
+            this.numNmbThread.BackColor = System.Drawing.Color.Silver;
             this.numNmbThread.Location = new System.Drawing.Point(6, 56);
             this.numNmbThread.Name = "numNmbThread";
             this.numNmbThread.Size = new System.Drawing.Size(150, 20);
@@ -368,7 +380,7 @@
             // 
             // btnShowMapResolving
             // 
-            this.btnShowMapResolving.BackColor = System.Drawing.Color.Gray;
+            this.btnShowMapResolving.BackColor = System.Drawing.Color.DarkGray;
             this.btnShowMapResolving.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
             this.btnShowMapResolving.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnShowMapResolving.ForeColor = System.Drawing.Color.Black;
@@ -378,6 +390,7 @@
             this.btnShowMapResolving.TabIndex = 6;
             this.btnShowMapResolving.Text = "Afficher les maps";
             this.btnShowMapResolving.UseVisualStyleBackColor = false;
+            this.btnShowMapResolving.Click += new System.EventHandler(this.btnShowMapResolving_Click);
             // 
             // chkSynchroMonitoring
             // 
@@ -410,7 +423,8 @@
             // 
             // bntEffacerLog
             // 
-            this.bntEffacerLog.BackColor = System.Drawing.Color.Gray;
+            this.bntEffacerLog.BackColor = System.Drawing.Color.DarkGray;
+            this.bntEffacerLog.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bntEffacerLog.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
             this.bntEffacerLog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bntEffacerLog.ForeColor = System.Drawing.Color.Black;
@@ -435,6 +449,15 @@
             // 
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
+            // picMap
+            // 
+            this.picMap.BackColor = System.Drawing.Color.Black;
+            this.picMap.Location = new System.Drawing.Point(571, 11);
+            this.picMap.Name = "picMap";
+            this.picMap.Size = new System.Drawing.Size(563, 687);
+            this.picMap.TabIndex = 19;
+            this.picMap.TabStop = false;
+            // 
             // ucMonitoring
             // 
             this.ucMonitoring.BackColor = System.Drawing.Color.DimGray;
@@ -450,6 +473,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(571, 709);
+            this.Controls.Add(this.picMap);
             this.Controls.Add(this.lblDureeCalcul);
             this.Controls.Add(this.bntEffacerLog);
             this.Controls.Add(this.txtLog);
@@ -461,21 +485,26 @@
             this.Controls.Add(this.ucMonitoring);
             this.Controls.Add(this.pnlParametrage);
             this.Controls.Add(this.pnlMethode);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FrmParallelAStar";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Parallélisation et algorithme A*";
+            this.Load += new System.EventHandler(this.FrmParallelAStar_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmParallelAStar_FormClosing);
             this.pnlMethode.ResumeLayout(false);
             this.pnlMethode.PerformLayout();
             this.pnlParametrage.ResumeLayout(false);
             this.pnlParametrage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDistanceMax)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSeed)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numCountNode)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numCountMap)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRereshRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numNmbThread)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -499,12 +528,12 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown numNmbThread;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.NumericUpDown numericUpDown6;
+        private System.Windows.Forms.NumericUpDown numDistanceMax;
         private System.Windows.Forms.CheckBox chkUtiliserGraine;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.NumericUpDown numericUpDown5;
+        private System.Windows.Forms.NumericUpDown numSeed;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.NumericUpDown numericUpDown4;
+        private System.Windows.Forms.NumericUpDown numCountNode;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown numCountMap;
@@ -514,6 +543,7 @@
         private System.Windows.Forms.Button bntEffacerLog;
         private System.Windows.Forms.Label lblDureeCalcul;
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.PictureBox picMap;
     }
 }
 

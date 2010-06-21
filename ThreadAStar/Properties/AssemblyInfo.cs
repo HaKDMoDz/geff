@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ThreadAStar")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("SNCF")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ThreadAStar")]
-[assembly: AssemblyCopyright("Copyright © SNCF 2010")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
