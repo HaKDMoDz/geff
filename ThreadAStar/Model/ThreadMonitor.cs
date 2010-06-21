@@ -21,6 +21,7 @@ namespace ThreadAStar.Model
         private Int16 _refreshRate;
         private TimeSpan _firstRefresh;
         private List<int> _listPreviousThread;
+        private List<int> _listThreadToIgnore;
         private PerformanceCounter perfCounterCPU;
 
         public List<TimelineData> ListTimeLineData { get; set; }
@@ -54,7 +55,16 @@ namespace ThreadAStar.Model
             _listPreviousThread = new List<int>();
             _firstRefresh = DateTime.Now.TimeOfDay;
             _lastRefresh = DateTime.Now.TimeOfDay;
-            
+
+            //--- Liste des threads en cours.
+            //    ces threads sont à exclure
+            _listThreadToIgnore = new List<int>();
+            foreach (ProcessThread processThread in Process.GetCurrentProcess().Threads)
+            {
+                _listThreadToIgnore.Add(processThread.Id);
+            }
+            //---
+
             if(!_backgroundWorker.IsBusy)
                 _backgroundWorker.RunWorkerAsync();
         }
@@ -109,11 +119,12 @@ namespace ThreadAStar.Model
 
             foreach (ProcessThread processThread in Process.GetCurrentProcess().Threads)
             {
-                listCurrentThread.Add(processThread.Id);
+                if(!_listThreadToIgnore.Contains(processThread.Id))
+                    listCurrentThread.Add(processThread.Id);
             }
 
             timelineData.CountThreads = (byte)listCurrentThread.Count;
-            timelineData.CountNewThreads = (byte)listCurrentThread.Count(t => _listPreviousThread.Contains(t));
+            timelineData.CountNewThreads = (byte)listCurrentThread.Count(t => !_listPreviousThread.Contains(t));
             
             if(_listPreviousThread.Count>0)
                 timelineData.CountDeadThreads = (byte)(timelineData.CountThreads - timelineData.CountNewThreads);

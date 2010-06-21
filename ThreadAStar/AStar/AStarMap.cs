@@ -57,28 +57,25 @@ namespace ThreadAStar.AStar
 
             gImg.Clear(Color.Black);
 
+            float cellCost = 1f; // cellCost;
+
             foreach (Cell cell in ListCell)
             {
+                //--- Liens entre noeuds voisins
                 foreach (Cell cell2 in cell.ListNeighbour)
                 {
                     gImg.DrawLine(Pens.LightBlue, cell.Position, cell2.Position);
                 }
 
-                float cellCost = 1f; // cellCost;
-
-                //g.DrawEllipse(Pens.LightGray, cell.Position.X - cellCost * 7, cell.Position.Y - cellCost * 7, cellCost * 15, cellCost * 15);
+                //---> Cercle de chaque noeud
                 gImg.FillEllipse(Brushes.LightGray, cell.Position.X - cellCost * 7, cell.Position.Y - cellCost * 7, cellCost * 15, cellCost * 15);
-
-                if (cell == _cellStart)
-                {
-                    gImg.FillEllipse(Brushes.YellowGreen, cell.Position.X - cellCost * 7, cell.Position.Y - cellCost * 7, cellCost * 14, cellCost * 14);
-                }
-
-                if (cell == _cellEnd)
-                {
-                    gImg.FillEllipse(Brushes.Orange, cell.Position.X - cellCost * 7, cell.Position.Y - cellCost * 7, cellCost * 14, cellCost * 14);
-                }
             }
+
+            //---> Cercle de la cellule de départ
+            gImg.FillEllipse(Brushes.YellowGreen, _cellStart.Position.X - cellCost * 7, _cellStart.Position.Y - cellCost * 7, cellCost * 14, cellCost * 14);
+
+            //---> Cercle de la cellule d'arrivée
+            gImg.FillEllipse(Brushes.Orange, _cellEnd.Position.X - cellCost * 7, _cellEnd.Position.Y - cellCost * 7, cellCost * 14, cellCost * 14);
 
             Pen penPath = new Pen(Brushes.Red, 5f);
 
@@ -95,11 +92,7 @@ namespace ThreadAStar.AStar
         private void Init()
         {
             //--- Initialisation du générateur aléatoire
-            _rnd = null;
-            if (_seed == int.MinValue)
-                _rnd = new Random();
-            else
-                _rnd = new Random(_seed);
+            _rnd = new Random(_seed);
             //---
 
             CreateCells();

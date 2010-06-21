@@ -17,7 +17,7 @@ namespace ThreadAStar.ThreadManager
         
         public List<IComputable> ListComputable { get; set; }
         public Int32 CountCalculated { get; set; }
-        public Boolean AreAllCalculCompleted = false;
+        public volatile Boolean AreAllCalculCompleted = false;
 
         public ThreadManagerBase(int countThread, List<IComputable> listComputable)
         {
@@ -43,6 +43,8 @@ namespace ThreadAStar.ThreadManager
 
         protected virtual void AllCalculCompleted()
         {
+            AreAllCalculCompleted = true;
+
             if (AllCalculCompletedEvent != null) 
                 AllCalculCompletedEvent(this, null);
         }

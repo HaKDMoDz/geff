@@ -46,37 +46,55 @@ namespace ThreadAStar
         #region Méthodes privées
         private void InitResolving()
         {
-            //--- Initialise le formulaire
-            SetText(btnStartResolving, BUTTON_STOP);
-            SetEnabled(pnlMethode, false);
-            SetEnabled(pnlParametrage, false);
-            //---
-
-            //--- Création des MatrixMultiply
-            //listMap = new List<IComputable>();
-            //for (int i = 0; i < this.numCountMap.Value; i++)
-            //{
-            //    listMap.Add(new MatrixMultiply());
-            //}
-            //---
-
-            AddLog("Calcul la liste des map");
-
-            //--- Création des Map
-            listMap = new List<IComputable>();
-            for (int i = 0; i < this.numCountMap.Value; i++)
+            try
             {
-                listMap.Add(new AStarMap(picMap.Width, picMap.Height, chkUtiliserGraine.Checked?  (int)numSeed.Value : int.MinValue, (int)numCountNode.Value, (int)numDistanceMax.Value));
+                Cursor.Current = Cursors.WaitCursor;
+
+                //--- Initialise le formulaire
+                SetText(btnStartResolving, BUTTON_STOP);
+                SetEnabled(pnlMethode, false);
+                SetEnabled(pnlParametrage, false);
+                //---
+
+                int seed = (int)DateTime.Now.TimeOfDay.TotalMilliseconds;
+                if (chkUtiliserGraine.Checked)
+                     seed = (int)numSeed.Value;
+                
+                AddLog("--- Paramètres ---");
+                AddLog(String.Format("Nombre de threads : {0}", numNmbThread.Value));
+                AddLog(String.Format("Taux de rafraichissement : {0} ms", numRereshRate.Value));
+                AddLog(String.Format("Nombre de maps : {0}", numCountMap.Value));
+                AddLog(String.Format("Nombre de noueuds par map : {0}", numCountNode.Value));
+                AddLog(String.Format("Distance maximum de liaison : {0}", numDistanceMax.Value));
+                AddLog(String.Format("Graine random : {0}", seed));
+                AddLog("-----------------------");
+
+                AddLog("Création de la liste des maps");
+
+                Application.DoEvents();
+
+                //--- Création des Map
+                Random rnd = new Random(seed);
+
+                listMap = new List<IComputable>();
+                for (int i = 0; i < this.numCountMap.Value; i++)
+                {
+                    listMap.Add(new AStarMap(picMap.Width, picMap.Height, rnd.Next(), (int)numCountNode.Value, (int)numDistanceMax.Value));
+                }
+                //---
+
+                AddLog("Démarrage du monitoring");
+
+                //--- Démarre le monitoring de thread
+                ucMonitoring.StartMonitoring((short)this.numRereshRate.Value);
+                //---
+
+                methodToStart = TypeThreading.Natif;
             }
-            //---
-
-            AddLog("Démarrage du monitoring");
-
-            //--- Démarre le monitoring de thread
-            ucMonitoring.StartMonitoring((short)this.numRereshRate.Value);
-            //---
-
-            methodToStart = TypeThreading.Natif;
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
         }
 
         /// <summary>
@@ -205,12 +223,10 @@ namespace ThreadAStar
         }
 
         /// <summary>
-        /// Arrête la résolution des map A*
+        /// Arrête la résolution des maps A*
         /// </summary>
         private void StopResolving()
         {
-            AddLog("Arrêt de la résolution");
-
             //--- Initialise le formulaire
             timer.Stop();
             SetText(lblDureeCalcul, String.Empty);
@@ -225,7 +241,11 @@ namespace ThreadAStar
 
             //---> Arrête la résolution des map pour la méthode de parallélisation courante
             if (currentThreadManager != null)
+            {
+                AddLog("Arrêt de la résolution");
                 currentThreadManager.StopComputation();
+                this.listMap = null;
+            }
         }
 
         private void AddLog(string text)
@@ -245,6 +265,7 @@ namespace ThreadAStar
             else
             {
                 ctrl.AppendText(text);
+                ctrl.ScrollToCaret();
             }
         }
 
@@ -308,7 +329,7 @@ namespace ThreadAStar
             {
                 btnShowMapResolving.Text = BUTTON_MAP_OFF;
 
-                this.Width = picMap.Right + 10;
+                this.Width = picMap.Right + 15;
             }
             else
             {
@@ -324,8 +345,14 @@ namespace ThreadAStar
         {
             if (chkSynchroMonitoring.Checked && btnStartResolving.Text == BUTTON_START)
             {
+                currentThreadManager = null;
                 StopResolving();
             }
+        }
+
+        private void chkUtiliserGraine_CheckedChanged(object sender, EventArgs e)
+        {
+            numSeed.Enabled = chkUtiliserGraine.Checked;
         }
 
         private void bntEffacerLog_Click(object sender, EventArgs e)

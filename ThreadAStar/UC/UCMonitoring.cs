@@ -69,96 +69,85 @@ namespace ThreadAStar.UC
         {
             try
             {
-                //if (this.pictureBox.InvokeRequired)
-                //{
-                //    Refresh_UCMonitoringCallback call = new Refresh_UCMonitoringCallback(RefreshGraph);
-                //    pictureBox.Invoke(call);
-                //}
-                //else
+                DateTime currentRefresh = DateTime.Now;
+
+                gImg.Clear(Color.Gray);
+
+                TimelineData prevTimeLineData = new TimelineData();
+
+                //--- Calcul les valeurs hautes
+                maxCpuValue = (int)monitor.ListTimeLineData.Max(t => t.CPU);
+                maxRamValue = (int)monitor.ListTimeLineData.Max(t => t.RAM);
+                maxCountThreads = (int)monitor.ListTimeLineData.Max(t => t.CountThreads);
+                maxCountNewThreads = (int)monitor.ListTimeLineData.Max(t => t.CountNewThreads);
+                maxCountDeadThreads = (int)monitor.ListTimeLineData.Max(t => t.CountDeadThreads);
+                //---
+
+                foreach (TimelineData timelineData in monitor.ListTimeLineData)
                 {
-                    DateTime currentRefresh = DateTime.Now;
-
-                    gImg.Clear(Color.Gray);
-
-                    TimelineData prevTimeLineData = new TimelineData();
-
-                    //--- Calcul les valeurs hautes
-                    maxCpuValue = (int)monitor.ListTimeLineData.Max(t => t.CPU);
-                    maxRamValue = (int)monitor.ListTimeLineData.Max(t => t.RAM);
-                    maxCountThreads = (int)monitor.ListTimeLineData.Max(t => t.CountThreads);
-                    maxCountNewThreads = (int)monitor.ListTimeLineData.Max(t => t.CountNewThreads);
-                    maxCountDeadThreads = (int)monitor.ListTimeLineData.Max(t => t.CountDeadThreads);
+                    //--- Courbe de la charge CPU
+                    if (chkCPU.Checked)
+                    {
+                        gImg.DrawLine(penCPU,
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CPU, 100),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CPU, 100));
+                    }
                     //---
 
-                    foreach (TimelineData timelineData in monitor.ListTimeLineData)
+                    //--- Courbe de la charge RAM
+                    if (chkRAM.Checked)
                     {
-                        //--- Courbe de la charge CPU
-                        if (chkCPU.Checked)
-                        {
-                            gImg.DrawLine(penCPU,
-                                ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CPU, 100),
-                                ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CPU, 100));
-                        }
-                        //---
+                        gImg.DrawLine(penRAM,
+                        ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.RAM, maxRamValue),
+                        ConvertPointToGraph((int)timelineData.Time, (int)timelineData.RAM, maxRamValue));
+                    }
+                    //---
 
-                        //--- Courbe de la charge RAM
-                        if (chkRAM.Checked)
-                        {
-                            gImg.DrawLine(penRAM,
-                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.RAM, maxRamValue),
-                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.RAM, maxRamValue));
-                        }
-                        //---
-
-                        //=== Courbe des threads
-                        //---> Nouveaux
-                        if (chkThreadNew.Checked)
-                        {
-                            gImg.DrawLine(penThreadNew,
-                                ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountNewThreads, maxCountNewThreads),
-                                ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountNewThreads, maxCountNewThreads));
-                        }
-
-                        //---> Morts
-                        if (chkThreadDead.Checked)
-                        {
-                            gImg.DrawLine(penThreadDead,
-                                ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountDeadThreads, maxCountDeadThreads),
-                                ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountDeadThreads, maxCountDeadThreads));
-                        }
-
-                        //---> Total
-                        if (chkThreadTotal.Checked)
-                        {
-                            gImg.DrawLine(penThreadTotal,
-                                ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountThreads, maxCountThreads),
-                                ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountThreads, maxCountThreads));
-                        }
-                        //===
-
-                        prevTimeLineData = timelineData;
+                    //=== Courbe des threads
+                    //---> Nouveaux
+                    if (chkThreadNew.Checked)
+                    {
+                        gImg.DrawLine(penThreadNew,
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountNewThreads, maxCountNewThreads),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountNewThreads, maxCountNewThreads));
                     }
 
-                    //---> Rafraichissement des labels toutes les 5 secondes
-                    //     Ces labels sont Thread Safe
-                    if (currentRefresh.Subtract(_lastRefreshLabel).TotalMilliseconds > 5000)
+                    //---> Morts
+                    if (chkThreadDead.Checked)
                     {
-                        _lastRefreshLabel = currentRefresh;
-                        lblCPU.SetText(String.Format("Max: {0}%\r\nCur:  {1}%", maxCpuValue, prevTimeLineData.CPU));
-                        lblRAM.SetText(String.Format("Max: {0}\r\nCur:  {1}", FormatRAMValue(maxRamValue), FormatRAMValue(prevTimeLineData.RAM)));
-                        lblTotalThread.SetText(String.Format("Max: {0}\r\nCur:  {1}", maxCountThreads, prevTimeLineData.CountThreads));
-                        lblNewThread.SetText(String.Format("Max: {0}\r\nCur:  {1}", maxCountNewThreads, prevTimeLineData.CountNewThreads));
-                        lblDeadThread.SetText(String.Format("Max: {0}\r\nCur:  {1}", maxCountDeadThreads, prevTimeLineData.CountDeadThreads));
+                        gImg.DrawLine(penThreadDead,
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountDeadThreads, maxCountDeadThreads),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountDeadThreads, maxCountDeadThreads));
                     }
 
-                    //Monitor.Enter(g);
-                    g.DrawImage(img, 0, 0);
-                    //Monitor.Exit(g);
+                    //---> Total
+                    if (chkThreadTotal.Checked)
+                    {
+                        gImg.DrawLine(penThreadTotal,
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountThreads, maxCountThreads),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountThreads, maxCountThreads));
+                    }
+                    //===
+
+                    prevTimeLineData = timelineData;
                 }
-            }
-            catch (Exception ex)
-            {
 
+                //---> Rafraichissement des labels toutes les 5 secondes
+                //     Ces labels sont Thread Safe
+                if (currentRefresh.Subtract(_lastRefreshLabel).TotalMilliseconds > 1)
+                {
+                    _lastRefreshLabel = currentRefresh;
+                    lblCPU.SetText(String.Format("Max: {0}%\r\nCur:  {1}%", maxCpuValue, prevTimeLineData.CPU));
+                    lblRAM.SetText(String.Format("Max: {0}\r\nCur:  {1}", FormatRAMValue(maxRamValue), FormatRAMValue(prevTimeLineData.RAM)));
+                    lblTotalThread.SetText(String.Format("Max: {0}\r\nCur:  {1}", maxCountThreads, prevTimeLineData.CountThreads));
+                    lblNewThread.SetText(String.Format("Max: {0}\r\nCur:  {1}", maxCountNewThreads, prevTimeLineData.CountNewThreads));
+                    lblDeadThread.SetText(String.Format("Max: {0}\r\nCur:  {1}", maxCountDeadThreads, prevTimeLineData.CountDeadThreads));
+                }
+
+                g.DrawImage(img, 0, 0);
+            }
+            catch
+            {
             }
         }
 
@@ -189,7 +178,8 @@ namespace ThreadAStar.UC
         {
             PointF point = Point.Empty;
 
-            point.X = this.pictureBox.Width + x - monitor.ElapsedTimePart;
+            //---> Calcul du point selon la portion de temps écoulée (une portion de temps équivaut à 3 pixels afin de rendre les courbes plus lisibles)
+            point.X = this.pictureBox.Width + (x - monitor.ElapsedTimePart) * 3;
 
             if (maxY > 0)
             {

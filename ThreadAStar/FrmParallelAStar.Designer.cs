@@ -101,6 +101,8 @@
             // chkMethodeTaskParallelLibrary
             // 
             this.chkMethodeTaskParallelLibrary.AutoSize = true;
+            this.chkMethodeTaskParallelLibrary.Checked = true;
+            this.chkMethodeTaskParallelLibrary.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMethodeTaskParallelLibrary.ForeColor = System.Drawing.Color.White;
             this.chkMethodeTaskParallelLibrary.Location = new System.Drawing.Point(14, 94);
             this.chkMethodeTaskParallelLibrary.Name = "chkMethodeTaskParallelLibrary";
@@ -112,6 +114,8 @@
             // chkMethodeBackgroundWorker
             // 
             this.chkMethodeBackgroundWorker.AutoSize = true;
+            this.chkMethodeBackgroundWorker.Checked = true;
+            this.chkMethodeBackgroundWorker.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMethodeBackgroundWorker.ForeColor = System.Drawing.Color.White;
             this.chkMethodeBackgroundWorker.Location = new System.Drawing.Point(14, 70);
             this.chkMethodeBackgroundWorker.Name = "chkMethodeBackgroundWorker";
@@ -182,6 +186,16 @@
             // 
             this.numDistanceMax.BackColor = System.Drawing.Color.Silver;
             this.numDistanceMax.Location = new System.Drawing.Point(175, 153);
+            this.numDistanceMax.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.numDistanceMax.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numDistanceMax.Name = "numDistanceMax";
             this.numDistanceMax.Size = new System.Drawing.Size(150, 20);
             this.numDistanceMax.TabIndex = 14;
@@ -199,6 +213,7 @@
             this.chkUtiliserGraine.Size = new System.Drawing.Size(15, 14);
             this.chkUtiliserGraine.TabIndex = 13;
             this.chkUtiliserGraine.UseVisualStyleBackColor = true;
+            this.chkUtiliserGraine.CheckedChanged += new System.EventHandler(this.chkUtiliserGraine_CheckedChanged);
             // 
             // label8
             // 
@@ -215,6 +230,11 @@
             this.numSeed.BackColor = System.Drawing.Color.Silver;
             this.numSeed.Enabled = false;
             this.numSeed.Location = new System.Drawing.Point(193, 111);
+            this.numSeed.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            0});
             this.numSeed.Name = "numSeed";
             this.numSeed.Size = new System.Drawing.Size(129, 20);
             this.numSeed.TabIndex = 11;
@@ -239,7 +259,7 @@
             this.numCountNode.BackColor = System.Drawing.Color.Silver;
             this.numCountNode.Location = new System.Drawing.Point(6, 153);
             this.numCountNode.Maximum = new decimal(new int[] {
-            10000,
+            2000,
             0,
             0,
             0});
@@ -252,7 +272,7 @@
             this.numCountNode.Size = new System.Drawing.Size(150, 20);
             this.numCountNode.TabIndex = 9;
             this.numCountNode.Value = new decimal(new int[] {
-            100,
+            300,
             0,
             0,
             0});
@@ -271,21 +291,21 @@
             this.label6.ForeColor = System.Drawing.Color.White;
             this.label6.Location = new System.Drawing.Point(3, 95);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(88, 13);
+            this.label6.Size = new System.Drawing.Size(93, 13);
             this.label6.TabIndex = 7;
-            this.label6.Text = "Nombre de map :";
+            this.label6.Text = "Nombre de maps :";
             // 
             // numCountMap
             // 
             this.numCountMap.BackColor = System.Drawing.Color.Silver;
             this.numCountMap.Location = new System.Drawing.Point(6, 111);
             this.numCountMap.Maximum = new decimal(new int[] {
-            10000,
+            2000,
             0,
             0,
             0});
             this.numCountMap.Minimum = new decimal(new int[] {
-            10,
+            1,
             0,
             0,
             0});
@@ -313,7 +333,7 @@
             this.numRereshRate.BackColor = System.Drawing.Color.Silver;
             this.numRereshRate.Location = new System.Drawing.Point(172, 56);
             this.numRereshRate.Maximum = new decimal(new int[] {
-            60000,
+            10000,
             0,
             0,
             0});
@@ -326,7 +346,7 @@
             this.numRereshRate.Size = new System.Drawing.Size(150, 20);
             this.numRereshRate.TabIndex = 4;
             this.numRereshRate.Value = new decimal(new int[] {
-            10,
+            250,
             0,
             0,
             0});

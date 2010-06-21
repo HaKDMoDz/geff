@@ -89,7 +89,7 @@ namespace ThreadAStar.ThreadManager
                 }
             }
 
-            if (CountCalculated >= this.ListComputable.Count)
+            if (CountCalculated >= this.ListComputable.Count & !AreAllCalculCompleted)
             {
                 AllCalculCompleted();
             }
@@ -103,6 +103,8 @@ namespace ThreadAStar.ThreadManager
         protected override void AllCalculCompleted()
         {
             base.AllCalculCompleted();
+
+            StopComputation();
         }
 
         private void threadingMethod_CalculCompletedEvent(object sender, EventArgs e)

@@ -23,9 +23,10 @@ namespace ThreadAStar.ThreadingMethod
             computable.Compute();
             e.Result = true;
         }
-    
+
         void _backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            _backgroundWorker.Dispose();
             base.CalculCompleted();
         }
 
