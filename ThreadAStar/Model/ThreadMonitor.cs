@@ -125,9 +125,7 @@ namespace ThreadAStar.Model
 
             timelineData.CountThreads = (byte)listCurrentThread.Count;
             timelineData.CountNewThreads = (byte)listCurrentThread.Count(t => !_listPreviousThread.Contains(t));
-            
-            if(_listPreviousThread.Count>0)
-                timelineData.CountDeadThreads = (byte)(timelineData.CountThreads - timelineData.CountNewThreads);
+            timelineData.CountDeadThreads = (byte)_listPreviousThread.Count(t => !listCurrentThread.Contains(t));
 
             _listPreviousThread = listCurrentThread;
         }

@@ -17,9 +17,10 @@ namespace ThreadAStar.UC
         private DateTime _lastRefreshLabel = DateTime.MinValue;
         private int maxCpuValue = 0;
         private int maxRamValue = 0;
-        private int maxCountThreads = 0;
+        private int maxCountTotalThreads = 0;
         private int maxCountNewThreads = 0;
         private int maxCountDeadThreads = 0;
+        private int maxCountThreads = 0;
 
         private Graphics gImg;
         private Graphics g;
@@ -78,9 +79,10 @@ namespace ThreadAStar.UC
                 //--- Calcul les valeurs hautes
                 maxCpuValue = (int)monitor.ListTimeLineData.Max(t => t.CPU);
                 maxRamValue = (int)monitor.ListTimeLineData.Max(t => t.RAM);
-                maxCountThreads = (int)monitor.ListTimeLineData.Max(t => t.CountThreads);
+                maxCountTotalThreads = (int)monitor.ListTimeLineData.Max(t => t.CountThreads);
                 maxCountNewThreads = (int)monitor.ListTimeLineData.Max(t => t.CountNewThreads);
                 maxCountDeadThreads = (int)monitor.ListTimeLineData.Max(t => t.CountDeadThreads);
+                maxCountThreads = Math.Max(Math.Max(maxCountTotalThreads, maxCountNewThreads), maxCountDeadThreads);
                 //---
 
                 foreach (TimelineData timelineData in monitor.ListTimeLineData)
@@ -108,16 +110,16 @@ namespace ThreadAStar.UC
                     if (chkThreadNew.Checked)
                     {
                         gImg.DrawLine(penThreadNew,
-                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountNewThreads, maxCountNewThreads),
-                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountNewThreads, maxCountNewThreads));
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountNewThreads, maxCountThreads),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountNewThreads, maxCountThreads));
                     }
 
                     //---> Morts
                     if (chkThreadDead.Checked)
                     {
                         gImg.DrawLine(penThreadDead,
-                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountDeadThreads, maxCountDeadThreads),
-                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountDeadThreads, maxCountDeadThreads));
+                            ConvertPointToGraph((int)prevTimeLineData.Time, (int)prevTimeLineData.CountDeadThreads, maxCountThreads),
+                            ConvertPointToGraph((int)timelineData.Time, (int)timelineData.CountDeadThreads, maxCountThreads));
                     }
 
                     //---> Total
@@ -134,7 +136,7 @@ namespace ThreadAStar.UC
 
                 //---> Rafraichissement des labels toutes les 5 secondes
                 //     Ces labels sont Thread Safe
-                if (currentRefresh.Subtract(_lastRefreshLabel).TotalMilliseconds > 1)
+                if (currentRefresh.Subtract(_lastRefreshLabel).TotalMilliseconds > 1000)
                 {
                     _lastRefreshLabel = currentRefresh;
                     lblCPU.SetText(String.Format("Max: {0}%\r\nCur:  {1}%", maxCpuValue, prevTimeLineData.CPU));
