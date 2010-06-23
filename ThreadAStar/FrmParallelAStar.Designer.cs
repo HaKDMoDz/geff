@@ -259,7 +259,7 @@
             this.numCountNode.BackColor = System.Drawing.Color.Silver;
             this.numCountNode.Location = new System.Drawing.Point(6, 153);
             this.numCountNode.Maximum = new decimal(new int[] {
-            2000,
+            500,
             0,
             0,
             0});
@@ -300,7 +300,7 @@
             this.numCountMap.BackColor = System.Drawing.Color.Silver;
             this.numCountMap.Location = new System.Drawing.Point(6, 111);
             this.numCountMap.Maximum = new decimal(new int[] {
-            2000,
+            1000,
             0,
             0,
             0});

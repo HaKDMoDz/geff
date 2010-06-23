@@ -35,12 +35,18 @@ namespace ThreadAStar.ThreadingMethod
 
             //---> Une fois le thread terminé, le calcul est terminé
             //     Appel des évènements CalculCompleted
-            base.CalculCompleted();
+            CalculCompleted();
         }
 
         public override void Stop()
         {
-            _thread.Abort();
+        }
+
+        protected override void CalculCompleted()
+        {
+            _thread = null;
+
+            base.CalculCompleted();
         }
     }
 }

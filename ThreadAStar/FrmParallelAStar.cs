@@ -10,6 +10,8 @@ using ThreadAStar.Model;
 using System.Threading;
 using ThreadAStar.ThreadManager;
 using ThreadAStar.AStar;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace ThreadAStar
 {
@@ -29,11 +31,11 @@ namespace ThreadAStar
         private const String BUTTON_MAP_ON = "Afficher les maps";
         private const String BUTTON_MAP_OFF = "Cacher les maps";
 
-        private ThreadManagerBase currentThreadManager;
-        private DateTime startParallel = DateTime.MinValue;
-        private TypeThreading methodToStart = TypeThreading.None;
-        private List<IComputable> listMap = new List<IComputable>();
-        private Graphics gMap;
+        private ThreadManagerBase _currentThreadManager;
+        private DateTime _startParallel = DateTime.MinValue;
+        private TypeThreading _methodToStart = TypeThreading.None;
+        private List<IComputable> _listMap = new List<IComputable>();
+        private Graphics _gMap;
         #endregion
 
         #region Constructeur
@@ -58,13 +60,13 @@ namespace ThreadAStar
 
                 int seed = (int)DateTime.Now.TimeOfDay.TotalMilliseconds;
                 if (chkUtiliserGraine.Checked)
-                     seed = (int)numSeed.Value;
-                
+                    seed = (int)numSeed.Value;
+
                 AddLog("--- Paramètres ---");
                 AddLog(String.Format("Nombre de threads : {0}", numNmbThread.Value));
                 AddLog(String.Format("Taux de rafraichissement : {0} ms", numRereshRate.Value));
                 AddLog(String.Format("Nombre de maps : {0}", numCountMap.Value));
-                AddLog(String.Format("Nombre de noueuds par map : {0}", numCountNode.Value));
+                AddLog(String.Format("Nombre de noeuds par map : {0}", numCountNode.Value));
                 AddLog(String.Format("Distance maximum de liaison : {0}", numDistanceMax.Value));
                 AddLog(String.Format("Graine random : {0}", seed));
                 AddLog("-----------------------");
@@ -76,11 +78,14 @@ namespace ThreadAStar
                 //--- Création des Map
                 Random rnd = new Random(seed);
 
-                listMap = new List<IComputable>();
-                for (int i = 0; i < this.numCountMap.Value; i++)
-                {
-                    listMap.Add(new AStarMap(picMap.Width, picMap.Height, rnd.Next(), (int)numCountNode.Value, (int)numDistanceMax.Value));
-                }
+                _listMap = new List<IComputable>();
+
+                Parallel.For(0, (int)this.numCountMap.Value,
+                    i =>
+                    {
+                        _listMap.Add(new AStarMap(picMap.Width, picMap.Height, rnd.Next(), (int)numCountNode.Value, (int)numDistanceMax.Value));
+                    }
+                );
                 //---
 
                 AddLog("Démarrage du monitoring");
@@ -89,7 +94,7 @@ namespace ThreadAStar
                 ucMonitoring.StartMonitoring((short)this.numRereshRate.Value);
                 //---
 
-                methodToStart = TypeThreading.Natif;
+                _methodToStart = TypeThreading.Natif;
             }
             finally
             {
@@ -103,47 +108,55 @@ namespace ThreadAStar
         private void StartResolving()
         {
             //--- Création du threadManager pour le type Natif
-            if (chkMethodeNative.Checked && methodToStart == TypeThreading.Natif)
+            if (chkMethodeNative.Checked && _methodToStart == TypeThreading.Natif)
             {
                 AddLog("Parallélisation mode natif - Début");
-                currentThreadManager = new ThreadManagerNative((int)this.numNmbThread.Value, listMap);
+                _currentThreadManager = new ThreadManagerNative((int)this.numNmbThread.Value, _listMap);
             }
-            else if (!chkMethodeNative.Checked && methodToStart == TypeThreading.Natif)
+            else if (!chkMethodeNative.Checked && _methodToStart == TypeThreading.Natif)
             {
-                methodToStart = TypeThreading.BackgroundWorker;
+                _methodToStart = TypeThreading.BackgroundWorker;
             }
             //---
 
             //--- Création du threadManager pour le type BackGroundworker
-            if (chkMethodeBackgroundWorker.Checked && methodToStart == TypeThreading.BackgroundWorker)
+            if (chkMethodeBackgroundWorker.Checked && _methodToStart == TypeThreading.BackgroundWorker)
             {
                 AddLog("Parallélisation mode BackgroundWorker - Début");
-                currentThreadManager = new ThreadManagerBackgroundWorker((int)this.numNmbThread.Value, listMap);
+                _currentThreadManager = new ThreadManagerBackgroundWorker((int)this.numNmbThread.Value, _listMap);
             }
-            else if (!chkMethodeBackgroundWorker.Checked && methodToStart == TypeThreading.BackgroundWorker)
+            else if (!chkMethodeBackgroundWorker.Checked && _methodToStart == TypeThreading.BackgroundWorker)
             {
-                methodToStart = TypeThreading.TaskParallelLibrary;
+                _methodToStart = TypeThreading.TaskParallelLibrary;
             }
             //---
 
             //--- Création du threadManager pour le type TPL
-            if (chkMethodeTaskParallelLibrary.Checked && methodToStart == TypeThreading.TaskParallelLibrary)
+            if (chkMethodeTaskParallelLibrary.Checked && _methodToStart == TypeThreading.TaskParallelLibrary)
             {
                 AddLog("Parallélisation mode Task Parallel Library - Début");
-                currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, listMap);
+                _currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, _listMap);
             }
-            else if (!chkMethodeTaskParallelLibrary.Checked && methodToStart == TypeThreading.TaskParallelLibrary)
+            else if (!chkMethodeTaskParallelLibrary.Checked && _methodToStart == TypeThreading.TaskParallelLibrary)
             {
-                methodToStart = TypeThreading.None;
+                _methodToStart = TypeThreading.None;
             }
             //---
 
-            if (methodToStart != TypeThreading.None)
+            if (_methodToStart != TypeThreading.None)
             {
                 InitUI();
-                currentThreadManager.CalculCompletedEvent += new EventHandler<ComputableEventArgs>(currentThreadManager_CalculCompletedEvent);
-                currentThreadManager.AllCalculCompletedEvent += new EventHandler(currentThreadManager_AllCalculCompletedEvent);
-                currentThreadManager.StartComputation();
+                _currentThreadManager.CalculCompletedEvent += new EventHandler<ComputableEventArgs>(currentThreadManager_CalculCompletedEvent);
+                _currentThreadManager.AllCalculCompletedEvent += new EventHandler(currentThreadManager_AllCalculCompletedEvent);
+
+                //--- Initialise la liste des maps avant chaque calcul.
+                //    Permet de vider les listes
+                foreach (IComputable computable in _listMap)
+                {
+                    computable.Init();
+                }
+
+                _currentThreadManager.StartComputation();
             }
             else
             {
@@ -161,7 +174,7 @@ namespace ThreadAStar
             {
                 this.progressBar.Maximum = (int)this.numCountMap.Value;
                 this.progressBar.Value = 0;
-                startParallel = DateTime.Now;
+                _startParallel = DateTime.Now;
                 timer.Enabled = true;
                 timer.Start();
             }
@@ -182,7 +195,7 @@ namespace ThreadAStar
 
         private void currentThreadManager_AllCalculCompletedEvent(object sender, EventArgs e)
         {
-            switch (methodToStart)
+            switch (_methodToStart)
             {
                 case TypeThreading.None:
                     break;
@@ -200,10 +213,17 @@ namespace ThreadAStar
             }
 
             //---> Afffiche la durée de résolution
-            AddLog(String.Format("Durée : {0}", DateTime.Now.Subtract(startParallel).ToString()));
+            AddLog(String.Format("Durée : {0}", DateTime.Now.Subtract(_startParallel).ToString()));
 
             //---> Passe à la méthode de parallélisation suivante
-            methodToStart++;
+            _methodToStart++;
+
+            //--- Vide de la mémoire la précédente méthode de parallélisation
+            if (_currentThreadManager != null)
+                _currentThreadManager.StopComputation();
+
+            _currentThreadManager = null;
+            //---
 
             //--- Pause de 500 ms du thread Application
             //    les threads précédents ont ainsi le temps de se terminer
@@ -219,7 +239,7 @@ namespace ThreadAStar
             progressBar.Value = count;
 
             if (btnShowMapResolving.Text == BUTTON_MAP_OFF)
-                computable.Draw(gMap);
+                computable.Draw(_gMap);
         }
 
         /// <summary>
@@ -227,6 +247,8 @@ namespace ThreadAStar
         /// </summary>
         private void StopResolving()
         {
+            AddLog("Arrêt de la résolution");
+
             //--- Initialise le formulaire
             timer.Stop();
             SetText(lblDureeCalcul, String.Empty);
@@ -240,12 +262,13 @@ namespace ThreadAStar
                 ucMonitoring.StopMonitoring();
 
             //---> Arrête la résolution des map pour la méthode de parallélisation courante
-            if (currentThreadManager != null)
-            {
-                AddLog("Arrêt de la résolution");
-                currentThreadManager.StopComputation();
-                this.listMap = null;
-            }
+            if (_currentThreadManager != null)
+                _currentThreadManager.StopComputation();
+
+            //--- Vide la mémoire
+            _listMap = null;
+            _currentThreadManager = null;
+            //---
         }
 
         private void AddLog(string text)
@@ -299,7 +322,7 @@ namespace ThreadAStar
         #region Évènements
         private void FrmParallelAStar_Load(object sender, EventArgs e)
         {
-            gMap = picMap.CreateGraphics();
+            _gMap = picMap.CreateGraphics();
         }
 
         private void FrmParallelAStar_FormClosing(object sender, FormClosingEventArgs e)
@@ -345,8 +368,7 @@ namespace ThreadAStar
         {
             if (chkSynchroMonitoring.Checked && btnStartResolving.Text == BUTTON_START)
             {
-                currentThreadManager = null;
-                StopResolving();
+                ucMonitoring.StopMonitoring();
             }
         }
 
@@ -362,7 +384,7 @@ namespace ThreadAStar
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            lblDureeCalcul.Text = String.Format("Durée du calcul : {0}", DateTime.Now.Subtract(startParallel).ToString());
+            lblDureeCalcul.Text = String.Format("Durée du calcul : {0}", DateTime.Now.Subtract(_startParallel).ToString());
         }
         #endregion
     }

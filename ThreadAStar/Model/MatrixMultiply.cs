@@ -10,7 +10,9 @@ namespace ThreadAStar.Model
 {
     public class MatrixMultiply : IComputable
     {
-        public bool Completed { get; set; }
+        public void Init()
+        {
+        }
 
         public void Compute()
         {

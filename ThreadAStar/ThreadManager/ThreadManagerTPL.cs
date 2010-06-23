@@ -22,75 +22,48 @@ namespace ThreadAStar.ThreadManager
         {
         }
 
-        private void ParallelComputBody(int index)
-        {
-            this.ListComputable[index].Compute();
-
-            CountCalculated++;
-        }
-
-        private void ParallelComputBody(IComputable computable)
-        {
-            computable.Compute();
-
-            CountCalculated++;
-        }
-
-        private void ParallelComputBody2(IComputable computable)
-        {
-            computable.Compute();
-
-            CountCalculated++;
-        }
-
-
-        private void ParallelComputeFinally(int index)
-        {
-            base.CalculCompleted(this.ListComputable[index]);
-
-            if (CountCalculated >= this.ListComputable.Count && !AreAllCalculCompleted)
-                base.AllCalculCompleted();
-        }
-
+        #region Méthodes publiques
         public override void StartComputation()
         {
             //--- Options de la parallalisation TPL
             parallelOptions = new ParallelOptions();
-            parallelOptions.MaxDegreeOfParallelism = this.CountThread+20;
+            parallelOptions.MaxDegreeOfParallelism = this.CountThread;
 
             cancellationToken = new CancellationTokenSource();
             parallelOptions.CancellationToken = cancellationToken.Token;
             //---
 
+            //---
             Task.Factory.StartNew(() =>
             {
-                Parallel.For<int>(0, this.ListComputable.Count, parallelOptions,
-                    () => { return 0; },
-                    (i,loopState, j) =>
+                Parallel.ForEach<IComputable>(this.ListComputable, parallelOptions,
+                    computable =>
                     {
-                        ParallelComputBody(i);
-
-                        return i;
-                    },
-                    i =>
-                    {
-                        ParallelComputeFinally(i);
+                        ParallelCompute(computable);
                     }
                 );
 
             }, parallelOptions.CancellationToken);
-
         }
 
         public override void StopComputation()
         {
             cancellationToken.Cancel();
         }
+        #endregion
 
-        protected override void CalculCompleted(IComputable computable)
+        #region Méthodes privées
+        private void ParallelCompute(IComputable computable)
         {
-            base.CalculCompleted(computable);
-        }
+            computable.Compute();
 
+            CountCalculated++;
+
+            base.CalculCompleted(computable);
+
+            if (CountCalculated >= this.ListComputable.Count && !AreAllCalculCompleted)
+                base.AllCalculCompleted();
+        }
+        #endregion
     }
 }

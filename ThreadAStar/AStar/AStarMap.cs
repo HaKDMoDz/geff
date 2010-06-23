@@ -34,17 +34,30 @@ namespace ThreadAStar.AStar
             _countCell = countCell;
             _distanceMax = distanceMax;
 
-            Init();
-        }
+            //--- Initialisation du générateur aléatoire
+            _rnd = new Random(_seed);
+            //---
 
-        #region Méthodes publiques
-        public void Compute()
-        {
+            CreateCells();
+
+            CalcNeighbourgh();
+
             //--- Détermine aléatoirement la case de départ et la case d'arrivée
             _cellStart = ListCell[_rnd.Next(ListCell.Count)];
             _cellEnd = ListCell[_rnd.Next(ListCell.Count)];
             //---
+        }
 
+        #region Méthodes publiques
+        public void Init()
+        {
+            _listCellOpen = new List<AStarCell>();
+            _listCellClose = new List<AStarCell>();
+            ListCellPath = new List<Cell>();
+        }
+
+        public void Compute()
+        {
             //--- Démarre le calcul
             ListCellPath = CalcPath(false, 1f);
             //---
@@ -57,7 +70,7 @@ namespace ThreadAStar.AStar
 
             gImg.Clear(Color.Black);
 
-            float cellCost = 1f; // cellCost;
+            float cellCost = 1f;
 
             foreach (Cell cell in ListCell)
             {
@@ -89,17 +102,6 @@ namespace ThreadAStar.AStar
         #endregion
 
         #region Méthodes privées
-        private void Init()
-        {
-            //--- Initialisation du générateur aléatoire
-            _rnd = new Random(_seed);
-            //---
-
-            CreateCells();
-
-            CalcNeighbourgh();
-        }
-
         private void CreateCells()
         {
             ListCell = new List<Cell>();
@@ -133,8 +135,6 @@ namespace ThreadAStar.AStar
 
         private List<Cell> CalcPath(bool useCost, float costMax)
         {
-            _listCellOpen = new List<AStarCell>();
-            _listCellClose = new List<AStarCell>();
             List<Cell> listCellPath = new List<Cell>();
 
             //--- Ajout de la case de départ
@@ -241,6 +241,12 @@ namespace ThreadAStar.AStar
             //---
         }
 
+        /// <summary>
+        /// Distance entre deux points
+        /// </summary>
+        /// <param name="point1"></param>
+        /// <param name="point2"></param>
+        /// <returns></returns>
         private int Distance(Point point1, Point point2)
         {
             int distance = 0;

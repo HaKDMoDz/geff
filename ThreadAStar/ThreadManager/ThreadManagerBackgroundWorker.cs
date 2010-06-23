@@ -34,12 +34,12 @@ namespace ThreadAStar.ThreadManager
 
         public override void StopComputation()
         {
-            _backgroundWorker.CancelAsync();
-
             foreach (ThreadingBaseMethod threadingMethod in this.ListThread)
             {
                 threadingMethod.Stop();
             }
+
+            _backgroundWorker.Dispose();
         }
         #endregion
 
@@ -103,13 +103,6 @@ namespace ThreadAStar.ThreadManager
         private bool IsThreadAlive()
         {
             return !_backgroundWorker.CancellationPending;
-        }
-
-        protected override void AllCalculCompleted()
-        {
-            base.AllCalculCompleted();
-
-            StopComputation();
         }
 
         private void threadingMethod_CalculCompletedEvent(object sender, EventArgs e)

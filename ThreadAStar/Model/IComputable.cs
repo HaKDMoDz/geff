@@ -8,6 +8,8 @@ namespace ThreadAStar.Model
 {
     public interface IComputable
     {
+        void Init();
+
         void Compute();
 
         void Draw(Graphics g);

@@ -30,19 +30,17 @@ namespace ThreadAStar.ThreadManager
             _threadStart = new ThreadStart(LaunchPrimaryThread);
             _thread = new Thread(_threadStart);
 
-            _nextIdToCompute = 0;
-
             _thread.Start();
         }
 
         public override void StopComputation()
         {
-            _thread.Abort();
-
             foreach (ThreadingBaseMethod threadingMethod in this.ListThread)
             {
                 threadingMethod.Stop();
             }
+
+            _thread = null;
         }
         #endregion
 
@@ -69,6 +67,8 @@ namespace ThreadAStar.ThreadManager
         #region Méthodes privées
         private void LaunchPrimaryThread()
         {
+            _nextIdToCompute = 0;
+
             CreateNewThread(this.CountThread);
         }
 
@@ -98,13 +98,6 @@ namespace ThreadAStar.ThreadManager
         private bool IsThreadAlive()
         {
             return (_thread.ThreadState == System.Threading.ThreadState.Running || _thread.ThreadState == System.Threading.ThreadState.WaitSleepJoin);
-        }
-
-        protected override void AllCalculCompleted()
-        {
-            base.AllCalculCompleted();
-
-            StopComputation();
         }
 
         private void threadingMethod_CalculCompletedEvent(object sender, EventArgs e)

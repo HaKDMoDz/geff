@@ -26,8 +26,7 @@ namespace ThreadAStar.ThreadingMethod
 
         void _backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            _backgroundWorker.Dispose();
-            base.CalculCompleted();
+            CalculCompleted();
         }
 
         public override void Start(params object[] parameter)
@@ -38,6 +37,13 @@ namespace ThreadAStar.ThreadingMethod
             _backgroundWorker.DoWork += new DoWorkEventHandler(_backgroundWorker_DoWork);
 
             _backgroundWorker.RunWorkerAsync(parameter);
+        }
+
+        protected override void CalculCompleted()
+        {
+            _backgroundWorker.Dispose();
+            
+            base.CalculCompleted();
         }
 
         public override void Stop()
