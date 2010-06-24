@@ -14,5 +14,6 @@ namespace CubEat
         public int Layer { get; set; }
         public int NumberOnLayer { get; set; }
         public Boolean IsOnMeasure { get; set; }
+        public Boolean IsInPlayedTime { get; set; }
     }
 }

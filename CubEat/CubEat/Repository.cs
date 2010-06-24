@@ -73,7 +73,7 @@ namespace CubEat
             Beat++;
 
             UpdateMap(Map1);
-            UpdateMap(Map2);
+            //UpdateMap(Map2);
         }
 
         private void UpdateMap(Map map)
@@ -86,6 +86,30 @@ namespace CubEat
                     if (map.Cells[x, y] != null)
                     {
                         map.Cells[x, y].IsEmitting = false;
+                        map.Cells[x, y].IsInPlayedTime = false;
+
+
+                        //=== Détermination des Cellules jouées dans le temps courant
+
+                        //--- Nombre de cases sur la couche
+                        int numberOfCellOnLayer = (map.Size / 2 - map.Cells[x, y].Layer+1) * 8;
+                        //---
+
+                        //--- Beat  de la couche
+                        int layerBeat = Beat % numberOfCellOnLayer;
+                        //---
+
+                        //--- 
+                        int minPlayedCell = (layerBeat / 4) * 4;
+                        int maxPlayedCell = ((layerBeat / 4) + 1) * 4;
+
+                        if (map.Cells[x, y].NumberOnLayer >= minPlayedCell &&
+                            map.Cells[x, y].NumberOnLayer <= maxPlayedCell)
+                        {
+                            map.Cells[x, y].IsInPlayedTime = true;
+
+                        }
+                        //===
                     }
                 }
             }

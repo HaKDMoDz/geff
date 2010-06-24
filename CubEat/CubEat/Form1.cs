@@ -13,7 +13,7 @@ namespace CubEat
     {
         public Repository r { get; set; }
 
-        int sampleSize = 60;
+        int sampleSize = 20;
         int numberOfLayer = 5;
         int speed = 150;
         Font font;
@@ -32,6 +32,9 @@ namespace CubEat
         #region Méthodes privées
         private void Init()
         {
+            this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Height - 20;
+            this.Left = Screen.PrimaryScreen.WorkingArea.Width - this.Width - 20;
+
             gMap = pictureBoxMap.CreateGraphics();
             gNextSample = pictureBoxNextSample.CreateGraphics();
 
@@ -69,14 +72,14 @@ namespace CubEat
         {
             gImgMap.Clear(Color.White);
 
-            Point map1Location =new Point(50, 70);
-            Point map2Location =new Point(50 + r.Map1.Size * sampleSize + 20, 70);
+            Point map1Location = new Point(50, 70);
+            Point map2Location = new Point(50 + r.Map1.Size * sampleSize + 20, 70);
 
             DrawNextSample();
             DrawMap(r.Map1, map1Location);
-            DrawMap(r.Map2, map2Location);
+            //DrawMap(r.Map2, map2Location);
             DrawPlayedSample(r.Map1, map1Location);
-            DrawPlayedSample(r.Map2, map2Location);
+            //DrawPlayedSample(r.Map2, map2Location);
 
             gMap.DrawImage(imgMap, 0, 0);
         }
@@ -88,8 +91,8 @@ namespace CubEat
         public void DrawMap(Map map, Point location)
         {
             HatchBrush brushMeasure = new HatchBrush(HatchStyle.LightDownwardDiagonal, Color.Silver, Color.Transparent);
-             
-            
+            HatchBrush brushPlayedTime = new HatchBrush(HatchStyle.Divot, Color.Purple, Color.Transparent);
+
             for (int x = 0; x < map.Size; x++)
             {
                 for (int y = 0; y < map.Size; y++)
@@ -98,14 +101,19 @@ namespace CubEat
                     {
                         gImgMap.FillRectangle(new SolidBrush(map.Cells[x, y].Sample.SampleModel.Color), location.X + x * sampleSize, location.Y + y * sampleSize, sampleSize, sampleSize);
 
-                        gImgMap.DrawString(map.Cells[x, y].NumberOnLayer.ToString(), font, Brushes.Black, location.X + ((float)x + 0.3f) * (float)sampleSize, location.Y + ((float)y + 0.2f) * (float)sampleSize);
+                        //gImgMap.DrawString(map.Cells[x, y].NumberOnLayer.ToString(), font, Brushes.Black, location.X + ((float)x + 0.3f) * (float)sampleSize, location.Y + ((float)y + 0.2f) * (float)sampleSize);
                     }
 
                     if (map.Cells[x, y].IsOnMeasure)
                         gImgMap.FillRectangle(brushMeasure, location.X + x * sampleSize, location.Y + y * sampleSize, sampleSize, sampleSize);
 
-                    if (!map.Cells[x, y].IsEmpty)
-                        gImgMap.DrawString(map.Cells[x, y].NumberOnLayer.ToString(), font, Brushes.Black, location.X + ((float)x + 0.3f) * (float)sampleSize, location.Y + ((float)y + 0.2f) * (float)sampleSize);
+                    //if (!map.Cells[x, y].IsEmpty)
+                    //    gImgMap.DrawString(map.Cells[x, y].NumberOnLayer.ToString(), font, Brushes.Black, location.X + ((float)x + 0.3f) * (float)sampleSize, location.Y + ((float)y + 0.2f) * (float)sampleSize);
+
+
+                    if (map.Cells[x, y].IsInPlayedTime)
+                        gImgMap.FillRectangle(brushPlayedTime, location.X + x * sampleSize, location.Y + y * sampleSize, sampleSize, sampleSize);
+
 
                     if (map.Cells[x, y].IsEmitting)
                         gImgMap.FillRectangle(new SolidBrush(Color.FromArgb(100, Color.Red)), location.X + x * sampleSize + sampleSize / 4, location.Y + y * sampleSize + sampleSize / 4, sampleSize / 2, sampleSize / 2);

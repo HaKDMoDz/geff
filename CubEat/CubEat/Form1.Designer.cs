@@ -54,7 +54,7 @@
             this.pictureBoxMap.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxMap.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxMap.Name = "pictureBoxMap";
-            this.pictureBoxMap.Size = new System.Drawing.Size(913, 842);
+            this.pictureBoxMap.Size = new System.Drawing.Size(545, 239);
             this.pictureBoxMap.TabIndex = 1;
             this.pictureBoxMap.TabStop = false;
             // 
@@ -66,7 +66,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(790, 12);
+            this.button1.Location = new System.Drawing.Point(368, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 2;
@@ -76,7 +76,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(871, 12);
+            this.button2.Location = new System.Drawing.Point(449, 12);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 3;
@@ -87,7 +87,7 @@
             // comboBoxLibrary
             // 
             this.comboBoxLibrary.FormattingEnabled = true;
-            this.comboBoxLibrary.Location = new System.Drawing.Point(610, 12);
+            this.comboBoxLibrary.Location = new System.Drawing.Point(188, 12);
             this.comboBoxLibrary.Name = "comboBoxLibrary";
             this.comboBoxLibrary.Size = new System.Drawing.Size(174, 21);
             this.comboBoxLibrary.TabIndex = 4;
@@ -95,11 +95,11 @@
             // trackBar
             // 
             this.trackBar.LargeChange = 100;
-            this.trackBar.Location = new System.Drawing.Point(229, 12);
+            this.trackBar.Location = new System.Drawing.Point(8, 12);
             this.trackBar.Maximum = 1000;
             this.trackBar.Minimum = 50;
             this.trackBar.Name = "trackBar";
-            this.trackBar.Size = new System.Drawing.Size(375, 45);
+            this.trackBar.Size = new System.Drawing.Size(185, 45);
             this.trackBar.TabIndex = 5;
             this.trackBar.TickFrequency = 100;
             this.trackBar.Value = 50;
@@ -109,7 +109,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(913, 842);
+            this.ClientSize = new System.Drawing.Size(545, 239);
             this.Controls.Add(this.trackBar);
             this.Controls.Add(this.comboBoxLibrary);
             this.Controls.Add(this.button2);
@@ -118,7 +118,6 @@
             this.Controls.Add(this.pictureBoxNextSample);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxNextSample)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMap)).EndInit();
