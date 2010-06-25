@@ -12,10 +12,13 @@ namespace CubEat
         public LibraySample CurrentLibrarySample { get; set; }
         public Dictionary<int, int> PlayedSample { get; set; }
 
+        public Dictionary<int, List<Cell>> LayerCells { get; set; }
+
         public Map(int size, LibraySample currentLibrarySample)
         {
             this.Size = size;
             this.Cells = new Cell[size, size];
+            this.LayerCells = new Dictionary<int,List<Cell>>();
             this.CurrentLibrarySample = currentLibrarySample;
             this.DrainPlayedSample();
         }
@@ -58,17 +61,6 @@ namespace CubEat
 
             for (int layer = 1; layer <= Size / 2; layer++)
             {
-                //if(
-                //    (delta.Y == -layer && delta.X>= -layer && delta.X <= layer) ||
-                //    (delta.Y == layer && delta.X>= -layer && delta.X <= layer) ||
-                //    (delta.X == -layer && delta.Y>= -layer && delta.Y <= layer) ||
-                //    (delta.X == layer && delta.Y>= -layer && delta.Y <= layer)
-                //    )
-                //{
-                //    cell.Layer = layer;
-                //}
-
-
                 if (delta.Y == -layer && delta.X >= -layer && delta.X <= layer)
                 {
                     cell.Layer = layer;
@@ -90,6 +82,13 @@ namespace CubEat
                     cell.NumberOnLayer = layer * 7 - delta.Y;
                 }
             }
+
+            //--- Ajout de la cellule à la représentation par couche
+            if(!this.LayerCells.ContainsKey(cell.Layer))
+                this.LayerCells.Add(cell.Layer, new List<Cell>());
+
+            this.LayerCells[cell.Layer].Add(cell);
+            //---
 
             cell.IsOnMeasure = cell.NumberOnLayer % 4 == 0;
         }

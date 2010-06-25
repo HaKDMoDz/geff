@@ -92,8 +92,11 @@ namespace CubEat
                         //=== Détermination des Cellules jouées dans le temps courant
 
                         //--- Nombre de cases sur la couche
-                        int numberOfCellOnLayer = (map.Size / 2 - map.Cells[x, y].Layer+1) * 8;
+                        int numberOfCellOnLayer = map.Cells[x, y].Layer * 8;
                         //---
+
+                        if (numberOfCellOnLayer == 0)
+                            numberOfCellOnLayer = 1;
 
                         //--- Beat  de la couche
                         int layerBeat = Beat % numberOfCellOnLayer;
@@ -104,7 +107,7 @@ namespace CubEat
                         int maxPlayedCell = ((layerBeat / 4) + 1) * 4;
 
                         if (map.Cells[x, y].NumberOnLayer >= minPlayedCell &&
-                            map.Cells[x, y].NumberOnLayer <= maxPlayedCell)
+                            map.Cells[x, y].NumberOnLayer < maxPlayedCell)
                         {
                             map.Cells[x, y].IsInPlayedTime = true;
 

@@ -54,7 +54,7 @@
             this.pictureBoxMap.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxMap.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxMap.Name = "pictureBoxMap";
-            this.pictureBoxMap.Size = new System.Drawing.Size(545, 239);
+            this.pictureBoxMap.Size = new System.Drawing.Size(545, 372);
             this.pictureBoxMap.TabIndex = 1;
             this.pictureBoxMap.TabStop = false;
             // 
@@ -109,7 +109,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(545, 239);
+            this.ClientSize = new System.Drawing.Size(545, 372);
             this.Controls.Add(this.trackBar);
             this.Controls.Add(this.comboBoxLibrary);
             this.Controls.Add(this.button2);

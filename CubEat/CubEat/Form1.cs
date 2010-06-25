@@ -78,8 +78,10 @@ namespace CubEat
             DrawNextSample();
             DrawMap(r.Map1, map1Location);
             //DrawMap(r.Map2, map2Location);
-            DrawPlayedSample(r.Map1, map1Location);
+            //DrawPlayedSample(r.Map1, map1Location);
             //DrawPlayedSample(r.Map2, map2Location);
+
+            DrawCurrentMeasure(r.Map1, map1Location);
 
             gMap.DrawImage(imgMap, 0, 0);
         }
@@ -88,10 +90,59 @@ namespace CubEat
         {
         }
 
+        public void DrawCurrentMeasure(Map map, Point location)
+        {
+            HatchBrush brushMeasure = new HatchBrush(HatchStyle.LightDownwardDiagonal, Color.Silver, Color.Transparent);
+            HatchBrush brushPlayedTime = new HatchBrush(HatchStyle.Weave, Color.Purple, Color.Transparent);
+
+            location.Offset(new Point(0, (map.Size+2)*sampleSize));
+            for (int layer = 0; layer < map.LayerCells.Keys.Count; layer++)
+            {
+                //--- Nombre de cases sur la couche
+                int numberOfCellOnLayer = layer * 8;
+
+                if (numberOfCellOnLayer == 0)
+                    numberOfCellOnLayer = 1;
+                //---
+
+                //--- Beat  de la couche
+                int layerBeat = r.Beat % numberOfCellOnLayer;
+                //---
+
+                //--- 
+                int minPlayedCell = (layerBeat / 4) * 4;
+                //--- 
+
+                for (int i = 0; i < map.LayerCells[layer].Count; i++)
+                {
+                    Cell cell = map.LayerCells[layer][i];
+
+                    if (cell.IsInPlayedTime)
+                    {
+                        if (!cell.IsEmpty)
+                        {
+                            gImgMap.FillRectangle(new SolidBrush(cell.Sample.SampleModel.Color),
+                                location.X + (cell.NumberOnLayer - minPlayedCell) * sampleSize, 
+                                location.Y + layer * sampleSize, 
+                                sampleSize, sampleSize);
+                        }
+
+                        if (cell.IsOnMeasure)
+                            gImgMap.FillRectangle(brushMeasure, location.X + (cell.NumberOnLayer - minPlayedCell) * sampleSize, location.Y + layer * sampleSize, sampleSize, sampleSize);
+
+                        gImgMap.FillRectangle(brushPlayedTime, location.X + (cell.NumberOnLayer - minPlayedCell) * sampleSize, location.Y + layer * sampleSize, sampleSize, sampleSize);
+
+                        if (cell.IsEmitting)
+                            gImgMap.FillRectangle(new SolidBrush(Color.FromArgb(100, Color.Red)), location.X + (cell.NumberOnLayer - minPlayedCell) * sampleSize + sampleSize / 4, location.Y + layer * sampleSize + sampleSize / 4, sampleSize / 2, sampleSize / 2);
+                    }
+                }
+            }
+        }
+
         public void DrawMap(Map map, Point location)
         {
             HatchBrush brushMeasure = new HatchBrush(HatchStyle.LightDownwardDiagonal, Color.Silver, Color.Transparent);
-            HatchBrush brushPlayedTime = new HatchBrush(HatchStyle.Divot, Color.Purple, Color.Transparent);
+            HatchBrush brushPlayedTime = new HatchBrush(HatchStyle.Weave, Color.Purple, Color.Transparent);
 
             for (int x = 0; x < map.Size; x++)
             {
