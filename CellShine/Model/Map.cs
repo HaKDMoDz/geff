@@ -44,7 +44,7 @@ namespace CellShine.Model
             Bitmap img = new Bitmap(_width, _height);
             Graphics gImg = Graphics.FromImage(img);
             
-            float cellCost = 3f;
+            float cellCost = 8f;
 
             gImg.Clear(Color.Black);
 
@@ -53,7 +53,7 @@ namespace CellShine.Model
                 //--- Liens entre noeuds voisins
                 //foreach (Cell cell2 in cell.ListNeighbour)
                 //{
-                //    gImg.DrawLine(Pens.LightBlue, cell.Position, cell2.Position);
+                //    gImg.DrawLine(Pens.DarkSlateGray, cell.Position, cell2.Position);
                 //}
 
                 Brush brush = new SolidBrush(Color.FromArgb((byte)(255f * (cell.Value)), Color.White));
@@ -86,6 +86,51 @@ namespace CellShine.Model
             }
             else if (_typeCellDistribution == TypeCellDistribution.Hexagon)
             {
+                CreateCellsHex();
+            }
+        }
+
+        private void CreateCellsHex()
+        {
+            ListCell = new List<Cell>();
+
+            float d = (float)Math.Sqrt(0.75);
+            float r = 6;
+
+            int maxX = (int)((float)_width / r);
+            int maxY = (int)((float)_height / r);
+
+            int nb = 0;
+
+            for (int y = 0; y < maxY; y++)
+            {
+                for (int x = 0; x < maxX; x++)
+                {
+                    float fx = (float)x;
+                    float fy = (float)y;
+
+                    Cell cell1 = new Cell(
+                        (int)((1 + fx * 3) * r),
+                        (int)((0.5f + fy) * (2 * d * r)));
+
+                    //if (y == 0 || y == maxY - 1 || x == 0)
+                    //    cell1.IsBorder = true;
+
+                    //cell1.Coordinate = new Point(x, y);
+                    ListCell.Add(cell1);
+
+
+                    Cell cell2 = new Cell(
+                         (int)((2.5f + fx * 3) * r),
+                         (int)((fy) * (2 * d * r)));
+
+                    //if (y == 0 || y == maxY - 1 || x == maxX - 1)
+                    //    cell2.IsBorder = true;
+
+                    //cell2.Coordinate = new Point(x, y);
+
+                    ListCell.Add(cell2);
+                }
             }
         }
 

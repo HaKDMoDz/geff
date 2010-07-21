@@ -19,6 +19,7 @@ namespace CellShine
         Cell prevSelectedCell;
         Curve curveDistance;
         Curve curveTime;
+        float timeMax = 0f;
 
         public Form1()
         {
@@ -31,25 +32,31 @@ namespace CellShine
         {
             timer.Interval = 10;
 
-            map = new Map(pic.Width, pic.Height, 5000, 50, TypeCellDistribution.Random);
+            map = new Map(pic.Width, pic.Height, 1000, 20, TypeCellDistribution.Hexagon);
 
             g = pic.CreateGraphics();
 
             //---
             float distanceMax = 100;
 
+
             curveDistance = new Curve();
+            //---> Donut
+            //curveDistance.Keys.Add(new CurveKey(0 * distanceMax, 0.25f));
+            //curveDistance.Keys.Add(new CurveKey(0.5f * distanceMax, 0.25f));
+            //curveDistance.Keys.Add(new CurveKey(0.75f * distanceMax, 0.7f));
+            //curveDistance.Keys.Add(new CurveKey(1f * distanceMax, 0f));
+
             curveDistance.Keys.Add(new CurveKey(0 * distanceMax, 1f));
-            curveDistance.Keys.Add(new CurveKey(0.5f * distanceMax, 0.25f));
-            curveDistance.Keys.Add(new CurveKey(0.75f * distanceMax, 0.7f));
             curveDistance.Keys.Add(new CurveKey(1f * distanceMax, 0f));
             //---
 
             //---
-            float timeMax = 1000f;
+            timeMax = 500f;
 
             curveTime = new Curve();
-            curveTime.Keys.Add(new CurveKey(0 * timeMax, 1f));
+            curveTime.Keys.Add(new CurveKey(0 * timeMax, 0.05f));
+            curveTime.Keys.Add(new CurveKey(0.7f * timeMax, 1f));
             curveTime.Keys.Add(new CurveKey(1f * timeMax, 0f));
             //---
         }
@@ -60,14 +67,26 @@ namespace CellShine
 
             foreach (Cell cell in map.ListCell)
             {
-                float distance = (float)Map.Distance(cell.Position, selectedCell.Position);
+                float distance = (float)Map.Distance(cell.FixedPosition, selectedCell.FixedPosition);
 
-                float value = curveDistance.Evaluate(distance) * curveTime.Evaluate(0f);
+                float valueDistance = curveDistance.Evaluate(distance);
+                float valueTime = curveTime.Evaluate(0f);
+                float value = valueDistance * valueTime;
 
-                if (value > cell.Value)
+                if (cell.StartTime == DateTime.MinValue || value > cell.Value)
                 {
-                    cell.Coeff = curveDistance.Evaluate(distance);
+                    cell.Coeff = valueDistance;
                     cell.StartTime = startTime;
+
+                    if (cell != selectedCell)
+                    {
+                        cell.Vector = new PointF(((float)cell.FixedPosition.X - (float)selectedCell.FixedPosition.X) / distance,
+                                                    ((float)cell.FixedPosition.Y - (float)selectedCell.FixedPosition.Y) / distance);
+                    }
+                    else
+                    {
+                        cell.Vector = new PointF(0, 0);
+                    }
                 }
             }
         }
@@ -86,8 +105,13 @@ namespace CellShine
 
                     cell.Value = cell.Coeff * valueTime;
 
-                    if (cell.Value < 0.01f)
+                    if (timeSpan.TotalMilliseconds >= (double)timeMax)
                         cell.StartTime = DateTime.MinValue;
+
+
+
+                    cell.Position= new System.Drawing.Point(cell.FixedPosition.X + (int)(cell.Value * cell.Vector.X*20f),
+                                                            cell.FixedPosition.Y + (int)(cell.Value * cell.Vector.Y*20f));
                 }
             }
         }
@@ -123,7 +147,7 @@ namespace CellShine
         private void Form1_Resize(object sender, EventArgs e)
         {
             Init();
-        } 
+        }
         #endregion
     }
 }
