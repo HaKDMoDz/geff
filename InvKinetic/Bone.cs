@@ -11,9 +11,13 @@ namespace InvKinetic
         public Bone ParentBone { get; set; }
 
         public Point PositionEnd { get; set; }
+        
+        public Point AbsolutePositionEnd { get; set; }
 
         public float Angle { get; set; }
 
         public Point TempPosition { get; set; }
+
+        public int Length { get; set; }
     }
 }
