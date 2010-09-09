@@ -11,14 +11,14 @@ namespace InvKinetic
 {
     public partial class Form1 : Form
     {
-        int maxBones = 5;
+        int maxBones = 20;
         Random rnd;
         Graphics g;
         Graphics gBmp;
         float delta = 0.5f;
         Bitmap bmp = null;
-        int nbSkeleton = 100;
-        int length = 20;
+        int nbSkeleton = 20;
+        int length = 8;
 
         public List<Skeleton> ListSkeleton { get; set; }
 
@@ -56,9 +56,10 @@ namespace InvKinetic
                     Bone bone = new Bone();
 
                     bone.ParentBone = prevBone;
-                    bone.PositionEnd = new Point(rnd.Next(-length, length), rnd.Next(-length, length));
-                    //bone.PositionEnd = new Point(0, length);
+                    //bone.PositionEnd = new Point(rnd.Next(-length, length), rnd.Next(-length, length));
+                    bone.PositionEnd = new Point(0, length);
                     bone.Angle = 0f;
+                    bone.Level = i;
 
                     if (prevBone != null)
                     {
@@ -69,6 +70,7 @@ namespace InvKinetic
 
                         bone.Length = Distance(bone.AbsolutePositionEnd, bone.ParentBone.AbsolutePositionEnd);
 
+
                         if (bone.ParentBone.ParentBone != null)
                         {
                             bone.Angle = GetAngle(GetVector(bone.ParentBone.ParentBone.AbsolutePositionEnd, bone.ParentBone.AbsolutePositionEnd), GetVector(bone.AbsolutePositionEnd, bone.ParentBone.AbsolutePositionEnd));
@@ -77,10 +79,13 @@ namespace InvKinetic
                         {
                             bone.Angle = GetAngle(new Point(1, 0), GetVector(bone.AbsolutePositionEnd, bone.ParentBone.AbsolutePositionEnd));
                         }
+
+                        bone.AngleConstraintMin = Math.Abs(bone.Angle - 1.57f * ((float)i / (float)maxBones));
+                        bone.AngleConstraintMax = Math.Abs(bone.Angle + 1.57f * ((float)i / (float)maxBones));
                     }
                     else
                     {
-                        bone.PositionEnd = new Point((int)((float)pic.Width / 2f + 150f * (float)Math.Cos(6.28f / (float)nbSkeleton * (float)j)), (int)((float)pic.Height / 2f + 150f * (float)Math.Sin(6.28f / (float)nbSkeleton * (float)j)));
+                        bone.PositionEnd = new Point((int)((float)pic.Width / 2f + 200f * (float)Math.Cos(6.28f / (float)nbSkeleton * (float)j)), (int)((float)pic.Height / 2f + 200f * (float)Math.Sin(6.28f / (float)nbSkeleton * (float)j)));
                         bone.AbsolutePositionEnd = bone.PositionEnd;
                     }
 
@@ -98,11 +103,11 @@ namespace InvKinetic
 
         private void DrawSkeleton()
         {
-            gBmp.Clear(Color.White);
+            gBmp.Clear(Color.Black);
 
             foreach (Skeleton skeleton in ListSkeleton)
             {
-                DrawBone(skeleton.LeafBone);
+                DrawBone(skeleton.RootBone);
             }
 
             g.DrawImage(bmp, 0, 0);
@@ -110,13 +115,20 @@ namespace InvKinetic
 
         private void DrawBone(Bone bone)
         {
-            if (bone.ParentBone != null)
+            if (bone.ChildBone != null)
             {
                 int size = 4;
-                gBmp.DrawLine(Pens.Black, bone.ParentBone.AbsolutePositionEnd, bone.AbsolutePositionEnd);
+                int sizeBone = maxBones + 15 - bone.Level;
+                int n = (int)(150f* ((float)bone.Level / (float)maxBones));
+                Pen pen = new Pen(Color.FromArgb((int)n, Color.Black), sizeBone);
+                Brush brush = new SolidBrush(Color.FromArgb(255,n,n,n));
+
+                //gBmp.DrawLine(pen, bone.ParentBone.AbsolutePositionEnd, bone.AbsolutePositionEnd);
+                gBmp.FillEllipse(brush, bone.AbsolutePositionEnd.X, bone.AbsolutePositionEnd.Y, sizeBone, sizeBone);
+
                 //gBmp.DrawRectangle(Pens.Black, bone.AbsolutePositionEnd.X - size / 2, bone.AbsolutePositionEnd.Y - size / 2, size, size);
-                gBmp.FillRectangle(Brushes.DarkGray, bone.AbsolutePositionEnd.X - size / 2, bone.AbsolutePositionEnd.Y - size / 2, size, size);
-                DrawBone(bone.ParentBone);
+                //gBmp.FillRectangle(Brushes.DarkGray, bone.AbsolutePositionEnd.X - size / 2, bone.AbsolutePositionEnd.Y - size / 2, size, size);
+                DrawBone(bone.ChildBone);
             }
         }
 
@@ -175,6 +187,7 @@ namespace InvKinetic
 
                 float angleBone = GetAngle(new Point(1, 0), vecBone);
                 float anglePoint = GetAngle(new Point(1, 0), vecPoint);
+                float prevAngle = bone.Angle;
 
                 if (angleBone > anglePoint)
                 {
@@ -195,6 +208,10 @@ namespace InvKinetic
                     bone.Angle = -GetAngle(GetVector(bone.AbsolutePositionEnd, bone.ParentBone.AbsolutePositionEnd), GetVector(bone.ParentBone.ParentBone.AbsolutePositionEnd, bone.ParentBone.AbsolutePositionEnd));
                 else
                     bone.Angle = angleBone;
+
+                //if (Math.Abs(bone.Angle) < bone.AngleConstraintMin || Math.Abs(bone.Angle) > bone.AngleConstraintMax)
+                //    bone.Angle = prevAngle;
+
 
                 CalcBone(bone.ParentBone, point);
             }
@@ -249,6 +266,13 @@ namespace InvKinetic
             Point perpVector = new Point(point.Y, -point.X);
 
             return perpVector;
+        }
+
+        private void pic_Resize(object sender, EventArgs e)
+        {
+            g = pic.CreateGraphics();
+            bmp = new Bitmap(pic.Width, pic.Height);
+            gBmp = Graphics.FromImage(bmp);
         }
     }
 }

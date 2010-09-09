@@ -16,7 +16,10 @@ namespace InvKinetic
         public Point AbsolutePositionEnd { get; set; }
 
         public float Angle { get; set; }
+        public float AngleConstraintMin { get; set; }
+        public float AngleConstraintMax { get; set; }
 
         public int Length { get; set; }
+        public int Level { get; set; }
     }
 }
