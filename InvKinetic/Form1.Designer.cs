@@ -28,29 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pic = new System.Windows.Forms.PictureBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pic)).BeginInit();
             this.SuspendLayout();
             // 
             // pic
             // 
-            this.pic.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.pic.Location = new System.Drawing.Point(12, 12);
+            this.pic.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pic.Location = new System.Drawing.Point(0, 0);
             this.pic.Name = "pic";
-            this.pic.Size = new System.Drawing.Size(518, 425);
+            this.pic.Size = new System.Drawing.Size(993, 725);
             this.pic.TabIndex = 0;
             this.pic.TabStop = false;
             this.pic.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pic_MouseMove);
             this.pic.Resize += new System.EventHandler(this.pic_Resize);
             this.pic.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pic_MouseUp);
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(542, 449);
+            this.ClientSize = new System.Drawing.Size(993, 725);
             this.Controls.Add(this.pic);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -62,6 +68,7 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pic;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

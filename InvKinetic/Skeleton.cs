@@ -9,5 +9,6 @@ namespace InvKinetic
     {
         public Bone RootBone { get; set; }
         public Bone LeafBone { get; set; }
+        public int Index { get; set; }
     }
 }

@@ -11,15 +11,16 @@ namespace InvKinetic
         public Bone ParentBone { get; set; }
         public Bone ChildBone { get; set; }
 
-        public Point PositionEnd { get; set; }
+        public PointF PositionEnd { get; set; }
         
-        public Point AbsolutePositionEnd { get; set; }
+        public PointF AbsolutePositionEnd { get; set; }
 
         public float Angle { get; set; }
         public float AngleConstraintMin { get; set; }
         public float AngleConstraintMax { get; set; }
 
-        public int Length { get; set; }
+        public float Length { get; set; }
         public int Level { get; set; }
+        public Skeleton Skeleton { get; set; }
     }
 }
