@@ -6,19 +6,20 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing.Imaging;
 
 namespace InvKinetic
 {
     public partial class Form1 : Form
     {
-        int maxBones = 100;
+        int maxBones = 150;
         Random rnd;
         Graphics g;
         Graphics gBmp;
         float delta = 0.001f;
         Bitmap bmp = null;
-        int nbSkeleton = 10;
-        int length = 10;
+        int nbSkeleton = 3;
+        int length = 8;
         PointF mousePoint = PointF.Empty;
 
         public List<Skeleton> ListSkeleton { get; set; }
@@ -26,10 +27,24 @@ namespace InvKinetic
         public Form1()
         {
             InitializeComponent();
-            this.MouseWheel += new MouseEventHandler(pic_MouseWheel);
-            g = pic.CreateGraphics();
-            bmp = new Bitmap(pic.Width, pic.Height);
 
+            //this.Opacity = 0.4;
+            this.MouseWheel += new MouseEventHandler(pic_MouseWheel);
+            this.TopMost = true;
+
+            this.Top = 0;
+            this.Left = 0;
+            this.Width = Screen.PrimaryScreen.WorkingArea.Width;
+            this.Height = Screen.PrimaryScreen.WorkingArea.Height;
+
+            this.SetStyle(ControlStyles.DoubleBuffer, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.SetStyle(ControlStyles.UserPaint, true);
+
+            this.TransparencyKey = Color.Red;
+
+            g = this.CreateGraphics();
+            bmp = new Bitmap(this.Width, this.Height);
             gBmp = Graphics.FromImage(bmp);
 
             CreateSkeleton();
@@ -77,13 +92,15 @@ namespace InvKinetic
                             bone.Angle = GetAngle(new PointF(1, 0), GetVector(bone.AbsolutePositionEnd, bone.ParentBone.AbsolutePositionEnd));
                         }
 
-                        bone.AngleConstraintMin = Math.Abs(bone.Angle - 1.57f * ((float)i / (float)maxBones));
-                        bone.AngleConstraintMax = Math.Abs(bone.Angle + 1.57f * ((float)i / (float)maxBones));
+                        float constraintAngle = (float)Math.PI / 6f;
+
+                        bone.AngleConstraintMin = Math.Abs(bone.Angle - constraintAngle * ((float)i / (float)maxBones));
+                        bone.AngleConstraintMax = Math.Abs(bone.Angle + constraintAngle * ((float)i / (float)maxBones));
                     }
                     else
                     {
                         //bone.PositionEnd = new PointF((int)((float)pic.Width / 2f + 200f * (float)Math.Cos(6.28f / (float)nbSkeleton * (float)j)), (int)((float)pic.Height / 2f + 200f * (float)Math.Sin(6.28f / (float)nbSkeleton * (float)j)));
-                        bone.PositionEnd = new PointF(0, pic.Height / nbSkeleton * j);
+                        bone.PositionEnd = new PointF(0, this.Height / nbSkeleton * j);
                         bone.AbsolutePositionEnd = bone.PositionEnd;
                     }
 
@@ -101,12 +118,15 @@ namespace InvKinetic
 
         private void DrawSkeleton()
         {
-            gBmp.Clear(Color.Black);
+            Color f = Color.Red;//.FromArgb(rnd.Next(255), rnd.Next(255),rnd.Next(255));
+
+            gBmp.Clear(f);
 
             foreach (Skeleton skeleton in ListSkeleton)
             {
                 DrawBone(skeleton.RootBone);
             }
+
 
             g.DrawImage(bmp, 0, 0);
         }
@@ -116,7 +136,10 @@ namespace InvKinetic
             if (bone.ChildBone != null)
             {
                 int sizeBone = maxBones + 15 - bone.Level;
-                int n = (int)(150f * ((float)bone.Level / (float)maxBones));
+
+                //int n = (int)(255f-150f * ((float)bone.Level / (float)maxBones));
+                int n = (int)(255f - 150f * ((float)bone.Level / (float)maxBones));
+
                 //Brush brush = new SolidBrush(Color.FromArgb(255, n, n, 50 + 180 * bone.Skeleton.Index / nbSkeleton));
                 Brush brush = new SolidBrush(Color.FromArgb(255, n, n, n));
 
@@ -236,38 +259,49 @@ namespace InvKinetic
             }
         }
 
-        private void pic_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                CreateSkeleton();
-            }
-            else if (e.Button == MouseButtons.Left)
-            {
-                Calc(e.Location);
-            }
+        //private void pic_MouseUp(object sender, MouseEventArgs e)
+        //{
+        //    if (e.Button == MouseButtons.Right)
+        //    {
+        //        CreateSkeleton();
+        //    }
+        //    else if (e.Button == MouseButtons.Left)
+        //    {
+        //        Calc(e.Location);
+        //    }
+        //    Application.Exit();
 
-            DrawSkeleton();
-        }
-
-        private void pic_MouseMove(object sender, MouseEventArgs e)
-        {
-            mousePoint = new PointF(e.X, e.Y);
-        }
-
-        private void pic_Resize(object sender, EventArgs e)
-        {
-            g = pic.CreateGraphics();
-            bmp = new Bitmap(pic.Width, pic.Height);
-            gBmp = Graphics.FromImage(bmp);
-
-            CreateSkeleton();
-        }
+        //    DrawSkeleton();
+        //}
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             Calc(mousePoint);
             DrawSkeleton();
+        }
+
+        private void Form1_Click(object sender, EventArgs e)
+        {
+            //Application.Exit();
+
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            mousePoint = new PointF(e.X, e.Y);
+
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState != FormWindowState.Minimized)
+            {
+                g = this.CreateGraphics();
+                bmp = new Bitmap(this.Width, this.Height);
+                gBmp = Graphics.FromImage(bmp);
+
+                CreateSkeleton();
+            }
         }
     }
 }
