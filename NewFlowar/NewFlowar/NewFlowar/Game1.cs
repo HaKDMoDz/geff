@@ -25,7 +25,7 @@ namespace NewFlowar
         {
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = 600;
-            graphics.PreferredBackBufferHeight= 600;
+            graphics.PreferredBackBufferHeight = 600;
             Content.RootDirectory = "Content";
         }
 
@@ -41,7 +41,7 @@ namespace NewFlowar
 
             base.Initialize();
 
-            CreateGrid();
+            CreateNewMap();
             CreateCamera();
         }
 
@@ -86,20 +86,20 @@ namespace NewFlowar
                 CameraPosition.X -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
                 moveCamera = true;
             }
-            
+
             if (keyState.IsKeyDown(Keys.Right))
             {
                 CameraPosition.X += (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
                 moveCamera = true;
             }
-            
+
             if (keyState.IsKeyDown(Keys.Up))
             {
                 CameraPosition.Y -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
                 moveCamera = true;
             }
-            
-             if (keyState.IsKeyDown(Keys.Down))
+
+            if (keyState.IsKeyDown(Keys.Down))
             {
                 CameraPosition.Y += (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
                 moveCamera = true;
@@ -127,7 +127,7 @@ namespace NewFlowar
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, this.Cells.Count * 12);
+                graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, Map.Cells.Count * 12);
             }
 
 
@@ -150,7 +150,7 @@ namespace NewFlowar
         private void CreateCamera()
         {
             View = Matrix.CreateLookAt(CameraPosition, CameraTarget, CameraUp);
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi/4f, this.GraphicsDevice.Viewport.Width / this.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi / 4f, this.GraphicsDevice.Viewport.Width / this.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
             //Projection = Matrix.CreatePerspective(this.GraphicsDevice.Viewport.Width, this.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
             World = Matrix.Identity;
 
@@ -167,11 +167,11 @@ namespace NewFlowar
             }
 
 
-            vBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), this.Cells.Count * 12, BufferUsage.None);
+            vBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), Map.Cells.Count * 12, BufferUsage.None);
 
             List<VertexPositionColor> vertex = new List<VertexPositionColor>();
 
-            foreach (Cell cell in this.Cells)
+            foreach (Cell cell in Map.Cells)
             {
                 for (int i = 0; i < 4; i++)
                 {
@@ -198,71 +198,13 @@ namespace NewFlowar
         }
 
         List<Vector3> vertexHexagon = new List<Vector3>();
+        public Map Map { get; set; }
 
-        private void CreateGrid()
+        private void CreateNewMap()
         {
-            Cells = new List<Cell>();
-
-            Random rnd = new Random();
-            int maxWidth = 3;
-            int maxHeight = 3;
-
-            float d = (float)Math.Sqrt(0.75);
-            float r = 2;
-
-            int nb = 0;
-
-            for (int y = 1; y <= maxHeight; y++)
-            {
-                for (int x = 1; x <= maxWidth; x++)
-                {
-                    float fx = (float)x;
-                    float fy = (float)y;
-
-
-                    Cell cell2 = new Cell(x,y*2-1,
-                         (int)((2.5f + fx * 3f) * r),
-                         (int)((fy) * (2f * d * r)));
-
-
-                    Cells.Add(cell2);
-
-                    cell2.Height = (float)(rnd.NextDouble() * 20);
-                }
-
-                for (int x = 1; x <= maxWidth; x++)
-                {
-                    float fx = (float)x;
-                    float fy = (float)y;
-
-                    Cell cell1 = new Cell(x, y * 2,
-                        (int)((1f + fx * 3f) * r),
-                        (int)((0.5f + fy) * (2f * d * r)));
-
-                   
-                    Cells.Add(cell1);
-
-                    cell1.Height = (float)(rnd.NextDouble() * 20);
-                }
-            }
-
-
-            System.Drawing.Image img = new System.Drawing.Bitmap(600, 600);
-
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(img);
-            //Bitmap b = new Bitmap(600, 600, g);
-
-            g.Clear(System.Drawing.Color.White);
-
-            int index = 0;
-            foreach (Cell cell in Cells)
-            {
-                g.DrawRectangle(System.Drawing.Pens.Black, cell.Location.X * 20, cell.Location.Y * 20, 70, 20);
-                g.DrawString(cell.Coord.ToString() + " " + index.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, new System.Drawing.PointF(cell.Location.X * 20, cell.Location.Y * 20));
-                index++;
-            }
-
-            img.Save(@"D:\test.png", System.Drawing.Imaging.ImageFormat.Png);
+            this.Map = new Map(3,3);
+            this.Map.CreateGrid();
         }
+
     }
 }
