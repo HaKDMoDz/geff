@@ -204,8 +204,8 @@ namespace NewFlowar
             Cells = new List<Cell>();
 
             Random rnd = new Random();
-            int maxWidth = 10;
-            int maxHeight = 10;
+            int maxWidth = 3;
+            int maxHeight = 3;
 
             float d = (float)Math.Sqrt(0.75);
             float r = 2;
@@ -219,30 +219,30 @@ namespace NewFlowar
                     float fx = (float)x;
                     float fy = (float)y;
 
-                    Cell cell1 = new Cell(
-                        (int)((1f + fx * 3f) * r),
-                        (int)((0.5f + fy) * (2f * d * r)));
 
-                    //if (y == 0 || y == maxY - 1 || x == 0)
-                    //    cell1.IsBorder = true;
-
-                    //cell1.Coordinate = new Point(x, y);
-                    Cells.Add(cell1);
-
-
-                    Cell cell2 = new Cell(
+                    Cell cell2 = new Cell(x,y*2-1,
                          (int)((2.5f + fx * 3f) * r),
                          (int)((fy) * (2f * d * r)));
 
-                    //if (y == 0 || y == maxY - 1 || x == maxX - 1)
-                    //    cell2.IsBorder = true;
-
-                    //cell2.Coordinate = new Point(x, y);
 
                     Cells.Add(cell2);
 
-                    cell1.Height = (float)(rnd.NextDouble() * 20);
                     cell2.Height = (float)(rnd.NextDouble() * 20);
+                }
+
+                for (int x = 1; x <= maxWidth; x++)
+                {
+                    float fx = (float)x;
+                    float fy = (float)y;
+
+                    Cell cell1 = new Cell(x, y * 2,
+                        (int)((1f + fx * 3f) * r),
+                        (int)((0.5f + fy) * (2f * d * r)));
+
+                   
+                    Cells.Add(cell1);
+
+                    cell1.Height = (float)(rnd.NextDouble() * 20);
                 }
             }
 
@@ -254,10 +254,12 @@ namespace NewFlowar
 
             g.Clear(System.Drawing.Color.White);
 
+            int index = 0;
             foreach (Cell cell in Cells)
             {
-                g.DrawRectangle(System.Drawing.Pens.Black, cell.Coord.X * 5, cell.Coord.Y * 5, 2, 2);
-
+                g.DrawRectangle(System.Drawing.Pens.Black, cell.Location.X * 20, cell.Location.Y * 20, 70, 20);
+                g.DrawString(cell.Coord.ToString() + " " + index.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, new System.Drawing.PointF(cell.Location.X * 20, cell.Location.Y * 20));
+                index++;
             }
 
             img.Save(@"D:\test.png", System.Drawing.Imaging.ImageFormat.Png);
