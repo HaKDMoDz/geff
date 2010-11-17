@@ -42,7 +42,7 @@ namespace NewFlowar
         {
             get
             {
-                return (this.Coord.Y - 1) * this.Map.Width + this.Coord.X;
+                return (this.Coord.Y - 1) * this.Map.Width + this.Coord.X-1;
             }
         }
     }

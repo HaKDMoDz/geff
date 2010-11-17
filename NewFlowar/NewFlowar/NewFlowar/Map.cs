@@ -12,11 +12,13 @@ namespace NewFlowar
         public List<Point> Points { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public int R { get; set; }
 
         public Map(int width, int height)
         {
             this.Width = width;
             this.Height = height;
+            this.R = 2;
         }
 
         public void CreateGrid()
@@ -26,7 +28,6 @@ namespace NewFlowar
             Random rnd = new Random();
 
             float d = (float)Math.Sqrt(0.75);
-            float r = 2;
 
             for (int y = 1; y <= Height; y++)
             {
@@ -37,8 +38,8 @@ namespace NewFlowar
 
 
                     Cell cell2 = new Cell(this, x, y * 2 - 1,
-                         (int)((2.5f + fx * 3f) * r),
-                         (int)((fy) * (2f * d * r)));
+                         (int)((2.5f + fx * 3f) * R),
+                         (int)((fy) * (2f * d * R)));
 
 
                     Cells.Add(cell2);
@@ -52,8 +53,8 @@ namespace NewFlowar
                     float fy = (float)y;
 
                     Cell cell1 = new Cell(this, x, y * 2,
-                        (int)((1f + fx * 3f) * r),
-                        (int)((0.5f + fy) * (2f * d * r)));
+                        (int)((1f + fx * 3f) * R),
+                        (int)((0.5f + fy) * (2f * d * R)));
 
 
                     Cells.Add(cell1);
@@ -63,6 +64,7 @@ namespace NewFlowar
             }
 
             CalcNeighborough();
+            CalcPoints();
         }
 
         public void CalcNeighborough()
@@ -71,7 +73,7 @@ namespace NewFlowar
             {
                 cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
                 cell.Neighbourghs[2] = GetNeighborough(cell, 1, 0);
-                cell.Neighbourghs[3] = GetNeighborough(cell, 1, 1);
+                cell.Neighbourghs[3] = GetNeighborough(cell, 0, 1);
                 cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
                 cell.Neighbourghs[5] = GetNeighborough(cell, -1, 0);
                 cell.Neighbourghs[6] = GetNeighborough(cell, -1, -1);
@@ -80,13 +82,62 @@ namespace NewFlowar
 
         private Cell GetNeighborough(Cell cell, int offsetX, int offsetY)
         {
-            if (cell.Coord.X + offsetX > 0 && cell.Coord.X + offsetX < this.Width &&
-                cell.Coord.Y + offsetY > 0 && cell.Coord.Y + offsetY < this.Height)
+            if (cell.Coord.X + offsetX > 0 && cell.Coord.X + offsetX <= this.Width &&
+                cell.Coord.Y + offsetY > 0 && cell.Coord.Y + offsetY <= this.Height)
             {
-                return Cells[(cell.Coord.Y + offsetY - 1) * this.Width + cell.Coord.X + offsetX];
+                return Cells[(cell.Coord.Y + offsetY - 1) * this.Width + cell.Coord.X + offsetX-1];
             }
 
             return null;
+        }
+
+        public void CalcPoints()
+        {
+            string st = "";
+            Cell neighbourh = null;
+
+            foreach (Cell cell in Cells)
+            {
+                for (int i = 1; i <= 6; i++)
+                {
+                    if (cell.Points[i] == Point.Zero)
+                    {
+                        Point point = new Point(
+                            cell.Location.X + (int)(Math.Cos(Math.PI / 3 * (double)i) * (double)R),
+                            cell.Location.Y + (int)(Math.Sin(Math.PI / 3 * (double)i) * (double)R));
+
+                        cell.Points[i] = point;
+                        
+                        int indexCell = (i - 1) % 6;
+                        if (indexCell == 0)
+                            indexCell = 6;
+
+                        neighbourh = cell.Neighbourghs[indexCell];
+                        if (neighbourh != null)
+                        {
+                            int index = (i + 2) % 6;
+                            if (index == 0)
+                                index = 6;
+
+                            st += "\r\nN" + cell.IndexPosition.ToString() + " P(" + i.ToString() + ") => N" + indexCell.ToString() + " P(" + index.ToString() + ")";
+                            neighbourh.Points[index] = point;
+                        }
+
+                        neighbourh = cell.Neighbourghs[i];
+                        if (neighbourh != null)
+                        {
+                            int index = (i + 4) % 6;
+                            if (index == 0)
+                                index = 6;
+
+                            st += "\r\nN" + cell.IndexPosition.ToString() + " P(" + i.ToString() + ") => N" + i.ToString() + " P(" + index.ToString() + ")";
+                            neighbourh.Points[index] = point;
+                        }
+                    }
+                }
+
+                st += "\r\n";
+            }
         }
 
         public void DrawMapIntoImageFile()
