@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace NewFlowar
+namespace NewFlowar.Model
 {
     public class Map
     {
         public List<Cell> Cells { get; set; }
         public List<Vector3> Points { get; set; }
+        public List<Vector3> Normals { get; set; }
+
         public int Width { get; set; }
         public int Height { get; set; }
         public int R { get; set; }
@@ -44,7 +46,13 @@ namespace NewFlowar
 
                     Cells.Add(cell2);
 
-                    cell2.Height = (float)(rnd.NextDouble() * R*4);
+                    cell2.Height = (float)(rnd.NextDouble() * R * 4);
+
+                    if (x == 1 && y == 1)
+                        cell2.Height = 100;
+
+                    if (x == Width && y == 1)
+                        cell2.Height = 50;
                 }
 
                 for (int x = 1; x <= Width; x++)
@@ -59,13 +67,14 @@ namespace NewFlowar
 
                     Cells.Add(cell1);
 
-                    cell1.Height = (float)(rnd.NextDouble() * R*4);
+                    cell1.Height = (float)(rnd.NextDouble() * R * 4);
                 }
             }
 
             CalcNeighborough();
             CalcPoints();
             CalcHeightPoint();
+            CalcNormals();
 
             DrawMapIntoImageFile();
         }
@@ -97,10 +106,10 @@ namespace NewFlowar
 
         private Cell GetNeighborough(Cell cell, int offsetX, int offsetY)
         {
-            if (cell.Coord.X + offsetX-1 >= 0 && cell.Coord.X + offsetX <= this.Width &&
-                cell.Coord.Y + offsetY-1 >= 0 && cell.Coord.Y + offsetY <= this.Height*2)
+            if (cell.Coord.X + offsetX - 1 >= 0 && cell.Coord.X + offsetX <= this.Width &&
+                cell.Coord.Y + offsetY - 1 >= 0 && cell.Coord.Y + offsetY <= this.Height * 2)
             {
-                return Cells[(cell.Coord.Y + offsetY - 1) * this.Width + cell.Coord.X + offsetX-1];
+                return Cells[(cell.Coord.Y + offsetY - 1) * this.Width + cell.Coord.X + offsetX - 1];
             }
 
             return null;
@@ -116,14 +125,16 @@ namespace NewFlowar
             {
                 for (int i = 1; i <= 6; i++)
                 {
-                    if (cell.Points[i] == Vector3.Zero)
+                    if (cell.Points[i] == -1)
                     {
                         Vector3 point = new Vector3(
-                            (float)cell.Location.X + (float)(Math.Cos(Math.PI / (double)3 * (double)(i-2)) * (double)R),
-                            (float)cell.Location.Y + (int)(Math.Sin(Math.PI / (double)3 * (double)(i-2)) * (double)R), 0);
+                            (float)cell.Location.X + (float)(Math.Cos(Math.PI / (double)3 * (double)(i - 2)) * (double)R),
+                            (float)cell.Location.Y + (int)(Math.Sin(Math.PI / (double)3 * (double)(i - 2)) * (double)R), 0);
 
-                        cell.Points[i] = point;
                         Points.Add(point);
+                        int indexPoint = Points.Count - 1;
+
+                        cell.Points[i] = indexPoint;
 
                         int indexCell = (i - 1) % 6;
                         if (indexCell == 0)
@@ -136,10 +147,10 @@ namespace NewFlowar
                             if (index == 0)
                                 index = 6;
 
-                            if (neighbourh.Points[index] == Vector3.Zero)
+                            if (neighbourh.Points[index] == -1)
                             {
-                                  st += "\r\nI" + cell.IndexPosition.ToString() + " P(" + i.ToString() + ") => N" + indexCell.ToString() + " I" + neighbourh.IndexPosition.ToString() + " P(" + index.ToString() + ")";
-                                neighbourh.Points[index] = point;
+                                st += "\r\nI" + cell.IndexPosition.ToString() + " P(" + i.ToString() + ") => N" + indexCell.ToString() + " I" + neighbourh.IndexPosition.ToString() + " P(" + index.ToString() + ")";
+                                neighbourh.Points[index] = indexPoint;
                             }
                         }
 
@@ -150,10 +161,10 @@ namespace NewFlowar
                             if (index == 0)
                                 index = 6;
 
-                            if (neighbourh.Points[index] == Vector3.Zero)
+                            if (neighbourh.Points[index] == -1)
                             {
                                 st += "\r\nI" + cell.IndexPosition.ToString() + " P(" + i.ToString() + ") => N" + i.ToString() + " I" + neighbourh.IndexPosition.ToString() + " P(" + index.ToString() + ")";
-                                neighbourh.Points[index] = point;
+                                neighbourh.Points[index] = indexPoint;
                             }
                         }
                     }
@@ -165,33 +176,35 @@ namespace NewFlowar
 
         public void CalcHeightPoint()
         {
-            //foreach (Vector3 vector3 in Points)
             for (int i = 0; i < Points.Count; i++)
             {
                 Vector3 vector3 = Points[i];
-                List<Cell> listCells = Cells.FindAll(cell => cell.Points.ContainsValue(vector3));
+                List<Cell> listCells = Cells.FindAll(cell => cell.Points.ContainsValue(i));
 
-                List<int> listIndex = new List<int>();
-                float z = 0;
+                vector3.Z = 0;
                 foreach (Cell cell in listCells)
                 {
-                    foreach (int key in cell.Points.Keys)
-                    {
-                        if (cell.Points[key] == vector3)
-                            listIndex.Add(key);
-                    }
-
-                    z += (float)cell.Height;
+                    vector3.Z += (float)cell.Height;
                 }
 
+                vector3.Z /= listCells.Count;
+                //TODO : l'égalité ci-dessous est peut être inutile
+                Points[i] = vector3;
+            }
+        }
 
-                vector3.Z = z /listCells.Count;
+        public void CalcNormals()
+        {
+            Normals = new List<Vector3>();
 
-                for (int j = 0; j < listCells.Count; j++)
-                {
-                    listCells[j].Points[listIndex[j]] = vector3;
-                }
-
+            for (int i = 0; i < Points.Count; i++)
+            {
+                if(i%3==0)
+                    Normals.Add(Vector3.Up);
+                else if(i%3==1)
+                    Normals.Add(Vector3.Left);
+                else if(i%3 ==2)
+                    Normals.Add(Vector3.Right);
             }
         }
 
@@ -213,24 +226,24 @@ namespace NewFlowar
                 //g.DrawString(cell.Coord.ToString() + " " + index.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, new System.Drawing.PointF(cell.Location.X *d, cell.Location.Y * d));
                 index++;
 
-                Vector3 prevPoint = Vector3.Zero;
-                for (int i = 1; i <= 6; i++)
-                {
-                    if (prevPoint != Vector3.Zero)
-                        g.DrawLine(System.Drawing.Pens.Red, prevPoint.X*d, prevPoint.Y*d, cell.Points[i].X * d, cell.Points[i].Y * d);
+                //Vector3 prevPoint = Vector3.Zero;
+                //for (int i = 1; i <= 6; i++)
+                //{
+                //    if (prevPoint != Vector3.Zero)
+                //        g.DrawLine(System.Drawing.Pens.Red, prevPoint.X * d, prevPoint.Y * d, cell.Points[i].X * d, cell.Points[i].Y * d);
 
-                    prevPoint = cell.Points[i];
-                }
+                //    prevPoint = cell.Points[i];
+                //}
 
-                g.DrawLine(System.Drawing.Pens.Red, prevPoint.X * d, prevPoint.Y * d, cell.Points[1].X * d, cell.Points[1].Y * d);
+                //g.DrawLine(System.Drawing.Pens.Red, prevPoint.X * d, prevPoint.Y * d, cell.Points[1].X * d, cell.Points[1].Y * d);
 
-                for (int i = 1; i <= 6; i++)
-                {
-                    //g.DrawRectangle(System.Drawing.Pens.Blue, cell.Points[i].X * d, cell.Points[i].Y * d, 5, 5);
+                //for (int i = 1; i <= 6; i++)
+                //{
+                //    //g.DrawRectangle(System.Drawing.Pens.Blue, cell.Points[i].X * d, cell.Points[i].Y * d, 5, 5);
 
-                    g.DrawString(i.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, cell.Points[i].X * d, cell.Points[i].Y * d);
+                //    g.DrawString(i.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, cell.Points[i].X * d, cell.Points[i].Y * d);
 
-                }
+                //}
             }
 
             img.Save(@"D:\test.png", System.Drawing.Imaging.ImageFormat.Png);

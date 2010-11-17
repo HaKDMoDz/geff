@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace NewFlowar
+namespace NewFlowar.Model
 {
     public class Cell
     {
@@ -13,7 +13,7 @@ namespace NewFlowar
         public Point Coord { get; set; }
         public Point Location { get; set; }
         public Dictionary<int, Cell> Neighbourghs { get; set; }
-        public Dictionary<int, Vector3> Points { get; set; }
+        public Dictionary<int, int> Points { get; set; }
 
         public Cell(Map map, int x, int y, int left, int top)
         {
@@ -29,13 +29,13 @@ namespace NewFlowar
             this.Neighbourghs.Add(5,null);
             this.Neighbourghs.Add(6,null);
 
-            this.Points = new Dictionary<int, Vector3>();
-            this.Points.Add(1, Vector3.Zero);
-            this.Points.Add(2, Vector3.Zero);
-            this.Points.Add(3, Vector3.Zero);
-            this.Points.Add(4, Vector3.Zero);
-            this.Points.Add(5, Vector3.Zero);
-            this.Points.Add(6, Vector3.Zero);
+            this.Points = new Dictionary<int, int>();
+            this.Points.Add(1, -1);
+            this.Points.Add(2, -1);
+            this.Points.Add(3, -1);
+            this.Points.Add(4, -1);
+            this.Points.Add(5, -1);
+            this.Points.Add(6, -1);
         }
 
         public int IndexPosition

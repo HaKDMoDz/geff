@@ -8,30 +8,33 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using NewFlowar.Model;
+using NewFlowar.Logic.Render;
+using NewFlowar.Logic.Controller;
+using NewFlowar.Logic.GamePlay;
 
 namespace NewFlowar
 {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game
+    public class GameEngine : Microsoft.Xna.Framework.Game
     {
-        public Map Map { get; set; }
-        public Render Render { get; set; }
+        public RenderLogic Render { get; set; }
+        public ControllerLogic Controller { get; set; }
+        public GamePlayLogic GamePlay { get; set; }
         public GraphicsDeviceManager Graphics;
 
-        public Game1()
+        public GameEngine()
         {
             Graphics = new GraphicsDeviceManager(this);
             Graphics.PreferredBackBufferWidth = 600;
             Graphics.PreferredBackBufferHeight = 600;
-
             Content.RootDirectory = "Content";
 
-            Map = new Map(10, 10);
-            Map.CreateGrid();
-
-            Render = new Render(this, Map);
+            GamePlay = new GamePlayLogic();
+            Render = new RenderLogic(this);
+            Controller = new ControllerLogic(this);
         }
 
         /// <summary>
@@ -70,48 +73,9 @@ namespace NewFlowar
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            KeyboardState keyState = Keyboard.GetState();
+            Controller.UpdateBegin(gameTime);
 
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyState.IsKeyDown(Keys.Space))
-                this.Exit();
-
-            bool moveCamera = false;
-
-            if (keyState.IsKeyDown(Keys.M))
-            {
-                Map.CreateGrid();
-                Render.CreateVertex();
-            }
-
-            if (keyState.IsKeyDown(Keys.Left))
-            {
-                Render.CameraPosition.X -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
-                moveCamera = true;
-            }
-
-            if (keyState.IsKeyDown(Keys.Right))
-            {
-                Render.CameraPosition.X += (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
-                moveCamera = true;
-            }
-
-            if (keyState.IsKeyDown(Keys.Up))
-            {
-                Render.CameraPosition.Y -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
-                moveCamera = true;
-            }
-
-            if (keyState.IsKeyDown(Keys.Down))
-            {
-                Render.CameraPosition.Y += (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
-                moveCamera = true;
-            }
-
-            if (moveCamera)
-            {
-                Render.UpdateCamera();
-            }
+            Controller.UpdateEnd(gameTime);
 
             base.Update(gameTime);
         }
