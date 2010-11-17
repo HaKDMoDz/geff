@@ -16,17 +16,22 @@ namespace NewFlowar
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        public List<Cell> Cells { get; set; }
-
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        public Map Map { get; set; }
+        public Render Render { get; set; }
+        public GraphicsDeviceManager Graphics;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 600;
-            graphics.PreferredBackBufferHeight = 600;
+            Graphics = new GraphicsDeviceManager(this);
+            Graphics.PreferredBackBufferWidth = 600;
+            Graphics.PreferredBackBufferHeight = 600;
+
             Content.RootDirectory = "Content";
+
+            Map = new Map(10, 10);
+            Map.CreateGrid();
+
+            Render = new Render(this, Map);
         }
 
         /// <summary>
@@ -37,12 +42,8 @@ namespace NewFlowar
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
-
-            CreateNewMap();
-            CreateCamera();
+            Render.InitRender();
         }
 
         /// <summary>
@@ -51,10 +52,6 @@ namespace NewFlowar
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -81,35 +78,39 @@ namespace NewFlowar
 
             bool moveCamera = false;
 
+            if (keyState.IsKeyDown(Keys.M))
+            {
+                Map.CreateGrid();
+                Render.CreateVertex();
+            }
+
             if (keyState.IsKeyDown(Keys.Left))
             {
-                CameraPosition.X -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
+                Render.CameraPosition.X -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
                 moveCamera = true;
             }
 
             if (keyState.IsKeyDown(Keys.Right))
             {
-                CameraPosition.X += (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
+                Render.CameraPosition.X += (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
                 moveCamera = true;
             }
 
             if (keyState.IsKeyDown(Keys.Up))
             {
-                CameraPosition.Y -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
+                Render.CameraPosition.Y -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
                 moveCamera = true;
             }
 
             if (keyState.IsKeyDown(Keys.Down))
             {
-                CameraPosition.Y += (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
+                Render.CameraPosition.Y += (float)(gameTime.ElapsedGameTime.TotalMilliseconds * 0.1);
                 moveCamera = true;
             }
 
-
             if (moveCamera)
             {
-                View = Matrix.CreateLookAt(CameraPosition, CameraTarget, CameraUp);
-                effect.View = View;
+                Render.UpdateCamera();
             }
 
             base.Update(gameTime);
@@ -121,90 +122,9 @@ namespace NewFlowar
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
-
-
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, Map.Cells.Count * 12);
-            }
-
-
+            Render.Draw(gameTime);
 
             base.Draw(gameTime);
         }
-
-        BasicEffect effect;
-        VertexBuffer vBuffer;
-
-        Matrix View;
-        Matrix Projection;
-        Matrix World;
-
-        Vector3 CameraPosition = new Vector3(15f, 15f, -80.0f);
-        Vector3 CameraTarget = new Vector3(15f, 15f, 0f);
-        Vector3 CameraUp = Vector3.Up;
-
-        //Création de la caméra
-        private void CreateCamera()
-        {
-            View = Matrix.CreateLookAt(CameraPosition, CameraTarget, CameraUp);
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi / 4f, this.GraphicsDevice.Viewport.Width / this.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
-            //Projection = Matrix.CreatePerspective(this.GraphicsDevice.Viewport.Width, this.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
-            World = Matrix.Identity;
-
-            double r = 2;
-
-            vertexHexagon = new List<Vector3>();
-            for (double i = 0; i < 6; i++)
-            {
-                Vector3 vec = new Vector3();
-                vec.X = (float)(Math.Cos(Math.PI / 3 * i) * r);
-                vec.Y = (float)(Math.Sin(Math.PI / 3 * i) * r);
-
-                vertexHexagon.Add(vec);
-            }
-
-
-            vBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), Map.Cells.Count * 12, BufferUsage.None);
-
-            List<VertexPositionColor> vertex = new List<VertexPositionColor>();
-
-            foreach (Cell cell in Map.Cells)
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    vertex.Add(new VertexPositionColor(new Vector3(vertexHexagon[0].X + cell.Coord.X, vertexHexagon[0].Y + cell.Coord.Y, cell.Height), Color.White));
-                    vertex.Add(new VertexPositionColor(new Vector3(vertexHexagon[1 + i].X + cell.Coord.X, vertexHexagon[1 + i].Y + cell.Coord.Y, cell.Height), Color.Gray));
-                    vertex.Add(new VertexPositionColor(new Vector3(vertexHexagon[2 + i].X + cell.Coord.X, vertexHexagon[2 + i].Y + cell.Coord.Y, cell.Height), Color.Black));
-                }
-            }
-
-
-            vBuffer.SetData<VertexPositionColor>(vertex.ToArray());
-
-            GraphicsDevice.SetVertexBuffer(vBuffer);
-
-
-            effect = new BasicEffect(GraphicsDevice);
-            //effect.World = Matrix.CreateRotationY((float)gameTime.TotalGameTime.TotalMilliseconds/800);
-            effect.View = View;
-            effect.Projection = Projection;
-            effect.World = World;
-
-            effect.PreferPerPixelLighting = true;
-            effect.VertexColorEnabled = true;
-        }
-
-        List<Vector3> vertexHexagon = new List<Vector3>();
-        public Map Map { get; set; }
-
-        private void CreateNewMap()
-        {
-            this.Map = new Map(3,3);
-            this.Map.CreateGrid();
-        }
-
     }
 }
