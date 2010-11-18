@@ -48,11 +48,11 @@ namespace NewFlowar.Model
 
                     cell2.Height = (float)(rnd.NextDouble() * R * 4);
 
-                    if (x == 1 && y == 1)
-                        cell2.Height = 100;
+                    //if (x == 1 && y == 1)
+                    //    cell2.Height = 100;
 
-                    if (x == Width && y == 1)
-                        cell2.Height = 50;
+                    //if (x == Width && y == 1)
+                    //    cell2.Height = 50;
                 }
 
                 for (int x = 1; x <= Width; x++)
@@ -193,18 +193,46 @@ namespace NewFlowar.Model
             }
         }
 
-        public void CalcNormals()
+        private void CalcNormals()
         {
+            Dictionary<int, int[,]> dic = new Dictionary<int, int[,]>();
+
+            dic.Add(1, new int[2, 3] { { 3, 2, 1 }, { 6, 3, 1 } });
+            dic.Add(2, new int[1, 3] { { 3, 2, 1 } });
+            dic.Add(3, new int[3, 3] { { 3, 2, 1 }, { 6, 4, 3 }, { 6, 3, 1 } });
+            dic.Add(4, new int[2, 3] { { 6, 4, 3 }, { 6, 5, 4 } });
+            dic.Add(5, new int[1, 3] { { 6, 5, 4 } });
+            dic.Add(6, new int[3, 3] { { 6, 4, 3 }, { 6, 5, 4 }, { 6, 3, 1 } });
+
             Normals = new List<Vector3>();
 
             for (int i = 0; i < Points.Count; i++)
             {
-                if(i%3==0)
-                    Normals.Add(Vector3.Up);
-                else if(i%3==1)
-                    Normals.Add(Vector3.Left);
-                else if(i%3 ==2)
-                    Normals.Add(Vector3.Right);
+                int nb = 0;
+                Vector3 normal = Vector3.Zero;
+
+                List<Cell> listCell = Cells.FindAll(cell => cell.Points.ContainsValue(i));
+
+                foreach (Cell cell in listCell)
+                {
+                    foreach (int key in cell.Points.Keys)
+                    {
+                        if (cell.Points[key] == i)
+                        {
+                            for (int j = 0; j < dic[key].GetUpperBound(0); j++)
+                            {
+                                Vector3 vec1 = Points[cell.Points[dic[key][j, 1]]] - Points[cell.Points[dic[key][j, 0]]];
+                                Vector3 vec2 = Points[cell.Points[dic[key][j, 1]]] - Points[cell.Points[dic[key][j, 2]]];
+                                normal += Vector3.Cross(vec1, vec2);
+                                nb++;
+                            }
+                        }
+                    }
+                }
+
+                //normal /= nb;
+                normal.Normalize();
+                Normals.Add(-normal);
             }
         }
 

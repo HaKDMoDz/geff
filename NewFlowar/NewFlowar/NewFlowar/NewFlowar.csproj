@@ -108,6 +108,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logic\Controller\KeyManager.cs" />
+    <Compile Include="Logic\Controller\MouseManager.cs" />
     <Compile Include="Logic\Gameplay\GamePlayLogic.cs" />
     <Compile Include="Logic\Controller\ControllerLogic.cs" />
     <Compile Include="Model\Cell.cs" />

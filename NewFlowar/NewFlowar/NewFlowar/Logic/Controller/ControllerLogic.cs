@@ -15,8 +15,6 @@ namespace NewFlowar.Logic.Controller
         private Keys leftKey = Keys.Q;
         private Keys rightKey = Keys.D;
 
-        private ButtonState prevLeftButtonState = ButtonState.Released;
-        private ButtonState prevRightButtonState = ButtonState.Released;
         private int prevMouseWheel = 0;
 
         public MouseState mouseState;
@@ -25,51 +23,52 @@ namespace NewFlowar.Logic.Controller
         public Vector2 mousePosition;
         public Point mousePositionPoint;
 
-        private bool isPlusKeyPressed = false;
-        private bool isMinusKeyPressed = false;
-
         private bool isPKeyPressed = false;
         private bool isSKeyPressed = false;
 
+        private KeyManager keyLeft;
+        private KeyManager keyRight;
+        private KeyManager keyUp;
+        private KeyManager keyDown;
+
+        private MouseManager mouseLeftButton;
+        private MouseManager mouseMiddleButton;
+        private MouseManager mouseRightButton;
+
+        private Vector3 prevCameraTarget;
         #endregion
-
-        public bool IsMouseLeftButtonPressedAndReleased
-        {
-            get
-            {
-                return mouseState.LeftButton == ButtonState.Released && prevLeftButtonState == ButtonState.Pressed;
-            }
-        }
-
-        public bool IsMouseLeftButtonPressed
-        {
-            get
-            {
-                return mouseState.LeftButton == ButtonState.Pressed;
-            }
-        }
-
-        public bool IsMouseRightButtonPressedAndReleased
-        {
-            get
-            {
-                return mouseState.RightButton == ButtonState.Released && prevRightButtonState == ButtonState.Pressed;
-            }
-        }
-
-        public bool IsMouseRightButtonPressed
-        {
-            get
-            {
-                return mouseState.RightButton == ButtonState.Pressed;
-            }
-        }
 
         private GameEngine gameEngine { get; set; }
 
         public ControllerLogic(GameEngine gameEngine)
         {
             this.gameEngine = gameEngine;
+
+            this.keyLeft = new KeyManager(leftKey);
+
+            this.mouseLeftButton = new MouseManager(MouseButtons.LeftButton);
+            this.mouseMiddleButton = new MouseManager(MouseButtons.MiddleButton);
+            this.mouseRightButton = new MouseManager(MouseButtons.RightButton);
+
+            this.mouseMiddleButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseMiddleButton_MouseFirstPressed);
+            this.mouseMiddleButton.MousePressed += new MouseManager.MousePressedHandler(mouseMiddleButton_MousePressed);
+        }
+
+        void mouseMiddleButton_MouseFirstPressed(MouseButtons mouseButton, GameTime gameTime)
+        {
+            prevCameraTarget = this.gameEngine.Render.CameraTarget;
+        }
+
+        void mouseMiddleButton_MousePressed(MouseButtons mouseButton, GameTime gameTime, Point distance)
+        {
+            //this.gameEngine.Render.CameraTarget = prevCameraTarget + new Vector3(distance.X/5, -distance.Y/5,0);
+
+            float rayon = (new Vector2(prevCameraTarget.X, prevCameraTarget.Y) - new Vector2(this.gameEngine.Render.CameraPosition.X, this.gameEngine.Render.CameraPosition.Y)).Length();
+
+            rayon += (float)distance.Y/10f;
+
+            float angle = (float)distance.X / 200f;
+            this.gameEngine.Render.CameraTarget = new Vector3((float)Math.Cos(angle) * rayon, (float)Math.Sin(angle) * rayon, 0f);
         }
 
         public void UpdateBegin(GameTime gameTime)
@@ -147,6 +146,12 @@ namespace NewFlowar.Logic.Controller
             }
             //---
 
+            //--- Mouse
+            mouseLeftButton.Update(mouseState, gameTime);
+            mouseMiddleButton.Update(mouseState, gameTime);
+            mouseRightButton.Update(mouseState, gameTime);
+            //---
+
             if (gameEngine.Render.updateViewScreen)
             {
                 gameEngine.Render.VecTranslation = vecTempTranslation;
@@ -175,70 +180,10 @@ namespace NewFlowar.Logic.Controller
             {
                 this.gameEngine.Exit();
             }
-
-            //--- Draw physics objects
-            //if (keyBoardState.IsKeyDown(Keys.P))
-            //{
-            //    if (!isPKeyPressed)
-            //        isPKeyPressed = true;
-            //}
-            //else if (isPKeyPressed)
-            //{
-            //    gameEngine.Render.drawPhysicObjects = !gameEngine.Render.drawPhysicObjects;
-            //    isPKeyPressed = false;
-            //}
-            //---
-
-            //--- Add blob
-            //if (keyBoardState.IsKeyDown(Keys.Add))
-            //{
-            //    if (!isPlusKeyPressed)
-            //        isPlusKeyPressed = true;
-            //}
-            //else if (isPlusKeyPressed)
-            //{
-            //    if (gameEngine.GameLogic.currentBlobGroup != null)
-            //        gameEngine.GameLogic.AddBlob(gameEngine.GameLogic.currentBlobGroup, 1f, Color.Red, 1f);
-            //    //currentBlobGroup.AddBlob(1f, Color.Red, 1f, currentBlobGroup.GroupNumber);
-
-            //    isPlusKeyPressed = false;
-            //}
-            //---
-
-            //--- Subtract blob
-            //if (keyBoardState.IsKeyDown(Keys.Subtract))
-            //{
-            //    if (!isMinusKeyPressed)
-            //        isMinusKeyPressed = true;
-            //}
-            //else if (isMinusKeyPressed)
-            //{
-            //    if (gameEngine.GameLogic.currentBlobGroup != null)
-            //        gameEngine.GameLogic.currentBlobGroup.DeleteLastBlob();
-
-            //    isMinusKeyPressed = false;
-            //}
-            //---
-
-            //--- Selection of BlobGroup
-            //if (IsMouseLeftButtonPressedAndReleased && !gameEngine.Render.UIManager.IsMouseCaught)
-            //{
-            //    gameEngine.GameLogic.SelectGroupBlob(mousePosition);
-            //}
-            ////---
-
-            ////--- Move blob
-            //if (IsMouseRightButtonPressedAndReleased && gameEngine.GameLogic.currentBlobGroup != null && !gameEngine.Render.UIManager.IsMouseCaught)
-            //{
-            //    gameEngine.GameLogic.MoveBlobGroup(gameEngine.GameLogic.currentBlobGroup, mousePosition);
-            //}
-            //---
         }
 
         public void UpdateEnd(GameTime gameTime)
         {
-            prevLeftButtonState = mouseState.LeftButton;
-            prevRightButtonState = mouseState.RightButton;
         }
     }
 }

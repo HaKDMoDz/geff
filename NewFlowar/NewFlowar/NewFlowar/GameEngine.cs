@@ -30,6 +30,8 @@ namespace NewFlowar
             Graphics = new GraphicsDeviceManager(this);
             Graphics.PreferredBackBufferWidth = 600;
             Graphics.PreferredBackBufferHeight = 600;
+            this.IsMouseVisible = true;
+
             Content.RootDirectory = "Content";
 
             GamePlay = new GamePlayLogic();
