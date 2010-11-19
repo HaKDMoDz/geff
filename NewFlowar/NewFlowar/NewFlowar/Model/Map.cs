@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using NewFlowar.Common;
 
 namespace NewFlowar.Model
 {
@@ -197,6 +198,25 @@ namespace NewFlowar.Model
             }
         }
 
+        public void CalcHeightPoint(Cell cell)
+        {
+            foreach (int key in cell.Points.Keys)
+            {
+                Vector3 vector3 = Points[cell.Points[key]];
+                List<Cell> listCells = Cells.FindAll(cell2 => cell2.Points.ContainsValue(cell.Points[key]));
+
+                vector3.Z = 0;
+                foreach (Cell cell2 in listCells)
+                {
+                    vector3.Z += (float)cell2.Height;
+                }
+
+                vector3.Z /= listCells.Count;
+                //TODO : l'égalité ci-dessous est peut être inutile
+                Points[cell.Points[key]] = vector3;
+            }
+        }
+
         private void CalcNormals()
         {
             Dictionary<int, int[,]> dic = new Dictionary<int, int[,]>();
@@ -279,6 +299,29 @@ namespace NewFlowar.Model
             }
 
             img.Save(@"D:\test.png", System.Drawing.Imaging.ImageFormat.Png);
+        }
+
+        public void ElevateCell(Cell cell, float radius)
+        {
+            foreach (Cell cell2 in Cells)
+            {
+                float distance = Tools.Distance(cell.Location, cell2.Location);
+                if (cell != cell2 && distance < radius)
+                {
+                    double value = Math.Abs(Tools.GetBellCurvePoint(1 - distance / radius, 0.5));
+
+                    cell2.Height = (float)value * cell.Height;
+                }
+            }
+
+            foreach (Cell cell2 in Cells)
+            {
+                float distance = Tools.Distance(cell.Location, cell2.Location);
+                if (distance < radius)
+                {
+                    CalcHeightPoint(cell2);
+                }
+            }
         }
     }
 }

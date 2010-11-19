@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NewFlowar.Model;
+using Microsoft.Xna.Framework.Input;
 
 namespace NewFlowar.Logic.Render
 {
@@ -34,7 +35,7 @@ namespace NewFlowar.Logic.Render
         public Vector3 CameraPosition = new Vector3(0f, 0f, 50f);
         public Vector3 CameraTarget = new Vector3(0f, 30f, 0f);
         public Vector3 CameraUp = Vector3.Backward;
-        
+
         public bool updateViewScreen = false;
         public bool doScreenShot = false;
 
@@ -75,7 +76,7 @@ namespace NewFlowar.Logic.Render
 
             //effect.PreferPerPixelLighting = true;
             effect.VertexColorEnabled = false;
-            effect.LightingEnabled = true;
+            effect.LightingEnabled = false;
             effect.EmissiveColor = new Vector3(0.2f, 0.2f, 0.25f);
             //effect.DirectionalLight0 = new DirectionalLight(
 
@@ -103,7 +104,7 @@ namespace NewFlowar.Logic.Render
             effect.Projection = Projection;
             effect.World = World;
 
-            float angle = (float)gameTime.TotalGameTime.TotalMilliseconds/1000f;
+            float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
 
 
@@ -111,7 +112,7 @@ namespace NewFlowar.Logic.Render
             effectCube.Projection = Projection;
             //effect.World = World;
 
-            effectCube.World = Matrix.Multiply(World, Matrix.CreateTranslation(CameraTarget+new Vector3(0,0,10)));
+            effectCube.World = Matrix.Multiply(World, Matrix.CreateTranslation(CameraTarget + new Vector3(0, 0, 10)));
         }
 
         public void CreateVertex()
@@ -168,7 +169,7 @@ namespace NewFlowar.Logic.Render
             UpdateCamera();
             UpdateShader(gameTime);
 
-            GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
+            //GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
@@ -185,6 +186,40 @@ namespace NewFlowar.Logic.Render
             //}
         }
 
+        public Cell GetSelectedCell(MouseState mouseState)
+        {
+            Vector3 nearsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 0f);
+            Vector3 farsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 1f);
+
+            Matrix world = Matrix.CreateTranslation(0, 0, 0);
+
+            Vector3 nearPoint = GameEngine.GraphicsDevice.Viewport.Unproject(nearsource,
+                Projection, View, world);
+
+            Vector3 farPoint = GameEngine.GraphicsDevice.Viewport.Unproject(farsource,
+                Projection, View, world);
+
+            Vector3 direction = farPoint - nearPoint;
+            direction.Normalize();
+            Ray pickRay = new Ray(nearPoint, direction);
+
+            Cell selectedCell = null;
+            float minimalDistance = float.MaxValue;
+
+            foreach (Cell cell in Map.Cells)
+            {
+                BoundingSphere s = new BoundingSphere(new Vector3(cell.Location.X, cell.Location.Y, cell.Height), Map.R);
+                float? distance = pickRay.Intersects(s);
+
+                if (distance.HasValue && distance.Value < minimalDistance)
+                {
+                    selectedCell = cell;
+                    minimalDistance = distance.Value;
+                }
+            }
+
+            return selectedCell;
+        }
 
         VertexDeclaration cubeVertexDeclaration;
         VertexPositionColor[] nonIndexedCube;

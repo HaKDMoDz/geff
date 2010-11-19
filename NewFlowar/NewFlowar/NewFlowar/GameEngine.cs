@@ -12,6 +12,9 @@ using NewFlowar.Model;
 using NewFlowar.Logic.Render;
 using NewFlowar.Logic.Controller;
 using NewFlowar.Logic.GamePlay;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using NewFlowar.Common;
 
 namespace NewFlowar
 {
@@ -20,16 +23,33 @@ namespace NewFlowar
     /// </summary>
     public class GameEngine : Microsoft.Xna.Framework.Game
     {
+        [DllImport("user32.dll")]
+        static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
         public RenderLogic Render { get; set; }
         public ControllerLogic Controller { get; set; }
         public GamePlayLogic GamePlay { get; set; }
         public GraphicsDeviceManager Graphics;
+        public bool Mini = false;
 
         public GameEngine()
         {
+            Mini = (Environment.MachineName == "P64L03BIB69");
+
             Graphics = new GraphicsDeviceManager(this);
-            Graphics.PreferredBackBufferWidth = 1000;
-            Graphics.PreferredBackBufferHeight = 1000;
+
+            if (Mini)
+            {
+                Graphics.PreferredBackBufferWidth = 400;
+                Graphics.PreferredBackBufferHeight = 400;
+            }
+            else
+            {
+                Graphics.PreferredBackBufferWidth = 1000;
+                Graphics.PreferredBackBufferHeight = 1000;
+            }
+
+            
             this.IsMouseVisible = true;
 
             Content.RootDirectory = "Content";
@@ -37,6 +57,14 @@ namespace NewFlowar
             GamePlay = new GamePlayLogic();
             Render = new RenderLogic(this);
             Controller = new ControllerLogic(this);
+
+
+            //List<double> l = new List<double>();
+
+            //for (int i = 0; i < 500; i++)
+            //{
+            //    l.Add(Tools.GetBellCurvePoint((double)i / 500, 0.5));
+            //}
         }
 
         /// <summary>
@@ -47,7 +75,16 @@ namespace NewFlowar
         /// </summary>
         protected override void Initialize()
         {
+
+            if (Mini)
+            {
+                Control window = Control.FromHandle(this.Window.Handle);
+                window.Location = new System.Drawing.Point(2500, 0);
+            }
+
             base.Initialize();
+
+
             Render.InitRender();
         }
 

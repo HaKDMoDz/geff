@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using NewFlowar.Common;
+using NewFlowar.Model;
 
 namespace NewFlowar.Logic.Controller
 {
@@ -31,11 +32,13 @@ namespace NewFlowar.Logic.Controller
         private KeyManager keyRight;
         private KeyManager keyUp;
         private KeyManager keyDown;
+        private KeyManager keyNewMap;
+        private KeyManager keyHeightMapMode;
 
         private MouseManager mouseLeftButton;
         private MouseManager mouseMiddleButton;
         private MouseManager mouseRightButton;
-        
+
         private float prevAngle;
         private float prevRayon;
         #endregion
@@ -47,27 +50,55 @@ namespace NewFlowar.Logic.Controller
             this.gameEngine = gameEngine;
 
             this.keyLeft = new KeyManager(leftKey);
+            this.keyNewMap = new KeyManager(Keys.M);
+            this.keyHeightMapMode = new KeyManager(Keys.C);
+
+            this.keyNewMap.KeyReleased += new KeyManager.KeyReleasedHandler(keyNewMap_KeyReleased);
+            this.keyHeightMapMode.KeyReleased += new KeyManager.KeyReleasedHandler(keyHeightMapMode_KeyReleased);
 
             this.mouseLeftButton = new MouseManager(MouseButtons.LeftButton);
             this.mouseMiddleButton = new MouseManager(MouseButtons.MiddleButton);
             this.mouseRightButton = new MouseManager(MouseButtons.RightButton);
 
+            this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
             this.mouseMiddleButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseMiddleButton_MouseFirstPressed);
             this.mouseMiddleButton.MousePressed += new MouseManager.MousePressedHandler(mouseMiddleButton_MousePressed);
         }
 
-        void mouseMiddleButton_MouseFirstPressed(MouseButtons mouseButton, GameTime gameTime)
+        void keyHeightMapMode_KeyReleased(Keys key, GameTime gameTime)
+        {
+            if (Context.ContextType == ContextType.DefineSphereHeightMap)
+            {
+                Context.ContextType = ContextType.None;
+            }
+            else
+            {
+                Context.ContextType = ContextType.DefineSphereHeightMap;
+            }
+        }
+
+        void keyNewMap_KeyReleased(Keys key, GameTime gameTime)
+        {
+            this.gameEngine.GamePlay.Map.CreateGrid();
+            this.gameEngine.Render.CreateVertex();
+        }
+
+        void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            Context.SelectedCell = gameEngine.Render.GetSelectedCell(mouseState);
+        }
+
+        void mouseMiddleButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
         {
             Vector2 cameraDirection = Tools.GetVector2(this.gameEngine.Render.CameraTarget) - Tools.GetVector2(this.gameEngine.Render.CameraPosition);
 
             prevRayon = cameraDirection.Length();
             prevAngle = Tools.GetAngle(Vector2.UnitX, cameraDirection);
-        } 
+        }
 
-        void mouseMiddleButton_MousePressed(MouseButtons mouseButton, GameTime gameTime, Point distance)
+        void mouseMiddleButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-
-            float rayon = prevRayon + (float)distance.Y/7f;
+            float rayon = prevRayon + (float)distance.Y / 7f;
 
             float angle = prevAngle + (float)distance.X / 200f;
 
@@ -86,18 +117,54 @@ namespace NewFlowar.Logic.Controller
             mousePositionPoint = new Point(mouseState.X, mouseState.Y);
             //---
 
-            //--- Zoom
+            //--- Mouse wheel
             int curMouseWheel = mouseState.ScrollWheelValue;
-            float estimatedZoom = gameEngine.Render.CameraPosition.Z + (prevMouseWheel - curMouseWheel) / 50f;
 
-            if (estimatedZoom >20)
-                gameEngine.Render.CameraPosition.Z = estimatedZoom;
+            if (Context.SelectedCell != null)
+            {
+                if (prevMouseWheel != curMouseWheel)
+                {
+
+                    if (Context.ContextType == ContextType.DefineSphereHeightMap)
+                    {
+                        Context.HeightMapRadius += (float)(prevMouseWheel - curMouseWheel) / 250f;
+                        gameEngine.Window.Title = "Radius : " + Context.HeightMapRadius.ToString();
+                    }
+                    else
+                    {
+                        Context.SelectedCell.Height += (float)(prevMouseWheel - curMouseWheel) / 250f;
+                        gameEngine.Window.Title = "Hauteur : " +  Context.SelectedCell.Height.ToString();
+                    }
+
+                    gameEngine.GamePlay.Map.ElevateCell(Context.SelectedCell, Context.HeightMapRadius);
+                    gameEngine.Render.CreateVertex();
+
+                    //else
+                    //{
+                    //    Context.SelectedCell.Height += (float)(prevMouseWheel - curMouseWheel) / 50f;
+                    //    this.gameEngine.GamePlay.Map.CalcHeightPoint(Context.SelectedCell);
+                    //    gameEngine.Render.CreateVertex();
+                    //    //gameEngine.Window.Title = DateTime.Now.Ticks.ToString();
+                    //}
+                }
+            }
+            //--- Zoom
+            else
+            {
+                float estimatedZoom = gameEngine.Render.CameraPosition.Z + (prevMouseWheel - curMouseWheel) / 50f;
+
+                if (estimatedZoom > 20)
+                {
+                    gameEngine.Render.CameraPosition.Z = estimatedZoom;
+                    gameEngine.Render.updateViewScreen = true;
+                }
+            }
 
             if (prevMouseWheel != curMouseWheel)
             {
                 prevMouseWheel = curMouseWheel;
-                gameEngine.Render.updateViewScreen = true;
             }
+            //---
 
             if (keyBoardState.IsKeyDown(Keys.PageUp))
             {
@@ -126,7 +193,7 @@ namespace NewFlowar.Logic.Controller
 
             Vector2 cameraDirection = Tools.GetVector2(this.gameEngine.Render.CameraTarget) - Tools.GetVector2(this.gameEngine.Render.CameraPosition);
             cameraDirection.Normalize();
-            
+
             if (keyBoardState.IsKeyDown(upKey))
             {
                 vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * cameraDirection;
@@ -158,6 +225,11 @@ namespace NewFlowar.Logic.Controller
             mouseRightButton.Update(mouseState, gameTime);
             //---
 
+            //---
+            keyHeightMapMode.Update(keyBoardState, gameTime);
+            keyHeightMapMode.Update(keyBoardState, gameTime);
+            //---
+
             if (gameEngine.Render.updateViewScreen)
             {
                 gameEngine.Render.CameraPosition += Tools.GetVector3(vecTempTranslation);
@@ -177,12 +249,6 @@ namespace NewFlowar.Logic.Controller
                 isSKeyPressed = false;
             }
             //---
-
-            if (keyBoardState.IsKeyDown(Keys.M))
-            {
-                this.gameEngine.GamePlay.Map.CreateGrid();
-                this.gameEngine.Render.CreateVertex();
-            }
 
             if (keyBoardState.IsKeyDown(Keys.Space))
             {

@@ -34,5 +34,26 @@ namespace NewFlowar.Common
         {
             return new Vector3(vec.X, vec.Y, 0f);
         }
+
+        public static double GetBellCurvePoint(double Percentage, double Midpoint)
+        {
+            if (Percentage > Midpoint)
+            {
+                Percentage = 1 - Percentage;
+                return 1 - ((Percentage - ((1 - Percentage) * Percentage)) * (1 / (1 - Midpoint)));
+            }
+            else
+            {
+                return (Percentage - ((1 - Percentage) * Percentage)) * (1 / Midpoint);
+            }
+        }
+
+        public static int Distance(Point point1, Point point2)
+        {
+            int distance = (int)Math.Sqrt((point1.X - point2.X) * (point1.X - point2.X) + (point1.Y - point2.Y) * (point1.Y - point2.Y));
+
+            return distance;
+        }
+
     }
 }

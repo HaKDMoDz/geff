@@ -12,8 +12,13 @@ namespace NewFlowar.Logic.Controller
         private KeyState keyState;
         private Keys key;
 
+        public delegate void KeyFirstPressedHandler(Keys key, GameTime gameTime);
         public delegate void KeyPressedHandler(Keys key, GameTime gameTime);
+        public delegate void KeyReleasedHandler(Keys key, GameTime gameTime);
+
+        public event KeyFirstPressedHandler KeyFirstPressed;
         public event KeyPressedHandler KeyPressed;
+        public event KeyReleasedHandler KeyReleased;
 
         public KeyManager(Keys key)
         {
@@ -23,19 +28,25 @@ namespace NewFlowar.Logic.Controller
 
         public void Update(KeyboardState keyBoardState, GameTime gameTime)
         {
-            if (keyState == KeyState.Down && keyBoardState.IsKeyUp(key))
+            bool pressed = keyBoardState.IsKeyDown(key);
+
+            if (keyState == KeyState.Up && pressed)
             {
-                KeyPressed(key, gameTime);
+                if(KeyFirstPressed != null)
+                    KeyFirstPressed(key, gameTime);
+            }
+            else if (keyState == KeyState.Down && pressed)
+            {
+                if (KeyPressed != null)
+                    KeyPressed(key, gameTime);
+            }
+            else if (keyState == KeyState.Down && !pressed)
+            {
+                if (KeyReleased != null)
+                    KeyReleased(key, gameTime);
             }
 
-            if (keyBoardState.IsKeyUp(key))
-            {
-                keyState = KeyState.Up;
-            }
-            else
-            {
-                keyState = KeyState.Down;
-            }
+            keyState = pressed ? KeyState.Down : KeyState.Up;
         }
     }
 }

@@ -13,9 +13,9 @@ namespace NewFlowar.Logic.Controller
         private MouseButtons mouseButton;
         private Point mousePosition;
 
-        public delegate void MouseFirstPressedHandler(MouseButtons mouseButton, GameTime gameTime);
-        public delegate void MousePressedHandler(MouseButtons mouseButton, GameTime gameTime, Point distance);
-        public delegate void MouseReleasedHandler(MouseButtons mouseButton, GameTime gameTime, Point distance);
+        public delegate void MouseFirstPressedHandler(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime);
+        public delegate void MousePressedHandler(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance);
+        public delegate void MouseReleasedHandler(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance);
 
         public event MousePressedHandler MousePressed;
         public event MouseFirstPressedHandler MouseFirstPressed;
@@ -51,17 +51,17 @@ namespace NewFlowar.Logic.Controller
                 mousePosition = new Point(mouseState.X, mouseState.Y);
 
                 if (MouseFirstPressed != null) 
-                    MouseFirstPressed(mouseButton, gameTime);
+                    MouseFirstPressed(mouseButton, mouseState, gameTime);
             }
             else if(mouseButtonState == ButtonState.Pressed  && pressed)
             {
-                if (MousePressed != null) 
-                    MousePressed(mouseButton, gameTime, new Point(mousePosition.X - mouseState.X, mousePosition.Y- mouseState.Y));
+                if (MousePressed != null)
+                    MousePressed(mouseButton, mouseState, gameTime, new Point(mousePosition.X - mouseState.X, mousePosition.Y - mouseState.Y));
             }
             else if(mouseButtonState == ButtonState.Pressed  && !pressed)
             {
                 if(MouseReleased != null)
-                    MouseReleased(mouseButton, gameTime, new Point(mousePosition.X - mouseState.X, mousePosition.Y- mouseState.Y));
+                    MouseReleased(mouseButton, mouseState, gameTime, new Point(mousePosition.X - mouseState.X, mousePosition.Y - mouseState.Y));
             }
 
             mouseButtonState = pressed?ButtonState.Pressed:ButtonState.Released;
