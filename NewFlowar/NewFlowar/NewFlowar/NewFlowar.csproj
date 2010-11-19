@@ -108,6 +108,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Extension.cs" />
+    <Compile Include="Common\Tools.cs" />
     <Compile Include="Logic\Controller\KeyManager.cs" />
     <Compile Include="Logic\Controller\MouseManager.cs" />
     <Compile Include="Logic\Gameplay\GamePlayLogic.cs" />

@@ -31,11 +31,10 @@ namespace NewFlowar.Logic.Render
         Matrix Projection;
         Matrix World;
 
-        public Vector3 CameraPosition = new Vector3(15f, 15f, 0f);
-        public Vector3 CameraTarget = new Vector3(15f, 15f, 0f);
+        public Vector3 CameraPosition = new Vector3(0f, 0f, 50f);
+        public Vector3 CameraTarget = new Vector3(0f, 30f, 0f);
         public Vector3 CameraUp = Vector3.Backward;
-        public float Zoom { get; set; }
-        public Vector2 VecTranslation = new Vector2(0, 0);
+        
         public bool updateViewScreen = false;
         public bool doScreenShot = false;
 
@@ -58,16 +57,15 @@ namespace NewFlowar.Logic.Render
         //Création de la caméra
         private void CreateCamera()
         {
-            Zoom = 50;
             UpdateCamera();
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi / 4f, GameEngine.GraphicsDevice.Viewport.Width / GameEngine.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi / 2f, GameEngine.GraphicsDevice.Viewport.Width / GameEngine.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
             //Projection = Matrix.CreatePerspective(this.GraphicsDevice.Viewport.Width, this.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
             World = Matrix.Identity;
         }
 
         private void UpdateCamera()
         {
-            View = Matrix.CreateLookAt(CameraPosition + new Vector3(VecTranslation, Zoom), CameraTarget + new Vector3(VecTranslation,0), CameraUp);
+            View = Matrix.CreateLookAt(CameraPosition, CameraTarget, CameraUp);
         }
 
         private void CreateShader()
@@ -75,14 +73,18 @@ namespace NewFlowar.Logic.Render
             effect = new BasicEffect(GameEngine.GraphicsDevice);
             //effect.World = Matrix.CreateRotationY((float)gameTime.TotalGameTime.TotalMilliseconds/800);
 
-            effect.PreferPerPixelLighting = true;
+            //effect.PreferPerPixelLighting = true;
             effect.VertexColorEnabled = false;
-            effect.LightingEnabled = false;
+            effect.LightingEnabled = true;
+            effect.EmissiveColor = new Vector3(0.2f, 0.2f, 0.25f);
+            //effect.DirectionalLight0 = new DirectionalLight(
+
             effect.TextureEnabled = true;
+            effect.SpecularColor = new Vector3(0.3f, 0.35f, 0.3f);
+            effect.SpecularPower = 1f;
             //effect.SpecularColor = new Vector3(1, 1, 1);
             //effect.SpecularPower = 1f;
             effect.Texture = GameEngine.Content.Load<Texture2D>("Hexa");
-
             effectCube = new BasicEffect(GameEngine.GraphicsDevice);
 
             effectCube.PreferPerPixelLighting = false;
@@ -92,14 +94,18 @@ namespace NewFlowar.Logic.Render
             //effectCube.SpecularColor = new Vector3(1, 1, 1);
             //effectCube.SpecularPower = 1f;
 
-            UpdateShader();
+            UpdateShader(new GameTime());
         }
 
-        public void UpdateShader()
+        public void UpdateShader(GameTime gameTime)
         {
             effect.View = View;
             effect.Projection = Projection;
             effect.World = World;
+
+            float angle = (float)gameTime.TotalGameTime.TotalMilliseconds/1000f;
+            effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
+
 
             effectCube.View = View;
             effectCube.Projection = Projection;
@@ -138,9 +144,9 @@ namespace NewFlowar.Logic.Render
             uv.Add(5, new Vector2(0f, 0.5f));
             uv.Add(6, new Vector2(0.26f, 0f));
 
-            Vector3 vec1 = Map.Points[cell.Points[index2]] - Map.Points[cell.Points[index1]];
-            Vector3 vec2 = Map.Points[cell.Points[index2]] - Map.Points[cell.Points[index3]];
-            Vector3 normal = Vector3.Cross(vec1, vec2);
+            //Vector3 vec1 = Map.Points[cell.Points[index2]] - Map.Points[cell.Points[index1]];
+            //Vector3 vec2 = Map.Points[cell.Points[index2]] - Map.Points[cell.Points[index3]];
+            //Vector3 normal = Vector3.Cross(vec1, vec2);
 
             //vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index1]], normal, uv[index1]));
             //vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index2]], normal, uv[index2]));
@@ -160,7 +166,7 @@ namespace NewFlowar.Logic.Render
             GameEngine.GraphicsDevice.Clear(Color.Black);
 
             UpdateCamera();
-            UpdateShader();
+            UpdateShader(gameTime);
 
             GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
 
@@ -170,13 +176,13 @@ namespace NewFlowar.Logic.Render
                 GameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, Map.Cells.Count * 12);
             }
 
-            GameEngine.GraphicsDevice.SetVertexBuffer(vBufferCube);
+            //GameEngine.GraphicsDevice.SetVertexBuffer(vBufferCube);
 
-            foreach (EffectPass pass in effectCube.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                GameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 36);
-            }
+            //foreach (EffectPass pass in effectCube.CurrentTechnique.Passes)
+            //{
+            //    pass.Apply();
+            //    GameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 36);
+            //}
         }
 
 

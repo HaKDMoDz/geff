@@ -15,12 +15,14 @@ namespace NewFlowar.Model
         public int Width { get; set; }
         public int Height { get; set; }
         public int R { get; set; }
+        public int H { get; set; }
 
         public Map(int width, int height)
         {
             this.Width = width;
             this.Height = height;
             this.R = 5;
+            this.H = 3;
         }
 
         public void CreateGrid()
@@ -46,10 +48,12 @@ namespace NewFlowar.Model
 
                     Cells.Add(cell2);
 
-                    cell2.Height = (float)(rnd.NextDouble() * R * 4);
+                    cell2.Height = (float)(rnd.NextDouble() * R * H);
 
-                    //if (x == 1 && y == 1)
-                    //    cell2.Height = 100;
+                    if (x == Height/2 && y == Height/2)
+                        cell2.Height = 100;
+                    if (x == Height / 2 && y+1 == Height / 2)
+                        cell2.Height = 50;
 
                     //if (x == Width && y == 1)
                     //    cell2.Height = 50;
@@ -67,7 +71,7 @@ namespace NewFlowar.Model
 
                     Cells.Add(cell1);
 
-                    cell1.Height = (float)(rnd.NextDouble() * R * 4);
+                    cell1.Height = (float)(rnd.NextDouble() * R * H);
                 }
             }
 
@@ -149,7 +153,7 @@ namespace NewFlowar.Model
 
                             if (neighbourh.Points[index] == -1)
                             {
-                                st += "\r\nI" + cell.IndexPosition.ToString() + " P(" + i.ToString() + ") => N" + indexCell.ToString() + " I" + neighbourh.IndexPosition.ToString() + " P(" + index.ToString() + ")";
+                                //st += "\r\nI" + cell.IndexPosition.ToString() + " P(" + i.ToString() + ") => N" + indexCell.ToString() + " I" + neighbourh.IndexPosition.ToString() + " P(" + index.ToString() + ")";
                                 neighbourh.Points[index] = indexPoint;
                             }
                         }
@@ -163,14 +167,14 @@ namespace NewFlowar.Model
 
                             if (neighbourh.Points[index] == -1)
                             {
-                                st += "\r\nI" + cell.IndexPosition.ToString() + " P(" + i.ToString() + ") => N" + i.ToString() + " I" + neighbourh.IndexPosition.ToString() + " P(" + index.ToString() + ")";
+                                //st += "\r\nI" + cell.IndexPosition.ToString() + " P(" + i.ToString() + ") => N" + i.ToString() + " I" + neighbourh.IndexPosition.ToString() + " P(" + index.ToString() + ")";
                                 neighbourh.Points[index] = indexPoint;
                             }
                         }
                     }
                 }
 
-                st += "\r\n";
+                //st += "\r\n";
             }
         }
 
@@ -221,8 +225,8 @@ namespace NewFlowar.Model
                         {
                             for (int j = 0; j < dic[key].GetUpperBound(0); j++)
                             {
-                                Vector3 vec1 = Points[cell.Points[dic[key][j, 1]]] - Points[cell.Points[dic[key][j, 0]]];
-                                Vector3 vec2 = Points[cell.Points[dic[key][j, 1]]] - Points[cell.Points[dic[key][j, 2]]];
+                                Vector3 vec1 = Points[cell.Points[dic[key][j, 0]]] - Points[cell.Points[dic[key][j, 1]]];
+                                Vector3 vec2 = Points[cell.Points[dic[key][j, 2]]] - Points[cell.Points[dic[key][j, 1]]];
                                 normal += Vector3.Cross(vec1, vec2);
                                 nb++;
                             }
@@ -230,9 +234,9 @@ namespace NewFlowar.Model
                     }
                 }
 
-                //normal /= nb;
+                normal /= nb;
                 normal.Normalize();
-                Normals.Add(-normal);
+                Normals.Add(normal);
             }
         }
 

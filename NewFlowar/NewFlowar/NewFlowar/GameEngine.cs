@@ -28,8 +28,8 @@ namespace NewFlowar
         public GameEngine()
         {
             Graphics = new GraphicsDeviceManager(this);
-            Graphics.PreferredBackBufferWidth = 600;
-            Graphics.PreferredBackBufferHeight = 600;
+            Graphics.PreferredBackBufferWidth = 1000;
+            Graphics.PreferredBackBufferHeight = 1000;
             this.IsMouseVisible = true;
 
             Content.RootDirectory = "Content";

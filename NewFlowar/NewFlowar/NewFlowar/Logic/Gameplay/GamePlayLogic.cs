@@ -12,7 +12,7 @@ namespace NewFlowar.Logic.GamePlay
 
         public GamePlayLogic()
         {
-            Map = new Map(20,20);
+            Map = new Map(20, 20);
             Map.CreateGrid();
         }
     }
