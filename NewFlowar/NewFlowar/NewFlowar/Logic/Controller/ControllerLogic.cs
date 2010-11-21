@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using NewFlowar.Common;
 using NewFlowar.Model;
+using NewFlowar.Model.Minion;
+using NewFlowar.Logic.AI;
 
 namespace NewFlowar.Logic.Controller
 {
@@ -57,7 +59,7 @@ namespace NewFlowar.Logic.Controller
             this.keyHeightMapMode.KeyReleased += new KeyManager.KeyReleasedHandler(keyHeightMapMode_KeyReleased);
 
             this.mouseLeftButton = new MouseManager(MouseButtons.LeftButton);
-            this.mouseMiddleButton = new MouseManager(MouseButtons.MiddleButton);
+            this.mouseMiddleButton = new MouseManager(MouseButtons.RightButton);
             this.mouseRightButton = new MouseManager(MouseButtons.RightButton);
 
             this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
@@ -85,7 +87,28 @@ namespace NewFlowar.Logic.Controller
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            Context.SelectedCell = gameEngine.Render.GetSelectedCell(mouseState);
+            if (gameEngine.Window.ClientBounds.Contains(new Point(mouseState.X + gameEngine.Window.ClientBounds.Left, mouseState.Y + gameEngine.Window.ClientBounds.Top)))
+            {
+                Context.SelectedCell = gameEngine.Render.GetSelectedCell(mouseState);
+
+                if (Context.SelectedMinion == null && Context.SelectedCell != null)
+                {
+                    MinionBase selectedMinion = Context.CurrentPlayer.Minions.Find(minion => minion.CurrentCell == Context.SelectedCell);
+                    Context.SelectedMinion = selectedMinion;
+                }
+                else if (Context.SelectedMinion != null && Context.SelectedCell != null)
+                {
+                    Context.SelectedMinion.Path = PathFinding.CalcPath(Context.SelectedMinion.CurrentCell, Context.SelectedCell, true, 10f);
+                    Context.SelectedMinion.PathLength = (Context.SelectedMinion.Path.Count - 1) * gameEngine.GamePlay.Map.R;
+                    Context.SelectedMinion.TraveledLength = 0f;
+                    Context.SelectedCell = null;
+                }
+
+                if (Context.SelectedMinion != null && Context.SelectedCell == null)
+                {
+                    Context.SelectedMinion = null;
+                }
+            }
         }
 
         void mouseMiddleButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
@@ -182,11 +205,11 @@ namespace NewFlowar.Logic.Controller
             //---
 
             //--- Keyboard
-            float deltaTranslation = 8f / gameEngine.Render.CameraPosition.Z;
+            float deltaTranslation = gameEngine.Render.CameraPosition.Z / 200f;
             Vector2 vecTempTranslation = Vector2.Zero;
 
             if (deltaTranslation >= 0.5f)
-                deltaTranslation = 0.1f;
+                deltaTranslation = 0.3f;
 
             if (keyBoardState.IsKeyDown(Keys.LeftShift))
                 deltaTranslation *= 2;

@@ -47,9 +47,16 @@ namespace NewFlowar
             {
                 Graphics.PreferredBackBufferWidth = 1000;
                 Graphics.PreferredBackBufferHeight = 1000;
+
+                /*
+                 * Graphics.PreferredBackBufferWidth = 1680;
+                Graphics.PreferredBackBufferHeight = 1050;
+                Graphics.IsFullScreen = true;
+                Graphics.ApplyChanges();
+                 */
             }
 
-            
+
             this.IsMouseVisible = true;
 
             Content.RootDirectory = "Content";
@@ -115,6 +122,8 @@ namespace NewFlowar
             Controller.UpdateBegin(gameTime);
 
             Controller.UpdateEnd(gameTime);
+
+            GamePlay.Update(gameTime);
 
             base.Update(gameTime);
         }

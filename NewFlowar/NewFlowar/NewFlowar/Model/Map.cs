@@ -186,6 +186,7 @@ namespace NewFlowar.Model
                 Vector3 vector3 = Points[i];
                 List<Cell> listCells = Cells.FindAll(cell => cell.Points.ContainsValue(i));
 
+
                 vector3.Z = 0;
                 foreach (Cell cell in listCells)
                 {
@@ -195,6 +196,25 @@ namespace NewFlowar.Model
                 vector3.Z /= listCells.Count;
                 //TODO : l'égalité ci-dessous est peut être inutile
                 Points[i] = vector3;
+            }
+        }
+
+        public void CalcHeightPointNew(List<int> listIndexPoint)
+        {
+            for (int i = 0; i < listIndexPoint.Count; i++)
+            {
+                Vector3 vector3 = Points[listIndexPoint[i]];
+                List<Cell> listCells = Cells.FindAll(cell => cell.Points.ContainsValue(listIndexPoint[i]));
+
+                vector3.Z = 0;
+                foreach (Cell cell in listCells)
+                {
+                    vector3.Z += (float)cell.Height;
+                }
+
+                vector3.Z /= listCells.Count;
+                //TODO : l'égalité ci-dessous est peut être inutile
+                Points[listIndexPoint[i]] = vector3;
             }
         }
 
@@ -260,6 +280,50 @@ namespace NewFlowar.Model
             }
         }
 
+        private void CalcNormals(List<int> listIndexPoint)
+        {
+            Dictionary<int, int[,]> dic = new Dictionary<int, int[,]>();
+
+            dic.Add(1, new int[2, 3] { { 3, 2, 1 }, { 6, 3, 1 } });
+            dic.Add(2, new int[1, 3] { { 3, 2, 1 } });
+            dic.Add(3, new int[3, 3] { { 3, 2, 1 }, { 6, 4, 3 }, { 6, 3, 1 } });
+            dic.Add(4, new int[2, 3] { { 6, 4, 3 }, { 6, 5, 4 } });
+            dic.Add(5, new int[1, 3] { { 6, 5, 4 } });
+            dic.Add(6, new int[3, 3] { { 6, 4, 3 }, { 6, 5, 4 }, { 6, 3, 1 } });
+
+            //Normals = new List<Vector3>();
+
+            for (int i = 0; i < listIndexPoint.Count; i++)
+            {
+                int index = listIndexPoint[i];
+                int nb = 0;
+                Vector3 normal = Vector3.Zero;
+
+                List<Cell> listCell = Cells.FindAll(cell => cell.Points.ContainsValue(index));
+
+                foreach (Cell cell in listCell)
+                {
+                    foreach (int key in cell.Points.Keys)
+                    {
+                        if (cell.Points[key] == index)
+                        {
+                            for (int j = 0; j < dic[key].GetUpperBound(0); j++)
+                            {
+                                Vector3 vec1 = Points[cell.Points[dic[key][j, 0]]] - Points[cell.Points[dic[key][j, 1]]];
+                                Vector3 vec2 = Points[cell.Points[dic[key][j, 2]]] - Points[cell.Points[dic[key][j, 1]]];
+                                normal += Vector3.Cross(vec1, vec2);
+                                nb++;
+                            }
+                        }
+                    }
+                }
+
+                normal /= nb;
+                normal.Normalize();
+                Normals[index] = normal;
+            }
+        }
+
         public void DrawMapIntoImageFile()
         {
             System.Drawing.Image img = new System.Drawing.Bitmap(600, 600);
@@ -303,25 +367,63 @@ namespace NewFlowar.Model
 
         public void ElevateCell(Cell cell, float radius)
         {
-            foreach (Cell cell2 in Cells)
-            {
-                float distance = Tools.Distance(cell.Location, cell2.Location);
-                if (cell != cell2 && distance < radius)
-                {
-                    double value = Math.Abs(Tools.GetBellCurvePoint(1 - distance / radius, 0.5));
+            System.Diagnostics.Stopwatch f = new System.Diagnostics.Stopwatch();
 
-                    cell2.Height = (float)value * cell.Height;
-                }
-            }
+            f.Start();
+
+            List<Cell> cellsToCalcul = new List<Cell>();
+            cellsToCalcul.Add(cell);
+
+            List<int> listIndexPoint = new List<int>();
+
 
             foreach (Cell cell2 in Cells)
             {
                 float distance = Tools.Distance(cell.Location, cell2.Location);
                 if (distance < radius)
                 {
+                    double value = Math.Abs(Tools.GetBellCurvePoint(1 - distance / radius, 0.25));
+                    cellsToCalcul.Add(cell2);
+                    cell2.Height = (float)value * cell.Height;
+
+                    for (int i = 1; i <= 6; i++)
+                    {
+                        int index = cell2.Points[i];
+                        if (!listIndexPoint.Contains(index))
+                            listIndexPoint.Add(index);
+                    }
+                }
+            }
+
+            f.Stop();
+            TimeSpan elapsed1 = f.Elapsed;
+
+            f.Restart();
+            
+            /*
+            foreach (Cell cell2 in cellsToCalcul)
+            {
+                //float distance = Tools.Distance(cell.Location, cell2.Location);
+                //if (distance < radius)
+                {
                     CalcHeightPoint(cell2);
                 }
             }
+            */
+
+            CalcHeightPointNew(listIndexPoint);
+
+            f.Stop();
+
+            TimeSpan elasped2 = f.Elapsed;
+            
+            f.Restart();
+
+            CalcNormals(listIndexPoint);
+
+            f.Stop();
+
+            TimeSpan elasped3 = f.Elapsed;
         }
     }
 }

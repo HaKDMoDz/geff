@@ -11,15 +11,16 @@ namespace NewFlowar.Model
         public Map Map { get; set; }
         public float Height { get; set; }
         public Point Coord { get; set; }
-        public Point Location { get; set; }
+        public Vector2 Location { get; set; }
         public Dictionary<int, Cell> Neighbourghs { get; set; }
         public Dictionary<int, int> Points { get; set; }
+        public bool ContainsMinion { get; set; }
 
-        public Cell(Map map, int x, int y, int left, int top)
+        public Cell(Map map, int x, int y, float left, float top)
         {
             this.Map = map;
             this.Coord = new Point(x, y);
-            this.Location = new Point(left, top);
+            this.Location = new Vector2(left, top);
 
             this.Neighbourghs = new Dictionary<int, Cell>();
             this.Neighbourghs.Add(1,null);

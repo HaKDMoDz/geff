@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NewFlowar.Model;
 using Microsoft.Xna.Framework.Input;
+using NewFlowar.Common;
+using NewFlowar.Model.Minion;
 
 namespace NewFlowar.Logic.Render
 {
@@ -39,6 +41,8 @@ namespace NewFlowar.Logic.Render
         public bool updateViewScreen = false;
         public bool doScreenShot = false;
 
+        Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
+
         public RenderLogic(GameEngine gameEngine)
         {
             this.GameEngine = gameEngine;
@@ -50,16 +54,24 @@ namespace NewFlowar.Logic.Render
             CreateShader();
 
             CreateVertex();
-            InitializeCube();
+            Initilize3DModel();
 
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
+        }
+
+        private void Initilize3DModel()
+        {
+            meshModels = new Dictionary<string, Microsoft.Xna.Framework.Graphics.Model>();
+
+            meshModels.Add("FlowPhant", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowPhant"));
+            meshModels.Add("FlowInspector", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowInspector"));
         }
 
         //Création de la caméra
         private void CreateCamera()
         {
             UpdateCamera();
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi / 2f, GameEngine.GraphicsDevice.Viewport.Width / GameEngine.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi / 2f, (float)GameEngine.Graphics.PreferredBackBufferWidth / (float)GameEngine.Graphics.PreferredBackBufferHeight, 0.01f, 1000.0f);
             //Projection = Matrix.CreatePerspective(this.GraphicsDevice.Viewport.Width, this.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
             World = Matrix.Identity;
         }
@@ -76,16 +88,16 @@ namespace NewFlowar.Logic.Render
 
             //effect.PreferPerPixelLighting = true;
             effect.VertexColorEnabled = false;
-            effect.LightingEnabled = false;
-            effect.EmissiveColor = new Vector3(0.2f, 0.2f, 0.25f);
+            effect.LightingEnabled = true;
+            effect.EmissiveColor = new Vector3(0.2f, 0.2f, 0.3f);
             //effect.DirectionalLight0 = new DirectionalLight(
 
             effect.TextureEnabled = true;
-            effect.SpecularColor = new Vector3(0.3f, 0.35f, 0.3f);
+            effect.SpecularColor = new Vector3(0.3f, 0.5f, 0.3f);
             effect.SpecularPower = 1f;
             //effect.SpecularColor = new Vector3(1, 1, 1);
             //effect.SpecularPower = 1f;
-            effect.Texture = GameEngine.Content.Load<Texture2D>("Hexa");
+            effect.Texture = GameEngine.Content.Load<Texture2D>(@"Texture\HexaGrass");
             effectCube = new BasicEffect(GameEngine.GraphicsDevice);
 
             effectCube.PreferPerPixelLighting = false;
@@ -132,26 +144,30 @@ namespace NewFlowar.Logic.Render
             vBuffer.SetData<VertexPositionNormalTexture>(vertex.ToArray());
 
             GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
-            GameEngine.GraphicsDevice.Textures[0] = GameEngine.Content.Load<Texture2D>("Hexa");
+            //GameEngine.GraphicsDevice.Textures[0] = GameEngine.Content.Load<Texture2D>(@"Texture\HexaFloor1");
         }
 
         private void AddVertex(int index1, int index2, int index3, List<VertexPositionNormalTexture> vertex, Cell cell)
         {
             Dictionary<int, Vector2> uv = new Dictionary<int, Vector2>();
-            uv.Add(1, new Vector2(0.75f, 0f));
-            uv.Add(2, new Vector2(1f, 0.5f));
-            uv.Add(3, new Vector2(0.75f, 1f));
-            uv.Add(4, new Vector2(0.26f, 1f));
-            uv.Add(5, new Vector2(0f, 0.5f));
-            uv.Add(6, new Vector2(0.26f, 0f));
-
-            //Vector3 vec1 = Map.Points[cell.Points[index2]] - Map.Points[cell.Points[index1]];
-            //Vector3 vec2 = Map.Points[cell.Points[index2]] - Map.Points[cell.Points[index3]];
-            //Vector3 normal = Vector3.Cross(vec1, vec2);
-
-            //vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index1]], normal, uv[index1]));
-            //vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index2]], normal, uv[index2]));
-            //vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index3]], normal, uv[index3]));
+            //if (cell.ContainsMinion)
+            //{
+            //    uv.Add(1, new Vector2(0f, 0f));
+            //    uv.Add(2, new Vector2(0f, 0f));
+            //    uv.Add(3, new Vector2(0f, 0f));
+            //    uv.Add(4, new Vector2(0f, 0f));
+            //    uv.Add(5, new Vector2(0f, 0f));
+            //    uv.Add(6, new Vector2(0f, 0f));
+            //}
+            //else
+            {
+                uv.Add(1, new Vector2(0.75f, 0f));
+                uv.Add(2, new Vector2(1f, 0.5f));
+                uv.Add(3, new Vector2(0.75f, 1f));
+                uv.Add(4, new Vector2(0.26f, 1f));
+                uv.Add(5, new Vector2(0f, 0.5f));
+                uv.Add(6, new Vector2(0.26f, 0f));
+            }
 
             vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index1]], Map.Normals[cell.Points[index1]], uv[index1]));
             vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index2]], Map.Normals[cell.Points[index2]], uv[index2]));
@@ -169,21 +185,58 @@ namespace NewFlowar.Logic.Render
             UpdateCamera();
             UpdateShader(gameTime);
 
-            //GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
+            //--- Affiche la map
+            //CreateVertex();
+            GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 GameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, Map.Cells.Count * 12);
             }
+            //---
 
-            //GameEngine.GraphicsDevice.SetVertexBuffer(vBufferCube);
+            //--- Affiche les minions de chaque joueur
+            for (int i = 0; i < Context.Players.Count; i++)
+            {
+                for (int j = 0; j < Context.Players[i].Minions.Count; j++)
+                {
+                    DrawMinion(gameTime, Context.Players[i].Minions[j]);
+                }
+            }
+            //---
+        }
 
-            //foreach (EffectPass pass in effectCube.CurrentTechnique.Passes)
-            //{
-            //    pass.Apply();
-            //    GameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 36);
-            //}
+        private void DrawMinion(GameTime gameTime, MinionBase minion)
+        {
+            DrawModel(gameTime, meshModels[minion.ModelName], Matrix.CreateRotationZ(minion.Angle) * Matrix.CreateTranslation(minion.Location));
+        }
+
+        private void DrawModel(GameTime gameTime, Microsoft.Xna.Framework.Graphics.Model meshModel, Matrix mtxWorld)
+        {
+            float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
+            Vector3 lightDirection = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
+
+            Matrix[] mtxMeshTransform = new Matrix[meshModel.Bones.Count];
+            meshModel.CopyAbsoluteBoneTransformsTo(mtxMeshTransform);
+
+            foreach (ModelMesh mesh in meshModel.Meshes)
+            {
+                foreach (BasicEffect effect2 in mesh.Effects)
+                {
+                    effect2.EnableDefaultLighting();
+
+                    if(effect2.Texture != null)
+                        effect2.TextureEnabled = true;
+
+                    effect.DirectionalLight0.Direction = lightDirection;
+                    
+                    effect2.World = mtxMeshTransform[mesh.ParentBone.Index] * World * mtxWorld;
+                    effect2.View = View;
+                    effect2.Projection = Projection;
+                }
+                mesh.Draw();
+            }
         }
 
         public Cell GetSelectedCell(MouseState mouseState)
@@ -219,118 +272,6 @@ namespace NewFlowar.Logic.Render
             }
 
             return selectedCell;
-        }
-
-        VertexDeclaration cubeVertexDeclaration;
-        VertexPositionColor[] nonIndexedCube;
-        VertexBuffer vBufferCube;
-
-        /// <summary>
-        /// Creates an array of non-indexed position/colored data 
-        /// representing a cube.
-        /// </summary>
-        private void InitializeCube()
-        {
-            cubeVertexDeclaration = VertexPositionColor.VertexDeclaration;
-
-            nonIndexedCube = new VertexPositionColor[36];
-
-            Vector3 topLeftFront = new Vector3(-1.0f, 1.0f, 1.0f);
-            Vector3 bottomLeftFront = new Vector3(-1.0f, -1.0f, 1.0f);
-            Vector3 topRightFront = new Vector3(1.0f, 1.0f, 1.0f);
-            Vector3 bottomRightFront = new Vector3(1.0f, -1.0f, 1.0f);
-            Vector3 topLeftBack = new Vector3(-1.0f, 1.0f, -1.0f);
-            Vector3 topRightBack = new Vector3(1.0f, 1.0f, -1.0f);
-            Vector3 bottomLeftBack = new Vector3(-1.0f, -1.0f, -1.0f);
-            Vector3 bottomRightBack = new Vector3(1.0f, -1.0f, -1.0f);
-
-            // Front face
-            nonIndexedCube[0] =
-                new VertexPositionColor(topLeftFront, Color.Red);
-            nonIndexedCube[1] =
-                new VertexPositionColor(bottomLeftFront, Color.Red);
-            nonIndexedCube[2] =
-                new VertexPositionColor(topRightFront, Color.Red);
-            nonIndexedCube[3] =
-                new VertexPositionColor(bottomLeftFront, Color.Red);
-            nonIndexedCube[4] =
-                new VertexPositionColor(bottomRightFront, Color.Red);
-            nonIndexedCube[5] =
-                new VertexPositionColor(topRightFront, Color.Red);
-
-            // Back face 
-            nonIndexedCube[6] =
-                new VertexPositionColor(topLeftBack, Color.Orange);
-            nonIndexedCube[7] =
-                new VertexPositionColor(topRightBack, Color.Orange);
-            nonIndexedCube[8] =
-                new VertexPositionColor(bottomLeftBack, Color.Orange);
-            nonIndexedCube[9] =
-                new VertexPositionColor(bottomLeftBack, Color.Orange);
-            nonIndexedCube[10] =
-                new VertexPositionColor(topRightBack, Color.Orange);
-            nonIndexedCube[11] =
-                new VertexPositionColor(bottomRightBack, Color.Orange);
-
-            // Top face
-            nonIndexedCube[12] =
-                new VertexPositionColor(topLeftFront, Color.Yellow);
-            nonIndexedCube[13] =
-                new VertexPositionColor(topRightBack, Color.Yellow);
-            nonIndexedCube[14] =
-                new VertexPositionColor(topLeftBack, Color.Yellow);
-            nonIndexedCube[15] =
-                new VertexPositionColor(topLeftFront, Color.Yellow);
-            nonIndexedCube[16] =
-                new VertexPositionColor(topRightFront, Color.Yellow);
-            nonIndexedCube[17] =
-                new VertexPositionColor(topRightBack, Color.Yellow);
-
-            // Bottom face 
-            nonIndexedCube[18] =
-                new VertexPositionColor(bottomLeftFront, Color.Purple);
-            nonIndexedCube[19] =
-                new VertexPositionColor(bottomLeftBack, Color.Purple);
-            nonIndexedCube[20] =
-                new VertexPositionColor(bottomRightBack, Color.Purple);
-            nonIndexedCube[21] =
-                new VertexPositionColor(bottomLeftFront, Color.Purple);
-            nonIndexedCube[22] =
-                new VertexPositionColor(bottomRightBack, Color.Purple);
-            nonIndexedCube[23] =
-                new VertexPositionColor(bottomRightFront, Color.Purple);
-
-            // Left face
-            nonIndexedCube[24] =
-                new VertexPositionColor(topLeftFront, Color.Blue);
-            nonIndexedCube[25] =
-                new VertexPositionColor(bottomLeftBack, Color.Blue);
-            nonIndexedCube[26] =
-                new VertexPositionColor(bottomLeftFront, Color.Blue);
-            nonIndexedCube[27] =
-                new VertexPositionColor(topLeftBack, Color.Blue);
-            nonIndexedCube[28] =
-                new VertexPositionColor(bottomLeftBack, Color.Blue);
-            nonIndexedCube[29] =
-                new VertexPositionColor(topLeftFront, Color.Blue);
-
-            // Right face 
-            nonIndexedCube[30] =
-                new VertexPositionColor(topRightFront, Color.Green);
-            nonIndexedCube[31] =
-                new VertexPositionColor(bottomRightFront, Color.Green);
-            nonIndexedCube[32] =
-                new VertexPositionColor(bottomRightBack, Color.Green);
-            nonIndexedCube[33] =
-                new VertexPositionColor(topRightBack, Color.Green);
-            nonIndexedCube[34] =
-                new VertexPositionColor(topRightFront, Color.Green);
-            nonIndexedCube[35] =
-                new VertexPositionColor(bottomRightBack, Color.Green);
-
-            vBufferCube = new VertexBuffer(GameEngine.GraphicsDevice, typeof(VertexPositionColor), 36, BufferUsage.None);
-
-            vBufferCube.SetData<VertexPositionColor>(nonIndexedCube);
         }
     }
 }
