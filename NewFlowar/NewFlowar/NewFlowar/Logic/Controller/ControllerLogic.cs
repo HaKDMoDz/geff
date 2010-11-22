@@ -36,6 +36,7 @@ namespace NewFlowar.Logic.Controller
         private KeyManager keyDown;
         private KeyManager keyNewMap;
         private KeyManager keyHeightMapMode;
+        private KeyManager keyDetachedHexa;
 
         private MouseManager mouseLeftButton;
         private MouseManager mouseMiddleButton;
@@ -54,9 +55,11 @@ namespace NewFlowar.Logic.Controller
             this.keyLeft = new KeyManager(leftKey);
             this.keyNewMap = new KeyManager(Keys.M);
             this.keyHeightMapMode = new KeyManager(Keys.C);
+            this.keyDetachedHexa = new KeyManager(Keys.D);
 
             this.keyNewMap.KeyReleased += new KeyManager.KeyReleasedHandler(keyNewMap_KeyReleased);
             this.keyHeightMapMode.KeyReleased += new KeyManager.KeyReleasedHandler(keyHeightMapMode_KeyReleased);
+            this.keyDetachedHexa.KeyReleased += new KeyManager.KeyReleasedHandler(keyDetachedHexa_KeyReleased);
 
             this.mouseLeftButton = new MouseManager(MouseButtons.LeftButton);
             this.mouseMiddleButton = new MouseManager(MouseButtons.RightButton);
@@ -65,6 +68,11 @@ namespace NewFlowar.Logic.Controller
             this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
             this.mouseMiddleButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseMiddleButton_MouseFirstPressed);
             this.mouseMiddleButton.MousePressed += new MouseManager.MousePressedHandler(mouseMiddleButton_MousePressed);
+        }
+
+        void keyDetachedHexa_KeyReleased(Keys key, GameTime gameTime)
+        {
+            Context.DetachedHexaActivated = !Context.DetachedHexaActivated;
         }
 
         void keyHeightMapMode_KeyReleased(Keys key, GameTime gameTime)
@@ -76,6 +84,7 @@ namespace NewFlowar.Logic.Controller
             else
             {
                 Context.ContextType = ContextType.DefineSphereHeightMap;
+                gameEngine.Window.Title = "Radius : " + Context.HeightMapRadius.ToString();
             }
         }
 

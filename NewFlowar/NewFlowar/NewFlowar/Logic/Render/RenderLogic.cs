@@ -8,6 +8,7 @@ using NewFlowar.Model;
 using Microsoft.Xna.Framework.Input;
 using NewFlowar.Common;
 using NewFlowar.Model.Minion;
+using SkinnedModel;
 
 namespace NewFlowar.Logic.Render
 {
@@ -26,7 +27,6 @@ namespace NewFlowar.Logic.Render
         public GameEngine GameEngine { get; set; }
 
         BasicEffect effect;
-        BasicEffect effectCube;
 
         VertexBuffer vBuffer;
 
@@ -65,6 +65,15 @@ namespace NewFlowar.Logic.Render
 
             meshModels.Add("FlowPhant", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowPhant"));
             meshModels.Add("FlowInspector", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowInspector"));
+            meshModels.Add("FlowRobot1", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowRobot1"));
+
+            foreach (Player player in Context.Players)
+            {
+                foreach (MinionBase minion in player.Minions)
+                {
+                    minion.InitAnimationPlayer(meshModels[minion.ModelName]);
+                }
+            }
         }
 
         //Création de la caméra
@@ -98,14 +107,6 @@ namespace NewFlowar.Logic.Render
             //effect.SpecularColor = new Vector3(1, 1, 1);
             //effect.SpecularPower = 1f;
             effect.Texture = GameEngine.Content.Load<Texture2D>(@"Texture\HexaGrass");
-            effectCube = new BasicEffect(GameEngine.GraphicsDevice);
-
-            effectCube.PreferPerPixelLighting = false;
-            effectCube.VertexColorEnabled = true;
-            effectCube.LightingEnabled = false;
-            effectCube.TextureEnabled = false;
-            //effectCube.SpecularColor = new Vector3(1, 1, 1);
-            //effectCube.SpecularPower = 1f;
 
             UpdateShader(new GameTime());
         }
@@ -118,13 +119,6 @@ namespace NewFlowar.Logic.Render
 
             float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
-
-
-            effectCube.View = View;
-            effectCube.Projection = Projection;
-            //effect.World = World;
-
-            effectCube.World = Matrix.Multiply(World, Matrix.CreateTranslation(CameraTarget + new Vector3(0, 0, 10)));
         }
 
         public void CreateVertex()
@@ -209,10 +203,10 @@ namespace NewFlowar.Logic.Render
 
         private void DrawMinion(GameTime gameTime, MinionBase minion)
         {
-            DrawModel(gameTime, meshModels[minion.ModelName], Matrix.CreateRotationZ(minion.Angle) * Matrix.CreateTranslation(minion.Location));
+            DrawModel(gameTime, meshModels[minion.ModelName], Matrix.CreateRotationZ(minion.Angle) * Matrix.CreateTranslation(minion.Location), minion.AnimationPlayer);
         }
 
-        private void DrawModel(GameTime gameTime, Microsoft.Xna.Framework.Graphics.Model meshModel, Matrix mtxWorld)
+        private void DrawModel(GameTime gameTime, Microsoft.Xna.Framework.Graphics.Model meshModel, Matrix mtxWorld, AnimationPlayer animationPlayer)
         {
             float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             Vector3 lightDirection = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
@@ -220,21 +214,51 @@ namespace NewFlowar.Logic.Render
             Matrix[] mtxMeshTransform = new Matrix[meshModel.Bones.Count];
             meshModel.CopyAbsoluteBoneTransformsTo(mtxMeshTransform);
 
+            Matrix[] bones = animationPlayer.GetSkinTransforms();
+
+            bones[0] = Matrix.CreateScale(500f) * World;// *mtxWorld;
             foreach (ModelMesh mesh in meshModel.Meshes)
             {
-                foreach (BasicEffect effect2 in mesh.Effects)
-                {
-                    effect2.EnableDefaultLighting();
+                //foreach (BasicEffect effect2 in mesh.Effects)
+                //{
+                //    effect2.EnableDefaultLighting();
 
-                    if(effect2.Texture != null)
-                        effect2.TextureEnabled = true;
+                //    if(effect2.Texture != null)
+                //        effect2.TextureEnabled = true;
 
-                    effect.DirectionalLight0.Direction = lightDirection;
+                //    effect.DirectionalLight0.Direction = lightDirection;
                     
-                    effect2.World = mtxMeshTransform[mesh.ParentBone.Index] * World * mtxWorld;
-                    effect2.View = View;
-                    effect2.Projection = Projection;
+                //    effect2.World = mtxMeshTransform[mesh.ParentBone.Index] * World * mtxWorld;
+                //    effect2.View = View;
+                //    effect2.Projection = Projection;
+                //}
+
+                foreach (SkinnedEffect effect in mesh.Effects)
+                {
+
+                    //effect.VertexColorEnabled = true;
+
+                    effect.SetBoneTransforms(bones);
+                    //effect.World = mtxMeshTransform[mesh.ParentBone.Index] * World * mtxWorld;
+
+                    //effect.World = World;// *mtxWorld;
+                    effect.World = World * Matrix.CreateTranslation(50f, 50f, 10f);
+
+                    effect.View = View;
+                    effect.Projection = Projection;
+                    effect.PreferPerPixelLighting = true;
+                    
+
+
+                    effect.EnableDefaultLighting();
+                    effect.DirectionalLight0.Direction = lightDirection;
+
+                    effect.SpecularColor = new Vector3(0.25f);
+                    effect.SpecularPower = 16;
                 }
+
+
+
                 mesh.Draw();
             }
         }

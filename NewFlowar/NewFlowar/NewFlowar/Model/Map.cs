@@ -367,9 +367,9 @@ namespace NewFlowar.Model
 
         public void ElevateCell(Cell cell, float radius)
         {
-            System.Diagnostics.Stopwatch f = new System.Diagnostics.Stopwatch();
+            //System.Diagnostics.Stopwatch f = new System.Diagnostics.Stopwatch();
 
-            f.Start();
+            //f.Start();
 
             List<Cell> cellsToCalcul = new List<Cell>();
             cellsToCalcul.Add(cell);
@@ -395,10 +395,10 @@ namespace NewFlowar.Model
                 }
             }
 
-            f.Stop();
-            TimeSpan elapsed1 = f.Elapsed;
+            //f.Stop();
+            //TimeSpan elapsed1 = f.Elapsed;
 
-            f.Restart();
+            //f.Restart();
             
             /*
             foreach (Cell cell2 in cellsToCalcul)
@@ -413,17 +413,17 @@ namespace NewFlowar.Model
 
             CalcHeightPointNew(listIndexPoint);
 
-            f.Stop();
+            //f.Stop();
 
-            TimeSpan elasped2 = f.Elapsed;
+            //TimeSpan elasped2 = f.Elapsed;
             
-            f.Restart();
+            //f.Restart();
 
             CalcNormals(listIndexPoint);
 
-            f.Stop();
+            //f.Stop();
 
-            TimeSpan elasped3 = f.Elapsed;
+            //TimeSpan elasped3 = f.Elapsed;
         }
     }
 }

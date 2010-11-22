@@ -14,7 +14,7 @@ namespace NewFlowar.Model
         public Vector2 Location { get; set; }
         public Dictionary<int, Cell> Neighbourghs { get; set; }
         public Dictionary<int, int> Points { get; set; }
-        public bool ContainsMinion { get; set; }
+        public bool IsDetached { get; set; }
 
         public Cell(Map map, int x, int y, float left, float top)
         {

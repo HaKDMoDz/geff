@@ -34,12 +34,14 @@ namespace NewFlowar.Logic.GamePlay
 
                 MinionBase minion = null;
 
-                int indexMinion = rnd.Next(2);
+                int indexMinion = rnd.Next(3);
 
-                if (indexMinion == 0)
-                    minion = new Inspector(Map.Cells[indexCell]);
-                else if (indexMinion == 1)
-                    minion = new Phant(Map.Cells[indexCell]);
+                //if (indexMinion == 0)
+                //    minion = new Inspector(Map.Cells[indexCell]);
+                //else if (indexMinion == 1)
+                //    minion = new Phant(Map.Cells[indexCell]);
+                //else if (indexMinion == 2)
+                    minion = new Robot(Map.Cells[indexCell]);
 
                 Context.CurrentPlayer.Minions.Add(minion);
             }
@@ -66,6 +68,8 @@ namespace NewFlowar.Logic.GamePlay
 
         public void Update(GameTime gameTime)
         {
+            UpdateAnimation(gameTime);
+
             Random rnd = new Random();
 
             //--- Calcul la position des minions
@@ -74,7 +78,6 @@ namespace NewFlowar.Logic.GamePlay
                 for (int j = 0; j < Context.Players[i].Minions.Count; j++)
                 {
                     MinionBase minion = Context.Players[i].Minions[j];
-                    minion.CurrentCell.ContainsMinion = false;
 
                     if (minion.Path.Count > 0)
                     {
@@ -166,11 +169,20 @@ namespace NewFlowar.Logic.GamePlay
                             minion.Location = new Vector3(minion.Location.X, minion.Location.Y, 50f - distance.Value);
                     }
                     //---
-
-                    minion.CurrentCell.ContainsMinion = true;
                 }
             }
             //---
+        }
+
+        private void UpdateAnimation(GameTime gameTime)
+        {
+            foreach (Player player in Context.Players)
+            {
+                foreach (MinionBase minion in player.Minions)
+                {
+                    minion.AnimationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                }
+            }
         }
     }
 }
