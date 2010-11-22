@@ -97,8 +97,7 @@
     <Compile Include="3DModel\FlowRobot1.fbx">
       <Name>FlowRobot1</Name>
       <Importer>FbxImporter</Importer>
-      <Processor>SkinnedModelProcessor</Processor>
-      <ProcessorParameters_Scale>0.01</ProcessorParameters_Scale>
+      <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>

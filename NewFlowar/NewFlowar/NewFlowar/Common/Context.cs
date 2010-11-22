@@ -15,6 +15,7 @@ namespace NewFlowar.Common
 
         public static float HeightMapRadius { get; set; }
         public static bool DetachedHexaActivated { get; set; }
+        public static bool GoToFlagActivated { get; set; }
 
         public static Player CurrentPlayer { get; set; }
         public static List<Player> Players { get; set; }

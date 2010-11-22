@@ -37,6 +37,7 @@ namespace NewFlowar.Logic.Controller
         private KeyManager keyNewMap;
         private KeyManager keyHeightMapMode;
         private KeyManager keyDetachedHexa;
+        private KeyManager keyGoToFlag;
 
         private MouseManager mouseLeftButton;
         private MouseManager mouseMiddleButton;
@@ -56,10 +57,12 @@ namespace NewFlowar.Logic.Controller
             this.keyNewMap = new KeyManager(Keys.M);
             this.keyHeightMapMode = new KeyManager(Keys.C);
             this.keyDetachedHexa = new KeyManager(Keys.D);
+            this.keyGoToFlag = new KeyManager(Keys.F);
 
             this.keyNewMap.KeyReleased += new KeyManager.KeyReleasedHandler(keyNewMap_KeyReleased);
             this.keyHeightMapMode.KeyReleased += new KeyManager.KeyReleasedHandler(keyHeightMapMode_KeyReleased);
             this.keyDetachedHexa.KeyReleased += new KeyManager.KeyReleasedHandler(keyDetachedHexa_KeyReleased);
+            this.keyGoToFlag.KeyReleased += new KeyManager.KeyReleasedHandler(keyGoToFlag_KeyReleased);
 
             this.mouseLeftButton = new MouseManager(MouseButtons.LeftButton);
             this.mouseMiddleButton = new MouseManager(MouseButtons.RightButton);
@@ -68,6 +71,11 @@ namespace NewFlowar.Logic.Controller
             this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
             this.mouseMiddleButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseMiddleButton_MouseFirstPressed);
             this.mouseMiddleButton.MousePressed += new MouseManager.MousePressedHandler(mouseMiddleButton_MousePressed);
+        }
+
+        void keyGoToFlag_KeyReleased(Keys key, GameTime gameTime)
+        {
+            Context.GoToFlagActivated = !Context.GoToFlagActivated;
         }
 
         void keyDetachedHexa_KeyReleased(Keys key, GameTime gameTime)
@@ -100,22 +108,37 @@ namespace NewFlowar.Logic.Controller
             {
                 Context.SelectedCell = gameEngine.Render.GetSelectedCell(mouseState);
 
-                if (Context.SelectedMinion == null && Context.SelectedCell != null)
+                if (Context.SelectedCell != null && Context.GoToFlagActivated)
                 {
-                    MinionBase selectedMinion = Context.CurrentPlayer.Minions.Find(minion => minion.CurrentCell == Context.SelectedCell);
-                    Context.SelectedMinion = selectedMinion;
+                    foreach (Player player in Context.Players)
+                    {
+                        foreach (MinionBase minion in player.Minions)
+                        {
+                            minion.Path = PathFinding.CalcPath(minion.CurrentCell, Context.SelectedCell, true, 10f);
+                            minion.PathLength = (minion.Path.Count - 1) * gameEngine.GamePlay.Map.R;
+                            minion.TraveledLength = 0f;
+                        }
+                    }
                 }
-                else if (Context.SelectedMinion != null && Context.SelectedCell != null)
+                else
                 {
-                    Context.SelectedMinion.Path = PathFinding.CalcPath(Context.SelectedMinion.CurrentCell, Context.SelectedCell, true, 10f);
-                    Context.SelectedMinion.PathLength = (Context.SelectedMinion.Path.Count - 1) * gameEngine.GamePlay.Map.R;
-                    Context.SelectedMinion.TraveledLength = 0f;
-                    Context.SelectedCell = null;
-                }
+                    if (Context.SelectedMinion == null && Context.SelectedCell != null)
+                    {
+                        MinionBase selectedMinion = Context.CurrentPlayer.Minions.Find(minion => minion.CurrentCell == Context.SelectedCell);
+                        Context.SelectedMinion = selectedMinion;
+                    }
+                    else if (Context.SelectedMinion != null && Context.SelectedCell != null)
+                    {
+                        Context.SelectedMinion.Path = PathFinding.CalcPath(Context.SelectedMinion.CurrentCell, Context.SelectedCell, true, 10f);
+                        Context.SelectedMinion.PathLength = (Context.SelectedMinion.Path.Count - 1) * gameEngine.GamePlay.Map.R;
+                        Context.SelectedMinion.TraveledLength = 0f;
+                        Context.SelectedCell = null;
+                    }
 
-                if (Context.SelectedMinion != null && Context.SelectedCell == null)
-                {
-                    Context.SelectedMinion = null;
+                    if (Context.SelectedMinion != null && Context.SelectedCell == null)
+                    {
+                        Context.SelectedMinion = null;
+                    }
                 }
             }
         }
@@ -260,6 +283,8 @@ namespace NewFlowar.Logic.Controller
             //---
             keyHeightMapMode.Update(keyBoardState, gameTime);
             keyHeightMapMode.Update(keyBoardState, gameTime);
+            keyDetachedHexa.Update(keyBoardState, gameTime);
+            keyGoToFlag.Update(keyBoardState, gameTime);
             //---
 
             if (gameEngine.Render.updateViewScreen)

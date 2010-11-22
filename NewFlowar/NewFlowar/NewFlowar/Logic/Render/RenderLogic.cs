@@ -65,7 +65,7 @@ namespace NewFlowar.Logic.Render
 
             meshModels.Add("FlowPhant", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowPhant"));
             meshModels.Add("FlowInspector", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowInspector"));
-            //meshModels.Add("FlowRobot1", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowRobot1"));
+            meshModels.Add("FlowRobot1", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowRobot1"));
 
             foreach (Player player in Context.Players)
             {
@@ -203,7 +203,7 @@ namespace NewFlowar.Logic.Render
 
         private void DrawMinion(GameTime gameTime, MinionBase minion)
         {
-            float scaleZ = 1f - (float)Math.Cos(minion.BornTime.Subtract(gameTime.TotalGameTime).TotalMilliseconds * 0.01 * minion.Speed) * 0.1f;
+            float scaleZ = 1f - (float)Math.Cos(minion.BornTime.Subtract(gameTime.TotalGameTime).TotalMilliseconds * 0.01f * minion.Speed) * 0.1f;
 
             DrawModel(gameTime, meshModels[minion.ModelName], Matrix.CreateScale(1f,1f, scaleZ) * minion.MatrixRotation * Matrix.CreateTranslation(minion.Location));//, minion.AnimationPlayer);
 

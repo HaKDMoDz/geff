@@ -89,17 +89,18 @@ namespace NewFlowar.Common
             return normal;
         }
 
-        public static float? RayIntersectCell(Vector3 rayPosition, Vector3 rayDirection, Map map, Cell cell, out Vector3 normal)
+        public static Vector3 NormalCell(Map map, Cell cell)
         {
             float? pickDistance = float.MaxValue;
             float pickCurDistance = 0f;
             float barycentricU = 0f;
             float barycentricV = 0f;
-            normal = Vector3.UnitZ;
+            Vector3 rayPosition = new Vector3(cell.Location,50f);
+            Vector3 normal = Vector3.UnitZ;
 
             for (int i = 0; i < 4; i++)
             {
-                bool intersect = RayIntersectTriangle(rayPosition, rayDirection,
+                bool intersect = RayIntersectTriangle(rayPosition, -Vector3.UnitZ,
                                     map.Points[cell.Points[listTriangle[i][0]]],
                                     map.Points[cell.Points[listTriangle[i][2]]],
                                     map.Points[cell.Points[listTriangle[i][1]]],
@@ -116,6 +117,30 @@ namespace NewFlowar.Common
                 }
 
 
+            }
+
+            return normal;
+        }
+
+        public static float? RayIntersectCell(Vector3 rayPosition, Vector3 rayDirection, Map map, Cell cell)
+        {
+            float? pickDistance = float.MaxValue;
+            float pickCurDistance = 0f;
+            float barycentricU = 0f;
+            float barycentricV = 0f;
+
+            for (int i = 0; i < 4; i++)
+            {
+                bool intersect = RayIntersectTriangle(rayPosition, rayDirection,
+                                    map.Points[cell.Points[listTriangle[i][0]]],
+                                    map.Points[cell.Points[listTriangle[i][2]]],
+                                    map.Points[cell.Points[listTriangle[i][1]]],
+                                    ref pickCurDistance, ref barycentricU, ref barycentricV);
+
+                if (intersect && pickCurDistance < pickDistance)
+                {
+                    pickDistance = pickCurDistance;
+                }
             }
 
             if (pickDistance == float.MaxValue)

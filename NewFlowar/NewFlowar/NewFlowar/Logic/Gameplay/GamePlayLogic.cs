@@ -40,8 +40,8 @@ namespace NewFlowar.Logic.GamePlay
                     minion = new Inspector(Map.Cells[indexCell]);
                 else if (indexMinion == 1)
                     minion = new Phant(Map.Cells[indexCell]);
-                //else if (indexMinion == 2)
-                //    minion = new Robot(Map.Cells[indexCell]);
+                else if (indexMinion == 2)
+                    minion = new Robot(Map.Cells[indexCell]);
 
                 Context.CurrentPlayer.Minions.Add(minion);
             }
@@ -89,6 +89,9 @@ namespace NewFlowar.Logic.GamePlay
 
                         if (indexPrevCell + 1 <= minion.Path.Count - 1)
                         {
+                            Vector3 prevCellNormal;
+                            Vector3 nextCellNormal; 
+                            
                             Cell prevCell = Map.Cells[minion.Path[indexPrevCell]];
                             Cell nextCell = Map.Cells[minion.Path[indexPrevCell + 1]];
                             Cell nextCell2 = null;
@@ -99,10 +102,9 @@ namespace NewFlowar.Logic.GamePlay
                             float percent = p - (float)((int)p);
 
                             minion.Location = Vector3.Lerp(Tools.GetVector3(prevCell.Location), Tools.GetVector3(nextCell.Location), percent);
-                            Vector3 normal;
 
                             //--- Détection de la cellule sur laquelle se trouve le minion
-                            float? distance1 = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, prevCell, out normal);
+                            float? distance1 = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), -Vector3.UnitZ, Map, prevCell);
 
                             if (distance1.HasValue)
                             {
@@ -111,7 +113,7 @@ namespace NewFlowar.Logic.GamePlay
                             }
                             else
                             {
-                                float? distance2 = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, nextCell, out normal);
+                                float? distance2 = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), -Vector3.UnitZ, Map, nextCell);
 
                                 if (distance2.HasValue)
                                 {
@@ -122,22 +124,27 @@ namespace NewFlowar.Logic.GamePlay
                             //---
 
                             //--- Calcul de l'orientation du minion
-                            float angleNextCell = Tools.GetAngle(Vector2.UnitX, nextCell.Location - Tools.GetVector2(minion.Location));
-                            float angle = 0f;
+                            prevCellNormal = Tools.NormalCell(Map, prevCell);
+                            nextCellNormal = Tools.NormalCell(Map, nextCell);
+                            
+                            float angleCellToNextCell = Tools.GetAngle(Vector2.UnitX, nextCell.Location - prevCell.Location);
+                            float angleNextCellToNextCell2 = 0f;
 
                             if (nextCell2 != null)
                             {
-                                angle = Tools.GetAngle(Vector2.UnitX, nextCell2.Location - Tools.GetVector2(minion.Location));
+                                angleNextCellToNextCell2 = Tools.GetAngle(Vector2.UnitX, nextCell2.Location - nextCell.Location);
                             }
                             else
                             {
-                                percent = 0f;
+                                //percent = 1f;
                             }
+                            
+                            Quaternion qPrevCell = Quaternion.CreateFromAxisAngle(prevCellNormal, angleCellToNextCell);
+                            Quaternion qNextCell = Quaternion.CreateFromAxisAngle(nextCellNormal, angleNextCellToNextCell2);
 
-                            minion.Angle = angleNextCell * (1f - percent) + angle * percent;
+                            Quaternion qRotation = Quaternion.Lerp(qPrevCell, qNextCell, percent);
 
-                            minion.MatrixRotation = Matrix.CreateLookAt(Vector3.Zero, -normal, Vector3.Backward);
-                            minion.MatrixRotation = Matrix.CreateRotationZ(minion.Angle) * Matrix.Invert(minion.MatrixRotation);
+                            minion.MatrixRotation = Matrix.CreateFromQuaternion(qRotation);
                             //---
                         }
                         else
@@ -160,18 +167,18 @@ namespace NewFlowar.Logic.GamePlay
                     }
 
                     //--- Calcul de la position sur l'axe Z du minion (selon le terrain)
-                    if (minion.Location.Z == 0)
-                    {
-                        Vector3 normal;
-                        float? distance = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, minion.CurrentCell, out normal);
+                    //if (minion.Location.Z == 0)
+                    //{
+                    //    Vector3 normal;
+                    //    float? distance = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, minion.CurrentCell, out normal);
 
-                        if (distance.HasValue)
-                        {
-                            minion.Location = new Vector3(minion.Location.X, minion.Location.Y, 40f - distance.Value);
-                            minion.MatrixRotation = Matrix.CreateLookAt(Vector3.Zero, normal, Vector3.Backward);
-                            minion.MatrixRotation = Matrix.Transpose(minion.MatrixRotation);
-                        }
-                    }
+                    //    if (distance.HasValue)
+                    //    {
+                    //        minion.Location = new Vector3(minion.Location.X, minion.Location.Y, 40f - distance.Value);
+                    //        minion.MatrixRotation = Matrix.CreateLookAt(Vector3.Zero, normal, Vector3.Backward);
+                    //        minion.MatrixRotation = Matrix.Transpose(minion.MatrixRotation);
+                    //    }
+                    //}
                     //---
                 }
             }
