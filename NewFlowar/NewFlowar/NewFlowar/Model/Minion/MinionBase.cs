@@ -20,8 +20,10 @@ namespace NewFlowar.Model.Minion
         public float PathLength { get; set; }
         public float TraveledLength { get; set; }
         public float Angle { get; set; }
+        public Matrix MatrixRotation { get; set; }
+
         public TimeSpan BornTime { get; set; }
-        public AnimationPlayer AnimationPlayer { get; set; }
+        //public AnimationPlayer AnimationPlayer { get; set; }
 
         public MinionBase(Cell cellStartLocation)
         {
@@ -31,21 +33,21 @@ namespace NewFlowar.Model.Minion
             this.BornTime = DateTime.Now.TimeOfDay;
         }
 
-        public void InitAnimationPlayer(Microsoft.Xna.Framework.Graphics.Model model)
-        {
-            // Look up our custom skinning information.
-            SkinningData skinningData = model.Tag as SkinningData;
+        //public void InitAnimationPlayer(Microsoft.Xna.Framework.Graphics.Model model)
+        //{
+        //    // Look up our custom skinning information.
+        //    SkinningData skinningData = model.Tag as SkinningData;
 
-            if (skinningData == null)
-                throw new InvalidOperationException
-                    ("This model does not contain a SkinningData tag.");
+        //    if (skinningData == null)
+        //        throw new InvalidOperationException
+        //            ("This model does not contain a SkinningData tag.");
 
-            // Create an animation player, and start decoding an animation clip.
-            AnimationPlayer = new AnimationPlayer(skinningData);
+        //    // Create an animation player, and start decoding an animation clip.
+        //    AnimationPlayer = new AnimationPlayer(skinningData);
 
-            AnimationClip clip = skinningData.AnimationClips.Values.ElementAt<AnimationClip>(0);//["Walking"];
+        //    AnimationClip clip = skinningData.AnimationClips.Values.ElementAt<AnimationClip>(0);//["Walking"];
 
-            AnimationPlayer.StartClip(clip);
-        }
+        //    AnimationPlayer.StartClip(clip);
+        //}
     }
 }

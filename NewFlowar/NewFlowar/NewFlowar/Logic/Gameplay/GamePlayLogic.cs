@@ -28,20 +28,20 @@ namespace NewFlowar.Logic.GamePlay
 
             Random rnd = new Random();
             Context.CurrentPlayer.Minions = new List<MinionBase>();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 50; i++)
             {
                 int indexCell = rnd.Next(Map.Cells.Count);
 
                 MinionBase minion = null;
 
-                int indexMinion = rnd.Next(3);
+                int indexMinion = rnd.Next(2);
 
-                //if (indexMinion == 0)
-                //    minion = new Inspector(Map.Cells[indexCell]);
-                //else if (indexMinion == 1)
-                //    minion = new Phant(Map.Cells[indexCell]);
+                if (indexMinion == 0)
+                    minion = new Inspector(Map.Cells[indexCell]);
+                else if (indexMinion == 1)
+                    minion = new Phant(Map.Cells[indexCell]);
                 //else if (indexMinion == 2)
-                    minion = new Robot(Map.Cells[indexCell]);
+                //    minion = new Robot(Map.Cells[indexCell]);
 
                 Context.CurrentPlayer.Minions.Add(minion);
             }
@@ -68,7 +68,7 @@ namespace NewFlowar.Logic.GamePlay
 
         public void Update(GameTime gameTime)
         {
-            UpdateAnimation(gameTime);
+            //UpdateAnimation(gameTime);
 
             Random rnd = new Random();
 
@@ -99,9 +99,10 @@ namespace NewFlowar.Logic.GamePlay
                             float percent = p - (float)((int)p);
 
                             minion.Location = Vector3.Lerp(Tools.GetVector3(prevCell.Location), Tools.GetVector3(nextCell.Location), percent);
+                            Vector3 normal;
 
                             //--- Détection de la cellule sur laquelle se trouve le minion
-                            float? distance1 = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, prevCell);
+                            float? distance1 = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, prevCell, out normal);
 
                             if (distance1.HasValue)
                             {
@@ -110,7 +111,7 @@ namespace NewFlowar.Logic.GamePlay
                             }
                             else
                             {
-                                float? distance2 = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, nextCell);
+                                float? distance2 = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, nextCell, out normal);
 
                                 if (distance2.HasValue)
                                 {
@@ -134,6 +135,9 @@ namespace NewFlowar.Logic.GamePlay
                             }
 
                             minion.Angle = angleNextCell * (1f - percent) + angle * percent;
+
+                            minion.MatrixRotation = Matrix.CreateLookAt(Vector3.Zero, -normal, Vector3.Backward);
+                            minion.MatrixRotation = Matrix.CreateRotationZ(minion.Angle) * Matrix.Invert(minion.MatrixRotation);
                             //---
                         }
                         else
@@ -158,15 +162,15 @@ namespace NewFlowar.Logic.GamePlay
                     //--- Calcul de la position sur l'axe Z du minion (selon le terrain)
                     if (minion.Location.Z == 0)
                     {
-                        float? distance = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, minion.CurrentCell);
+                        Vector3 normal;
+                        float? distance = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, minion.CurrentCell, out normal);
 
                         if (distance.HasValue)
                         {
-                            minion.Location = new Vector3(minion.Location.X, minion.Location.Y, 50f - distance.Value);
+                            minion.Location = new Vector3(minion.Location.X, minion.Location.Y, 40f - distance.Value);
+                            minion.MatrixRotation = Matrix.CreateLookAt(Vector3.Zero, normal, Vector3.Backward);
+                            minion.MatrixRotation = Matrix.Transpose(minion.MatrixRotation);
                         }
-
-                        if (distance.HasValue)
-                            minion.Location = new Vector3(minion.Location.X, minion.Location.Y, 50f - distance.Value);
                     }
                     //---
                 }
@@ -174,15 +178,15 @@ namespace NewFlowar.Logic.GamePlay
             //---
         }
 
-        private void UpdateAnimation(GameTime gameTime)
-        {
-            foreach (Player player in Context.Players)
-            {
-                foreach (MinionBase minion in player.Minions)
-                {
-                    minion.AnimationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
-                }
-            }
-        }
+        //private void UpdateAnimation(GameTime gameTime)
+        //{
+        //    foreach (Player player in Context.Players)
+        //    {
+        //        foreach (MinionBase minion in player.Minions)
+        //        {
+        //            minion.AnimationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+        //        }
+        //    }
+        //}
     }
 }

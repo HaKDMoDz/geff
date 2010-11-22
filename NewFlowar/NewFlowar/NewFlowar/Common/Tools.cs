@@ -73,12 +73,29 @@ namespace NewFlowar.Common
             return distance;
         }
 
-        public static float? RayIntersectCell(Vector3 rayPosition, Vector3 rayDirection, Map map, Cell cell)
+        public static Vector3 NormalTriangle(Vector3 vec1, Vector3 vec2, Vector3 vec3)
+        {
+            Vector3 normal = Vector3.Zero;
+
+            Vector3 firstvec = vec2 - vec1;
+            Vector3 secondvec = vec1 - vec3;
+
+            //Vector3 firstvec = vertices[indices[i * 3 + 1]].Position - vertices[indices[i * 3]].Position;
+            //Vector3 secondvec = vertices[indices[i * 3]].Position - vertices[indices[i * 3 + 2]].Position;
+            
+            normal = Vector3.Cross(firstvec, secondvec);
+            normal.Normalize();
+
+            return normal;
+        }
+
+        public static float? RayIntersectCell(Vector3 rayPosition, Vector3 rayDirection, Map map, Cell cell, out Vector3 normal)
         {
             float? pickDistance = float.MaxValue;
             float pickCurDistance = 0f;
             float barycentricU = 0f;
             float barycentricV = 0f;
+            normal = Vector3.UnitZ;
 
             for (int i = 0; i < 4; i++)
             {
@@ -89,7 +106,16 @@ namespace NewFlowar.Common
                                     ref pickCurDistance, ref barycentricU, ref barycentricV);
 
                 if (intersect && pickCurDistance < pickDistance)
+                {
                     pickDistance = pickCurDistance;
+
+                    normal = NormalTriangle(
+                                    map.Points[cell.Points[listTriangle[i][0]]],
+                                    map.Points[cell.Points[listTriangle[i][1]]],
+                                    map.Points[cell.Points[listTriangle[i][2]]]);
+                }
+
+
             }
 
             if (pickDistance == float.MaxValue)
@@ -123,12 +149,12 @@ namespace NewFlowar.Common
 
             // Calculate distance from vert0 to ray origin
             Vector3 tvec;
-            
+
             Vector3.Subtract(ref rayPosition, ref tri0, out tvec);
 
             // Calculate barycentricU parameter and test bounds
             //barycentricU;
-            
+
             Vector3.Dot(ref tvec, ref pvec, out barycentricU);
 
             if (barycentricU < 0.0f || barycentricU > det)
