@@ -114,9 +114,7 @@ namespace NewFlowar.Logic.Controller
                     {
                         foreach (MinionBase minion in player.Minions)
                         {
-                            minion.Path = PathFinding.CalcPath(minion.CurrentCell, Context.SelectedCell, true, 10f);
-                            minion.PathLength = (minion.Path.Count - 1) * gameEngine.GamePlay.Map.R;
-                            minion.TraveledLength = 0f;
+                            gameEngine.GamePlay.CalcMinionNewPath(minion, Context.SelectedCell);
                         }
                     }
                 }
@@ -129,9 +127,8 @@ namespace NewFlowar.Logic.Controller
                     }
                     else if (Context.SelectedMinion != null && Context.SelectedCell != null)
                     {
-                        Context.SelectedMinion.Path = PathFinding.CalcPath(Context.SelectedMinion.CurrentCell, Context.SelectedCell, true, 10f);
-                        Context.SelectedMinion.PathLength = (Context.SelectedMinion.Path.Count - 1) * gameEngine.GamePlay.Map.R;
-                        Context.SelectedMinion.TraveledLength = 0f;
+                        gameEngine.GamePlay.CalcMinionNewPath(Context.SelectedMinion, Context.SelectedCell);
+
                         Context.SelectedCell = null;
                     }
 

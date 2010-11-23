@@ -144,16 +144,17 @@ namespace NewFlowar.Logic.Render
         private void AddVertex(int index1, int index2, int index3, List<VertexPositionNormalTexture> vertex, Cell cell)
         {
             Dictionary<int, Vector2> uv = new Dictionary<int, Vector2>();
-            //if (cell.ContainsMinion)
-            //{
-            //    uv.Add(1, new Vector2(0f, 0f));
-            //    uv.Add(2, new Vector2(0f, 0f));
-            //    uv.Add(3, new Vector2(0f, 0f));
-            //    uv.Add(4, new Vector2(0f, 0f));
-            //    uv.Add(5, new Vector2(0f, 0f));
-            //    uv.Add(6, new Vector2(0f, 0f));
-            //}
-            //else
+            
+            if (cell.IsFlaged)
+            {
+                uv.Add(1, new Vector2(0f, 0f));
+                uv.Add(2, new Vector2(0f, 0f));
+                uv.Add(3, new Vector2(0f, 0f));
+                uv.Add(4, new Vector2(0f, 0f));
+                uv.Add(5, new Vector2(0f, 0f));
+                uv.Add(6, new Vector2(0f, 0f));
+            }
+            else
             {
                 uv.Add(1, new Vector2(0.75f, 0f));
                 uv.Add(2, new Vector2(1f, 0.5f));

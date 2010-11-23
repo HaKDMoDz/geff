@@ -61,7 +61,7 @@ namespace NewFlowar
 
             Content.RootDirectory = "Content";
 
-            GamePlay = new GamePlayLogic();
+            GamePlay = new GamePlayLogic(this);
             Render = new RenderLogic(this);
             Controller = new ControllerLogic(this);
 

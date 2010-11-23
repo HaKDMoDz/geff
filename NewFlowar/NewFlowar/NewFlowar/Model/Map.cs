@@ -34,7 +34,7 @@ namespace NewFlowar.Model
 
             float d = (float)Math.Sqrt(0.75);
 
-            for (int y = 1; y <= Height; y++)
+            for (int y = 1; y <= Height/2; y++)
             {
                 for (int x = 1; x <= Width; x++)
                 {
@@ -81,7 +81,7 @@ namespace NewFlowar.Model
             CalcHeightPoint();
             CalcNormals();
 
-            DrawMapIntoImageFile();
+            //DrawMapIntoImageFile();
         }
 
         public void CalcNeighborough()
@@ -112,7 +112,7 @@ namespace NewFlowar.Model
         private Cell GetNeighborough(Cell cell, int offsetX, int offsetY)
         {
             if (cell.Coord.X + offsetX - 1 >= 0 && cell.Coord.X + offsetX <= this.Width &&
-                cell.Coord.Y + offsetY - 1 >= 0 && cell.Coord.Y + offsetY <= this.Height * 2)
+                cell.Coord.Y + offsetY - 1 >= 0 && cell.Coord.Y + offsetY <= this.Height)
             {
                 return Cells[(cell.Coord.Y + offsetY - 1) * this.Width + cell.Coord.X + offsetX - 1];
             }
@@ -278,6 +278,11 @@ namespace NewFlowar.Model
                 normal.Normalize();
                 Normals.Add(normal);
             }
+
+            foreach (Cell cell in Cells)
+            {
+                cell.Normal = Tools.NormalCell(this, cell);
+            }
         }
 
         private void CalcNormals(List<int> listIndexPoint)
@@ -424,6 +429,28 @@ namespace NewFlowar.Model
             //f.Stop();
 
             //TimeSpan elasped3 = f.Elapsed;
+        }
+
+        private byte[,] _matrix = null;
+        public byte[,] Matrix 
+        {
+            get
+            {
+                if (_matrix == null)
+                {
+                    _matrix = new byte[this.Width, this.Height*2];
+
+                    for (int y = 1; y <= Height; y++)
+                    {
+                        for (int x = 1; x <= Width; x++)
+                        {
+                            _matrix[x-1, y-1] = (byte)Cells[(x-1)+(y-1)*Width].Height;
+                        }
+                    }
+                }
+
+                return _matrix;
+            }
         }
     }
 }

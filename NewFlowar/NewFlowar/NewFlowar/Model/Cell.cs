@@ -15,6 +15,8 @@ namespace NewFlowar.Model
         public Dictionary<int, Cell> Neighbourghs { get; set; }
         public Dictionary<int, int> Points { get; set; }
         public bool IsDetached { get; set; }
+        public bool IsFlaged { get; set; }
+        public Vector3 Normal { get; set; }
 
         public Cell(Map map, int x, int y, float left, float top)
         {

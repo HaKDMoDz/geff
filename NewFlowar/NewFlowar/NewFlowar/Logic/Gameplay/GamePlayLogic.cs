@@ -7,15 +7,20 @@ using NewFlowar.Common;
 using NewFlowar.Model.Minion;
 using Microsoft.Xna.Framework;
 using NewFlowar.Logic.AI;
+using Algorithms;
 
 namespace NewFlowar.Logic.GamePlay
 {
     public class GamePlayLogic
     {
-        public Map Map { get; set; }
+        private Random rnd = new Random();
 
-        public GamePlayLogic()
+        public Map Map { get; set; }
+        public GameEngine GameEngine { get; set; }
+
+        public GamePlayLogic(GameEngine gameEngine)
         {
+            this.GameEngine = gameEngine;
             InitializeMap();
             InitializePlayers();
         }
@@ -28,7 +33,7 @@ namespace NewFlowar.Logic.GamePlay
 
             Random rnd = new Random();
             Context.CurrentPlayer.Minions = new List<MinionBase>();
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 500; i++)
             {
                 int indexCell = rnd.Next(Map.Cells.Count);
 
@@ -36,12 +41,12 @@ namespace NewFlowar.Logic.GamePlay
 
                 int indexMinion = rnd.Next(2);
 
-                if (indexMinion == 0)
-                    minion = new Inspector(Map.Cells[indexCell]);
-                else if (indexMinion == 1)
-                    minion = new Phant(Map.Cells[indexCell]);
-                else if (indexMinion == 2)
-                    minion = new Robot(Map.Cells[indexCell]);
+                //if (indexMinion == 0)
+                minion = new Inspector(Map.Cells[indexCell]);
+                //else if (indexMinion == 1)
+                //    minion = new Phant(Map.Cells[indexCell]);
+                //else if (indexMinion == 2)
+                //    minion = new Robot(Map.Cells[indexCell]);
 
                 Context.CurrentPlayer.Minions.Add(minion);
             }
@@ -51,9 +56,9 @@ namespace NewFlowar.Logic.GamePlay
         {
             Context.HeightMapRadius = 10f;
 
-            Map = new Map(20, 40);
+            Map = new Map(16, 16);
             Map.CreateGrid();
-            
+
             Map.Cells[Map.Cells.Count / 2].Height = Map.R * 10;
             Map.ElevateCell(Map.Cells[Map.Cells.Count / 2], 80f);
 
@@ -62,7 +67,7 @@ namespace NewFlowar.Logic.GamePlay
 
             Map.Cells[Map.Cells.Count / 3].Height = -Map.R * 15;
             Map.ElevateCell(Map.Cells[Map.Cells.Count / 3], 50f);
-            
+
             Map.CalcHeightPoint();
         }
 
@@ -70,7 +75,6 @@ namespace NewFlowar.Logic.GamePlay
         {
             //UpdateAnimation(gameTime);
 
-            Random rnd = new Random();
 
             //--- Calcul la position des minions
             for (int i = 0; i < Context.Players.Count; i++)
@@ -89,9 +93,6 @@ namespace NewFlowar.Logic.GamePlay
 
                         if (indexPrevCell + 1 <= minion.Path.Count - 1)
                         {
-                            Vector3 prevCellNormal;
-                            Vector3 nextCellNormal; 
-                            
                             Cell prevCell = Map.Cells[minion.Path[indexPrevCell]];
                             Cell nextCell = Map.Cells[minion.Path[indexPrevCell + 1]];
                             Cell nextCell2 = null;
@@ -99,7 +100,7 @@ namespace NewFlowar.Logic.GamePlay
                             if (indexPrevCell + 2 <= minion.Path.Count - 1)
                                 nextCell2 = Map.Cells[minion.Path[indexPrevCell + 2]];
 
-                            float percent = p - (float)((int)p);
+                            float percent = p - (float)(indexPrevCell);
 
                             minion.Location = Vector3.Lerp(Tools.GetVector3(prevCell.Location), Tools.GetVector3(nextCell.Location), percent);
 
@@ -124,9 +125,6 @@ namespace NewFlowar.Logic.GamePlay
                             //---
 
                             //--- Calcul de l'orientation du minion
-                            prevCellNormal = Tools.NormalCell(Map, prevCell);
-                            nextCellNormal = Tools.NormalCell(Map, nextCell);
-                            
                             float angleCellToNextCell = Tools.GetAngle(Vector2.UnitX, nextCell.Location - prevCell.Location);
                             float angleNextCellToNextCell2 = 0f;
 
@@ -138,9 +136,9 @@ namespace NewFlowar.Logic.GamePlay
                             {
                                 //percent = 1f;
                             }
-                            
-                            Quaternion qPrevCell = Quaternion.CreateFromAxisAngle(prevCellNormal, angleCellToNextCell);
-                            Quaternion qNextCell = Quaternion.CreateFromAxisAngle(nextCellNormal, angleNextCellToNextCell2);
+
+                            Quaternion qPrevCell = Quaternion.CreateFromAxisAngle(prevCell.Normal, angleCellToNextCell);
+                            Quaternion qNextCell = Quaternion.CreateFromAxisAngle(nextCell.Normal, angleNextCellToNextCell2);
 
                             Quaternion qRotation = Quaternion.Lerp(qPrevCell, qNextCell, percent);
 
@@ -157,32 +155,53 @@ namespace NewFlowar.Logic.GamePlay
                     else
                     {
                         int indexCell = rnd.Next(Map.Cells.Count);
-                        if (Map.Cells[indexCell].Height < 10f)
-                        {
-                            minion.Path = PathFinding.CalcPath(minion.CurrentCell, Map.Cells[indexCell], true, 10f);
 
-                            minion.PathLength = (minion.Path.Count - 1) * Map.R;
-                            minion.TraveledLength = 0f;
-                        }
+                        CalcMinionNewPath(minion, Map.Cells[indexCell]);
                     }
-
-                    //--- Calcul de la position sur l'axe Z du minion (selon le terrain)
-                    //if (minion.Location.Z == 0)
-                    //{
-                    //    Vector3 normal;
-                    //    float? distance = Tools.RayIntersectCell(new Vector3(minion.Location.X, minion.Location.Y, 50f), new Vector3(0f, 0f, -1f), Map, minion.CurrentCell, out normal);
-
-                    //    if (distance.HasValue)
-                    //    {
-                    //        minion.Location = new Vector3(minion.Location.X, minion.Location.Y, 40f - distance.Value);
-                    //        minion.MatrixRotation = Matrix.CreateLookAt(Vector3.Zero, normal, Vector3.Backward);
-                    //        minion.MatrixRotation = Matrix.Transpose(minion.MatrixRotation);
-                    //    }
-                    //}
-                    //---
                 }
             }
             //---
+        }
+
+        public void CalcMinionNewPath(MinionBase minion, Cell cell)
+        {
+            if (false)
+            {
+                minion.Path = PathFinding.CalcPath(minion.CurrentCell, cell, true, 10f);
+                minion.PathLength = (minion.Path.Count - 1) * Map.R;
+                minion.TraveledLength = 0f;
+            }
+            else
+            {
+                IPathFinder mPathFinder = new PathFinderFast(Map.Matrix);
+                //IPathFinder mPathFinder = new PathFinder(Map.Matrix);
+
+                mPathFinder.Formula = HeuristicFormula.Manhattan;
+                mPathFinder.Diagonals = false;
+                mPathFinder.HeavyDiagonals = false;
+                mPathFinder.HeuristicEstimate = 1;
+                mPathFinder.PunishChangeDirection = false;
+                mPathFinder.TieBreaker = false;
+                mPathFinder.SearchLimit = 5000;
+                mPathFinder.DebugProgress = true;
+                mPathFinder.DebugFoundPath = true;
+
+                List<PathFinderNode> path = mPathFinder.FindPath(new System.Drawing.Point(minion.CurrentCell.Coord.X - 1, minion.CurrentCell.Coord.Y - 1), new System.Drawing.Point(cell.Coord.X - 1, cell.Coord.Y - 1));
+
+                minion.Path = new List<int>();
+                if (path != null)
+                {
+                    path.Reverse();
+
+                    for (int i = 0; i < path.Count; i++)
+                    {
+                        minion.Path.Add(path[i].X + path[i].Y * Map.Width);
+                    }
+                }
+
+                minion.PathLength = (minion.Path.Count - 1) * Map.R;
+                minion.TraveledLength = 0f;
+            }
         }
 
         //private void UpdateAnimation(GameTime gameTime)
