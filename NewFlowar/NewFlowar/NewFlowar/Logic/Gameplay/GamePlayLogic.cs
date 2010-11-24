@@ -56,7 +56,7 @@ namespace NewFlowar.Logic.GamePlay
         {
             Context.HeightMapRadius = 10f;
 
-            Map = new Map(16, 16);
+            Map = new Map(32,32);
             Map.CreateGrid();
 
             Map.Cells[Map.Cells.Count / 2].Height = Map.R * 10;
@@ -165,8 +165,6 @@ namespace NewFlowar.Logic.GamePlay
 
         public void CalcMinionNewPath(MinionBase minion, Cell cell)
         {
-            return;
-
             if (false)
             {
                 minion.Path = PathFinding.CalcPath(minion.CurrentCell, cell, true, 10f);

@@ -281,23 +281,28 @@ namespace NewFlowar.Logic.Controller
                 Vector3 forward = Tools.GetVector3(cameraDirection);
                 Vector3 right = Vector3.Cross(forward, Vector3.Backward);
 
-                float rotationSpeed = deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * 0.01f;
+                float rotationSpeed = deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * 0.02f;
 
-                Quaternion qyaw = Quaternion.CreateFromAxisAngle(Vector3.Backward, -(float)gamePadState.ThumbSticks.Right.X*rotationSpeed);
+                prevAngleX += gamePadState.ThumbSticks.Right.X * rotationSpeed;
+                prevAngleY += gamePadState.ThumbSticks.Right.Y * rotationSpeed;
+
+                prevAngleY = Microsoft.Xna.Framework.MathHelper.Clamp(prevAngleY, -0.9f, 0.9f);
+
+                Quaternion qyaw = Quaternion.CreateFromAxisAngle(Vector3.Backward, -(float)prevAngleX);
                 qyaw.Normalize();
-                Quaternion qtilt = Quaternion.CreateFromAxisAngle(right, (float)gamePadState.ThumbSticks.Right.Y * rotationSpeed);
+                Quaternion qtilt = Quaternion.CreateFromAxisAngle(right, (float)prevAngleY);
                 qtilt.Normalize();
                 Quaternion qroll = Quaternion.CreateFromAxisAngle(forward, 0f);
                 qroll.Normalize();
-                Quaternion yawpitch = qyaw * qtilt;// *qroll;
+                Quaternion yawpitch = qyaw * qtilt *qroll;
                 yawpitch.Normalize();
 
-                gameEngine.Render.CameraTarget = gameEngine.Render.CameraPosition + Vector3.Transform(forward, yawpitch)*10f;
+                gameEngine.Render.CameraTarget = gameEngine.Render.CameraPosition + Vector3.Transform(Vector3.UnitY, yawpitch);
 
                 float angleCamera = Tools.GetAngle(Vector2.UnitY, cameraDirection);
                 Quaternion q = Quaternion.CreateFromAxisAngle(Vector3.Backward, angleCamera);
 
-                vecTempTranslation += Vector2.Transform(gamePadState.ThumbSticks.Left, q) * deltaTranslation * gameTime.ElapsedGameTime.Milliseconds;
+                vecTempTranslation += Vector2.Transform(gamePadState.ThumbSticks.Left, q) * rotationSpeed*30f;
                 gameEngine.Render.updateViewScreen = true;
             }
             //---
@@ -340,6 +345,9 @@ namespace NewFlowar.Logic.Controller
                 this.gameEngine.Exit();
             }
         }
+
+        private float prevAngleX = 0f;
+        private float prevAngleY = 0f;
 
         public void UpdateEnd(GameTime gameTime)
         {

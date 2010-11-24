@@ -34,10 +34,11 @@ namespace NewFlowar.Model
 
             float d = (float)Math.Sqrt(0.75);
 
+            TimeSpan t = DateTime.Now.TimeOfDay;
 
-            for (int x = 1; x <= Width / 2; x++)
+            for (int y = 1; y <= Height / 2; y++)
             {
-                for (int y = 1; y <= Height; y++)
+                for (int x = 1; x <= Width; x++)
                 {
                     float fx = (float)x;
                     float fy = (float)y;
@@ -77,10 +78,25 @@ namespace NewFlowar.Model
                 }
             }
 
+            TimeSpan r1 = t.Subtract(DateTime.Now.TimeOfDay);
+            t = DateTime.Now.TimeOfDay;
+
             CalcNeighborough();
+
+            TimeSpan r2 = t.Subtract(DateTime.Now.TimeOfDay);
+            t = DateTime.Now.TimeOfDay;
+
             CalcPoints();
-            CalcHeightPoint();
+
+            TimeSpan r3 = t.Subtract(DateTime.Now.TimeOfDay);
+            t = DateTime.Now.TimeOfDay;
+
+            //CalcHeightPoint();
+
             CalcNormals();
+
+            TimeSpan r5 = t.Subtract(DateTime.Now.TimeOfDay);
+            t = DateTime.Now.TimeOfDay;
 
             DrawMapIntoImageFile();
         }
@@ -251,23 +267,31 @@ namespace NewFlowar.Model
 
             Normals = new List<Vector3>();
 
+            Vector3 vecP0, vecP1, vecP2;
+
+            Vector3 vec1, vec2;
+            Vector3 normal, normal2;
+            int nb = 0;
+            List<Cell> listCell;
+
             for (int i = 0; i < Points.Count; i++)
             {
-                int nb = 0;
-                Vector3 normal = Vector3.Zero;
-
-                List<Cell> listCell = Cells.FindAll(cell => cell.Points.ContainsValue(i));
+                nb = 0;
+                listCell = Cells.FindAll(cell => cell.Points.ContainsValue(i));
+                normal = Vector3.Zero;
 
                 foreach (Cell cell in listCell)
                 {
-                    foreach (int key in cell.Points.Keys)
+                    //foreach (int key in cell.Points.Keys)
+                    for (int k = 1; k <= 6; k++)
                     {
-                        if (cell.Points[key] == i)
+                        if (cell.Points[k] == i)
                         {
-                            for (int j = 0; j < dic[key].GetUpperBound(0); j++)
+                            for (int j = 0; j < dic[k].GetUpperBound(0); j++)
                             {
-                                Vector3 vec1 = Points[cell.Points[dic[key][j, 0]]] - Points[cell.Points[dic[key][j, 1]]];
-                                Vector3 vec2 = Points[cell.Points[dic[key][j, 2]]] - Points[cell.Points[dic[key][j, 1]]];
+                                vec1 = Points[cell.Points[dic[k][j, 0]]] - Points[cell.Points[dic[k][j, 1]]];
+                                vec2 = Points[cell.Points[dic[k][j, 2]]] - Points[cell.Points[dic[k][j, 1]]];
+
                                 normal += Vector3.Cross(vec1, vec2);
                                 nb++;
                             }
@@ -275,7 +299,8 @@ namespace NewFlowar.Model
                     }
                 }
 
-                normal /= nb;
+                normal = Vector3.Divide(normal, nb);
+                //normal /= nb;
                 normal.Normalize();
                 Normals.Add(normal);
             }
