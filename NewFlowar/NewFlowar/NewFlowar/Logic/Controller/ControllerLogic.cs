@@ -23,6 +23,7 @@ namespace NewFlowar.Logic.Controller
 
         public MouseState mouseState;
         public KeyboardState keyBoardState = Keyboard.GetState();
+        public GamePadState gamePadState;
 
         public Vector2 mousePosition;
         public Point mousePositionPoint;
@@ -45,6 +46,7 @@ namespace NewFlowar.Logic.Controller
 
         private float prevAngle;
         private float prevRayon;
+        private float prevRightStickLength;
         #endregion
 
         private GameEngine gameEngine { get; set; }
@@ -162,6 +164,7 @@ namespace NewFlowar.Logic.Controller
             //--- Update Mouse & Keyboard state
             mouseState = Mouse.GetState();
             keyBoardState = Keyboard.GetState();
+            gamePadState = GamePad.GetState((PlayerIndex)Context.CurrentPlayer.PlayerId);
             //---
 
             //--- Relative mouse position
@@ -185,7 +188,7 @@ namespace NewFlowar.Logic.Controller
                     else
                     {
                         Context.SelectedCell.Height += (float)(prevMouseWheel - curMouseWheel) / 250f;
-                        gameEngine.Window.Title = "Hauteur : " +  Context.SelectedCell.Height.ToString();
+                        gameEngine.Window.Title = "Hauteur : " + Context.SelectedCell.Height.ToString();
                     }
 
                     gameEngine.GamePlay.Map.ElevateCell(Context.SelectedCell, Context.HeightMapRadius);
@@ -267,6 +270,34 @@ namespace NewFlowar.Logic.Controller
             if (keyBoardState.IsKeyDown(leftKey))
             {
                 vecTempTranslation -= deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * Tools.GetPerpendicularVector(cameraDirection);
+                gameEngine.Render.updateViewScreen = true;
+            }
+            //---
+
+            //--- Gamepad
+
+            if (gamePadState.IsConnected)
+            {
+                Vector3 forward = Tools.GetVector3(cameraDirection);
+                Vector3 right = Vector3.Cross(forward, Vector3.Backward);
+
+                float rotationSpeed = deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * 0.01f;
+
+                Quaternion qyaw = Quaternion.CreateFromAxisAngle(Vector3.Backward, -(float)gamePadState.ThumbSticks.Right.X*rotationSpeed);
+                qyaw.Normalize();
+                Quaternion qtilt = Quaternion.CreateFromAxisAngle(right, (float)gamePadState.ThumbSticks.Right.Y * rotationSpeed);
+                qtilt.Normalize();
+                Quaternion qroll = Quaternion.CreateFromAxisAngle(forward, 0f);
+                qroll.Normalize();
+                Quaternion yawpitch = qyaw * qtilt;// *qroll;
+                yawpitch.Normalize();
+
+                gameEngine.Render.CameraTarget = gameEngine.Render.CameraPosition + Vector3.Transform(forward, yawpitch)*10f;
+
+                float angleCamera = Tools.GetAngle(Vector2.UnitY, cameraDirection);
+                Quaternion q = Quaternion.CreateFromAxisAngle(Vector3.Backward, angleCamera);
+
+                vecTempTranslation += Vector2.Transform(gamePadState.ThumbSticks.Left, q) * deltaTranslation * gameTime.ElapsedGameTime.Milliseconds;
                 gameEngine.Render.updateViewScreen = true;
             }
             //---

@@ -31,7 +31,7 @@ namespace NewFlowar.Model.Minion
         public Robot(Cell cellStartLocation)
             : base(cellStartLocation)
         {
-            _speed = 0.1f;
+            _speed = 1f;
         }
     }
 }

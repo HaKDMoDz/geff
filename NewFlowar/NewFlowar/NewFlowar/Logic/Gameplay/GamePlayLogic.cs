@@ -33,20 +33,20 @@ namespace NewFlowar.Logic.GamePlay
 
             Random rnd = new Random();
             Context.CurrentPlayer.Minions = new List<MinionBase>();
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 100; i++)
             {
                 int indexCell = rnd.Next(Map.Cells.Count);
 
                 MinionBase minion = null;
 
-                int indexMinion = rnd.Next(2);
+                int indexMinion = rnd.Next(3);
 
-                //if (indexMinion == 0)
+                if (indexMinion == 0)
                 minion = new Inspector(Map.Cells[indexCell]);
-                //else if (indexMinion == 1)
-                //    minion = new Phant(Map.Cells[indexCell]);
-                //else if (indexMinion == 2)
-                //    minion = new Robot(Map.Cells[indexCell]);
+                else if (indexMinion == 1)
+                    minion = new Phant(Map.Cells[indexCell]);
+                else if (indexMinion == 2)
+                    minion = new Robot(Map.Cells[indexCell]);
 
                 Context.CurrentPlayer.Minions.Add(minion);
             }
