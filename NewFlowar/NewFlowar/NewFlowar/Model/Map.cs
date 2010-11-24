@@ -22,7 +22,7 @@ namespace NewFlowar.Model
         {
             this.Width = width;
             this.Height = height;
-            this.R = 5;
+            this.R = 10;
             this.H = 3;
         }
 
@@ -34,9 +34,10 @@ namespace NewFlowar.Model
 
             float d = (float)Math.Sqrt(0.75);
 
-            for (int y = 1; y <= Height/2; y++)
+
+            for (int x = 1; x <= Width / 2; x++)
             {
-                for (int x = 1; x <= Width; x++)
+                for (int y = 1; y <= Height; y++)
                 {
                     float fx = (float)x;
                     float fy = (float)y;
@@ -51,9 +52,9 @@ namespace NewFlowar.Model
 
                     cell2.Height = (float)(rnd.NextDouble() * R * H);
 
-                    if (x == Height/2 && y == Height/2)
+                    if (x == Height / 2 && y == Height / 2)
                         cell2.Height = 100;
-                    if (x == Height / 2 && y+1 == Height / 2)
+                    if (x == Height / 2 && y + 1 == Height / 2)
                         cell2.Height = 50;
 
                     //if (x == Width && y == 1)
@@ -81,7 +82,7 @@ namespace NewFlowar.Model
             CalcHeightPoint();
             CalcNormals();
 
-            //DrawMapIntoImageFile();
+            DrawMapIntoImageFile();
         }
 
         public void CalcNeighborough()
@@ -331,7 +332,7 @@ namespace NewFlowar.Model
 
         public void DrawMapIntoImageFile()
         {
-            System.Drawing.Image img = new System.Drawing.Bitmap(600, 600);
+            System.Drawing.Image img = new System.Drawing.Bitmap(3000, 800);
 
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(img);
             //Bitmap b = new Bitmap(600, 600, g);
@@ -339,31 +340,30 @@ namespace NewFlowar.Model
             g.Clear(System.Drawing.Color.White);
 
             int index = 0;
-            int d = 10;
+            int d = 5;
 
             foreach (Cell cell in Cells)
             {
                 //g.DrawRectangle(System.Drawing.Pens.Black, cell.Location.X * d, cell.Location.Y * d, 7 * d, d*2);
-                //g.DrawString(cell.Coord.ToString() + " " + index.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, new System.Drawing.PointF(cell.Location.X *d, cell.Location.Y * d));
+                g.DrawString(cell.Coord.ToString() + " " + index.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, new System.Drawing.PointF(cell.Location.X * d - 40, cell.Location.Y * d - d));
                 index++;
 
-                //Vector3 prevPoint = Vector3.Zero;
-                //for (int i = 1; i <= 6; i++)
-                //{
-                //    if (prevPoint != Vector3.Zero)
-                //        g.DrawLine(System.Drawing.Pens.Red, prevPoint.X * d, prevPoint.Y * d, cell.Points[i].X * d, cell.Points[i].Y * d);
+                int prevPoint = -1;
+                for (int i = 1; i <= 6; i++)
+                {
+                    if (prevPoint != -1)
+                        g.DrawLine(System.Drawing.Pens.Red, Points[cell.Points[prevPoint]].X * d, Points[cell.Points[prevPoint]].Y * d, Points[cell.Points[i]].X * d, Points[cell.Points[i]].Y * d);
 
-                //    prevPoint = cell.Points[i];
-                //}
+                    prevPoint = i;
+                }
 
-                //g.DrawLine(System.Drawing.Pens.Red, prevPoint.X * d, prevPoint.Y * d, cell.Points[1].X * d, cell.Points[1].Y * d);
+                g.DrawLine(System.Drawing.Pens.Red, Points[cell.Points[prevPoint]].X * d, Points[cell.Points[prevPoint]].Y * d, Points[cell.Points[1]].X * d, Points[cell.Points[1]].Y * d);
 
                 //for (int i = 1; i <= 6; i++)
                 //{
                 //    //g.DrawRectangle(System.Drawing.Pens.Blue, cell.Points[i].X * d, cell.Points[i].Y * d, 5, 5);
 
-                //    g.DrawString(i.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, cell.Points[i].X * d, cell.Points[i].Y * d);
-
+                //    g.DrawString(i.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, Points[cell.Points[1]].X * d, Points[cell.Points[1]].Y * d);
                 //}
             }
 
@@ -404,7 +404,7 @@ namespace NewFlowar.Model
             //TimeSpan elapsed1 = f.Elapsed;
 
             //f.Restart();
-            
+
             /*
             foreach (Cell cell2 in cellsToCalcul)
             {
@@ -421,7 +421,7 @@ namespace NewFlowar.Model
             //f.Stop();
 
             //TimeSpan elasped2 = f.Elapsed;
-            
+
             //f.Restart();
 
             CalcNormals(listIndexPoint);
@@ -432,19 +432,19 @@ namespace NewFlowar.Model
         }
 
         private byte[,] _matrix = null;
-        public byte[,] Matrix 
+        public byte[,] Matrix
         {
             get
             {
                 if (_matrix == null)
                 {
-                    _matrix = new byte[this.Width, this.Height*2];
+                    _matrix = new byte[this.Width, this.Height * 2];
 
                     for (int y = 1; y <= Height; y++)
                     {
                         for (int x = 1; x <= Width; x++)
                         {
-                            _matrix[x-1, y-1] = (byte)Cells[(x-1)+(y-1)*Width].Height;
+                            _matrix[x - 1, y - 1] = (byte)Cells[(x - 1) + (y - 1) * Width].Height;
                         }
                     }
                 }

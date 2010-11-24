@@ -165,6 +165,8 @@ namespace NewFlowar.Logic.GamePlay
 
         public void CalcMinionNewPath(MinionBase minion, Cell cell)
         {
+            return;
+
             if (false)
             {
                 minion.Path = PathFinding.CalcPath(minion.CurrentCell, cell, true, 10f);
