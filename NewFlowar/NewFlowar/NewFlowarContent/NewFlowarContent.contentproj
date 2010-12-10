@@ -45,13 +45,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="3DModel\FlowPhant.fbx">
-      <Name>FlowPhant</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="3DModel\FlowInspector.fbx">
       <Name>FlowInspector</Name>
       <Importer>FbxImporter</Importer>
@@ -94,17 +87,32 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="3DModel\FlowRobot1.fbx">
-      <Name>FlowRobot1</Name>
+    <Compile Include="Texture\Hexa0.png">
+      <Name>Hexa0</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="3DModel\FlowRobot2.fbx">
+      <Name>FlowRobot2</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Texture\Hexa0.png">
-      <Name>Hexa0</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+    <Compile Include="3DModel\untitled.action">
+      <Name>untitled</Name>
+    </Compile>
+    <Compile Include="3DModel\untitled_mesh-ArmatureAction.fbx">
+      <Name>untitled_mesh-ArmatureAction</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>SkinnedModelProcessor</Processor>
+    </Compile>
+    <Compile Include="3DModel\untitled_mesh.fbx">
+      <Name>untitled_mesh</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

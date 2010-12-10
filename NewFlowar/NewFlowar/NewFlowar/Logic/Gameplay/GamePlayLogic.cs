@@ -33,20 +33,22 @@ namespace NewFlowar.Logic.GamePlay
 
             Random rnd = new Random();
             Context.CurrentPlayer.Minions = new List<MinionBase>();
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 50; i++)
             {
                 int indexCell = rnd.Next(Map.Cells.Count);
 
                 MinionBase minion = null;
 
-                int indexMinion = rnd.Next(3);
+                int indexMinion = rnd.Next(2);
 
                 if (indexMinion == 0)
-                minion = new Inspector(Map.Cells[indexCell]);
+                    minion = new Inspector(Map.Cells[indexCell]);
+                //else if (indexMinion == 1)
+                //    minion = new Phant(Map.Cells[indexCell]);
+                //else if (indexMinion == 1)
+                //    minion = new Robot(Map.Cells[indexCell]);
                 else if (indexMinion == 1)
-                    minion = new Phant(Map.Cells[indexCell]);
-                else if (indexMinion == 2)
-                    minion = new Robot(Map.Cells[indexCell]);
+                    minion = new Robot2(Map.Cells[indexCell]);
 
                 Context.CurrentPlayer.Minions.Add(minion);
             }
@@ -73,8 +75,7 @@ namespace NewFlowar.Logic.GamePlay
 
         public void Update(GameTime gameTime)
         {
-            //UpdateAnimation(gameTime);
-
+            UpdateAnimation(gameTime);
 
             //--- Calcul la position des minions
             for (int i = 0; i < Context.Players.Count; i++)
@@ -204,15 +205,16 @@ namespace NewFlowar.Logic.GamePlay
             }
         }
 
-        //private void UpdateAnimation(GameTime gameTime)
-        //{
-        //    foreach (Player player in Context.Players)
-        //    {
-        //        foreach (MinionBase minion in player.Minions)
-        //        {
-        //            minion.AnimationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
-        //        }
-        //    }
-        //}
+        private void UpdateAnimation(GameTime gameTime)
+        {
+            foreach (Player player in Context.Players)
+            {
+                foreach (MinionBase minion in player.Minions)
+                {
+                    if(minion.AnimationPlayer != null)
+                        minion.AnimationPlayer.Update(gameTime.ElapsedGameTime, true, Matrix.Identity);
+                }
+            }
+        }
     }
 }

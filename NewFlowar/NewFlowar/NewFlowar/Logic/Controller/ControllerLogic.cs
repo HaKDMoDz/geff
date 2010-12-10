@@ -206,7 +206,7 @@ namespace NewFlowar.Logic.Controller
             //--- Zoom
             else
             {
-                float estimatedZoom = gameEngine.Render.CameraPosition.Z + (prevMouseWheel - curMouseWheel) / 50f;
+                float estimatedZoom = gameEngine.Render.CameraPosition.Z + (float)(prevMouseWheel - curMouseWheel) / 50f;
 
                 if (estimatedZoom > 20)
                 {
@@ -278,32 +278,68 @@ namespace NewFlowar.Logic.Controller
 
             if (gamePadState.IsConnected)
             {
-                Vector3 forward = Tools.GetVector3(cameraDirection);
-                Vector3 right = Vector3.Cross(forward, Vector3.Backward);
-
                 float rotationSpeed = deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * 0.02f;
 
-                prevAngleX += gamePadState.ThumbSticks.Right.X * rotationSpeed;
-                prevAngleY += gamePadState.ThumbSticks.Right.Y * rotationSpeed;
+                if (gamePadState.ThumbSticks.Right.Length() > 0f)
+                {
 
-                prevAngleY = Microsoft.Xna.Framework.MathHelper.Clamp(prevAngleY, -0.9f, 0.9f);
 
-                Quaternion qyaw = Quaternion.CreateFromAxisAngle(Vector3.Backward, -(float)prevAngleX);
-                qyaw.Normalize();
-                Quaternion qtilt = Quaternion.CreateFromAxisAngle(right, (float)prevAngleY);
-                qtilt.Normalize();
-                Quaternion qroll = Quaternion.CreateFromAxisAngle(forward, 0f);
-                qroll.Normalize();
-                Quaternion yawpitch = qyaw * qtilt *qroll;
-                yawpitch.Normalize();
+                    Vector3 forward = Tools.GetVector3(cameraDirection);
+                    Vector3 right = Vector3.Cross(forward, Vector3.Backward);
 
-                gameEngine.Render.CameraTarget = gameEngine.Render.CameraPosition + Vector3.Transform(Vector3.UnitY, yawpitch);
+                    float upDownRotation = 0.0f;
+                    float leftRightRotation = 0.0f;
 
-                float angleCamera = Tools.GetAngle(Vector2.UnitY, cameraDirection);
-                Quaternion q = Quaternion.CreateFromAxisAngle(Vector3.Backward, angleCamera);
+                    //leftRightRotation -= gamePadState.ThumbSticks.Right.X / 50.0f;
+                    //upDownRotation += gamePadState.ThumbSticks.Right.Y / 50.0f;
 
-                vecTempTranslation += Vector2.Transform(gamePadState.ThumbSticks.Left, q) * rotationSpeed*30f;
-                gameEngine.Render.updateViewScreen = true;
+
+                    leftRightRotation -= gamePadState.ThumbSticks.Right.X / 20f; ;
+                    upDownRotation += gamePadState.ThumbSticks.Right.Y / 20f;
+
+                    Quaternion additionalRotation = Quaternion.CreateFromAxisAngle(Vector3.Backward, leftRightRotation) * Quaternion.CreateFromAxisAngle(right,
+                        upDownRotation);
+                    
+                    
+
+                    spacecraftRotation *=  additionalRotation;
+
+                    //spacecraftRotation.Y = MathHelper.Clamp(spacecraftRotation.Y, -01f, 1f);
+
+                    gameEngine.Render.CameraTarget = gameEngine.Render.CameraPosition + Vector3.Transform(Vector3.UnitY, spacecraftRotation);
+
+                    //AddToSpaceCraftPosition(new Vector3(0,0,-1));
+
+                    /*
+                    Vector3 forward = Tools.GetVector3(cameraDirection);
+                    Vector3 right = Vector3.Cross(forward, Vector3.Backward);
+
+                    prevAngleX += gamePadState.ThumbSticks.Right.X * rotationSpeed;
+                    prevAngleY += gamePadState.ThumbSticks.Right.Y * rotationSpeed;
+
+                    //prevAngleY = Microsoft.Xna.Framework.MathHelper.Clamp(prevAngleY, -1f, 1f);
+
+                    Quaternion qyaw = Quaternion.CreateFromAxisAngle(Vector3.Backward, -(float)prevAngleX);
+                    qyaw.Normalize();
+                    Quaternion qtilt = Quaternion.CreateFromAxisAngle(right, (float)prevAngleY);
+                    qtilt.Normalize();
+                    Quaternion qroll = Quaternion.CreateFromAxisAngle(forward, 0f);
+                    qroll.Normalize();
+                    Quaternion yawpitch = qyaw * qtilt * qroll;
+                    yawpitch.Normalize();
+                    
+                    gameEngine.Render.CameraTarget = gameEngine.Render.CameraPosition + Vector3.Transform(Vector3.UnitY, yawpitch);
+                     */
+                }
+
+                if (gamePadState.ThumbSticks.Left.Length() > 0f)
+                {
+                    float angleCamera = Tools.GetAngle(Vector2.UnitY, cameraDirection);
+                    Quaternion q = Quaternion.CreateFromAxisAngle(Vector3.Backward, angleCamera);
+
+                    vecTempTranslation += Vector2.Transform(gamePadState.ThumbSticks.Left, q) * rotationSpeed * 30f;
+                    gameEngine.Render.updateViewScreen = true;
+                }
             }
             //---
 
@@ -346,6 +382,7 @@ namespace NewFlowar.Logic.Controller
             }
         }
 
+        private Quaternion spacecraftRotation = Quaternion.Identity;
         private float prevAngleX = 0f;
         private float prevAngleY = 0f;
 

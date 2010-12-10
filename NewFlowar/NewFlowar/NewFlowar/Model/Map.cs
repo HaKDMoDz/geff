@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using NewFlowar.Common;
+using System.Threading.Tasks;
 
 namespace NewFlowar.Model
 {
@@ -48,6 +49,7 @@ namespace NewFlowar.Model
                          (int)((2.5f + fx * 3f) * R),
                          (int)((fy) * (2f * d * R)));
 
+                    //cell2.Coord = getHex(new Point((int)cell2.Location.X, (int)cell2.Location.Y));
 
                     Cells.Add(cell2);
 
@@ -71,6 +73,7 @@ namespace NewFlowar.Model
                         (int)((1f + fx * 3f) * R),
                         (int)((0.5f + fy) * (2f * d * R)));
 
+                    //cell1.Coord = getHex(new Point((int)cell1.Location.X, (int)cell1.Location.Y));
 
                     Cells.Add(cell1);
 
@@ -91,7 +94,7 @@ namespace NewFlowar.Model
             TimeSpan r3 = t.Subtract(DateTime.Now.TimeOfDay);
             t = DateTime.Now.TimeOfDay;
 
-            //CalcHeightPoint();
+            CalcHeightPoint();
 
             CalcNormals();
 
@@ -99,6 +102,71 @@ namespace NewFlowar.Model
             t = DateTime.Now.TimeOfDay;
 
             DrawMapIntoImageFile();
+        }
+
+        private Point getHex(Point pt)
+        {
+            //if (null == Map.Current) return InvalidPoint;
+
+            // precalculate the 'hotspot' regions
+            float MAPTILE_HEIGHT_HOT = R * .75F;
+            float MAPTILE_UPPERTHIRD = MAPTILE_HEIGHT_HOT * .33F;
+            float ANGLE = 0.589F;
+            float ANGLE2 = 1.8095F;
+            int MAPTILE_LEFTHALF = H >> 1;
+
+            int MAP_MARGIN = 0;
+            // subdivide the map up into squares.
+            // each square contains 1/2 of two opposing hexes horizontally and a portion
+            // of one or two hexes vertically
+            // for ease of calculation, offset the point by the map margins
+            //pt.Offset(-MAP_MARGIN, -MAP_MARGIN);
+            
+            pt.X -= 55;
+            pt.Y -= 17;
+
+            int row = (int)((pt.Y + (pt.Y / MAPTILE_HEIGHT_HOT)) / MAPTILE_HEIGHT_HOT);
+            int col = (int)((pt.X + (pt.X / H)) / H);
+
+            // convert the point (mouse coord) to coordinates relative to the current square
+            pt.X -= (col * H) - col;
+            pt.Y -= (int)(row * MAPTILE_HEIGHT_HOT) - row;
+
+            /*
+            if (pt.Y < MAPTILE_UPPERTHIRD)
+            {
+                if (row % 2 == 0)
+                {
+                    if (pt.X < MAPTILE_LEFTHALF && pt.X * ANGLE > pt.Y)
+                        row--;
+                    else if (pt.X >= MAPTILE_LEFTHALF && (pt.X - MAPTILE_LEFTHALF) / ANGLE2 < (MAPTILE_UPPERTHIRD - pt.Y))
+                        row--;
+                    else if (pt.X < MAPTILE_LEFTHALF)
+                        col--;
+                }
+                else
+                {
+                    if (pt.X >= MAPTILE_LEFTHALF && (pt.X - MAPTILE_LEFTHALF) * ANGLE > pt.Y)
+                        row--;
+                    else if (pt.X < MAPTILE_LEFTHALF && (pt.X / ANGLE2 < (MAPTILE_UPPERTHIRD - pt.Y)))
+                    {
+                        row--;
+                        col--;
+                    }
+                }
+            }
+            else if (row % 2 == 0 && pt.X < MAPTILE_LEFTHALF)
+            {
+                // if the point of interest is within the lower 2/3 of the hex, then there are
+                // two possibilities - even rows (0, 2, 4, ...) contain two hexes, whereas odd
+                // rows (1, 3, 5, ...) have only one hex.
+                col--;
+            }
+            */
+            if (col < 0 || row < 0 || row >= this.Height || col >= ((row % 2 == 0) ? this.Width - 1 : this.Width) || pt.X < 0)
+                return Point.Zero;//InvalidPoint;
+            else
+                return new Point(col, row);
         }
 
         public void CalcNeighborough()

@@ -63,15 +63,16 @@ namespace NewFlowar.Logic.Render
         {
             meshModels = new Dictionary<string, Microsoft.Xna.Framework.Graphics.Model>();
 
-            meshModels.Add("FlowPhant", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowPhant"));
+            //meshModels.Add("FlowPhant", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowPhant"));
             meshModels.Add("FlowInspector", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowInspector"));
-            meshModels.Add("FlowRobot1", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowRobot1"));
+            //meshModels.Add("FlowRobot1", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowRobot1"));
+            meshModels.Add("FlowRobot2", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowRobot2"));
 
             foreach (Player player in Context.Players)
             {
                 foreach (MinionBase minion in player.Minions)
                 {
-                    //minion.InitAnimationPlayer(meshModels[minion.ModelName]);
+                    minion.InitAnimationPlayer(meshModels[minion.ModelName]);
                 }
             }
         }
@@ -144,7 +145,7 @@ namespace NewFlowar.Logic.Render
         private void AddVertex(int index1, int index2, int index3, List<VertexPositionNormalTexture> vertex, Cell cell)
         {
             Dictionary<int, Vector2> uv = new Dictionary<int, Vector2>();
-            
+
             if (cell.IsFlaged)
             {
                 uv.Add(1, new Vector2(0f, 0f));
@@ -175,13 +176,14 @@ namespace NewFlowar.Logic.Render
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public void Draw(GameTime gameTime)
         {
-            GameEngine.GraphicsDevice.Clear(Color.Black);
+            GameEngine.GraphicsDevice.Clear(Color.LightGray);
 
             UpdateCamera();
             UpdateShader(gameTime);
 
             //--- Affiche la map
             //CreateVertex();
+
             GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -189,6 +191,7 @@ namespace NewFlowar.Logic.Render
                 pass.Apply();
                 GameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, Map.Cells.Count * 12);
             }
+
             //---
 
             //--- Affiche les minions de chaque joueur
@@ -204,14 +207,14 @@ namespace NewFlowar.Logic.Render
 
         private void DrawMinion(GameTime gameTime, MinionBase minion)
         {
-            float scaleZ = 1f - (float)Math.Cos(minion.BornTime.Subtract(gameTime.TotalGameTime).TotalMilliseconds * 0.01f * minion.Speed) * 0.1f;
+            float scaleZ = 1f -(float)Math.Cos(minion.BornTime.Subtract(gameTime.TotalGameTime).TotalMilliseconds * 0.01f) * 0.15f;
 
-            DrawModel(gameTime, meshModels[minion.ModelName], Matrix.CreateScale(1f,1f, scaleZ) * minion.MatrixRotation * Matrix.CreateTranslation(minion.Location));//, minion.AnimationPlayer);
+            DrawModel(gameTime, meshModels[minion.ModelName], Matrix.CreateScale(1f, 1f, scaleZ) * minion.MatrixRotation * Matrix.CreateTranslation(minion.Location), minion.AnimationPlayer);
 
             //* Matrix.CreateRotationZ(minion.Angle)
         }
 
-        private void DrawModel(GameTime gameTime, Microsoft.Xna.Framework.Graphics.Model meshModel, Matrix mtxWorld) //, AnimationPlayer animationPlayer)
+        private void DrawModel(GameTime gameTime, Microsoft.Xna.Framework.Graphics.Model meshModel, Matrix mtxWorld, AnimationPlayer animationPlayer)
         {
             float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             Vector3 lightDirection = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
@@ -219,49 +222,64 @@ namespace NewFlowar.Logic.Render
             Matrix[] mtxMeshTransform = new Matrix[meshModel.Bones.Count];
             meshModel.CopyAbsoluteBoneTransformsTo(mtxMeshTransform);
 
-            //Matrix[] bones = animationPlayer.GetSkinTransforms();
+            Matrix[] bones = null;
+
+            if (animationPlayer != null)
+                bones = animationPlayer.GetSkinTransforms();
 
             //bones[0] = Matrix.CreateScale(500f) * World;// *mtxWorld;
 
+
+
+            // Compute camera matrices.
+            /*
+            View = Matrix.CreateTranslation(0, 0, 0) *
+                          Matrix.CreateRotationY(MathHelper.ToRadians(0f)) *
+                          Matrix.CreateRotationX(MathHelper.ToRadians(0f)) *
+                          Matrix.CreateLookAt(new Vector3(0, 0, -100f),
+                                              new Vector3(0, 0, 0), Vector3.Up);
+            */
+            /*
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4,
+                                                                    1.6f,
+                                                                    1,
+                                                                    10000);
+
+            */
+
             foreach (ModelMesh mesh in meshModel.Meshes)
             {
-                foreach (BasicEffect effect2 in mesh.Effects)
+
+
+                foreach (Effect effect2 in mesh.Effects)
                 {
-                    effect2.EnableDefaultLighting();
+                    ((IEffectMatrices)effect2).View = View;
+                    ((IEffectMatrices)effect2).Projection = Projection;
 
-                    if (effect2.Texture != null)
-                        effect2.TextureEnabled = true;
+                    ((IEffectLights)effect2).EnableDefaultLighting();
+                    ((IEffectLights)effect2).DirectionalLight0.Direction = lightDirection;
+                    //((IEffectLights)effect2).PreferPerPixelLighting = true;
+                    //((IEffectLights)effect2).SpecularColor = new Vector3(0.25f);
+                    //((IEffectLights)effect2).SpecularPower = 16;
 
-                    effect2.DirectionalLight0.Direction = lightDirection;
+                    if (effect2 is SkinnedEffect)
+                    {
+                        if (animationPlayer != null)
+                            ((SkinnedEffect)effect2).SetBoneTransforms(bones);
 
-                    effect2.World = mtxMeshTransform[mesh.ParentBone.Index] * World * mtxWorld;
-                    effect2.View = View;
-                    effect2.Projection = Projection;
+                        ((IEffectMatrices)effect2).World = World * mtxWorld;
+                    }
+                    else
+                    {
+                        if (((BasicEffect)effect2).Texture != null)
+                        {
+                            ((BasicEffect)effect2).TextureEnabled = true;
+                            ((BasicEffect)effect2).VertexColorEnabled = false;
+                        }
+
+                        ((IEffectMatrices)effect2).World = mtxMeshTransform[mesh.ParentBone.Index] * World * mtxWorld;
+                    }
                 }
-
-                //foreach (SkinnedEffect effect in mesh.Effects)
-                //{
-
-                //    //effect.VertexColorEnabled = true;
-
-                //    effect.SetBoneTransforms(bones);
-                //    //effect.World = mtxMeshTransform[mesh.ParentBone.Index] * World * mtxWorld;
-
-                //    //effect.World = World;// *mtxWorld;
-                //    effect.World = World * Matrix.CreateTranslation(50f, 50f, 10f);
-
-                //    effect.View = View;
-                //    effect.Projection = Projection;
-                //    effect.PreferPerPixelLighting = true;
-                    
-
-
-                //    effect.EnableDefaultLighting();
-                //    effect.DirectionalLight0.Direction = lightDirection;
-
-                //    effect.SpecularColor = new Vector3(0.25f);
-                //    effect.SpecularPower = 16;
-                //}
 
                 mesh.Draw();
             }

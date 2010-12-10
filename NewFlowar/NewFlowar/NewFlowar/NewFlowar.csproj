@@ -134,6 +134,7 @@
     <Compile Include="Logic\Controller\ControllerLogic.cs" />
     <Compile Include="Model\Cell.cs" />
     <Compile Include="Model\Map.cs" />
+    <Compile Include="Model\Minion\Robot2.cs" />
     <Compile Include="Model\Minion\Inspector.cs" />
     <Compile Include="Model\Minion\MinionBase.cs" />
     <Compile Include="Model\Minion\Phant.cs" />
