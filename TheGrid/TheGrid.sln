@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheGrid", "TheGrid\TheGrid\TheGrid.csproj", "{040AB2FA-7016-4080-8E3C-B32FF598E9A7}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "TheGridContent", "TheGrid\TheGridContent\TheGridContent.contentproj", "{C851B8AF-17AD-41C6-8334-05961DEE58B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{040AB2FA-7016-4080-8E3C-B32FF598E9A7}.Debug|x86.ActiveCfg = Debug|x86
+		{040AB2FA-7016-4080-8E3C-B32FF598E9A7}.Debug|x86.Build.0 = Debug|x86
+		{040AB2FA-7016-4080-8E3C-B32FF598E9A7}.Release|x86.ActiveCfg = Release|x86
+		{040AB2FA-7016-4080-8E3C-B32FF598E9A7}.Release|x86.Build.0 = Release|x86
+		{C851B8AF-17AD-41C6-8334-05961DEE58B9}.Debug|x86.ActiveCfg = Debug|x86
+		{C851B8AF-17AD-41C6-8334-05961DEE58B9}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
