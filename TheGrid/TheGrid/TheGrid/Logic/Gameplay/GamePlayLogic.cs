@@ -22,21 +22,17 @@ namespace TheGrid.Logic.GamePlay
             InitializePlayers();
         }
 
+        private void InitializeMap()
+        {
+            Map = new Map(32,32);
+            Map.CreateGrid();
+        }        
+        
         private void InitializePlayers()
         {
             Context.Players = new List<Player>();
             Context.Players.Add(new Player() { PlayerName = "Geff" });
             Context.CurrentPlayer = Context.Players[0];
-
-            Random rnd = new Random();
-        }
-
-        private void InitializeMap()
-        {
-            Map = new Map(32,32);
-            Map.CreateGrid();
-
-            //Map.CalcHeightPoint();
         }
 
         public void Update(GameTime gameTime)

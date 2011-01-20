@@ -35,8 +35,6 @@ namespace TheGrid.Model
 
             float d = (float)Math.Sqrt(0.75);
 
-            TimeSpan t = DateTime.Now.TimeOfDay;
-
             for (int y = 1; y <= Height / 2; y++)
             {
                 for (int x = 1; x <= Width; x++)
@@ -49,19 +47,9 @@ namespace TheGrid.Model
                          (int)((2.5f + fx * 3f) * R),
                          (int)((fy) * (2f * d * R)));
 
-                    //cell2.Coord = getHex(new Point((int)cell2.Location.X, (int)cell2.Location.Y));
-
                     Cells.Add(cell2);
 
-                    cell2.Height = 0;//(float)(rnd.NextDouble() * R * H);
-
-                    //if (x == Height / 2 && y == Height / 2)
-                    //    cell2.Height = 100;
-                    //if (x == Height / 2 && y + 1 == Height / 2)
-                    //    cell2.Height = 50;
-
-                    //if (x == Width && y == 1)
-                    //    cell2.Height = 50;
+                    cell2.Height = 0;
                 }
 
                 for (int x = 1; x <= Width; x++)
@@ -73,33 +61,17 @@ namespace TheGrid.Model
                         (int)((1f + fx * 3f) * R),
                         (int)((0.5f + fy) * (2f * d * R)));
 
-                    //cell1.Coord = getHex(new Point((int)cell1.Location.X, (int)cell1.Location.Y));
-
                     Cells.Add(cell1);
 
-                    cell1.Height = 0;//(float)(rnd.NextDouble() * R * H);
+                    cell1.Height = 0;
                 }
             }
 
-            TimeSpan r1 = t.Subtract(DateTime.Now.TimeOfDay);
-            t = DateTime.Now.TimeOfDay;
-
             CalcNeighborough();
-
-            TimeSpan r2 = t.Subtract(DateTime.Now.TimeOfDay);
-            t = DateTime.Now.TimeOfDay;
 
             CalcPoints();
 
-            TimeSpan r3 = t.Subtract(DateTime.Now.TimeOfDay);
-            t = DateTime.Now.TimeOfDay;
-
-            //CalcHeightPoint();
-
             CalcNormals();
-
-            TimeSpan r5 = t.Subtract(DateTime.Now.TimeOfDay);
-            t = DateTime.Now.TimeOfDay;
 
             //DrawMapIntoImageFile();
         }
