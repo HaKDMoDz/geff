@@ -11,6 +11,11 @@ namespace TheGrid.Logic.Controller
 {
     public class ControllerLogic
     {
+        #region Constants
+        private const int ZOOM_IN_MAX = 2;
+        private const int ZOOM_OUT_MAX = 200;
+        #endregion
+
         #region Keyboard and Mouse
         private Keys upKey = Keys.Z;
         private Keys downKey = Keys.S;
@@ -132,7 +137,7 @@ namespace TheGrid.Logic.Controller
             {
                 float estimatedZoom = gameEngine.Render.CameraPosition.Z + (float)(prevMouseWheel - curMouseWheel) / 50f;
 
-                if (estimatedZoom > 20)
+                if (estimatedZoom > ZOOM_IN_MAX && estimatedZoom < ZOOM_OUT_MAX)
                 {
                     gameEngine.Render.CameraPosition.Z = estimatedZoom;
                     gameEngine.Render.updateViewScreen = true;

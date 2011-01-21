@@ -11,7 +11,7 @@ namespace TheGrid.Model
         public InstrumentBase Instrument { get; set; }
         public bool[] Directions { get; set; }
         public int? Repeater { get; set; }
-        public int Speed { get; set; }
+        public int? Speed { get; set; }
 
         public Clip()
         {

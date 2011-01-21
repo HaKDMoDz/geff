@@ -32,12 +32,13 @@ namespace TheGrid.Logic.Render
         Matrix Projection;
         Matrix World;
 
-        public Vector3 CameraPosition = new Vector3(0f, 0f, 50f);
-        public Vector3 CameraTarget = new Vector3(0f, 0f, 0f);
+        public Vector3 CameraPosition = new Vector3(200f, 100f, 50f);
+        public Vector3 CameraTarget = new Vector3(200f, 100f, 0f);
         public Vector3 CameraUp = -Vector3.Up;
 
         public bool updateViewScreen = false;
         public bool doScreenShot = false;
+        Microsoft.Xna.Framework.Graphics.Model meshHexa;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -60,6 +61,9 @@ namespace TheGrid.Logic.Render
         private void Initilize3DModel()
         {
             meshModels = new Dictionary<string, Microsoft.Xna.Framework.Graphics.Model>();
+
+            //meshModels.Add("Hexa", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\Hexa"));
+            meshHexa = GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\Hexa");
 
             /*
             //meshModels.Add("FlowPhant", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowPhant"));
@@ -146,24 +150,12 @@ namespace TheGrid.Logic.Render
         {
             Dictionary<int, Vector2> uv = new Dictionary<int, Vector2>();
 
-            if (cell.IsFlaged)
-            {
-                uv.Add(1, new Vector2(0f, 0f));
-                uv.Add(2, new Vector2(0f, 0f));
-                uv.Add(3, new Vector2(0f, 0f));
-                uv.Add(4, new Vector2(0f, 0f));
-                uv.Add(5, new Vector2(0f, 0f));
-                uv.Add(6, new Vector2(0f, 0f));
-            }
-            else
-            {
-                uv.Add(1, new Vector2(0.75f, 0f));
-                uv.Add(2, new Vector2(1f, 0.5f));
-                uv.Add(3, new Vector2(0.75f, 1f));
-                uv.Add(4, new Vector2(0.26f, 1f));
-                uv.Add(5, new Vector2(0f, 0.5f));
-                uv.Add(6, new Vector2(0.26f, 0f));
-            }
+            uv.Add(1, new Vector2(0.75f, 0f));
+            uv.Add(2, new Vector2(1f, 0.5f));
+            uv.Add(3, new Vector2(0.75f, 1f));
+            uv.Add(4, new Vector2(0.26f, 1f));
+            uv.Add(5, new Vector2(0f, 0.5f));
+            uv.Add(6, new Vector2(0.26f, 0f));
 
             vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index1]], Map.Normals[cell.Points[index1]], uv[index1]));
             vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index2]], Map.Normals[cell.Points[index2]], uv[index2]));
@@ -176,14 +168,20 @@ namespace TheGrid.Logic.Render
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public void Draw(GameTime gameTime)
         {
-            GameEngine.GraphicsDevice.Clear(new Color(15,15,15));
+            GameEngine.GraphicsDevice.Clear(new Color(15, 15, 15));
 
             UpdateCamera();
-            UpdateShader(gameTime);
+            //UpdateShader(gameTime);
 
             //--- Affiche la map
-            //CreateVertex();
+            foreach (Cell cell in Map.Cells)
+            {
+                DrawCell(cell, gameTime);
+            }
 
+
+            //CreateVertex();
+            /*
             GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -191,7 +189,115 @@ namespace TheGrid.Logic.Render
                 pass.Apply();
                 GameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, Map.Cells.Count * 12);
             }
+            */
+            //---
+        }
 
+        private void DrawCell(Cell cell, GameTime gameTime)
+        {
+            float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
+            Vector3 lightDirection = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
+            Matrix localWorld = World * cell.MatrixLocation;
+            ModelMesh mesh = null;
+
+            //--- Hexa
+            Color channelColor = Color.White;
+            if (cell.Channel != null)
+            {
+                channelColor = cell.Channel.Color;
+            }
+
+            mesh = meshHexa.Meshes["Hexa"];
+            foreach (Effect effect in mesh.Effects)
+            {
+                ((IEffectMatrices)effect).View = View;
+                ((IEffectMatrices)effect).Projection = Projection;
+                ((IEffectMatrices)effect).World = localWorld;
+
+                ((IEffectLights)effect).EnableDefaultLighting();
+                ((IEffectLights)effect).DirectionalLight0.Direction = lightDirection;
+
+                ((BasicEffect)effect).DiffuseColor = channelColor.ToVector3();
+            }
+
+            mesh.Draw();
+            //---
+
+            //--- Directions
+            for (int i = 1; i < 7; i++)
+            {
+                mesh = meshHexa.Meshes["Direction_" + i.ToString()];
+
+                foreach (Effect effect in mesh.Effects)
+                {
+                    ((IEffectMatrices)effect).View = View;
+                    ((IEffectMatrices)effect).Projection = View;
+                    ((IEffectMatrices)effect).World = localWorld * mesh.ParentBone.Transform;
+
+                    ((IEffectLights)effect).EnableDefaultLighting();
+                    ((IEffectLights)effect).DirectionalLight0.Direction = lightDirection;
+
+                    if (cell.Clip != null && cell.Clip.Directions[i])
+                    {
+                        ((BasicEffect)effect).DiffuseColor = Color.Red.ToVector3();
+                    }
+                    else
+                    {
+                        ((BasicEffect)effect).DiffuseColor = channelColor.ToVector3();
+                    }
+                }
+
+                mesh.Draw();
+            }
+            //---
+
+            //--- Repeater
+            for (int i = 1; i < 7; i++)
+            {
+                mesh = meshHexa.Meshes["Repeater_" + i.ToString()];
+
+                foreach (Effect effect in mesh.Effects)
+                {
+                    ((IEffectMatrices)effect).View = View;
+                    ((IEffectMatrices)effect).Projection = View;
+                    ((IEffectMatrices)effect).World = localWorld;
+
+                    ((IEffectLights)effect).EnableDefaultLighting();
+                    ((IEffectLights)effect).DirectionalLight0.Direction = lightDirection;
+
+                    if (cell.Clip != null && cell.Clip.Repeater.HasValue && cell.Clip.Repeater >= i)
+                    {
+                        ((BasicEffect)effect).DiffuseColor = Color.Red.ToVector3();
+                    }
+                    else
+                    {
+                        ((BasicEffect)effect).DiffuseColor = channelColor.ToVector3();
+                    }
+                }
+
+                mesh.Draw();
+            }
+            //---
+
+            //--- Speed
+            //if (cell.Clip.Speed.HasValue)
+            //{
+            //    if (cell.Clip.Speed.Value > 0)
+            //    {
+            //        for (int i = 0; i < cell.Clip.Repeater.Value; i++)
+            //        {
+            //            meshHexa.Meshes["Speed_H_" + i.ToString()].Draw();
+            //        }
+            //    }
+
+            //    if (cell.Clip.Speed.Value < 0)
+            //    {
+            //        for (int i = 0; i > cell.Clip.Repeater.Value; i--)
+            //        {
+            //            meshHexa.Meshes["Speed_L_" + i.ToString()].Draw();
+            //        }
+            //    }
+            //}
             //---
         }
 
