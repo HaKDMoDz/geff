@@ -13,7 +13,7 @@ namespace TheGrid.Logic.Controller
     {
         #region Constants
         private const int ZOOM_IN_MAX = 2;
-        private const int ZOOM_OUT_MAX = 200;
+        private const int ZOOM_OUT_MAX = 500;
         #endregion
 
         #region Keyboard and Mouse
@@ -44,9 +44,8 @@ namespace TheGrid.Logic.Controller
         private MouseManager mouseMiddleButton;
         private MouseManager mouseRightButton;
 
-        private float prevAngle;
-        private float prevRayon;
         private float prevRightStickLength;
+        private Vector3 prevCameraPosition = Vector3.Zero;
         #endregion
 
         private GameEngine gameEngine { get; set; }
@@ -64,49 +63,28 @@ namespace TheGrid.Logic.Controller
             this.mouseMiddleButton = new MouseManager(MouseButtons.RightButton);
             this.mouseRightButton = new MouseManager(MouseButtons.RightButton);
 
-            this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
-            this.mouseMiddleButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseMiddleButton_MouseFirstPressed);
-            this.mouseMiddleButton.MousePressed += new MouseManager.MousePressedHandler(mouseMiddleButton_MousePressed);
+            this.mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseRightButton_MousePressed);
+            this.mouseRightButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseRightButton_MouseFirstPressed);
+        }
+
+        void mouseRightButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
+        {
+            prevCameraPosition = gameEngine.Render.CameraPosition;
+        }
+
+        void mouseRightButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            if (Tools.Distance(Point.Zero, distance) > 5f)
+            {
+                gameEngine.Render.CameraPosition = new Vector3(prevCameraPosition.X, prevCameraPosition.Y, gameEngine.Render.CameraPosition.Z) + new Vector3(-distance.X, distance.Y, 0f) * gameEngine.Render.CameraPosition.Z / 500f; ;
+                gameEngine.Render.CameraTarget = new Vector3(gameEngine.Render.CameraPosition.X, gameEngine.Render.CameraPosition.Y, 0f);
+            }
         }
 
         void keyNewMap_KeyReleased(Keys key, GameTime gameTime)
         {
             this.gameEngine.GamePlay.Map.CreateGrid();
             this.gameEngine.Render.CreateVertex();
-        }
-
-        void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
-        {
-            if (gameEngine.Window.ClientBounds.Contains(new Point(mouseState.X + gameEngine.Window.ClientBounds.Left, mouseState.Y + gameEngine.Window.ClientBounds.Top)))
-            {
-                Context.SelectedCell = gameEngine.Render.GetSelectedCell(mouseState);
-
-                if (Context.SelectedCell != null)
-                {
-                    
-                }
-                else
-                {
-                    
-                }
-            }
-        }
-
-        void mouseMiddleButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
-        {
-            Vector2 cameraDirection = Tools.GetVector2(this.gameEngine.Render.CameraTarget) - Tools.GetVector2(this.gameEngine.Render.CameraPosition);
-
-            prevRayon = cameraDirection.Length();
-            prevAngle = Tools.GetAngle(Vector2.UnitX, cameraDirection);
-        }
-
-        void mouseMiddleButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
-        {
-            float rayon = prevRayon + (float)distance.Y / 7f;
-
-            float angle = prevAngle + (float)distance.X / 200f;
-
-            this.gameEngine.Render.CameraTarget = Tools.GetVector3WithoutZ(this.gameEngine.Render.CameraPosition) + new Vector3((float)Math.Cos(angle) * rayon, (float)Math.Sin(angle) * rayon, 0f);
         }
 
         public void UpdateBegin(GameTime gameTime)
@@ -137,7 +115,7 @@ namespace TheGrid.Logic.Controller
             {
                 float estimatedZoom = gameEngine.Render.CameraPosition.Z + (float)(prevMouseWheel - curMouseWheel) / 50f;
 
-                if (estimatedZoom > ZOOM_IN_MAX && estimatedZoom < ZOOM_OUT_MAX)
+                if (gameEngine.Render.CameraPosition.Z != estimatedZoom && estimatedZoom > ZOOM_IN_MAX && estimatedZoom < ZOOM_OUT_MAX)
                 {
                     gameEngine.Render.CameraPosition.Z = estimatedZoom;
                     gameEngine.Render.updateViewScreen = true;
@@ -161,8 +139,8 @@ namespace TheGrid.Logic.Controller
                 gameEngine.Render.updateViewScreen = true;
             }
 
-            if (gameEngine.Render.CameraPosition.Z > 150f)
-                gameEngine.Render.CameraPosition.Z = 150f;
+            if (gameEngine.Render.CameraPosition.Z > ZOOM_OUT_MAX)
+                gameEngine.Render.CameraPosition.Z = ZOOM_OUT_MAX;
             //---
 
             //--- Keyboard
@@ -196,6 +174,7 @@ namespace TheGrid.Logic.Controller
             if (keyBoardState.IsKeyDown(leftKey))
             {
                 vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * Vector2.UnitX;
+
                 gameEngine.Render.updateViewScreen = true;
             }
             //---
@@ -222,8 +201,8 @@ namespace TheGrid.Logic.Controller
 
                 //    Quaternion additionalRotation = Quaternion.CreateFromAxisAngle(Vector3.Backward, leftRightRotation) * Quaternion.CreateFromAxisAngle(right,
                 //        upDownRotation);
-                    
-                    
+
+
 
                 //    spacecraftRotation *=  additionalRotation;
 
@@ -250,7 +229,7 @@ namespace TheGrid.Logic.Controller
                 //    qroll.Normalize();
                 //    Quaternion yawpitch = qyaw * qtilt * qroll;
                 //    yawpitch.Normalize();
-                    
+
                 //    gameEngine.Render.CameraTarget = gameEngine.Render.CameraPosition + Vector3.Transform(Vector3.UnitY, yawpitch);
                 //     */
                 //}

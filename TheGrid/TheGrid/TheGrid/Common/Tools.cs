@@ -31,6 +31,11 @@ namespace TheGrid.Common
             return new Vector3(vec, 0f);
         }
 
+        public static Vector3 GetVector3(Point vec)
+        {
+            return new Vector3(vec.X, vec.Y, 0f);
+        }
+
         public static Vector2 GetVector2(Microsoft.Xna.Framework.Vector3 vec)
         {
             return new Vector2(vec.X, vec.Y);
@@ -82,7 +87,7 @@ namespace TheGrid.Common
 
             //Vector3 firstvec = vertices[indices[i * 3 + 1]].Position - vertices[indices[i * 3]].Position;
             //Vector3 secondvec = vertices[indices[i * 3]].Position - vertices[indices[i * 3 + 2]].Position;
-            
+
             normal = Vector3.Cross(firstvec, secondvec);
             normal.Normalize();
 
@@ -95,7 +100,7 @@ namespace TheGrid.Common
             float pickCurDistance = 0f;
             float barycentricU = 0f;
             float barycentricV = 0f;
-            Vector3 rayPosition = new Vector3(cell.Location,50f);
+            Vector3 rayPosition = new Vector3(cell.Location, 50f);
             Vector3 normal = Vector3.UnitZ;
 
             for (int i = 0; i < 4; i++)

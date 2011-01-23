@@ -38,7 +38,7 @@ namespace TheGrid.Logic.Render
 
         public bool updateViewScreen = false;
         public bool doScreenShot = false;
-        Microsoft.Xna.Framework.Graphics.Model meshHexa;
+        MeshHexa meshHexa = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -63,7 +63,7 @@ namespace TheGrid.Logic.Render
             meshModels = new Dictionary<string, Microsoft.Xna.Framework.Graphics.Model>();
 
             //meshModels.Add("Hexa", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\Hexa"));
-            meshHexa = GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\Hexa");
+            meshHexa = new MeshHexa(GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\Hexa"));
 
             /*
             //meshModels.Add("FlowPhant", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowPhant"));
@@ -195,10 +195,20 @@ namespace TheGrid.Logic.Render
 
         private void DrawCell(Cell cell, GameTime gameTime)
         {
+            Matrix localWorld = World * Matrix.CreateRotationZ(MathHelper.Pi) * cell.MatrixLocation;
+
+            //--- Affficher la cellule si elle est dans la portion visible de l'écran
+            BoundingFrustum frustum = new BoundingFrustum(View * Projection);
+            
+            BoundingSphere boundingSphere = meshHexa.Body.BoundingSphere.Transform(localWorld);
+
+            if (frustum.Contains(boundingSphere) == ContainmentType.Disjoint)
+                return;
+            //---
+
+
             float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             Vector3 lightDirection = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
-            Matrix localWorld = World * cell.MatrixLocation;
-            ModelMesh mesh = null;
 
             //--- Hexa
             Color channelColor = Color.White;
@@ -207,97 +217,105 @@ namespace TheGrid.Logic.Render
                 channelColor = cell.Channel.Color;
             }
 
-            mesh = meshHexa.Meshes["Hexa"];
-            foreach (Effect effect in mesh.Effects)
+            foreach (Effect effect in meshHexa.Body.Effects)
             {
-                ((IEffectMatrices)effect).View = View;
-                ((IEffectMatrices)effect).Projection = Projection;
-                ((IEffectMatrices)effect).World = localWorld;
+                BasicEffect basicEffect = effect as BasicEffect;
 
-                ((IEffectLights)effect).EnableDefaultLighting();
-                ((IEffectLights)effect).DirectionalLight0.Direction = lightDirection;
+                basicEffect.View = View;
+                basicEffect.Projection = Projection;
+                basicEffect.World = localWorld;
 
-                ((BasicEffect)effect).DiffuseColor = channelColor.ToVector3();
+                basicEffect.EnableDefaultLighting();
+                basicEffect.DirectionalLight0.Direction = lightDirection;
+
+                basicEffect.DiffuseColor = channelColor.ToVector3();
             }
 
-            mesh.Draw();
+            meshHexa.Body.Draw();
             //---
 
             //--- Directions
-            for (int i = 1; i < 7; i++)
+            for (int i = 0; i < 6; i++)
             {
-                mesh = meshHexa.Meshes["Direction_" + i.ToString()];
-
-                foreach (Effect effect in mesh.Effects)
+                foreach (Effect effect in meshHexa.Direction[i].Effects)
                 {
-                    ((IEffectMatrices)effect).View = View;
-                    ((IEffectMatrices)effect).Projection = View;
-                    ((IEffectMatrices)effect).World = localWorld * mesh.ParentBone.Transform;
+                    BasicEffect basicEffect = effect as BasicEffect;
 
-                    ((IEffectLights)effect).EnableDefaultLighting();
-                    ((IEffectLights)effect).DirectionalLight0.Direction = lightDirection;
+                    basicEffect.View = View;
+                    basicEffect.Projection = Projection;
+                    basicEffect.World = localWorld;
 
-                    if (cell.Clip != null && cell.Clip.Directions[i])
+                    basicEffect.EnableDefaultLighting();
+                    basicEffect.DirectionalLight0.Direction = lightDirection;
+
+                    if (i < 3 || cell.Clip != null && cell.Clip.Directions[i])
                     {
-                        ((BasicEffect)effect).DiffuseColor = Color.Red.ToVector3();
+                        //basicEffect.DiffuseColor = Color.Red.ToVector3();
                     }
                     else
                     {
-                        ((BasicEffect)effect).DiffuseColor = channelColor.ToVector3();
+                        basicEffect.DiffuseColor = channelColor.ToVector3();
                     }
                 }
 
-                mesh.Draw();
+                meshHexa.Direction[i].Draw();
             }
             //---
 
             //--- Repeater
-            for (int i = 1; i < 7; i++)
+            for (int i = 0; i < 6; i++)
             {
-                mesh = meshHexa.Meshes["Repeater_" + i.ToString()];
-
-                foreach (Effect effect in mesh.Effects)
+                foreach (Effect effect in meshHexa.Repeater[i].Effects)
                 {
-                    ((IEffectMatrices)effect).View = View;
-                    ((IEffectMatrices)effect).Projection = View;
-                    ((IEffectMatrices)effect).World = localWorld;
+                    BasicEffect basicEffect = effect as BasicEffect;
 
-                    ((IEffectLights)effect).EnableDefaultLighting();
-                    ((IEffectLights)effect).DirectionalLight0.Direction = lightDirection;
+                    basicEffect.View = View;
+                    basicEffect.Projection = Projection;
+                    basicEffect.World = localWorld;
 
-                    if (cell.Clip != null && cell.Clip.Repeater.HasValue && cell.Clip.Repeater >= i)
+                    basicEffect.EnableDefaultLighting();
+                    basicEffect.DirectionalLight0.Direction = lightDirection;
+
+                    if (i< 4 || cell.Clip != null && cell.Clip.Repeater.HasValue && cell.Clip.Repeater >= i)
                     {
-                        ((BasicEffect)effect).DiffuseColor = Color.Red.ToVector3();
+                        //basicEffect.DiffuseColor = Color.Blue.ToVector3();
                     }
                     else
                     {
-                        ((BasicEffect)effect).DiffuseColor = channelColor.ToVector3();
+                        basicEffect.DiffuseColor = channelColor.ToVector3();
                     }
                 }
 
-                mesh.Draw();
+                meshHexa.Repeater[i].Draw();
             }
             //---
-
+            
             //--- Speed
-            //if (cell.Clip.Speed.HasValue)
-            //{
-            //    if (cell.Clip.Speed.Value > 0)
-            //    {
-            //        for (int i = 0; i < cell.Clip.Repeater.Value; i++)
-            //        {
-            //            meshHexa.Meshes["Speed_H_" + i.ToString()].Draw();
-            //        }
-            //    }
+            for (int i = 0; i < 6; i++)
+            {
+                foreach (Effect effect in meshHexa.SpeedHigh[i].Effects)
+                {
+                    BasicEffect basicEffect = effect as BasicEffect;
 
-            //    if (cell.Clip.Speed.Value < 0)
-            //    {
-            //        for (int i = 0; i > cell.Clip.Repeater.Value; i--)
-            //        {
-            //            meshHexa.Meshes["Speed_L_" + i.ToString()].Draw();
-            //        }
-            //    }
-            //}
+                    basicEffect.View = View;
+                    basicEffect.Projection = Projection;
+                    basicEffect.World = localWorld;
+
+                    basicEffect.EnableDefaultLighting();
+                    basicEffect.DirectionalLight0.Direction = lightDirection;
+
+                    if (i<= 4 || cell.Clip != null && cell.Clip.Speed.HasValue && cell.Clip.Speed >= i)
+                    {
+                        //basicEffect.DiffuseColor = Color.Green.ToVector3();
+                    }
+                    else
+                    {
+                        basicEffect.DiffuseColor = channelColor.ToVector3();
+                    }
+                }
+
+                meshHexa.SpeedHigh[i].Draw();
+            }
             //---
         }
 

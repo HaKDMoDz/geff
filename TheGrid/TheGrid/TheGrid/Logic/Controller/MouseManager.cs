@@ -45,7 +45,6 @@ namespace TheGrid.Logic.Controller
                  break;
 	        }
 
-
             if (mouseButtonState == ButtonState.Released  && pressed)
             {
                 mousePosition = new Point(mouseState.X, mouseState.Y);

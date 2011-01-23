@@ -24,7 +24,7 @@ namespace TheGrid.Logic.GamePlay
 
         private void InitializeMap()
         {
-            Map = new Map(32,32);
+            Map = new Map(7,30);
             Map.CreateGrid();
         }        
         

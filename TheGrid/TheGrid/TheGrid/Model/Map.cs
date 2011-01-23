@@ -24,7 +24,7 @@ namespace TheGrid.Model
             this.Width = width;
             this.Height = height;
             this.R = 10;
-            this.H = 3;
+            this.H = 4;
         }
 
         public void CreateGrid()
