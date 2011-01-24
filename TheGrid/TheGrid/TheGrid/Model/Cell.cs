@@ -55,5 +55,11 @@ namespace TheGrid.Model
         {
             return String.Format("{0} : {1},{2}", IndexPosition, Coord.X, Coord.Y);
         }
+
+        public void InitClip()
+        {
+            if (Clip == null)
+                Clip = new Clip();
+        }
     }
 }

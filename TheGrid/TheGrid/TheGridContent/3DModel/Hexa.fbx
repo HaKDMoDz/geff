@@ -10,10 +10,10 @@ FBXHeaderExtension:  {
         Version: 1000
         Year: 2011
         Month: 01
-        Day: 23
-        Hour: 00
-        Minute: 49
-        Second: 06
+        Day: 24
+        Hour: 14
+        Minute: 34
+        Second: 29
         Millisecond: 0
     }
     Creator: "FBX SDK/FBX Plugins build 20070228"
@@ -21,7 +21,7 @@ FBXHeaderExtension:  {
         FlagPLE: 0
     }
 }
-CreationTime: "2011-01-23 00:49:06:000"
+CreationTime: "2011-01-24 14:34:29:000"
 Creator: "Blender version 2.55 (sub 0)"
 
 ; Object definitions
@@ -599,7 +599,7 @@ Objects:  {
 		Culling: "CullingOff"
 		Vertices: 4.542615,7.624313,0.258974,8.873417,-0.104207,0.268702,9.321282,-0.109744,-0.030344,4.772027,8.008617,-0.040563
 		PolygonVertexIndex: 3,0,1,-3
-		Edges: 1,0,1,2,3,0,2,3
+		Edges: 0,1,1,2,0,3,2,3
 		GeometryVersion: 124
         LayerElementNormal: 0 {
             Version: 101

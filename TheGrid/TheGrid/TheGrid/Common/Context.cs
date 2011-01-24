@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TheGrid.Model;
+using TheGrid.Model.Menu;
 
 namespace TheGrid.Common
 {
@@ -10,6 +11,10 @@ namespace TheGrid.Common
     {
         public static ContextType ContextType { get; set; }
         public static Cell SelectedCell { get; set; }
+
+        public static Menu CurrentMenu { get; set; }
+        public static Menu NextMenu { get; set; }
+
         //public static MinionBase SelectedMinion { get; set; }
 
         //public static float HeightMapRadius { get; set; }

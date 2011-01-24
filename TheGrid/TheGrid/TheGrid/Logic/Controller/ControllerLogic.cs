@@ -48,11 +48,11 @@ namespace TheGrid.Logic.Controller
         private Vector3 prevCameraPosition = Vector3.Zero;
         #endregion
 
-        private GameEngine gameEngine { get; set; }
+        private GameEngine GameEngine { get; set; }
 
         public ControllerLogic(GameEngine gameEngine)
         {
-            this.gameEngine = gameEngine;
+            this.GameEngine = gameEngine;
 
             this.keyLeft = new KeyManager(leftKey);
             this.keyNewMap = new KeyManager(Keys.M);
@@ -65,26 +65,43 @@ namespace TheGrid.Logic.Controller
 
             this.mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseRightButton_MousePressed);
             this.mouseRightButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseRightButton_MouseFirstPressed);
+
+            this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
+        }
+
+        void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            Context.SelectedCell = GetSelectedCell(mouseState);
+
+            //--- Ferme le précédent menu
+            if (Context.CurrentMenu != null)
+                Context.CurrentMenu.Close(gameTime);
+            //---
+
+            //--- Ouvre le nouveau menu
+            Context.CurrentMenu = GameEngine.GamePlay.CreateMenu(Context.SelectedCell);
+            Context.CurrentMenu.Open(gameTime);
+            //---
         }
 
         void mouseRightButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
         {
-            prevCameraPosition = gameEngine.Render.CameraPosition;
+            prevCameraPosition = GameEngine.Render.CameraPosition;
         }
 
         void mouseRightButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
             if (Tools.Distance(Point.Zero, distance) > 5f)
             {
-                gameEngine.Render.CameraPosition = new Vector3(prevCameraPosition.X, prevCameraPosition.Y, gameEngine.Render.CameraPosition.Z) + new Vector3(-distance.X, distance.Y, 0f) * gameEngine.Render.CameraPosition.Z / 500f; ;
-                gameEngine.Render.CameraTarget = new Vector3(gameEngine.Render.CameraPosition.X, gameEngine.Render.CameraPosition.Y, 0f);
+                GameEngine.Render.CameraPosition = new Vector3(prevCameraPosition.X, prevCameraPosition.Y, GameEngine.Render.CameraPosition.Z) + new Vector3(-distance.X, distance.Y, 0f) * GameEngine.Render.CameraPosition.Z / 500f; ;
+                GameEngine.Render.CameraTarget = new Vector3(GameEngine.Render.CameraPosition.X, GameEngine.Render.CameraPosition.Y, 0f);
             }
         }
 
         void keyNewMap_KeyReleased(Keys key, GameTime gameTime)
         {
-            this.gameEngine.GamePlay.Map.CreateGrid();
-            this.gameEngine.Render.CreateVertex();
+            this.GameEngine.GamePlay.Map.CreateGrid();
+            this.GameEngine.Render.CreateVertex();
         }
 
         public void UpdateBegin(GameTime gameTime)
@@ -113,12 +130,12 @@ namespace TheGrid.Logic.Controller
             //--- Zoom
             else
             {
-                float estimatedZoom = gameEngine.Render.CameraPosition.Z + (float)(prevMouseWheel - curMouseWheel) / 50f;
+                float estimatedZoom = GameEngine.Render.CameraPosition.Z + (float)(prevMouseWheel - curMouseWheel) / 50f;
 
-                if (gameEngine.Render.CameraPosition.Z != estimatedZoom && estimatedZoom > ZOOM_IN_MAX && estimatedZoom < ZOOM_OUT_MAX)
+                if (GameEngine.Render.CameraPosition.Z != estimatedZoom && estimatedZoom > ZOOM_IN_MAX && estimatedZoom < ZOOM_OUT_MAX)
                 {
-                    gameEngine.Render.CameraPosition.Z = estimatedZoom;
-                    gameEngine.Render.updateViewScreen = true;
+                    GameEngine.Render.CameraPosition.Z = estimatedZoom;
+                    GameEngine.Render.updateViewScreen = true;
                 }
             }
 
@@ -130,21 +147,21 @@ namespace TheGrid.Logic.Controller
 
             if (keyBoardState.IsKeyDown(Keys.PageUp))
             {
-                gameEngine.Render.CameraPosition.Z += 0.5f;
-                gameEngine.Render.updateViewScreen = true;
+                GameEngine.Render.CameraPosition.Z += 0.5f;
+                GameEngine.Render.updateViewScreen = true;
             }
             if (keyBoardState.IsKeyDown(Keys.PageDown))
             {
-                gameEngine.Render.CameraPosition.Z -= 0.5f;
-                gameEngine.Render.updateViewScreen = true;
+                GameEngine.Render.CameraPosition.Z -= 0.5f;
+                GameEngine.Render.updateViewScreen = true;
             }
 
-            if (gameEngine.Render.CameraPosition.Z > ZOOM_OUT_MAX)
-                gameEngine.Render.CameraPosition.Z = ZOOM_OUT_MAX;
+            if (GameEngine.Render.CameraPosition.Z > ZOOM_OUT_MAX)
+                GameEngine.Render.CameraPosition.Z = ZOOM_OUT_MAX;
             //---
 
             //--- Keyboard
-            float deltaTranslation = gameEngine.Render.CameraPosition.Z / 200f;
+            float deltaTranslation = GameEngine.Render.CameraPosition.Z / 200f;
             Vector2 vecTempTranslation = Vector2.Zero;
 
             if (deltaTranslation >= 0.5f)
@@ -156,26 +173,26 @@ namespace TheGrid.Logic.Controller
             if (keyBoardState.IsKeyDown(upKey))
             {
                 vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * -Vector2.UnitY;
-                gameEngine.Render.updateViewScreen = true;
+                GameEngine.Render.updateViewScreen = true;
             }
 
             if (keyBoardState.IsKeyDown(downKey))
             {
                 vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * Vector2.UnitY;
-                gameEngine.Render.updateViewScreen = true;
+                GameEngine.Render.updateViewScreen = true;
             }
 
             if (keyBoardState.IsKeyDown(rightKey))
             {
                 vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * -Vector2.UnitX;
-                gameEngine.Render.updateViewScreen = true;
+                GameEngine.Render.updateViewScreen = true;
             }
 
             if (keyBoardState.IsKeyDown(leftKey))
             {
                 vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * Vector2.UnitX;
 
-                gameEngine.Render.updateViewScreen = true;
+                GameEngine.Render.updateViewScreen = true;
             }
             //---
 
@@ -252,10 +269,10 @@ namespace TheGrid.Logic.Controller
             //---
 
 
-            if (gameEngine.Render.updateViewScreen)
+            if (GameEngine.Render.updateViewScreen)
             {
-                gameEngine.Render.CameraPosition += Tools.GetVector3(vecTempTranslation);
-                gameEngine.Render.CameraTarget += Tools.GetVector3(vecTempTranslation);
+                GameEngine.Render.CameraPosition += Tools.GetVector3(vecTempTranslation);
+                GameEngine.Render.CameraTarget += Tools.GetVector3(vecTempTranslation);
 
             }
 
@@ -267,14 +284,14 @@ namespace TheGrid.Logic.Controller
             }
             else if (isSKeyPressed)
             {
-                gameEngine.Render.doScreenShot = true;
+                GameEngine.Render.doScreenShot = true;
                 isSKeyPressed = false;
             }
             //---
 
             if (keyBoardState.IsKeyDown(Keys.Space))
             {
-                this.gameEngine.Exit();
+                this.GameEngine.Exit();
             }
         }
 
@@ -284,6 +301,41 @@ namespace TheGrid.Logic.Controller
 
         public void UpdateEnd(GameTime gameTime)
         {
+        }
+
+        public Cell GetSelectedCell(MouseState mouseState)
+        {
+            Vector3 nearsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 0f);
+            Vector3 farsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 1f);
+
+            Matrix world = Matrix.CreateTranslation(0, 0, 0);
+
+            Vector3 nearPoint = GameEngine.GraphicsDevice.Viewport.Unproject(nearsource,
+                GameEngine.Render.Projection, GameEngine.Render.View, world);
+
+            Vector3 farPoint = GameEngine.GraphicsDevice.Viewport.Unproject(farsource,
+                GameEngine.Render.Projection, GameEngine.Render.View, world);
+
+            Vector3 direction = farPoint - nearPoint;
+            direction.Normalize();
+            Ray pickRay = new Ray(nearPoint, direction);
+
+            Cell selectedCell = null;
+            float minimalDistance = float.MaxValue;
+
+            foreach (Cell cell in GameEngine.GamePlay.Map.Cells)
+            {
+                BoundingSphere s = new BoundingSphere(new Vector3(cell.Location.X, cell.Location.Y, cell.Height), GameEngine.GamePlay.Map.R);
+                float? distance = pickRay.Intersects(s);
+
+                if (distance.HasValue && distance.Value < minimalDistance)
+                {
+                    selectedCell = cell;
+                    minimalDistance = distance.Value;
+                }
+            }
+
+            return selectedCell;
         }
     }
 }

@@ -28,9 +28,9 @@ namespace TheGrid.Logic.Render
 
         VertexBuffer vBuffer;
 
-        Matrix View;
-        Matrix Projection;
-        Matrix World;
+        public Matrix View;
+        public Matrix Projection;
+        public Matrix World;
 
         public Vector3 CameraPosition = new Vector3(200f, 100f, 50f);
         public Vector3 CameraTarget = new Vector3(200f, 100f, 0f);
@@ -399,39 +399,6 @@ namespace TheGrid.Logic.Render
         //    }
         //}
 
-        public Cell GetSelectedCell(MouseState mouseState)
-        {
-            Vector3 nearsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 0f);
-            Vector3 farsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 1f);
-
-            Matrix world = Matrix.CreateTranslation(0, 0, 0);
-
-            Vector3 nearPoint = GameEngine.GraphicsDevice.Viewport.Unproject(nearsource,
-                Projection, View, world);
-
-            Vector3 farPoint = GameEngine.GraphicsDevice.Viewport.Unproject(farsource,
-                Projection, View, world);
-
-            Vector3 direction = farPoint - nearPoint;
-            direction.Normalize();
-            Ray pickRay = new Ray(nearPoint, direction);
-
-            Cell selectedCell = null;
-            float minimalDistance = float.MaxValue;
-
-            foreach (Cell cell in Map.Cells)
-            {
-                BoundingSphere s = new BoundingSphere(new Vector3(cell.Location.X, cell.Location.Y, cell.Height), Map.R);
-                float? distance = pickRay.Intersects(s);
-
-                if (distance.HasValue && distance.Value < minimalDistance)
-                {
-                    selectedCell = cell;
-                    minimalDistance = distance.Value;
-                }
-            }
-
-            return selectedCell;
-        }
+       
     }
 }
