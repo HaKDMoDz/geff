@@ -13,6 +13,7 @@ namespace TheGrid.Logic.Render
     public class RenderLogic
     {
         public SpriteBatch SpriteBatch;
+        public SpriteFont FontMenu { get; set; }
 
         public Map Map
         {
@@ -55,6 +56,7 @@ namespace TheGrid.Logic.Render
             Initilize3DModel();
 
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
+            FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
         }
 
         private void Initilize3DModel()

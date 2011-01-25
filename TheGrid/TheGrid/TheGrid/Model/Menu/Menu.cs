@@ -88,6 +88,28 @@ namespace TheGrid.Model.Menu
                 pass.Apply();
                 gameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, nbVertex);
             }
+
+
+            Vector3 nearPoint = gameEngine.GraphicsDevice.Viewport.Project(Tools.GetVector3(ParentCell.Location+ new Vector2(2f,0f)),
+                gameEngine.Render.Projection, gameEngine.Render.View, gameEngine.Render.World);
+
+            float localSize = size * 120f / gameEngine.Render.CameraPosition.Z;
+
+            gameEngine.Render.SpriteBatch.Begin();//SpriteSortMode.BackToFront, null, null, null, RasterizerState.CullClockwise, effect, mtx);
+            for (int i = 0; i < Items.Count; i++)
+            {
+                string text = Items[i].Name;
+
+                if (Items[i].Value != 0)
+                    text = Items[i].Value.ToString();
+
+                double angle = -MathHelper.TwoPi * (float)(i) / (float)(Items.Count);
+
+                Vector2 vec = new Vector2(localSize * (float)Math.Cos(angle), localSize* (float)Math.Sin(angle));
+                
+                gameEngine.Render.SpriteBatch.DrawString(gameEngine.Render.FontMenu, text, Tools.GetVector2(nearPoint) + vec, Color.White);
+            }
+            gameEngine.Render.SpriteBatch.End();
         }
 
         private void CreateVertex(GameEngine gameEngine)
@@ -200,11 +222,11 @@ namespace TheGrid.Model.Menu
             int currentIndex = -1;
             for (int i = 0; i < Items.Count; i++)
             {
-                double angle1 = -MathHelper.TwoPi * ((float)(i)+0.5f) / (float)(Items.Count);
-                double angle2 = -MathHelper.TwoPi * ((float)(i + 1)+0.5f) / (float)(Items.Count);
+                double angle1 = -MathHelper.TwoPi * ((float)(i) + 0.5f) / (float)(Items.Count);
+                double angle2 = -MathHelper.TwoPi * ((float)(i + 1) + 0.5f) / (float)(Items.Count);
 
-                Vector3 vec1 = new Vector3(size * 1.2f * (float)Math.Cos(angle1), size *1.2f* (float)Math.Sin(angle1), 1f);
-                Vector3 vec3 = new Vector3(size *1.2f* (float)Math.Cos(angle2), size *1.2f* (float)Math.Sin(angle2), 1f);
+                Vector3 vec1 = new Vector3(size * 1.2f * (float)Math.Cos(angle1), size * 1.2f * (float)Math.Sin(angle1), 1f);
+                Vector3 vec3 = new Vector3(size * 1.2f * (float)Math.Cos(angle2), size * 1.2f * (float)Math.Sin(angle2), 1f);
 
                 vec1 = vec1 + Tools.GetVector3(ParentCell.Location);
 
