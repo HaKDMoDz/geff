@@ -52,7 +52,6 @@ namespace TheGrid.Logic.Render
             CreateCamera();
             CreateShader();
 
-            CreateVertex();
             Initilize3DModel();
 
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
@@ -62,23 +61,7 @@ namespace TheGrid.Logic.Render
         {
             meshModels = new Dictionary<string, Microsoft.Xna.Framework.Graphics.Model>();
 
-            //meshModels.Add("Hexa", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\Hexa"));
             meshHexa = new MeshHexa(GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\Hexa"));
-
-            /*
-            //meshModels.Add("FlowPhant", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowPhant"));
-            meshModels.Add("FlowInspector", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowInspector"));
-            //meshModels.Add("FlowRobot1", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowRobot1"));
-            meshModels.Add("FlowRobot2", GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\FlowRobot2"));
-
-            foreach (Player player in Context.Players)
-            {
-                foreach (MinionBase minion in player.Minions)
-                {
-                    minion.InitAnimationPlayer(meshModels[minion.ModelName]);
-                }
-            }
-             * */
         }
 
         //Création de la caméra
@@ -101,17 +84,18 @@ namespace TheGrid.Logic.Render
             //effect.World = Matrix.CreateRotationY((float)gameTime.TotalGameTime.TotalMilliseconds/800);
 
             //effect.PreferPerPixelLighting = true;
-            effect.VertexColorEnabled = false;
-            effect.LightingEnabled = true;
+            effect.VertexColorEnabled = true;
+            effect.LightingEnabled = false;
             effect.EmissiveColor = new Vector3(0.2f, 0.2f, 0.3f);
             //effect.DirectionalLight0 = new DirectionalLight(
 
-            effect.TextureEnabled = true;
+            effect.TextureEnabled = false;
             effect.SpecularColor = new Vector3(0.3f, 0.5f, 0.3f);
             effect.SpecularPower = 1f;
+            
             //effect.SpecularColor = new Vector3(1, 1, 1);
             //effect.SpecularPower = 1f;
-            effect.Texture = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa0");
+            //effect.Texture = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa0");
 
             UpdateShader(new GameTime());
         }
@@ -126,41 +110,41 @@ namespace TheGrid.Logic.Render
             effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
         }
 
-        public void CreateVertex()
-        {
-            vBuffer = new VertexBuffer(GameEngine.GraphicsDevice, typeof(VertexPositionNormalTexture), Map.Cells.Count * 12, BufferUsage.None);
+        //public void CreateVertex()
+        //{
+        //    vBuffer = new VertexBuffer(GameEngine.GraphicsDevice, typeof(VertexPositionNormalTexture), Map.Cells.Count * 12, BufferUsage.None);
 
-            List<VertexPositionNormalTexture> vertex = new List<VertexPositionNormalTexture>();
+        //    List<VertexPositionNormalTexture> vertex = new List<VertexPositionNormalTexture>();
 
-            foreach (Cell cell in Map.Cells)
-            {
-                AddVertex(3, 2, 1, vertex, cell);
-                AddVertex(6, 4, 3, vertex, cell);
-                AddVertex(6, 5, 4, vertex, cell);
-                AddVertex(6, 3, 1, vertex, cell);
-            }
+        //    foreach (Cell cell in Map.Cells)
+        //    {
+        //        AddVertex(3, 2, 1, vertex, cell);
+        //        AddVertex(6, 4, 3, vertex, cell);
+        //        AddVertex(6, 5, 4, vertex, cell);
+        //        AddVertex(6, 3, 1, vertex, cell);
+        //    }
 
-            vBuffer.SetData<VertexPositionNormalTexture>(vertex.ToArray());
+        //    vBuffer.SetData<VertexPositionNormalTexture>(vertex.ToArray());
 
-            GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
-            //GameEngine.GraphicsDevice.Textures[0] = GameEngine.Content.Load<Texture2D>(@"Texture\HexaFloor1");
-        }
+        //    GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
+        //    //GameEngine.GraphicsDevice.Textures[0] = GameEngine.Content.Load<Texture2D>(@"Texture\HexaFloor1");
+        //}
 
-        private void AddVertex(int index1, int index2, int index3, List<VertexPositionNormalTexture> vertex, Cell cell)
-        {
-            Dictionary<int, Vector2> uv = new Dictionary<int, Vector2>();
+        //private void AddVertex(int index1, int index2, int index3, List<VertexPositionNormalTexture> vertex, Cell cell)
+        //{
+        //    Dictionary<int, Vector2> uv = new Dictionary<int, Vector2>();
 
-            uv.Add(1, new Vector2(0.75f, 0f));
-            uv.Add(2, new Vector2(1f, 0.5f));
-            uv.Add(3, new Vector2(0.75f, 1f));
-            uv.Add(4, new Vector2(0.26f, 1f));
-            uv.Add(5, new Vector2(0f, 0.5f));
-            uv.Add(6, new Vector2(0.26f, 0f));
+        //    uv.Add(1, new Vector2(0.75f, 0f));
+        //    uv.Add(2, new Vector2(1f, 0.5f));
+        //    uv.Add(3, new Vector2(0.75f, 1f));
+        //    uv.Add(4, new Vector2(0.26f, 1f));
+        //    uv.Add(5, new Vector2(0f, 0.5f));
+        //    uv.Add(6, new Vector2(0.26f, 0f));
 
-            vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index1]], Map.Normals[cell.Points[index1]], uv[index1]));
-            vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index2]], Map.Normals[cell.Points[index2]], uv[index2]));
-            vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index3]], Map.Normals[cell.Points[index3]], uv[index3]));
-        }
+        //    vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index1]], Map.Normals[cell.Points[index1]], uv[index1]));
+        //    vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index2]], Map.Normals[cell.Points[index2]], uv[index2]));
+        //    vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index3]], Map.Normals[cell.Points[index3]], uv[index3]));
+        //}
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -171,25 +155,18 @@ namespace TheGrid.Logic.Render
             GameEngine.GraphicsDevice.Clear(new Color(15, 15, 15));
 
             UpdateCamera();
-            //UpdateShader(gameTime);
+            UpdateShader(gameTime);
 
             //--- Affiche la map
             foreach (Cell cell in Map.Cells)
             {
                 DrawCell(cell, gameTime);
             }
+            //---
 
-
-            //CreateVertex();
-            /*
-            GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
-
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                GameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, Map.Cells.Count * 12);
-            }
-            */
+            //--- Affiche le menu
+            if (Context.CurrentMenu != null)
+                Context.CurrentMenu.Draw(GameEngine, effect, gameTime);
             //---
         }
 
@@ -199,7 +176,7 @@ namespace TheGrid.Logic.Render
 
             //--- Affficher la cellule si elle est dans la portion visible de l'écran
             BoundingFrustum frustum = new BoundingFrustum(View * Projection);
-            
+
             BoundingSphere boundingSphere = meshHexa.Body.BoundingSphere.Transform(localWorld);
 
             if (frustum.Contains(boundingSphere) == ContainmentType.Disjoint)
@@ -276,7 +253,7 @@ namespace TheGrid.Logic.Render
                     basicEffect.EnableDefaultLighting();
                     basicEffect.DirectionalLight0.Direction = lightDirection;
 
-                    if (i< 4 || cell.Clip != null && cell.Clip.Repeater.HasValue && cell.Clip.Repeater >= i)
+                    if (i < 4 || cell.Clip != null && cell.Clip.Repeater.HasValue && cell.Clip.Repeater >= i)
                     {
                         //basicEffect.DiffuseColor = Color.Blue.ToVector3();
                     }
@@ -289,7 +266,7 @@ namespace TheGrid.Logic.Render
                 meshHexa.Repeater[i].Draw();
             }
             //---
-            
+
             //--- Speed
             for (int i = 0; i < 6; i++)
             {
@@ -304,7 +281,7 @@ namespace TheGrid.Logic.Render
                     basicEffect.EnableDefaultLighting();
                     basicEffect.DirectionalLight0.Direction = lightDirection;
 
-                    if (i<= 4 || cell.Clip != null && cell.Clip.Speed.HasValue && cell.Clip.Speed >= i)
+                    if (i <= 4 || cell.Clip != null && cell.Clip.Speed.HasValue && cell.Clip.Speed >= i)
                     {
                         //basicEffect.DiffuseColor = Color.Green.ToVector3();
                     }
@@ -398,7 +375,5 @@ namespace TheGrid.Logic.Render
         //        mesh.Draw();
         //    }
         //}
-
-       
     }
 }

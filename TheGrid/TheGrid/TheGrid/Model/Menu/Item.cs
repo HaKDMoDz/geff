@@ -12,6 +12,7 @@ namespace TheGrid.Model.Menu
         public bool Checked { get; set; }
         public int Value { get; set; }
         public String Name { get; set; }
+        public bool MouseOver { get; set; }
 
         public Item(Menu parentMenu, string name) : this(parentMenu, name, 0) { }
 
@@ -24,7 +25,7 @@ namespace TheGrid.Model.Menu
 
         public delegate void SelectedHandler(Item item, GameTime gameTime);
         public event SelectedHandler Selected;
-        protected virtual void OnSelected(GameTime gameTime)
+        public virtual void OnSelected(GameTime gameTime)
         {
             if(Selected != null)
                 Selected(this, gameTime);

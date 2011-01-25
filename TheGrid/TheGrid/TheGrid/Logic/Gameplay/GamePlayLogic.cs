@@ -38,11 +38,26 @@ namespace TheGrid.Logic.GamePlay
 
         public void Update(GameTime gameTime)
         {
-            UpdateAnimation(gameTime);
-        }
+            //--- Menu
+            if (Context.CurrentMenu != null)
+            {
+                Context.CurrentMenu.Update(GameEngine, gameTime);
 
-        private void UpdateAnimation(GameTime gameTime)
-        {
+                if (Context.CurrentMenu.State == MenuState.Closed)
+                {
+                    if (Context.NextMenu != null && Context.CurrentMenu != Context.NextMenu)
+                    {
+                        Context.CurrentMenu = Context.NextMenu;
+                        //Context.NextMenu = null;
+                        Context.CurrentMenu.Open(gameTime);
+                    }
+                    else
+                    {
+                        Context.CurrentMenu = null;
+                    }
+                }
+            }
+            //---
         }
 
         #region Menu
@@ -81,12 +96,10 @@ namespace TheGrid.Logic.GamePlay
 
         void itemChannel_Selected(Item item, GameTime gameTime)
         {
-            throw new NotImplementedException();
         }
 
         void itemInstrument_Selected(Item item, GameTime gameTime)
         {
-            throw new NotImplementedException();
         }
 
         #region Menu Speed
@@ -97,7 +110,7 @@ namespace TheGrid.Logic.GamePlay
             //---
             Menu menuSpeed = new Menu(item.ParentMenu.ParentCell, item.ParentMenu);
 
-            for (int i = -4 ; i < 5; i++)
+            for (int i = -4; i < 5; i++)
             {
                 Item itemSpeed = new Item(menuSpeed, i.ToString(), i);
                 itemSpeed.Selected += new Item.SelectedHandler(itemSpeed_Selected);
@@ -126,7 +139,7 @@ namespace TheGrid.Logic.GamePlay
             item.ParentMenu.ParentCell.Clip.Speed = item.Value;
 
             Context.NextMenu = item.ParentMenu.ParentMenu;
-        } 
+        }
         #endregion
 
         #region Menu Repeater

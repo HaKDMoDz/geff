@@ -129,6 +129,7 @@
     <Compile Include="Model\Map.cs" />
     <Compile Include="Model\Menu\Item.cs" />
     <Compile Include="Model\Menu\Menu.cs" />
+    <Compile Include="Model\Menu\MenuState.cs" />
     <Compile Include="Model\Musician.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Sample.cs" />

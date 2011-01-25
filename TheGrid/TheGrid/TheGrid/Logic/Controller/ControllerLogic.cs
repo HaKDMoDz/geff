@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using TheGrid.Common;
 using TheGrid.Model;
+using TheGrid.Model.Menu;
 
 namespace TheGrid.Logic.Controller
 {
@@ -71,17 +72,33 @@ namespace TheGrid.Logic.Controller
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            Context.SelectedCell = GetSelectedCell(mouseState);
+            Cell selectedCell = GetSelectedCell(mouseState);
 
-            //--- Ferme le précédent menu
-            if (Context.CurrentMenu != null)
-                Context.CurrentMenu.Close(gameTime);
-            //---
+            if (selectedCell != null && Context.SelectedCell == selectedCell && Context.CurrentMenu != null && Context.CurrentMenu.State == MenuState.Opened)
+            {
+                Context.CurrentMenu.MouseClick(GameEngine, gameTime, mouseState);
+            }
+            else
+            {
+                Context.SelectedCell = selectedCell;
 
-            //--- Ouvre le nouveau menu
-            Context.CurrentMenu = GameEngine.GamePlay.CreateMenu(Context.SelectedCell);
-            Context.CurrentMenu.Open(gameTime);
-            //---
+                if (Context.SelectedCell != null)
+                {
+                    //--- Ferme le précédent menu
+                    if (Context.CurrentMenu != null)
+                    {
+                        Context.CurrentMenu.Close(gameTime);
+                        Context.NextMenu = GameEngine.GamePlay.CreateMenu(Context.SelectedCell);
+                    }
+                    else
+                    {
+                        //---> Ouvre le nouveau menu
+                        Context.CurrentMenu = GameEngine.GamePlay.CreateMenu(Context.SelectedCell);
+                        Context.CurrentMenu.Open(gameTime);
+                    }
+                    //---
+                }
+            }
         }
 
         void mouseRightButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
@@ -101,7 +118,6 @@ namespace TheGrid.Logic.Controller
         void keyNewMap_KeyReleased(Keys key, GameTime gameTime)
         {
             this.GameEngine.GamePlay.Map.CreateGrid();
-            this.GameEngine.Render.CreateVertex();
         }
 
         public void UpdateBegin(GameTime gameTime)
@@ -113,30 +129,18 @@ namespace TheGrid.Logic.Controller
             //---
 
             //--- Relative mouse position
-            //mousePosition = new Vector2(((float)mouseState.X - (float)this.gameEngine.GraphicsDevice.Viewport.Width / 2f) * (-this.gameEngine.Render.Zoom / 750f) + this.gameEngine.Render.VecTranslation.X, ((float)mouseState.Y - (float)this.gameEngine.GraphicsDevice.Viewport.Height / 2f) * (-this.gameEngine.Render.Zoom / 750f) + this.gameEngine.Render.VecTranslation.Y);
             mousePositionPoint = new Point(mouseState.X, mouseState.Y);
             //---
 
             //--- Mouse wheel
             int curMouseWheel = mouseState.ScrollWheelValue;
 
-            if (Context.SelectedCell != null)
-            {
-                if (prevMouseWheel != curMouseWheel)
-                {
+            float estimatedZoom = GameEngine.Render.CameraPosition.Z + (float)(prevMouseWheel - curMouseWheel) / 50f;
 
-                }
-            }
-            //--- Zoom
-            else
+            if (GameEngine.Render.CameraPosition.Z != estimatedZoom && estimatedZoom > ZOOM_IN_MAX && estimatedZoom < ZOOM_OUT_MAX)
             {
-                float estimatedZoom = GameEngine.Render.CameraPosition.Z + (float)(prevMouseWheel - curMouseWheel) / 50f;
-
-                if (GameEngine.Render.CameraPosition.Z != estimatedZoom && estimatedZoom > ZOOM_IN_MAX && estimatedZoom < ZOOM_OUT_MAX)
-                {
-                    GameEngine.Render.CameraPosition.Z = estimatedZoom;
-                    GameEngine.Render.updateViewScreen = true;
-                }
+                GameEngine.Render.CameraPosition.Z = estimatedZoom;
+                GameEngine.Render.updateViewScreen = true;
             }
 
             if (prevMouseWheel != curMouseWheel)
@@ -145,6 +149,7 @@ namespace TheGrid.Logic.Controller
             }
             //---
 
+            //--- Zoom clavier
             if (keyBoardState.IsKeyDown(Keys.PageUp))
             {
                 GameEngine.Render.CameraPosition.Z += 0.5f;
@@ -268,6 +273,14 @@ namespace TheGrid.Logic.Controller
             mouseRightButton.Update(mouseState, gameTime);
             //---
 
+            //---
+            Cell selectedCell = GetSelectedCell(mouseState);
+
+            if (selectedCell != null && Context.SelectedCell == selectedCell && Context.CurrentMenu != null && Context.CurrentMenu.State == MenuState.Opened)
+            {
+                Context.CurrentMenu.MouseOver(GameEngine, gameTime, mouseState);
+            }
+            //---
 
             if (GameEngine.Render.updateViewScreen)
             {
