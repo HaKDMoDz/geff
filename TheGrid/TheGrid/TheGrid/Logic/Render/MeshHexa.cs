@@ -11,8 +11,8 @@ namespace TheGrid.Logic.Render
         public ModelMesh[] Direction { get; set; }
         public ModelMesh[] Repeater { get; set; }
         public ModelMesh Body { get; set; }
-        public ModelMesh[] SpeedHigh { get; set; }
-        public ModelMesh[] SpeedLow { get; set; }
+        public ModelMesh Icon { get; set; }
+        public ModelMesh[] Speed { get; set; }
         public Microsoft.Xna.Framework.Graphics.Model Model { get; set; }
 
         public MeshHexa(Microsoft.Xna.Framework.Graphics.Model model)
@@ -31,12 +31,13 @@ namespace TheGrid.Logic.Render
                 Repeater[i - 1] = model.Meshes["Repeater_" + i.ToString()];
             }
 
-            SpeedHigh = new ModelMesh[8];
-            for (int i = 1; i < 9; i++)
+            Speed = new ModelMesh[4];
+            for (int i = 1; i < 5; i++)
             {
-                SpeedHigh[i - 1] = model.Meshes["Speed_H_" + i.ToString()];
+                Speed[i - 1] = model.Meshes["Speed_" + i.ToString()];
             }
 
+            Icon = model.Meshes["Icon"];
             Body = model.Meshes["Body"];
         }
     }

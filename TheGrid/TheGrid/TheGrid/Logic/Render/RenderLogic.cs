@@ -211,6 +211,22 @@ namespace TheGrid.Logic.Render
             }
 
             meshHexa.Body.Draw();
+
+            foreach (Effect effect in meshHexa.Icon.Effects)
+            {
+                BasicEffect basicEffect = effect as BasicEffect;
+
+                basicEffect.View = View;
+                basicEffect.Projection = Projection;
+                basicEffect.World = localWorld;
+
+                basicEffect.EnableDefaultLighting();
+                basicEffect.DirectionalLight0.Direction = lightDirection;
+
+                basicEffect.DiffuseColor = channelColor.ToVector3();
+            }
+
+            meshHexa.Icon.Draw();
             //---
 
             //--- Directions
@@ -270,9 +286,9 @@ namespace TheGrid.Logic.Render
             //---
 
             //--- Speed
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 4; i++)
             {
-                foreach (Effect effect in meshHexa.SpeedHigh[i].Effects)
+                foreach (Effect effect in meshHexa.Speed[i].Effects)
                 {
                     BasicEffect basicEffect = effect as BasicEffect;
 
@@ -293,7 +309,7 @@ namespace TheGrid.Logic.Render
                     }
                 }
 
-                meshHexa.SpeedHigh[i].Draw();
+                meshHexa.Speed[i].Draw();
             }
             //---
         }
