@@ -89,12 +89,13 @@ namespace TheGrid.Model.Menu
                 gameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, nbVertex);
             }
 
-
             Vector3 nearPoint = gameEngine.GraphicsDevice.Viewport.Project(new Vector3(ParentCell.Location,10f),
                 gameEngine.Render.Projection, gameEngine.Render.View, gameEngine.Render.World);
 
-            float localSize = size * 300f / gameEngine.Render.CameraPosition.Z;
+            //float localSize = size * 300f / gameEngine.Render.CameraPosition.Z;
+            float localSize = size * 150f / gameEngine.Render.CameraPosition.Z;
             float delta = 32f * localSize / 70f;
+            //float delta = 32f * localSize / 100f;
 
             gameEngine.Render.SpriteBatch.Begin();//SpriteSortMode.BackToFront, null, null, null, RasterizerState.CullClockwise, effect, mtx);
             for (int i = 0; i < Items.Count; i++)
@@ -150,7 +151,7 @@ namespace TheGrid.Model.Menu
                 else
                     color.G = 10;
 
-                vertex.Add(new VertexPositionColor(new Vector3(0, 0, 12f) + Tools.GetVector3(ParentCell.Location), color2));
+                vertex.Add(new VertexPositionColor(new Vector3(0, 0, 10f) + Tools.GetVector3(ParentCell.Location), color2));
                 vertex.Add(new VertexPositionColor(position1 + Tools.GetVector3(ParentCell.Location), color));
                 vertex.Add(new VertexPositionColor(position2 + Tools.GetVector3(ParentCell.Location), color));
             }
@@ -160,50 +161,58 @@ namespace TheGrid.Model.Menu
 
         public void MouseClick(GameEngine gameEngine, GameTime gameTime, MouseState mouseState)
         {
-            float pickCurDistance = 0f;
-            float barycentricU = 0f;
-            float barycentricV = 0f;
+            //float pickCurDistance = 0f;
+            //float barycentricU = 0f;
+            //float barycentricV = 0f;
 
-            Vector3 nearsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 0f);
-            Vector3 farsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 1f);
+            //Vector3 nearsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 0f);
+            //Vector3 farsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 1f);
 
-            Matrix world = Matrix.CreateTranslation(0, 0, 0);
+            //Matrix world = Matrix.CreateTranslation(0, 0, 0);
 
-            Vector3 nearPoint = gameEngine.GraphicsDevice.Viewport.Unproject(nearsource,
-                gameEngine.Render.Projection, gameEngine.Render.View, world);
+            //Vector3 nearPoint = gameEngine.GraphicsDevice.Viewport.Unproject(nearsource,
+            //    gameEngine.Render.Projection, gameEngine.Render.View, world);
 
-            Vector3 farPoint = gameEngine.GraphicsDevice.Viewport.Unproject(farsource,
-                gameEngine.Render.Projection, gameEngine.Render.View, world);
+            //Vector3 farPoint = gameEngine.GraphicsDevice.Viewport.Unproject(farsource,
+            //    gameEngine.Render.Projection, gameEngine.Render.View, world);
 
-            Vector3 direction = farPoint - nearPoint;
-            direction.Normalize();
+            //Vector3 direction = farPoint - nearPoint;
+            //direction.Normalize();
 
-            int currentIndex = -1;
-            for (int i = 0; i < Items.Count; i++)
+            //int currentIndex = -1;
+            //for (int i = 0; i < Items.Count; i++)
+            //{
+            //    double angle1 = -MathHelper.TwoPi * (float)(i) / (float)(Items.Count);
+            //    double angle2 = -MathHelper.TwoPi * (float)(i + 1) / (float)(Items.Count);
+
+            //    Vector3 vec1 = new Vector3(size * (float)Math.Cos(angle1), size * (float)Math.Sin(angle1), 10f);
+            //    Vector3 vec3 = new Vector3(size * (float)Math.Cos(angle2), size * (float)Math.Sin(angle2), 10f);
+
+            //    vec1 = vec1 + Tools.GetVector3(ParentCell.Location);
+
+            //    Vector3 vec2 = new Vector3(0, 0, 1f) + Tools.GetVector3(ParentCell.Location);
+
+            //    vec3 = vec3 + Tools.GetVector3(ParentCell.Location);
+
+            //    if (Tools.RayIntersectTriangle(nearPoint, direction, vec1, vec2, vec3, ref pickCurDistance, ref barycentricU, ref barycentricV))
+            //    {
+            //        currentIndex = i;
+            //    }
+            //}
+
+            //if (currentIndex != -1)
+            //{
+            //    //Items[currentIndex].OnSelected(gameTime);
+
+            //    gameEngine.Window.Title = currentIndex.ToString();
+            //}
+
+            foreach (Item item in Items)
             {
-                double angle1 = -MathHelper.TwoPi * (float)(i) / (float)(Items.Count);
-                double angle2 = -MathHelper.TwoPi * (float)(i + 1) / (float)(Items.Count);
-
-                Vector3 vec1 = new Vector3(size * (float)Math.Cos(angle1), size * (float)Math.Sin(angle1), 1f);
-                Vector3 vec3 = new Vector3(size * (float)Math.Cos(angle2), size * (float)Math.Sin(angle2), 1f);
-
-                vec1 = vec1 + Tools.GetVector3(ParentCell.Location);
-
-                Vector3 vec2 = new Vector3(0, 0, 1f) + Tools.GetVector3(ParentCell.Location);
-
-                vec3 = vec3 + Tools.GetVector3(ParentCell.Location);
-
-                if (Tools.RayIntersectTriangle(nearPoint, direction, vec1, vec2, vec3, ref pickCurDistance, ref barycentricU, ref barycentricV))
+                if (item.MouseOver)
                 {
-                    currentIndex = i;
+                    item.OnSelected(gameTime);
                 }
-            }
-
-            if (currentIndex != -1)
-            {
-                //Items[currentIndex].OnSelected(gameTime);
-
-                gameEngine.Window.Title = currentIndex.ToString();
             }
         }
 
@@ -227,18 +236,20 @@ namespace TheGrid.Model.Menu
             Vector3 direction = farPoint - nearPoint;
             direction.Normalize();
 
+            float localSize = size * 150f / gameEngine.Render.CameraPosition.Z;
+
             int currentIndex = -1;
             for (int i = 0; i < Items.Count; i++)
             {
                 double angle1 = -MathHelper.TwoPi * ((float)(i) + 0.5f) / (float)(Items.Count);
                 double angle2 = -MathHelper.TwoPi * ((float)(i + 1) + 0.5f) / (float)(Items.Count);
 
-                Vector3 vec1 = new Vector3(size * 1.2f * (float)Math.Cos(angle1), size * 1.2f * (float)Math.Sin(angle1), 10f);
-                Vector3 vec3 = new Vector3(size * 1.2f * (float)Math.Cos(angle2), size * 1.2f * (float)Math.Sin(angle2), 10f);
+                Vector3 vec1 = new Vector3(localSize * 1.2f * (float)Math.Cos(angle1), localSize * 1.2f * (float)Math.Sin(angle1), 10f);
+                Vector3 vec3 = new Vector3(localSize * 1.2f * (float)Math.Cos(angle2), localSize * 1.2f * (float)Math.Sin(angle2), 10f);
 
                 vec1 = vec1 + Tools.GetVector3(ParentCell.Location);
 
-                Vector3 vec2 = new Vector3(0, 0, 12f) + Tools.GetVector3(ParentCell.Location);
+                Vector3 vec2 = new Vector3(0, 0, 10f) + Tools.GetVector3(ParentCell.Location);
 
                 vec3 = vec3 + Tools.GetVector3(ParentCell.Location);
 

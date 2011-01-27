@@ -176,6 +176,14 @@ namespace TheGrid.Logic.Render
 
         private void DrawCell(Cell cell, GameTime gameTime)
         {
+            //GameEngine.GraphicsDevice.
+
+            //VertexPositionColorTexture f;
+            
+            //vBuffer.SetData<VertexPositionNormalTexture>(vertex.ToArray());
+
+            //meshHexa.Body.MeshParts[0].VertexBuffer.GetData<
+
             if (Context.CurrentMenu != null && Context.CurrentMenu.ParentCell == cell)
             {
                 cell.MatrixLocation = Matrix.CreateTranslation(cell.Location.X,cell.Location.Y, 10f*(float)Context.CurrentMenu.PercentVisibility);
@@ -300,10 +308,10 @@ namespace TheGrid.Logic.Render
                     basicEffect.DirectionalLight0.Direction = lightDirection;
                     basicEffect.DiffuseColor = channelColor.ToVector3();
 
-                    if (cell.Clip == null || !cell.Clip.Speed.HasValue || cell.Clip.Speed.Value < i)
-                    {
-                        basicEffect.Texture = texEmpty;
-                    }
+                    //if (cell.Clip == null || !cell.Clip.Speed.HasValue || cell.Clip.Speed.Value < i)
+                    //{
+                    //    basicEffect.Texture = texEmpty;
+                    //}
                 }
 
                 meshHexa.Speed[i].Draw();
