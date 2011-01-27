@@ -40,6 +40,7 @@ namespace TheGrid.Logic.Render
         public bool updateViewScreen = false;
         public bool doScreenShot = false;
         MeshHexa meshHexa = null;
+        private Texture2D texEmpty = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -57,6 +58,7 @@ namespace TheGrid.Logic.Render
 
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
+            texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
         }
 
         private void Initilize3DModel()
@@ -94,7 +96,7 @@ namespace TheGrid.Logic.Render
             effect.TextureEnabled = false;
             effect.SpecularColor = new Vector3(0.3f, 0.5f, 0.3f);
             effect.SpecularPower = 1f;
-            
+
             //effect.SpecularColor = new Vector3(1, 1, 1);
             //effect.SpecularPower = 1f;
             //effect.Texture = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa0");
@@ -174,6 +176,11 @@ namespace TheGrid.Logic.Render
 
         private void DrawCell(Cell cell, GameTime gameTime)
         {
+            if (Context.CurrentMenu != null && Context.CurrentMenu.ParentCell == cell)
+            {
+                cell.MatrixLocation = Matrix.CreateTranslation(cell.Location.X,cell.Location.Y, 10f*(float)Context.CurrentMenu.PercentVisibility);
+            }
+
             Matrix localWorld = World * Matrix.CreateRotationZ(MathHelper.Pi) * cell.MatrixLocation;
 
             //--- Affficher la cellule si elle est dans la portion visible de l'écran
@@ -185,12 +192,11 @@ namespace TheGrid.Logic.Render
                 return;
             //---
 
-
             float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             Vector3 lightDirection = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
 
             //--- Hexa
-            Color channelColor = Color.White;
+            Color channelColor = Color.Gray;
             if (cell.Channel != null)
             {
                 channelColor = cell.Channel.Color;
@@ -242,14 +248,11 @@ namespace TheGrid.Logic.Render
 
                     basicEffect.EnableDefaultLighting();
                     basicEffect.DirectionalLight0.Direction = lightDirection;
+                    basicEffect.DiffuseColor = channelColor.ToVector3();
 
-                    if (i < 3 || cell.Clip != null && cell.Clip.Directions[i])
+                    if (cell.Clip == null || !cell.Clip.Directions[i])
                     {
-                        //basicEffect.DiffuseColor = Color.Red.ToVector3();
-                    }
-                    else
-                    {
-                        basicEffect.DiffuseColor = channelColor.ToVector3();
+                        basicEffect.Texture = texEmpty;
                     }
                 }
 
@@ -270,14 +273,11 @@ namespace TheGrid.Logic.Render
 
                     basicEffect.EnableDefaultLighting();
                     basicEffect.DirectionalLight0.Direction = lightDirection;
+                    basicEffect.DiffuseColor = channelColor.ToVector3();
 
-                    if (i < 4 || cell.Clip != null && cell.Clip.Repeater.HasValue && cell.Clip.Repeater >= i)
+                    if (cell.Clip == null || !cell.Clip.Repeater.HasValue || cell.Clip.Repeater.Value < i)
                     {
-                        //basicEffect.DiffuseColor = Color.Blue.ToVector3();
-                    }
-                    else
-                    {
-                        basicEffect.DiffuseColor = channelColor.ToVector3();
+                        basicEffect.Texture = texEmpty;
                     }
                 }
 
@@ -298,14 +298,11 @@ namespace TheGrid.Logic.Render
 
                     basicEffect.EnableDefaultLighting();
                     basicEffect.DirectionalLight0.Direction = lightDirection;
+                    basicEffect.DiffuseColor = channelColor.ToVector3();
 
-                    if (i <= 4 || cell.Clip != null && cell.Clip.Speed.HasValue && cell.Clip.Speed >= i)
+                    if (cell.Clip == null || !cell.Clip.Speed.HasValue || cell.Clip.Speed.Value < i)
                     {
-                        //basicEffect.DiffuseColor = Color.Green.ToVector3();
-                    }
-                    else
-                    {
-                        basicEffect.DiffuseColor = channelColor.ToVector3();
+                        basicEffect.Texture = texEmpty;
                     }
                 }
 
