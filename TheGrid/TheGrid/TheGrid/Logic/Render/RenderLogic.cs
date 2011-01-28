@@ -41,6 +41,7 @@ namespace TheGrid.Logic.Render
         public bool doScreenShot = false;
         MeshHexa meshHexa = null;
         private Texture2D texEmpty = null;
+        private Texture2D texHexa = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -59,6 +60,7 @@ namespace TheGrid.Logic.Render
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
             texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
+            texHexa = GameEngine.Content.Load<Texture2D>(@"Texture\ImgHexa");
         }
 
         private void Initilize3DModel()
@@ -209,6 +211,10 @@ namespace TheGrid.Logic.Render
             {
                 channelColor = cell.Channel.Color;
             }
+            else if (cell.Clip != null)
+            {
+                channelColor = Color.White;
+            }
 
             foreach (Effect effect in meshHexa.Body.Effects)
             {
@@ -262,6 +268,10 @@ namespace TheGrid.Logic.Render
                     {
                         basicEffect.Texture = texEmpty;
                     }
+                    else if(cell.Clip.Directions[i])
+                    {
+                        basicEffect.Texture = texHexa;
+                    }
                 }
 
                 meshHexa.Direction[i].Draw();
@@ -283,9 +293,13 @@ namespace TheGrid.Logic.Render
                     basicEffect.DirectionalLight0.Direction = lightDirection;
                     basicEffect.DiffuseColor = channelColor.ToVector3();
 
-                    if (cell.Clip == null || !cell.Clip.Repeater.HasValue || cell.Clip.Repeater.Value < i)
+                    if (cell.Clip == null || !cell.Clip.Repeater.HasValue || i > cell.Clip.Repeater.Value)
                     {
                         basicEffect.Texture = texEmpty;
+                    }
+                    else if (cell.Clip.Repeater.HasValue && i <= cell.Clip.Repeater.Value)
+                    {
+                        basicEffect.Texture = texHexa;
                     }
                 }
 
@@ -308,10 +322,19 @@ namespace TheGrid.Logic.Render
                     basicEffect.DirectionalLight0.Direction = lightDirection;
                     basicEffect.DiffuseColor = channelColor.ToVector3();
 
-                    //if (cell.Clip == null || !cell.Clip.Speed.HasValue || cell.Clip.Speed.Value < i)
+                    // else if(cell.Clip.Directions[i])
                     //{
-                    //    basicEffect.Texture = texEmpty;
+                    //    basicEffect.Texture = texHexa;
                     //}
+
+                    if (cell.Clip == null || !cell.Clip.Speed.HasValue || cell.Clip.Speed.Value != i)
+                    {
+                        basicEffect.Texture = texEmpty;
+                    }
+                    else if (cell.Clip.Speed.Value == i)
+                    {
+                        basicEffect.Texture = texHexa;
+                    }
                 }
 
                 meshHexa.Speed[i].Draw();

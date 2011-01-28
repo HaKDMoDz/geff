@@ -13,7 +13,7 @@ namespace TheGrid.Logic.Controller
     public class ControllerLogic
     {
         #region Constants
-        private const int ZOOM_IN_MAX = 2;
+        private const int ZOOM_IN_MAX = 10;
         private const int ZOOM_OUT_MAX = 500;
         #endregion
 
@@ -64,22 +64,28 @@ namespace TheGrid.Logic.Controller
             this.mouseMiddleButton = new MouseManager(MouseButtons.RightButton);
             this.mouseRightButton = new MouseManager(MouseButtons.RightButton);
 
-            this.mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseRightButton_MousePressed);
             this.mouseRightButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseRightButton_MouseFirstPressed);
+            this.mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseRightButton_MousePressed);
+            this.mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseRightButton_MouseReleased);
 
             this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
         }
 
+
+
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            Cell selectedCell = GetSelectedCell(mouseState);
 
-            if (selectedCell != null && Context.SelectedCell == selectedCell && Context.CurrentMenu != null && Context.CurrentMenu.State == MenuState.Opened)
+            //if (selectedCell != null && Context.SelectedCell == selectedCell && Context.CurrentMenu != null && Context.CurrentMenu.State == MenuState.Opened)
+
+            if(Context.CurrentMenu != null && Context.CurrentMenu.Items.Exists(item=> item.MouseOver))
             {
                 Context.CurrentMenu.MouseClick(GameEngine, gameTime, mouseState);
             }
             else
             {
+                Cell selectedCell = GetSelectedCell(mouseState);
+
                 Context.SelectedCell = selectedCell;
 
                 if (Context.SelectedCell != null)
@@ -103,7 +109,7 @@ namespace TheGrid.Logic.Controller
 
         void mouseRightButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
         {
-            prevCameraPosition = GameEngine.Render.CameraPosition;
+                prevCameraPosition = GameEngine.Render.CameraPosition;
         }
 
         void mouseRightButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
@@ -112,6 +118,15 @@ namespace TheGrid.Logic.Controller
             {
                 GameEngine.Render.CameraPosition = new Vector3(prevCameraPosition.X, prevCameraPosition.Y, GameEngine.Render.CameraPosition.Z) + new Vector3(-distance.X, distance.Y, 0f) * GameEngine.Render.CameraPosition.Z / 500f; ;
                 GameEngine.Render.CameraTarget = new Vector3(GameEngine.Render.CameraPosition.X, GameEngine.Render.CameraPosition.Y, 0f);
+            }
+        }
+
+        void mouseRightButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            if (Context.CurrentMenu != null && Tools.Distance(Point.Zero, distance) < 5f)
+            {
+                Context.NextMenu = Context.CurrentMenu.ParentMenu;
+                Context.CurrentMenu.Close(gameTime);
             }
         }
 
@@ -274,9 +289,10 @@ namespace TheGrid.Logic.Controller
             //---
 
             //---
-            Cell selectedCell = GetSelectedCell(mouseState);
+            //Cell selectedCell = GetSelectedCell(mouseState);
 
-            if (selectedCell != null && Context.SelectedCell == selectedCell && Context.CurrentMenu != null && Context.CurrentMenu.State == MenuState.Opened)
+            //if (selectedCell != null && Context.SelectedCell == selectedCell && Context.CurrentMenu != null && Context.CurrentMenu.State == MenuState.Opened)
+            if(Context.CurrentMenu != null)
             {
                 Context.CurrentMenu.MouseOver(GameEngine, gameTime, mouseState);
             }

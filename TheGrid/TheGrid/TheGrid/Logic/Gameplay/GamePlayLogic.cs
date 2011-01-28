@@ -110,9 +110,17 @@ namespace TheGrid.Logic.GamePlay
             //---
             Menu menuSpeed = new Menu(item.ParentMenu.ParentCell, item.ParentMenu);
 
-            for (int i = -4; i < 5; i++)
+            for (int i = 0; i < 9; i++)
             {
-                Item itemSpeed = new Item(menuSpeed, i.ToString(), i);
+                Item itemSpeed;
+                
+                if(i==0)
+                    itemSpeed = new Item(menuSpeed, "Reset", i);
+                else if (i < 5)
+                    itemSpeed = new Item(menuSpeed, "SpeedH" + i.ToString(), i+4);
+                else
+                    itemSpeed = new Item(menuSpeed, "SpeedL" + (9-i).ToString(), i-9);
+
                 itemSpeed.Selected += new Item.SelectedHandler(itemSpeed_Selected);
                 menuSpeed.Items.Add(itemSpeed);
             }
@@ -129,7 +137,7 @@ namespace TheGrid.Logic.GamePlay
 
             bool isChecked = !item.Checked;
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 9; i++)
             {
                 item.ParentMenu.Items[i].Checked = false;
             }
@@ -150,9 +158,13 @@ namespace TheGrid.Logic.GamePlay
             //---
             Menu menuRepeater = new Menu(item.ParentMenu.ParentCell, item.ParentMenu);
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 6; i++)
             {
-                Item itemRepeater = new Item(menuRepeater, i.ToString(), i);
+                Item itemRepeater = new Item(menuRepeater, "Repeater" + (i + 1).ToString(), i);
+
+                if (item.ParentMenu.ParentCell.Clip != null && item.ParentMenu.ParentCell.Clip.Repeater.HasValue && i <= item.ParentMenu.ParentCell.Clip.Repeater.Value)
+                    itemRepeater.Checked = true;
+
                 itemRepeater.Selected += new Item.SelectedHandler(itemRepeater_Selected);
                 menuRepeater.Items.Add(itemRepeater);
             }
@@ -167,7 +179,7 @@ namespace TheGrid.Logic.GamePlay
 
             item.ParentMenu.ParentCell.InitClip();
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 6; i++)
             {
                 item.ParentMenu.Items[i].Checked = i <= item.Value;
             }
@@ -186,9 +198,13 @@ namespace TheGrid.Logic.GamePlay
             //---
             Menu menuDirection = new Menu(item.ParentMenu.ParentCell, item.ParentMenu);
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 6; i++)
             {
-                Item itemDirection = new Item(menuDirection, i.ToString(), i);
+                Item itemDirection = new Item(menuDirection, "Direction" + (i+1).ToString(), i);
+
+                if (item.ParentMenu.ParentCell.Clip != null && item.ParentMenu.ParentCell.Clip.Directions[i])
+                    itemDirection.Checked = true;
+
                 itemDirection.Selected += new Item.SelectedHandler(itemDirection_Selected);
                 menuDirection.Items.Add(itemDirection);
             }
