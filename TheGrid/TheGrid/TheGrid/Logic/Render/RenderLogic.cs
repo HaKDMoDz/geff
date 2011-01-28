@@ -14,15 +14,6 @@ namespace TheGrid.Logic.Render
     {
         public SpriteBatch SpriteBatch;
         public SpriteFont FontMenu { get; set; }
-
-        public Map Map
-        {
-            get
-            {
-                return this.GameEngine.GamePlay.Map;
-            }
-        }
-
         public GameEngine GameEngine { get; set; }
 
         BasicEffect effect;
@@ -130,7 +121,7 @@ namespace TheGrid.Logic.Render
             UpdateShader(gameTime);
 
             //--- Affiche la map
-            foreach (Cell cell in Map.Cells)
+            foreach (Cell cell in Context.Map.Cells)
             {
                 DrawCell(cell, gameTime);
             }
@@ -154,7 +145,11 @@ namespace TheGrid.Logic.Render
 
             if (Context.CurrentMenu != null && Context.CurrentMenu.ParentCell == cell)
             {
-                cell.MatrixLocation = Matrix.CreateTranslation(cell.Location.X,cell.Location.Y, 10f*(float)Context.CurrentMenu.PercentVisibility);
+                cell.MatrixLocation = Matrix.CreateTranslation(cell.Location.X, cell.Location.Y, 10f * (float)Context.CurrentMenu.PercentVisibility);
+            }
+            else
+            {
+                cell.MatrixLocation = Matrix.CreateTranslation(cell.Location.X, cell.Location.Y, 0f);
             }
 
             Matrix localWorld = World * Matrix.CreateRotationZ(MathHelper.Pi) * cell.MatrixLocation;

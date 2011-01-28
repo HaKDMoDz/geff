@@ -11,5 +11,12 @@ namespace TheGrid.Model
         public Color Color { get; set; }
         public List<Musician> ListMusician { get; set; }
         public List<Sample> ListSample { get; set; }
+        public string Name { get; set; }
+
+        public Channel(string name, Color color)
+        {
+            Name = name;
+            Color = color;
+        }
     }
 }

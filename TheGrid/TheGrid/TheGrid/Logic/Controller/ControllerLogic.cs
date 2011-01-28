@@ -132,7 +132,7 @@ namespace TheGrid.Logic.Controller
 
         void keyNewMap_KeyReleased(Keys key, GameTime gameTime)
         {
-            this.GameEngine.GamePlay.Map.CreateGrid();
+            Context.Map.CreateGrid();
         }
 
         public void UpdateBegin(GameTime gameTime)
@@ -352,9 +352,9 @@ namespace TheGrid.Logic.Controller
             Cell selectedCell = null;
             float minimalDistance = float.MaxValue;
 
-            foreach (Cell cell in GameEngine.GamePlay.Map.Cells)
+            foreach (Cell cell in Context.Map.Cells)
             {
-                BoundingSphere s = new BoundingSphere(new Vector3(cell.Location.X, cell.Location.Y, cell.Height), GameEngine.GamePlay.Map.R);
+                BoundingSphere s = new BoundingSphere(new Vector3(cell.Location.X, cell.Location.Y, cell.Height), Context.Map.R);
                 float? distance = pickRay.Intersects(s);
 
                 if (distance.HasValue && distance.Value < minimalDistance)

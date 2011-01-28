@@ -13,20 +13,31 @@ namespace TheGrid.Logic.GamePlay
     {
         private Random rnd = new Random();
 
-        public Map Map { get; set; }
         public GameEngine GameEngine { get; set; }
 
         public GamePlayLogic(GameEngine gameEngine)
         {
             this.GameEngine = gameEngine;
             InitializeMap();
+            InitializeChannel();
             InitializePlayers();
         }
 
         private void InitializeMap()
         {
-            Map = new Map(7, 30);
-            Map.CreateGrid();
+            Context.Map = new Map(7, 30);
+            Context.Map.CreateGrid();
+        }
+
+        private void InitializeChannel()
+        {
+            Context.Channels = new List<Channel>();
+
+            Context.Channels.Add(new Channel("Empty", Color.White));
+            Context.Channels.Add(new Channel("Drums", Color.Red));
+            Context.Channels.Add(new Channel("Keys", Color.Blue));
+            Context.Channels.Add(new Channel("Guitar", Color.Yellow));
+            Context.Channels.Add(new Channel("Bass", Color.Purple));
         }
 
         private void InitializePlayers()
@@ -64,7 +75,7 @@ namespace TheGrid.Logic.GamePlay
         public Menu CreateMenu(Cell cell)
         {
             //---
-            Menu menuRoot = new Menu(cell, null);
+            Menu menuRoot = new Menu(cell, null, true);
 
             Item itemReset = new Item(menuRoot, "Reset");
             itemReset.Selected += new Item.SelectedHandler(itemReset_Selected);
@@ -82,25 +93,57 @@ namespace TheGrid.Logic.GamePlay
             itemMenuSpeed.Selected += new Item.SelectedHandler(itemMenuSpeed_Selected);
             menuRoot.Items.Add(itemMenuSpeed);
 
-            Item itemInstrument = new Item(menuRoot, "Instrument");
-            itemInstrument.Selected += new Item.SelectedHandler(itemInstrument_Selected);
-            menuRoot.Items.Add(itemInstrument);
+            Item itemMenuInstrument = new Item(menuRoot, "Instrument");
+            itemMenuInstrument.Selected += new Item.SelectedHandler(itemMenuInstrument_Selected);
+            menuRoot.Items.Add(itemMenuInstrument);
 
-            Item itemChannel = new Item(menuRoot, "Channel");
-            itemChannel.Selected += new Item.SelectedHandler(itemChannel_Selected);
-            menuRoot.Items.Add(itemChannel);
+            Item itemMenuChannel = new Item(menuRoot, "Channel");
+            itemMenuChannel.Selected += new Item.SelectedHandler(itemMenuChannel_Selected);
+            menuRoot.Items.Add(itemMenuChannel);
             //---
 
             return menuRoot;
         }
 
-        void itemChannel_Selected(Item item, GameTime gameTime)
+        #region Menu Channel
+        void itemMenuChannel_Selected(Item item, GameTime gameTime)
         {
+            item.ParentMenu.Close(gameTime);
+
+            Menu menuChannel = new Menu(item.ParentMenu.ParentCell, item.ParentMenu, false);
+            menuChannel.AngleDeltaRender = MathHelper.TwoPi / Context.Channels.Count / 4;
+            menuChannel.AngleDeltaMouse = 0;// MathHelper.TwoPi / Context.Channels.Count / 4;
+
+            for (int i = 0; i < Context.Channels.Count; i++)
+            {
+                Item itemChannel = new Item(menuChannel, Context.Channels[i].Name, i);
+                itemChannel.Color = Context.Channels[i].Color;
+
+                if (item.ParentMenu.ParentCell.Channel != null && item.ParentMenu.ParentCell.Channel == Context.Channels[i])
+                    itemChannel.Checked = true;
+
+                itemChannel.Selected += new Item.SelectedHandler(itemChannel_Selected);
+                menuChannel.Items.Add(itemChannel);
+            }
+
+            Context.NextMenu = menuChannel;
         }
 
-        void itemInstrument_Selected(Item item, GameTime gameTime)
+        void itemChannel_Selected(Item item, GameTime gameTime)
+        {
+            item.ParentMenu.Close(gameTime);
+
+            item.ParentMenu.ParentCell.Channel = Context.Channels[item.Value];
+
+            Context.NextMenu = item.ParentMenu.ParentMenu;
+        }
+        #endregion
+
+        #region Menu Instrument
+        void itemMenuInstrument_Selected(Item item, GameTime gameTime)
         {
         }
+        #endregion
 
         #region Menu Speed
         void itemMenuSpeed_Selected(Item item, GameTime gameTime)
@@ -108,18 +151,19 @@ namespace TheGrid.Logic.GamePlay
             item.ParentMenu.Close(gameTime);
 
             //---
-            Menu menuSpeed = new Menu(item.ParentMenu.ParentCell, item.ParentMenu);
+            Menu menuSpeed = new Menu(item.ParentMenu.ParentCell, item.ParentMenu, true);
+            menuSpeed.AngleDeltaRender = -MathHelper.TwoPi / 36 * 3;
 
             for (int i = 0; i < 9; i++)
             {
                 Item itemSpeed;
-                
-                if(i==0)
+
+                if (i == 0)
                     itemSpeed = new Item(menuSpeed, "Reset", i);
                 else if (i < 5)
                     itemSpeed = new Item(menuSpeed, "SpeedH" + i.ToString(), i);
                 else
-                    itemSpeed = new Item(menuSpeed, "SpeedL" + (9-i).ToString(), i-9);
+                    itemSpeed = new Item(menuSpeed, "SpeedL" + (9 - i).ToString(), i - 9);
 
                 itemSpeed.Selected += new Item.SelectedHandler(itemSpeed_Selected);
                 menuSpeed.Items.Add(itemSpeed);
@@ -156,7 +200,10 @@ namespace TheGrid.Logic.GamePlay
             item.ParentMenu.Close(gameTime);
 
             //---
-            Menu menuRepeater = new Menu(item.ParentMenu.ParentCell, item.ParentMenu);
+            Menu menuRepeater = new Menu(item.ParentMenu.ParentCell, item.ParentMenu, true);
+            menuRepeater.AngleDeltaRender = MathHelper.TwoPi / 12;
+            menuRepeater.AngleDeltaRenderIcon = MathHelper.TwoPi / 12;
+            menuRepeater.AngleDeltaMouse = MathHelper.TwoPi / 12;
 
             for (int i = 0; i < 6; i++)
             {
@@ -196,11 +243,11 @@ namespace TheGrid.Logic.GamePlay
             item.ParentMenu.Close(gameTime);
 
             //---
-            Menu menuDirection = new Menu(item.ParentMenu.ParentCell, item.ParentMenu);
+            Menu menuDirection = new Menu(item.ParentMenu.ParentCell, item.ParentMenu, true);
 
             for (int i = 0; i < 6; i++)
             {
-                Item itemDirection = new Item(menuDirection, "Direction" + (i+1).ToString(), i);
+                Item itemDirection = new Item(menuDirection, "Direction" + (i + 1).ToString(), i);
 
                 if (item.ParentMenu.ParentCell.Clip != null && item.ParentMenu.ParentCell.Clip.Directions[i])
                     itemDirection.Checked = true;

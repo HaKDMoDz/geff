@@ -86,7 +86,7 @@ namespace TheGrid
             if (Mini)
             {
                 Control window = Control.FromHandle(this.Window.Handle);
-                window.Location = new System.Drawing.Point(2500, 0);
+                window.Location = new System.Drawing.Point(2600, 0);
             }
 
             base.Initialize();

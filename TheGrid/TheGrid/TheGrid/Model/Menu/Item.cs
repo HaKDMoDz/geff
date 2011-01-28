@@ -12,6 +12,7 @@ namespace TheGrid.Model.Menu
         public bool Checked { get; set; }
         public int Value { get; set; }
         public String Name { get; set; }
+        public Color Color { get; set; }
         public bool MouseOver { get; set; }
 
         public Item(Menu parentMenu, string name) : this(parentMenu, name, 0) { }
