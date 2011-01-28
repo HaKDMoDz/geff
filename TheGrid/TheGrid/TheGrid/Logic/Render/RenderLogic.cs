@@ -42,6 +42,7 @@ namespace TheGrid.Logic.Render
         MeshHexa meshHexa = null;
         private Texture2D texEmpty = null;
         private Texture2D texHexa = null;
+        private Texture2D texHexa2 = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -61,6 +62,7 @@ namespace TheGrid.Logic.Render
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
             texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
             texHexa = GameEngine.Content.Load<Texture2D>(@"Texture\ImgHexa");
+            texHexa2 = GameEngine.Content.Load<Texture2D>(@"Texture\ImgHexa2");
         }
 
         private void Initilize3DModel()
@@ -116,42 +118,6 @@ namespace TheGrid.Logic.Render
             effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
         }
 
-        //public void CreateVertex()
-        //{
-        //    vBuffer = new VertexBuffer(GameEngine.GraphicsDevice, typeof(VertexPositionNormalTexture), Map.Cells.Count * 12, BufferUsage.None);
-
-        //    List<VertexPositionNormalTexture> vertex = new List<VertexPositionNormalTexture>();
-
-        //    foreach (Cell cell in Map.Cells)
-        //    {
-        //        AddVertex(3, 2, 1, vertex, cell);
-        //        AddVertex(6, 4, 3, vertex, cell);
-        //        AddVertex(6, 5, 4, vertex, cell);
-        //        AddVertex(6, 3, 1, vertex, cell);
-        //    }
-
-        //    vBuffer.SetData<VertexPositionNormalTexture>(vertex.ToArray());
-
-        //    GameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
-        //    //GameEngine.GraphicsDevice.Textures[0] = GameEngine.Content.Load<Texture2D>(@"Texture\HexaFloor1");
-        //}
-
-        //private void AddVertex(int index1, int index2, int index3, List<VertexPositionNormalTexture> vertex, Cell cell)
-        //{
-        //    Dictionary<int, Vector2> uv = new Dictionary<int, Vector2>();
-
-        //    uv.Add(1, new Vector2(0.75f, 0f));
-        //    uv.Add(2, new Vector2(1f, 0.5f));
-        //    uv.Add(3, new Vector2(0.75f, 1f));
-        //    uv.Add(4, new Vector2(0.26f, 1f));
-        //    uv.Add(5, new Vector2(0f, 0.5f));
-        //    uv.Add(6, new Vector2(0.26f, 0f));
-
-        //    vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index1]], Map.Normals[cell.Points[index1]], uv[index1]));
-        //    vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index2]], Map.Normals[cell.Points[index2]], uv[index2]));
-        //    vertex.Add(new VertexPositionNormalTexture(Map.Points[cell.Points[index3]], Map.Normals[cell.Points[index3]], uv[index3]));
-        //}
-
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -169,12 +135,12 @@ namespace TheGrid.Logic.Render
                 DrawCell(cell, gameTime);
             }
             //---
-
+  
             //--- Affiche le menu
             if (Context.CurrentMenu != null)
                 Context.CurrentMenu.Draw(GameEngine, effect, gameTime);
             //---
-        }
+      }
 
         private void DrawCell(Cell cell, GameTime gameTime)
         {
@@ -326,15 +292,32 @@ namespace TheGrid.Logic.Render
                     //{
                     //    basicEffect.Texture = texHexa;
                     //}
+                    //if (cell.Clip.Speed.Value > 4 && cell.Clip.Speed.Value-4>i)
+                    //{
+                    //    basicEffect
+                    //}
 
-                    if (cell.Clip == null || !cell.Clip.Speed.HasValue || cell.Clip.Speed.Value != i)
-                    {
-                        basicEffect.Texture = texEmpty;
-                    }
-                    else if (cell.Clip.Speed.Value == i)
+                    if (
+                        cell.Clip != null && 
+                        cell.Clip.Speed.HasValue && 
+                        cell.Clip.Speed.Value > 0 && 
+                        i < cell.Clip.Speed.Value)
                     {
                         basicEffect.Texture = texHexa;
                     }
+                    else if (
+                        cell.Clip != null &&
+                        cell.Clip.Speed.HasValue &&
+                        cell.Clip.Speed.Value < 0 &&
+                        i < Math.Abs(cell.Clip.Speed.Value))
+                    {
+                        basicEffect.Texture = texHexa2;
+                    }
+                    else
+                    {
+                        basicEffect.Texture = texEmpty;
+                    }
+
                 }
 
                 meshHexa.Speed[i].Draw();

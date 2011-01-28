@@ -81,6 +81,7 @@ namespace TheGrid.Model.Menu
                 return;
 
             effect.Alpha = (float)PercentVisibility;
+
             gameEngine.GraphicsDevice.SetVertexBuffer(vBuffer);
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -89,28 +90,37 @@ namespace TheGrid.Model.Menu
                 gameEngine.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, nbVertex);
             }
 
-            Vector3 nearPoint = gameEngine.GraphicsDevice.Viewport.Project(new Vector3(ParentCell.Location,10f),
+            Vector3 nearPoint = gameEngine.GraphicsDevice.Viewport.Project(new Vector3(ParentCell.Location, 10f),
                 gameEngine.Render.Projection, gameEngine.Render.View, gameEngine.Render.World);
 
-            float localSize = size * 380f / gameEngine.Render.CameraPosition.Z;
-            //float localSize = size * 150f / gameEngine.Render.CameraPosition.Z;
-            float delta = 32f * localSize / 80f;
-            //float delta = 32f * localSize / 100f;
-            double angleItem = MathHelper.TwoPi / (double)Items.Count / 2;
+            //float localSize = size * 380f / gameEngine.Render.CameraPosition.Z;
+            //float delta = 32f * localSize / 80f;
+
+            float localSize = size * 150f / gameEngine.Render.CameraPosition.Z;
+            float delta = 32f * localSize / 100f;
+            double angleItem = MathHelper.TwoPi / (double)Items.Count;
+            
+            double d = 1.5;
+            if (Items.Count == 9)
+            {
+                d = 2.3;
+                //delta = 32f * localSize / 100f;
+            }
 
             gameEngine.Render.SpriteBatch.Begin();
             for (int i = 0; i < Items.Count; i++)
             {
-                double angle =  MathHelper.TwoPi* (float)(i-1) / (float)(Items.Count);
+                double angle = ((double)i - d) * angleItem;
 
-                Vector2 vec = new Vector2(localSize * (float)Math.Cos(angle - angleItem) - delta, localSize * (float)Math.Sin(angle - angleItem) - delta);
-                
-                Rectangle rec = new Rectangle((int)(nearPoint.X + vec.X), (int)(nearPoint.Y + vec.Y),(int)(delta*2f), (int)(delta*2f));
+                Vector2 vec = new Vector2(localSize * (float)Math.Cos(angle) - delta, localSize * (float)Math.Sin(angle) - delta);
+
+                Rectangle rec = new Rectangle((int)(nearPoint.X + vec.X), (int)(nearPoint.Y + vec.Y), (int)(delta * 2f), (int)(delta * 2f));
 
                 gameEngine.Render.SpriteBatch.Draw(gameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), rec, new Color((float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility));
             }
             gameEngine.Render.SpriteBatch.End();
         }
+
 
         private void CreateVertex(GameEngine gameEngine)
         {
@@ -125,30 +135,29 @@ namespace TheGrid.Model.Menu
                 color2.A = 240;
 
             if (Items.Count > 8)
-                nbVertex = Items.Count * 4;
+                nbVertex = Items.Count * 3;
 
             int nbPointPerItem = nbVertex / Items.Count;
-            double angleItem = MathHelper.TwoPi / (double)Items.Count / 2;
+            double angleItem =  MathHelper.TwoPi / (double)Items.Count;
+            double angleVertex = MathHelper.TwoPi / (double)nbVertex;
 
-            vBuffer = new VertexBuffer(gameEngine.GraphicsDevice, typeof(VertexPositionColor), nbVertex * nbPointPerItem, BufferUsage.None);
+            vBuffer = new VertexBuffer(gameEngine.GraphicsDevice, typeof(VertexPositionColor), nbVertex * 3, BufferUsage.None);
+
+            double d =0;
+            if(Items.Count ==9)
+                d = -angleVertex+angleItem;
 
             for (int i = 0; i < nbVertex; i++)
             {
-                double angle1 = MathHelper.PiOver2 + MathHelper.Pi - MathHelper.TwoPi * PercentVisibility * (float)(i) / (float)nbVertex;
-                double angle2 = MathHelper.PiOver2 + MathHelper.Pi - MathHelper.TwoPi * PercentVisibility * (float)(i + 1) / (float)nbVertex;
+                double angle1 = angleItem + (double)i * angleVertex * PercentVisibility +d;
+                double angle2 = angleItem + (double)(i + 1) * angleVertex * PercentVisibility +d;
 
-                if (i == nbVertex - 1)
-                    angle2 = MathHelper.PiOver2 + MathHelper.Pi - MathHelper.TwoPi * PercentVisibility - 0.01f;
+                Vector3 position1 = new Vector3(size * (float)Math.Cos(-angle1), size * (float)Math.Sin(-angle1), 10f);
+                Vector3 position2 = new Vector3(size * (float)Math.Cos(-angle2), size * (float)Math.Sin(-angle2), 10f);
 
-                Vector3 position1 = new Vector3(size * (float)Math.Cos(angle1 - angleItem), size * (float)Math.Sin(angle1 - angleItem), 10f);
-                Vector3 position2 = new Vector3(size * (float)Math.Cos(angle2 - angleItem), size * (float)Math.Sin(angle2 - angleItem), 10f);
+                int index = ((i / nbPointPerItem) ) % Items.Count;
 
-                int index = (i / nbPointPerItem)+1;
-
-                if (index > Items.Count - 1)
-                    index = 0;
-
-                if ( Items[index].MouseOver)
+                if (Items[index].MouseOver)
                     color = new Color(0.05f, 0.4f, 0.05f, (float)PercentVisibility);
                 else
                     color = new Color(0.05f, 0.05f, 0.05f, (float)PercentVisibility);
@@ -156,9 +165,9 @@ namespace TheGrid.Model.Menu
                 if (Items[index].Checked)
                     color = new Color(color.R + 50, color.G + 50, color.B + 50, color.A);
 
+                vertex.Add(new VertexPositionColor(position2+ Tools.GetVector3(ParentCell.Location), color));
                 vertex.Add(new VertexPositionColor(new Vector3(0, 0, 10f) + Tools.GetVector3(ParentCell.Location), color2));
                 vertex.Add(new VertexPositionColor(position1 + Tools.GetVector3(ParentCell.Location), color));
-                vertex.Add(new VertexPositionColor(position2 + Tools.GetVector3(ParentCell.Location), color));
             }
 
             vBuffer.SetData<VertexPositionColor>(vertex.ToArray());
@@ -196,16 +205,16 @@ namespace TheGrid.Model.Menu
             direction.Normalize();
 
             float localSize = size * 1.2f;
-            double angleItem = MathHelper.TwoPi / (double)Items.Count / 2;
+            double angleItem = -MathHelper.TwoPi / (double)Items.Count;
 
             int currentIndex = -1;
             for (int i = 0; i < Items.Count; i++)
             {
-                double angle1 = -MathHelper.TwoPi * ((float)(i) + 0.5f) / (float)(Items.Count) - angleItem;
-                double angle2 = -MathHelper.TwoPi * ((float)(i + 1) + 0.5f) / (float)(Items.Count) - angleItem;
+                double angle1 = ((double)i - 0.5) * angleItem - MathHelper.PiOver2;
+                double angle2 = ((double)i + 0.5) * angleItem - MathHelper.PiOver2;
 
-                Vector3 vec1 = new Vector3(localSize * (float)Math.Cos(angle1), localSize * (float)Math.Sin(angle1), 10f)+ Tools.GetVector3(ParentCell.Location);
-                Vector3 vec3 = new Vector3(localSize * (float)Math.Cos(angle2), localSize * (float)Math.Sin(angle2), 10f)+ Tools.GetVector3(ParentCell.Location);
+                Vector3 vec1 = new Vector3(localSize * (float)Math.Cos(angle1), localSize * (float)Math.Sin(angle1), 10f) + Tools.GetVector3(ParentCell.Location);
+                Vector3 vec3 = new Vector3(localSize * (float)Math.Cos(angle2), localSize * (float)Math.Sin(angle2), 10f) + Tools.GetVector3(ParentCell.Location);
 
                 Vector3 vec2 = new Vector3(0, 0, 10f) + Tools.GetVector3(ParentCell.Location);
 
@@ -216,9 +225,6 @@ namespace TheGrid.Model.Menu
 
                 Items[i].MouseOver = false;
             }
-
-            //if (currentIndex == 0)
-            //    currentIndex = Items.Count;
 
             if (currentIndex != -1)
             {

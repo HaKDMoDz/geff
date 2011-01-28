@@ -117,7 +117,7 @@ namespace TheGrid.Logic.GamePlay
                 if(i==0)
                     itemSpeed = new Item(menuSpeed, "Reset", i);
                 else if (i < 5)
-                    itemSpeed = new Item(menuSpeed, "SpeedH" + i.ToString(), i+4);
+                    itemSpeed = new Item(menuSpeed, "SpeedH" + i.ToString(), i);
                 else
                     itemSpeed = new Item(menuSpeed, "SpeedL" + (9-i).ToString(), i-9);
 
