@@ -13,8 +13,8 @@ namespace TheGrid.Logic.Controller
     public class ControllerLogic
     {
         #region Constants
-        private const int ZOOM_IN_MAX = 10;
-        private const int ZOOM_OUT_MAX = 500;
+        private const float ZOOM_IN_MAX = -30f;
+        private const float ZOOM_OUT_MAX = -1f;
         #endregion
 
         #region Keyboard and Mouse
@@ -71,14 +71,11 @@ namespace TheGrid.Logic.Controller
             this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
         }
 
-
-
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-
             //if (selectedCell != null && Context.SelectedCell == selectedCell && Context.CurrentMenu != null && Context.CurrentMenu.State == MenuState.Opened)
 
-            if(Context.CurrentMenu != null && Context.CurrentMenu.Items.Exists(item=> item.MouseOver))
+            if (Context.CurrentMenu != null && Context.CurrentMenu.Items.Exists(item => item.MouseOver))
             {
                 Context.CurrentMenu.MouseClick(GameEngine, gameTime, mouseState);
             }
@@ -109,14 +106,14 @@ namespace TheGrid.Logic.Controller
 
         void mouseRightButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
         {
-                prevCameraPosition = GameEngine.Render.CameraPosition;
+            prevCameraPosition = GameEngine.Render.CameraPosition;
         }
 
         void mouseRightButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
             if (Tools.Distance(Point.Zero, distance) > 5f)
             {
-                GameEngine.Render.CameraPosition = new Vector3(prevCameraPosition.X, prevCameraPosition.Y, GameEngine.Render.CameraPosition.Z) + new Vector3(-distance.X, distance.Y, 0f) * GameEngine.Render.CameraPosition.Z / 500f; ;
+                GameEngine.Render.CameraPosition = new Vector3(prevCameraPosition.X, prevCameraPosition.Y, GameEngine.Render.CameraPosition.Z) + new Vector3(distance.X, distance.Y, 0f) * GameEngine.Render.CameraPosition.Z * ZOOM_OUT_MAX;
                 GameEngine.Render.CameraTarget = new Vector3(GameEngine.Render.CameraPosition.X, GameEngine.Render.CameraPosition.Y, 0f);
             }
         }
@@ -150,7 +147,7 @@ namespace TheGrid.Logic.Controller
             //--- Mouse wheel
             int curMouseWheel = mouseState.ScrollWheelValue;
 
-            float estimatedZoom = GameEngine.Render.CameraPosition.Z + (float)(prevMouseWheel - curMouseWheel) / 50f;
+            float estimatedZoom = GameEngine.Render.CameraPosition.Z - (float)(prevMouseWheel - curMouseWheel) / 200f;
 
             if (GameEngine.Render.CameraPosition.Z != estimatedZoom && estimatedZoom > ZOOM_IN_MAX && estimatedZoom < ZOOM_OUT_MAX)
             {
@@ -219,6 +216,7 @@ namespace TheGrid.Logic.Controller
             //--- Gamepad
             if (gamePadState.IsConnected)
             {
+                #region
                 //float rotationSpeed = deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * 0.02f;
 
                 //if (gamePadState.ThumbSticks.Right.Length() > 0f)
@@ -279,6 +277,7 @@ namespace TheGrid.Logic.Controller
                 //    vecTempTranslation += Vector2.Transform(gamePadState.ThumbSticks.Left, q) * rotationSpeed * 30f;
                 //    gameEngine.Render.updateViewScreen = true;
                 //}
+                #endregion
             }
             //---
 
@@ -289,10 +288,7 @@ namespace TheGrid.Logic.Controller
             //---
 
             //---
-            //Cell selectedCell = GetSelectedCell(mouseState);
-
-            //if (selectedCell != null && Context.SelectedCell == selectedCell && Context.CurrentMenu != null && Context.CurrentMenu.State == MenuState.Opened)
-            if(Context.CurrentMenu != null)
+            if (Context.CurrentMenu != null)
             {
                 Context.CurrentMenu.MouseOver(GameEngine, gameTime, mouseState);
             }
@@ -302,7 +298,6 @@ namespace TheGrid.Logic.Controller
             {
                 GameEngine.Render.CameraPosition += Tools.GetVector3(vecTempTranslation);
                 GameEngine.Render.CameraTarget += Tools.GetVector3(vecTempTranslation);
-
             }
 
             //--- ScreenShot
@@ -324,15 +319,37 @@ namespace TheGrid.Logic.Controller
             }
         }
 
-        private Quaternion spacecraftRotation = Quaternion.Identity;
-        private float prevAngleX = 0f;
-        private float prevAngleY = 0f;
-
         public void UpdateEnd(GameTime gameTime)
         {
         }
 
         public Cell GetSelectedCell(MouseState mouseState)
+        {
+            uint[] pixelData = new uint[1];
+
+            Vector3 mousePosition = new Vector3((float)mouseState.X - (float)GameEngine.GraphicsDevice.Viewport.Width / 2f, (float)mouseState.Y - (float)GameEngine.GraphicsDevice.Viewport.Height / 2f, 0f);
+
+            Matrix mtx = Matrix.CreateScale(- GameEngine.Render.CameraPosition.Z) *Matrix.CreateTranslation(GameEngine.Render.CameraPosition.X, GameEngine.Render.CameraPosition.Y, GameEngine.Render.CameraPosition.Z);
+
+            mousePosition = Vector3.Transform(mousePosition, mtx);
+
+            foreach (Cell cell in Context.Map.Cells)
+            {
+                Rectangle rec = new Rectangle((int)(cell.Location.X * GameEngine.Render.HexaWidth), (int)(cell.Location.Y * GameEngine.Render.HexaWidth), (int)GameEngine.Render.HexaWidth, (int)GameEngine.Render.HexaWidth);
+
+                if (rec.Contains((int)mousePosition.X, (int)mousePosition.Y))
+                {
+                    GameEngine.Render.texHexa2D.GetData<uint>(0, new Rectangle((int)(mousePosition.X - (float)rec.X), (int)(mousePosition.Y - (float)rec.Y), 1, 1), pixelData, 0, 1);
+
+                    if (((pixelData[0] & 0xFF000000) >> 24) > 20)
+                        return cell;
+                }
+            }
+
+            return null;
+        }
+
+        public Cell GetSelectedCell3D(MouseState mouseState)
         {
             Vector3 nearsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 0f);
             Vector3 farsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 1f);

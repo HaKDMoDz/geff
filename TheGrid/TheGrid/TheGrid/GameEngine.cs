@@ -47,15 +47,12 @@ namespace TheGrid
             {
                 Graphics.PreferredBackBufferWidth = 1000;
                 Graphics.PreferredBackBufferHeight = 1000;
-
-                /*
-                 * Graphics.PreferredBackBufferWidth = 1680;
-                Graphics.PreferredBackBufferHeight = 1050;
-                Graphics.IsFullScreen = true;
-                Graphics.ApplyChanges();
-                 */
+                
+                //Graphics.PreferredBackBufferWidth = 1680;
+                //Graphics.PreferredBackBufferHeight = 1050;
+                //Graphics.IsFullScreen = true;
+                //Graphics.ApplyChanges();
             }
-
 
             this.IsMouseVisible = true;
 
@@ -64,14 +61,6 @@ namespace TheGrid
             GamePlay = new GamePlayLogic(this);
             Render = new RenderLogic(this);
             Controller = new ControllerLogic(this);
-
-
-            //List<double> l = new List<double>();
-
-            //for (int i = 0; i < 500; i++)
-            //{
-            //    l.Add(Tools.GetBellCurvePoint((double)i / 500, 0.5));
-            //}
         }
 
         /// <summary>

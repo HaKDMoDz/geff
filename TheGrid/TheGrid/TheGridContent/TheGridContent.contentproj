@@ -42,20 +42,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Texture\Hexa0.png">
-      <Name>Hexa0</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Texture\Hexa1.png">
-      <Name>Hexa1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="3DModel\Hexa.fbx">
       <Name>Hexa</Name>
       <Importer>FbxImporter</Importer>
@@ -70,13 +56,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Texture\ImgBody.png">
-      <Name>ImgBody</Name>
+    <Compile Include="Texture\HexaEmpty.png">
+      <Name>HexaEmpty</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Texture\Icon\Channel.png">
       <Name>Channel</Name>
       <Importer>TextureImporter</Importer>
@@ -151,13 +135,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Texture\HexaEmpty.png">
-      <Name>HexaEmpty</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Texture\Icon\Direction1.png">
       <Name>Direction1</Name>
       <Importer>TextureImporter</Importer>
@@ -220,15 +197,23 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Texture\ImgHexa.png">
-      <Name>ImgHexa</Name>
+    <Compile Include="Texture\Direction.png">
+      <Name>Direction</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Texture\ImgHexa2.png">
-      <Name>ImgHexa2</Name>
+    <Compile Include="Texture\Hexa_2D.png">
+      <Name>Hexa_2D</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Texture\Repeater.png">
+      <Name>Repeater</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Texture\Speed.png">
+      <Name>Speed</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -59,7 +59,6 @@ namespace TheGrid.Logic.GamePlay
                     if (Context.NextMenu != null && Context.CurrentMenu != Context.NextMenu)
                     {
                         Context.CurrentMenu = Context.NextMenu;
-                        //Context.NextMenu = null;
                         Context.CurrentMenu.Open(gameTime);
                     }
                     else
@@ -203,7 +202,7 @@ namespace TheGrid.Logic.GamePlay
             Menu menuRepeater = new Menu(item.ParentMenu.ParentCell, item.ParentMenu, true);
             menuRepeater.AngleDeltaRender = MathHelper.TwoPi / 12;
             menuRepeater.AngleDeltaRenderIcon = MathHelper.TwoPi / 12;
-            menuRepeater.AngleDeltaMouse = MathHelper.TwoPi / 12;
+            menuRepeater.AngleDeltaMouse = -MathHelper.TwoPi / 12;
 
             for (int i = 0; i < 6; i++)
             {

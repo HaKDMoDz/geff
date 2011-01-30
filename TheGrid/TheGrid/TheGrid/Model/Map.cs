@@ -22,7 +22,7 @@ namespace TheGrid.Model
         {
             this.Width = width;
             this.Height = height;
-            this.R = 9.9855f;
+            this.R = 0.5f;// 9.9855f;
         }
 
         public void CreateGrid()

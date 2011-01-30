@@ -17,6 +17,7 @@ namespace TheGrid.Logic.Render
         public GameEngine GameEngine { get; set; }
 
         BasicEffect effect;
+        BasicEffect effectSprite;
 
         VertexBuffer vBuffer;
 
@@ -24,9 +25,9 @@ namespace TheGrid.Logic.Render
         public Matrix Projection;
         public Matrix World;
 
-        public Vector3 CameraPosition = new Vector3(200f, 100f, 50f);
-        public Vector3 CameraTarget = new Vector3(200f, 100f, 0f);
-        public Vector3 CameraUp = -Vector3.Up;
+        public Vector3 CameraPosition = new Vector3(0, 0, -3f);
+        public Vector3 CameraTarget = new Vector3(0, 0, 0f);
+        public Vector3 CameraUp = new Vector3(0f,-1f,0f);
 
         public bool updateViewScreen = false;
         public bool doScreenShot = false;
@@ -35,7 +36,15 @@ namespace TheGrid.Logic.Render
         private Texture2D texHexa = null;
         private Texture2D texHexa2 = null;
 
+        public Texture2D texHexa2D = null;
+        private Texture2D textDirection = null;
+        private Texture2D texRepeater = null;
+        private Texture2D texSpeed = null;
+
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
+
+
+        public float HexaWidth = 512f;
 
         public RenderLogic(GameEngine gameEngine)
         {
@@ -51,9 +60,14 @@ namespace TheGrid.Logic.Render
 
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
-            texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
-            texHexa = GameEngine.Content.Load<Texture2D>(@"Texture\ImgHexa");
-            texHexa2 = GameEngine.Content.Load<Texture2D>(@"Texture\ImgHexa2");
+            //texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
+            //texHexa = GameEngine.Content.Load<Texture2D>(@"Texture\ImgHexa");
+            //texHexa2 = GameEngine.Content.Load<Texture2D>(@"Texture\ImgHexa2");
+
+            texHexa2D = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D");
+            textDirection = GameEngine.Content.Load<Texture2D>(@"Texture\Direction");
+            texRepeater = GameEngine.Content.Load<Texture2D>(@"Texture\Repeater");
+            texSpeed = GameEngine.Content.Load<Texture2D>(@"Texture\Speed");
         }
 
         private void Initilize3DModel()
@@ -67,8 +81,9 @@ namespace TheGrid.Logic.Render
         private void CreateCamera()
         {
             UpdateCamera();
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi / 2f, (float)GameEngine.Graphics.PreferredBackBufferWidth / (float)GameEngine.Graphics.PreferredBackBufferHeight, 0.01f, 1000.0f);
-            //Projection = Matrix.CreatePerspective(this.GraphicsDevice.Viewport.Width, this.GraphicsDevice.Viewport.Height, 0.01f, 1000.0f);
+            //Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi / 2f, (float)GameEngine.Graphics.PreferredBackBufferWidth / (float)GameEngine.Graphics.PreferredBackBufferHeight, 0.01f, 1000.0f);
+            Projection = Matrix.CreatePerspective(GameEngine.GraphicsDevice.Viewport.Width, GameEngine.GraphicsDevice.Viewport.Height, 1f, 100f);
+            //Projection = Matrix.CreateOrthographic(GameEngine.GraphicsDevice.Viewport.Width, GameEngine.GraphicsDevice.Viewport.Height, 1f, 100f);
             World = Matrix.Identity;
         }
 
@@ -80,33 +95,39 @@ namespace TheGrid.Logic.Render
         private void CreateShader()
         {
             effect = new BasicEffect(GameEngine.GraphicsDevice);
-            //effect.World = Matrix.CreateRotationY((float)gameTime.TotalGameTime.TotalMilliseconds/800);
 
-            //effect.PreferPerPixelLighting = true;
             effect.VertexColorEnabled = true;
             effect.LightingEnabled = false;
             effect.EmissiveColor = new Vector3(0.2f, 0.2f, 0.3f);
-            //effect.DirectionalLight0 = new DirectionalLight(
 
             effect.TextureEnabled = false;
             effect.SpecularColor = new Vector3(0.3f, 0.5f, 0.3f);
             effect.SpecularPower = 1f;
 
-            //effect.SpecularColor = new Vector3(1, 1, 1);
-            //effect.SpecularPower = 1f;
-            //effect.Texture = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa0");
+
+            effectSprite = new BasicEffect(GameEngine.GraphicsDevice);
+
+            effectSprite.LightingEnabled = false;
+            effectSprite.TextureEnabled = true;
+            effectSprite.VertexColorEnabled = true;
 
             UpdateShader(new GameTime());
         }
 
         public void UpdateShader(GameTime gameTime)
         {
-            effect.View = View;
+            Matrix localview = Matrix.CreateLookAt(new Vector3(CameraPosition.X,CameraPosition.Y,CameraPosition.Z), CameraTarget, -Vector3.Up);
+
+            effect.View = localview;
             effect.Projection = Projection;
             effect.World = World;
 
-            float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
-            effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
+            effectSprite.View = View;
+            effectSprite.Projection = Projection;
+            effectSprite.World = World;
+
+            //float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
+            //effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
         }
 
         /// <summary>
@@ -121,19 +142,36 @@ namespace TheGrid.Logic.Render
             UpdateShader(gameTime);
 
             //--- Affiche la map
+            SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, effectSprite, Matrix.Identity);
+
             foreach (Cell cell in Context.Map.Cells)
             {
                 DrawCell(cell, gameTime);
             }
+
+            SpriteBatch.End();
             //---
-  
+
             //--- Affiche le menu
             if (Context.CurrentMenu != null)
-                Context.CurrentMenu.Draw(GameEngine, effect, gameTime);
+                Context.CurrentMenu.Draw(GameEngine, effect, effectSprite, gameTime);
             //---
       }
 
         private void DrawCell(Cell cell, GameTime gameTime)
+        {
+            //--- TODO : gérer le frustum
+            //---
+
+            Color colorChannel = Color.White;
+
+            if(cell.Channel != null)
+                colorChannel = cell.Channel.Color;
+
+            SpriteBatch.Draw(texHexa2D, new Vector2(cell.Location.X * texHexa2D.Width, cell.Location.Y*texHexa2D.Height), colorChannel);
+        }
+
+        private void DrawCell3D(Cell cell, GameTime gameTime)
         {
             //GameEngine.GraphicsDevice.
 
@@ -319,85 +357,5 @@ namespace TheGrid.Logic.Render
             }
             //---
         }
-
-        //private void DrawMinion(GameTime gameTime, MinionBase minion)
-        //{
-        //    float scaleZ = 1f -(float)Math.Cos(minion.BornTime.Subtract(gameTime.TotalGameTime).TotalMilliseconds * 0.01f) * 0.15f;
-
-        //    DrawModel(gameTime, meshModels[minion.ModelName], Matrix.CreateScale(1f, 1f, scaleZ) * minion.MatrixRotation * Matrix.CreateTranslation(minion.Location), minion.AnimationPlayer);
-
-        //    //* Matrix.CreateRotationZ(minion.Angle)
-        //}
-
-        //private void DrawModel(GameTime gameTime, Microsoft.Xna.Framework.Graphics.Model meshModel, Matrix mtxWorld, AnimationPlayer animationPlayer)
-        //{
-        //    float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
-        //    Vector3 lightDirection = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
-
-        //    Matrix[] mtxMeshTransform = new Matrix[meshModel.Bones.Count];
-        //    meshModel.CopyAbsoluteBoneTransformsTo(mtxMeshTransform);
-
-        //    Matrix[] bones = null;
-
-        //    if (animationPlayer != null)
-        //        bones = animationPlayer.GetSkinTransforms();
-
-        //    //bones[0] = Matrix.CreateScale(500f) * World;// *mtxWorld;
-
-
-
-        //    // Compute camera matrices.
-        //    /*
-        //    View = Matrix.CreateTranslation(0, 0, 0) *
-        //                  Matrix.CreateRotationY(MathHelper.ToRadians(0f)) *
-        //                  Matrix.CreateRotationX(MathHelper.ToRadians(0f)) *
-        //                  Matrix.CreateLookAt(new Vector3(0, 0, -100f),
-        //                                      new Vector3(0, 0, 0), Vector3.Up);
-        //    */
-        //    /*
-        //    Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4,
-        //                                                            1.6f,
-        //                                                            1,
-        //                                                            10000);
-
-        //    */
-
-        //    foreach (ModelMesh mesh in meshModel.Meshes)
-        //    {
-
-
-        //        foreach (Effect effect2 in mesh.Effects)
-        //        {
-        //            ((IEffectMatrices)effect2).View = View;
-        //            ((IEffectMatrices)effect2).Projection = Projection;
-
-        //            ((IEffectLights)effect2).EnableDefaultLighting();
-        //            ((IEffectLights)effect2).DirectionalLight0.Direction = lightDirection;
-        //            //((IEffectLights)effect2).PreferPerPixelLighting = true;
-        //            //((IEffectLights)effect2).SpecularColor = new Vector3(0.25f);
-        //            //((IEffectLights)effect2).SpecularPower = 16;
-
-        //            if (effect2 is SkinnedEffect)
-        //            {
-        //                if (animationPlayer != null)
-        //                    ((SkinnedEffect)effect2).SetBoneTransforms(bones);
-
-        //                ((IEffectMatrices)effect2).World = World * mtxWorld;
-        //            }
-        //            else
-        //            {
-        //                if (((BasicEffect)effect2).Texture != null)
-        //                {
-        //                    ((BasicEffect)effect2).TextureEnabled = true;
-        //                    ((BasicEffect)effect2).VertexColorEnabled = false;
-        //                }
-
-        //                ((IEffectMatrices)effect2).World = mtxMeshTransform[mesh.ParentBone.Index] * World * mtxWorld;
-        //            }
-        //        }
-
-        //        mesh.Draw();
-        //    }
-        //}
     }
 }
