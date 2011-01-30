@@ -27,7 +27,7 @@ namespace TheGrid.Logic.Render
 
         public Vector3 CameraPosition = new Vector3(0, 0, -3f);
         public Vector3 CameraTarget = new Vector3(0, 0, 0f);
-        public Vector3 CameraUp = new Vector3(0f,-1f,0f);
+        public Vector3 CameraUp = new Vector3(0f, -1f, 0f);
 
         public bool updateViewScreen = false;
         public bool doScreenShot = false;
@@ -116,7 +116,7 @@ namespace TheGrid.Logic.Render
 
         public void UpdateShader(GameTime gameTime)
         {
-            Matrix localview = Matrix.CreateLookAt(new Vector3(CameraPosition.X,CameraPosition.Y,CameraPosition.Z), CameraTarget, -Vector3.Up);
+            Matrix localview = Matrix.CreateLookAt(new Vector3(CameraPosition.X, CameraPosition.Y, CameraPosition.Z), CameraTarget, -Vector3.Up);
 
             effect.View = localview;
             effect.Projection = Projection;
@@ -156,204 +156,73 @@ namespace TheGrid.Logic.Render
             if (Context.CurrentMenu != null)
                 Context.CurrentMenu.Draw(GameEngine, effect, effectSprite, gameTime);
             //---
-      }
+        }
 
         private void DrawCell(Cell cell, GameTime gameTime)
         {
             //--- TODO : gérer le frustum
             //---
 
-            Color colorChannel = Color.White;
+            Vector2 midCellSize = new Vector2(HexaWidth / 2, HexaWidth / 2);
+            Vector2 cellLocation = cell.Location * texHexa2D.Width;
 
-            if(cell.Channel != null)
-                colorChannel = cell.Channel.Color;
+            Color colorChannel = new Color(0.35f, 0.35f, 0.35f); ;
 
-            SpriteBatch.Draw(texHexa2D, new Vector2(cell.Location.X * texHexa2D.Width, cell.Location.Y*texHexa2D.Height), colorChannel);
-        }
-
-        private void DrawCell3D(Cell cell, GameTime gameTime)
-        {
-            //GameEngine.GraphicsDevice.
-
-            //VertexPositionColorTexture f;
-            
-            //vBuffer.SetData<VertexPositionNormalTexture>(vertex.ToArray());
-
-            //meshHexa.Body.MeshParts[0].VertexBuffer.GetData<
-
-            if (Context.CurrentMenu != null && Context.CurrentMenu.ParentCell == cell)
-            {
-                cell.MatrixLocation = Matrix.CreateTranslation(cell.Location.X, cell.Location.Y, 10f * (float)Context.CurrentMenu.PercentVisibility);
-            }
-            else
-            {
-                cell.MatrixLocation = Matrix.CreateTranslation(cell.Location.X, cell.Location.Y, 0f);
-            }
-
-            Matrix localWorld = World * Matrix.CreateRotationZ(MathHelper.Pi) * cell.MatrixLocation;
-
-            //--- Affficher la cellule si elle est dans la portion visible de l'écran
-            BoundingFrustum frustum = new BoundingFrustum(View * Projection);
-
-            BoundingSphere boundingSphere = meshHexa.Body.BoundingSphere.Transform(localWorld);
-
-            if (frustum.Contains(boundingSphere) == ContainmentType.Disjoint)
-                return;
-            //---
-
-            float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
-            Vector3 lightDirection = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
-
-            //--- Hexa
-            Color channelColor = Color.Gray;
             if (cell.Channel != null)
-            {
-                channelColor = cell.Channel.Color;
-            }
+                colorChannel = cell.Channel.Color;
             else if (cell.Clip != null)
-            {
-                channelColor = Color.White;
-            }
+                colorChannel = Color.White;
 
-            foreach (Effect effect in meshHexa.Body.Effects)
-            {
-                BasicEffect basicEffect = effect as BasicEffect;
+            SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
 
-                basicEffect.View = View;
-                basicEffect.Projection = Projection;
-                basicEffect.World = localWorld;
-
-                basicEffect.EnableDefaultLighting();
-                basicEffect.DirectionalLight0.Direction = lightDirection;
-
-                basicEffect.DiffuseColor = channelColor.ToVector3();
-            }
-
-            meshHexa.Body.Draw();
-
-            foreach (Effect effect in meshHexa.Icon.Effects)
-            {
-                BasicEffect basicEffect = effect as BasicEffect;
-
-                basicEffect.View = View;
-                basicEffect.Projection = Projection;
-                basicEffect.World = localWorld;
-
-                basicEffect.EnableDefaultLighting();
-                basicEffect.DirectionalLight0.Direction = lightDirection;
-
-                basicEffect.DiffuseColor = channelColor.ToVector3();
-            }
-
-            meshHexa.Icon.Draw();
-            //---
-
-            //--- Directions
+            //--- Direction
             for (int i = 0; i < 6; i++)
             {
-                foreach (Effect effect in meshHexa.Direction[i].Effects)
+                if (cell.Clip != null && cell.Clip.Directions[i])
                 {
-                    BasicEffect basicEffect = effect as BasicEffect;
-
-                    basicEffect.View = View;
-                    basicEffect.Projection = Projection;
-                    basicEffect.World = localWorld;
-
-                    basicEffect.EnableDefaultLighting();
-                    basicEffect.DirectionalLight0.Direction = lightDirection;
-                    basicEffect.DiffuseColor = channelColor.ToVector3();
-
-                    if (cell.Clip == null || !cell.Clip.Directions[i])
-                    {
-                        basicEffect.Texture = texEmpty;
-                    }
-                    else if(cell.Clip.Directions[i])
-                    {
-                        basicEffect.Texture = texHexa;
-                    }
+                    double angle = MathHelper.TwoPi / 6 * i;
+                    Vector2 center = new Vector2(0.5f * textDirection.Width, 0.5f * textDirection.Height + 0.34f * HexaWidth);
+                    SpriteBatch.Draw(textDirection, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
                 }
-
-                meshHexa.Direction[i].Draw();
             }
             //---
 
             //--- Repeater
             for (int i = 0; i < 6; i++)
             {
-                foreach (Effect effect in meshHexa.Repeater[i].Effects)
+                if (cell.Clip != null && cell.Clip.Repeater.HasValue && i <= cell.Clip.Repeater.Value)
                 {
-                    BasicEffect basicEffect = effect as BasicEffect;
-
-                    basicEffect.View = View;
-                    basicEffect.Projection = Projection;
-                    basicEffect.World = localWorld;
-
-                    basicEffect.EnableDefaultLighting();
-                    basicEffect.DirectionalLight0.Direction = lightDirection;
-                    basicEffect.DiffuseColor = channelColor.ToVector3();
-
-                    if (cell.Clip == null || !cell.Clip.Repeater.HasValue || i > cell.Clip.Repeater.Value)
-                    {
-                        basicEffect.Texture = texEmpty;
-                    }
-                    else if (cell.Clip.Repeater.HasValue && i <= cell.Clip.Repeater.Value)
-                    {
-                        basicEffect.Texture = texHexa;
-                    }
+                    double angle = MathHelper.TwoPi / 6 * i-MathHelper.TwoPi/12;
+                    Vector2 center = new Vector2(0.5f * texRepeater.Width, 0.5f * texRepeater.Height + 0.4f * HexaWidth);
+                    SpriteBatch.Draw(texRepeater, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
                 }
-
-                meshHexa.Repeater[i].Draw();
             }
             //---
 
             //--- Speed
             for (int i = 0; i < 4; i++)
             {
-                foreach (Effect effect in meshHexa.Speed[i].Effects)
+                if (
+                    cell.Clip != null &&
+                    cell.Clip.Speed.HasValue &&
+                    cell.Clip.Speed.Value > 0 &&
+                    i < cell.Clip.Speed.Value)
                 {
-                    BasicEffect basicEffect = effect as BasicEffect;
-
-                    basicEffect.View = View;
-                    basicEffect.Projection = Projection;
-                    basicEffect.World = localWorld;
-
-                    basicEffect.EnableDefaultLighting();
-                    basicEffect.DirectionalLight0.Direction = lightDirection;
-                    basicEffect.DiffuseColor = channelColor.ToVector3();
-
-                    // else if(cell.Clip.Directions[i])
-                    //{
-                    //    basicEffect.Texture = texHexa;
-                    //}
-                    //if (cell.Clip.Speed.Value > 4 && cell.Clip.Speed.Value-4>i)
-                    //{
-                    //    basicEffect
-                    //}
-
-                    if (
-                        cell.Clip != null && 
-                        cell.Clip.Speed.HasValue && 
-                        cell.Clip.Speed.Value > 0 && 
-                        i < cell.Clip.Speed.Value)
-                    {
-                        basicEffect.Texture = texHexa;
-                    }
-                    else if (
-                        cell.Clip != null &&
-                        cell.Clip.Speed.HasValue &&
-                        cell.Clip.Speed.Value < 0 &&
-                        i < Math.Abs(cell.Clip.Speed.Value))
-                    {
-                        basicEffect.Texture = texHexa2;
-                    }
-                    else
-                    {
-                        basicEffect.Texture = texEmpty;
-                    }
+                    Vector2 center = new Vector2(0.5f * texSpeed.Width, 0.5f * texSpeed.Height);
+                    Vector2 location = new Vector2(-2f * texSpeed.Width + Math.Abs(i) * texSpeed.Width, 0.34f * HexaWidth - texSpeed.Height);
+                    SpriteBatch.Draw(texSpeed, cellLocation + midCellSize + location, null, Color.White, 0f, center, 1f, SpriteEffects.None, 0f);
 
                 }
-
-                meshHexa.Speed[i].Draw();
+                else if (
+                    cell.Clip != null &&
+                    cell.Clip.Speed.HasValue &&
+                    cell.Clip.Speed.Value < 0 &&
+                    i < Math.Abs(cell.Clip.Speed.Value))
+                {
+                    Vector2 center = new Vector2(0.5f * texSpeed.Width, 0.5f * texSpeed.Height);
+                    Vector2 location = new Vector2(-2f * texSpeed.Width + Math.Abs(i) * texSpeed.Width, 0.34f * HexaWidth - texSpeed.Height);
+                    SpriteBatch.Draw(texSpeed, cellLocation + midCellSize + location, null, Color.White, 0f, center, 1f, SpriteEffects.FlipHorizontally, 0f);
+                }
             }
             //---
         }
