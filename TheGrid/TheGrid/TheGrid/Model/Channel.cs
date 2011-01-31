@@ -20,6 +20,7 @@ namespace TheGrid.Model
         {
             Name = name;
             Color = color;
+            Speed = 1f;
         }
     }
 }

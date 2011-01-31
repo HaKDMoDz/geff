@@ -174,6 +174,7 @@ namespace TheGrid.Logic.Render
                 colorChannel = Color.White;
 
             SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
+            SpriteBatch.DrawString(FontMenu, cell.Coord.ToString(), cellLocation, colorChannel);
 
             //--- Direction
             for (int i = 0; i < 6; i++)

@@ -34,11 +34,11 @@ namespace TheGrid.Model
             //float d = (float)Math.Sqrt(0.75);
 
             float width = R;
-            float height =R * (float)Math.Sin(MathHelper.Pi / 3);
+            float height = R * (float)Math.Sin(MathHelper.Pi / 3);
 
-            for (int y = 0; y <= Height / 2; y++)
+            for (int y = 1; y <= Height; y++)
             {
-                for (int x = 0; x < Width; x++)
+                for (int x = 1; x <= Math.Round((double)Width / 2, MidpointRounding.AwayFromZero); x++)
                 {
                     float fx = (float)x;
                     float fy = (float)y;
@@ -55,15 +55,16 @@ namespace TheGrid.Model
                     cell2.Height = 0;
                 }
 
-                for (int x = 0; x < Width; x++)
+                //for (int x = 1; x <= Math.Round((double)Width / 2, MidpointRounding.AwayFromZero); x++)
+                for (int x = 1; x <= Width / 2; x++)
                 {
                     float fx = (float)x;
                     float fy = (float)y;
 
-                    fx = fx * width * 3f + width*1.5f;
-                    fy = fy * height*2f-height;
+                    fx = fx * width * 3f + width * 1.5f;
+                    fy = fy * height * 2f - height;
 
-                    Cell cell1 = new Cell(this, x, y * 2-1,
+                    Cell cell1 = new Cell(this, x, (y * 2) - 1,
                          fx,
                          fy);
 
@@ -82,43 +83,38 @@ namespace TheGrid.Model
         {
             foreach (Cell cell in Cells)
             {
+                if (cell.IndexPosition == 20)
+                {
+                    int a = 0;
+                }
+
                 if (cell.Coord.Y % 2 == 1)
                 {
-                    //cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
-                    cell.Neighbourghs[1] = GetNeighborough(cell, 0, -2);
+                    cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
+                    cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
                     cell.Neighbourghs[2] = GetNeighborough(cell, 1, 1);
                     cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
                     cell.Neighbourghs[4] = GetNeighborough(cell, 0, 1);
                     cell.Neighbourghs[5] = GetNeighborough(cell, 0, -1);
-                    //cell.Neighbourghs[6] = GetNeighborough(cell, 0, -2);
-                    cell.Neighbourghs[6] = GetNeighborough(cell, 1, -1);
                 }
                 else
                 {
-                    //cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
-                    cell.Neighbourghs[6] = GetNeighborough(cell, 0, -2);
+                    cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
+                    cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
                     cell.Neighbourghs[2] = GetNeighborough(cell, 0, 1);
                     cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
                     cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
                     cell.Neighbourghs[5] = GetNeighborough(cell, -1, -1);
-                    //cell.Neighbourghs[6] = GetNeighborough(cell, 0, -2);
-                    cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
                 }
             }
         }
 
         private Cell GetNeighborough(Cell cell, int offsetX, int offsetY)
         {
-            if (cell.Coord.X + offsetX - 1 >= 0 && cell.Coord.X + offsetX <= this.Width &&
-                cell.Coord.Y + offsetY - 1 >= 0 && cell.Coord.Y + offsetY <= this.Height)
-            {
-                return Cells[(cell.Coord.Y + offsetY - 1) * this.Width + cell.Coord.X + offsetX - 1];
-            }
-
-            return null;
+            return Cells.Find(c => c.Coord.X == cell.Coord.X + offsetX && c.Coord.Y == cell.Coord.Y + offsetY);
         }
 
-      
+
         public void DrawMapIntoImageFile()
         {
             System.Drawing.Image img = new System.Drawing.Bitmap(3000, 800);
