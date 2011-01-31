@@ -73,6 +73,8 @@ namespace TheGrid.Model
                 }
             }
 
+            CalcNeighborough();
+
             //DrawMapIntoImageFile();
         }
 
@@ -82,21 +84,25 @@ namespace TheGrid.Model
             {
                 if (cell.Coord.Y % 2 == 1)
                 {
-                    cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
+                    //cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
+                    cell.Neighbourghs[1] = GetNeighborough(cell, 0, -2);
                     cell.Neighbourghs[2] = GetNeighborough(cell, 1, 1);
                     cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
                     cell.Neighbourghs[4] = GetNeighborough(cell, 0, 1);
                     cell.Neighbourghs[5] = GetNeighborough(cell, 0, -1);
-                    cell.Neighbourghs[6] = GetNeighborough(cell, 0, -2);
+                    //cell.Neighbourghs[6] = GetNeighborough(cell, 0, -2);
+                    cell.Neighbourghs[6] = GetNeighborough(cell, 1, -1);
                 }
                 else
                 {
-                    cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
+                    //cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
+                    cell.Neighbourghs[6] = GetNeighborough(cell, 0, -2);
                     cell.Neighbourghs[2] = GetNeighborough(cell, 0, 1);
                     cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
                     cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
                     cell.Neighbourghs[5] = GetNeighborough(cell, -1, -1);
-                    cell.Neighbourghs[6] = GetNeighborough(cell, 0, -2);
+                    //cell.Neighbourghs[6] = GetNeighborough(cell, 0, -2);
+                    cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
                 }
             }
         }

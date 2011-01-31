@@ -7,5 +7,6 @@ namespace TheGrid.Model.Instrument
 {
     public class InstrumentBase
     {
+        public TimeSpan StartTime { get; set; }
     }
 }

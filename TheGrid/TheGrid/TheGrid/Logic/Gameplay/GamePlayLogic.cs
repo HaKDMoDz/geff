@@ -6,13 +6,14 @@ using TheGrid.Model;
 using TheGrid.Common;
 using Microsoft.Xna.Framework;
 using TheGrid.Model.Menu;
+using TheGrid.Model.Instrument;
 
 namespace TheGrid.Logic.GamePlay
 {
     public class GamePlayLogic
     {
         private Random rnd = new Random();
-
+        private float musicianSpeed = 500f;
         public GameEngine GameEngine { get; set; }
 
         public GamePlayLogic(GameEngine gameEngine)
@@ -68,6 +69,111 @@ namespace TheGrid.Logic.GamePlay
                 }
             }
             //---
+        }
+
+        public void EvaluateMuscianGrid()
+        {
+            TimeSpan elapsedTime = new TimeSpan(0, 0, 0);
+
+            foreach (Channel channel in Context.Channels)
+            {
+                if (channel.CellStart != null)
+                {
+                    channel.ListMusician = new List<Musician>();
+                    Musician musician = new Musician();
+                    musician.Instruments = new List<InstrumentBase>();
+                    channel.ListMusician.Add(musician);
+
+                    EvaluateMusicianPartition(musician, channel.CellStart, channel, elapsedTime);
+                    /*
+                    //foreach (Musician musician in channel.ListMusician)
+                    {
+
+                        Cell cell = channel.CellStart;
+
+                        if (cell.Clip != null)
+                        {
+                            if(cell.Clip.Instrument != null)
+                            {
+                            cell.Clip.Instrument.StartTime = elapsedTime;
+                            musician.Instruments.Add(cell.Clip.Instrument);
+                            }
+
+                            for (int i = 0; i < 6; i++)
+                            {
+                                bool divided = false;
+                                if (cell.Clip.Directions[i])
+                                {
+                                    if (divided)
+                                    {
+                                        musician = new Musician();
+                                        musician.Instruments = new List<InstrumentBase>();
+                                        channel.ListMusician.Add(musician);
+                                    }
+
+                                    musician.NextCell = cell.Neighbourghs[i];
+                                    divided = true;
+                                }
+                            }
+                        }
+                    }
+                     * */
+                }
+            }
+        }
+
+        public void EvaluateMusicianPartition(Musician musician, Cell cell, Channel channel, TimeSpan elapsedTime)
+        {
+            musician.NextCell = null;
+            List<Musician> listNewMusician = new List<Musician>();
+
+            if (cell.Clip != null)
+            {
+                if (cell.Clip.Instrument != null)
+                {
+                    elapsedTime = elapsedTime.Add(new TimeSpan(0,0,0,0,(int)(musicianSpeed*channel.Speed)));
+                    cell.Clip.Instrument.StartTime = elapsedTime;
+                    musician.Instruments.Add(cell.Clip.Instrument);
+                }
+
+                for (int i = 0; i < 6; i++)
+                {
+                    bool divided = false;
+                    if (cell.Clip.Directions[i])
+                    {
+                        if (divided)
+                        {
+                            musician = new Musician();
+                            musician.Instruments = new List<InstrumentBase>();
+
+                            channel.ListMusician.Add(musician);
+                            listNewMusician.Add(musician);
+                        }
+
+                        //---
+                        InstrumentSample isample = new InstrumentSample();
+                        isample.StartTime = elapsedTime;
+                        musician.Instruments.Add(isample);
+                        musician.CurrentDirection = i;
+                        //---
+                        musician.NextCell = cell.Neighbourghs[i];
+                        divided = true;
+                    }
+                }
+            }
+
+            musician.NextCell = cell.Neighbourghs[musician.CurrentDirection];
+
+            if (musician.NextCell != null)
+                EvaluateMusicianPartition(musician, musician.NextCell, channel, elapsedTime);
+
+            foreach (Musician newMusician in listNewMusician)
+            {
+                newMusician.NextCell = cell.Neighbourghs[newMusician.CurrentDirection];
+
+                if (newMusician.NextCell != null)
+                    EvaluateMusicianPartition(newMusician, newMusician.NextCell, channel, elapsedTime);
+            }
         }
 
         #region Menu
@@ -133,6 +239,9 @@ namespace TheGrid.Logic.GamePlay
             item.ParentMenu.Close(gameTime);
 
             item.ParentMenu.ParentCell.Channel = Context.Channels[item.Value];
+            
+            //TODO : à supprimer par la suite
+            item.ParentMenu.ParentCell.Channel.CellStart = item.ParentMenu.ParentCell;
 
             Context.NextMenu = item.ParentMenu.ParentMenu;
         }

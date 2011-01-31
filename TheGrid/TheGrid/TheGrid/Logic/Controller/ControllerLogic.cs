@@ -40,6 +40,7 @@ namespace TheGrid.Logic.Controller
         private KeyManager keyUp;
         private KeyManager keyDown;
         private KeyManager keyNewMap;
+        private KeyManager keyEvaluateMusicianPartition;
 
         private MouseManager mouseLeftButton;
         private MouseManager mouseMiddleButton;
@@ -56,9 +57,11 @@ namespace TheGrid.Logic.Controller
             this.GameEngine = gameEngine;
 
             this.keyLeft = new KeyManager(leftKey);
-            this.keyNewMap = new KeyManager(Keys.M);
+            this.keyNewMap = new KeyManager(Keys.N);
+            this.keyEvaluateMusicianPartition = new KeyManager(Keys.C);
 
             this.keyNewMap.KeyReleased += new KeyManager.KeyReleasedHandler(keyNewMap_KeyReleased);
+            this.keyEvaluateMusicianPartition.KeyReleased += new KeyManager.KeyReleasedHandler(keyEvaluateMusicianPartition_KeyReleased);
 
             this.mouseLeftButton = new MouseManager(MouseButtons.LeftButton);
             this.mouseMiddleButton = new MouseManager(MouseButtons.RightButton);
@@ -69,6 +72,11 @@ namespace TheGrid.Logic.Controller
             this.mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseRightButton_MouseReleased);
 
             this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
+        }
+
+        void keyEvaluateMusicianPartition_KeyReleased(Keys key, GameTime gameTime)
+        {
+            GameEngine.GamePlay.EvaluateMuscianGrid();
         }
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
@@ -211,6 +219,8 @@ namespace TheGrid.Logic.Controller
 
                 GameEngine.Render.updateViewScreen = true;
             }
+
+            keyEvaluateMusicianPartition.Update(keyBoardState, gameTime);
             //---
 
             //--- Gamepad

@@ -12,6 +12,9 @@ namespace TheGrid.Model
         public List<Musician> ListMusician { get; set; }
         public List<Sample> ListSample { get; set; }
         public string Name { get; set; }
+        public Cell CellStart { get; set; }
+
+        public float Speed { get; set; }
 
         public Channel(string name, Color color)
         {
