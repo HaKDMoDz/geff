@@ -34,6 +34,7 @@ namespace TheGrid.Logic.GamePlay
             Cell cell1 = Context.Map.Cells[15];
             cell1.InitClip();
             cell1.Clip.Directions[3] = true;
+            cell1.Clip.Directions[2] = true;
             cell1.Channel = Context.Channels[2];
             Context.Channels[2].CellStart = cell1;
 
@@ -98,21 +99,24 @@ namespace TheGrid.Logic.GamePlay
 
             foreach (Channel channel in Context.Channels)
             {
+                channel.ListMusician = new List<Musician>();
+
                 if (channel.CellStart != null)
                 {
-                    channel.ListMusician = new List<Musician>();
                     Musician musician = new Musician();
                     musician.Instruments = new List<InstrumentBase>();
                     channel.ListMusician.Add(musician);
 
                     EvaluateMusicianPartition(musician, channel.CellStart, channel, elapsedTime);
-
                 }
             }
         }
 
         public void EvaluateMusicianPartition(Musician musician, Cell cell, Channel channel, TimeSpan elapsedTime)
         {
+            if (elapsedTime.TotalMilliseconds > 1000 * 60 * 5)
+                return;
+
             musician.NextCell = null;
             List<Musician> listNewMusician = new List<Musician>();
 
@@ -124,18 +128,18 @@ namespace TheGrid.Logic.GamePlay
                     musician.Instruments.Add(cell.Clip.Instrument);
                 }
 
+                bool divided = false;
+
                 for (int i = 0; i < 6; i++)
                 {
-                    bool divided = false;
                     if (cell.Clip.Directions[i])
                     {
-                        if (divided)
+                        if (divided && channel.ListMusician.Count < 5)
                         {
                             musician = new Musician();
                             musician.Instruments = new List<InstrumentBase>();
 
                             channel.ListMusician.Add(musician);
-                            listNewMusician.Add(musician);
                         }
 
                         //---
@@ -143,26 +147,32 @@ namespace TheGrid.Logic.GamePlay
                         isample.StartTime = elapsedTime;
                         musician.Instruments.Add(isample);
                         musician.CurrentDirection = i;
+
+                        listNewMusician.Add(musician);
                         //---
-                        musician.NextCell = cell.Neighbourghs[i];
+
+                        //musician.NextCell = cell.Neighbourghs[i];
                         divided = true;
                     }
                 }
             }
 
-            elapsedTime = elapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(musicianSpeed * channel.Speed)));
+            //listNewMusician.Add(musician);
 
-            musician.NextCell = cell.Neighbourghs[musician.CurrentDirection];
+            //musician.NextCell = cell.Neighbourghs[musician.CurrentDirection];
 
-            if (musician.NextCell != null)
-                EvaluateMusicianPartition(musician, musician.NextCell, channel, elapsedTime);
+            //if (musician.NextCell != null)
+            //    EvaluateMusicianPartition(musician, musician.NextCell, channel, elapsedTime);
 
             foreach (Musician newMusician in listNewMusician)
             {
                 newMusician.NextCell = cell.Neighbourghs[newMusician.CurrentDirection];
 
+                TimeSpan newElapsedTime = new TimeSpan(elapsedTime.Ticks);
+                newElapsedTime = elapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(musicianSpeed * channel.Speed)));
+
                 if (newMusician.NextCell != null)
-                    EvaluateMusicianPartition(newMusician, newMusician.NextCell, channel, elapsedTime);
+                    EvaluateMusicianPartition(newMusician, newMusician.NextCell, channel, newElapsedTime);
             }
         }
 
@@ -207,7 +217,7 @@ namespace TheGrid.Logic.GamePlay
 
             Menu menuChannel = new Menu(item.ParentMenu.ParentCell, item.ParentMenu, false);
             menuChannel.AngleDeltaRender = MathHelper.TwoPi / Context.Channels.Count / 4;
-            menuChannel.AngleDeltaMouse = 0;// MathHelper.TwoPi / Context.Channels.Count / 4;
+            menuChannel.AngleDeltaMouse = 0;
 
             for (int i = 0; i < Context.Channels.Count; i++)
             {
@@ -231,6 +241,12 @@ namespace TheGrid.Logic.GamePlay
             item.ParentMenu.ParentCell.Channel = Context.Channels[item.Value];
             
             //TODO : à supprimer par la suite
+            foreach (Channel channel in Context.Channels)
+            {
+                if (channel.CellStart == item.ParentMenu.ParentCell)
+                    channel.CellStart = null;
+            }
+
             item.ParentMenu.ParentCell.Channel.CellStart = item.ParentMenu.ParentCell;
 
             Context.NextMenu = item.ParentMenu.ParentMenu;

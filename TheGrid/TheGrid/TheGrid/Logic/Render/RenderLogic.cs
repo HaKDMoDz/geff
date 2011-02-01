@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using TheGrid.Model;
 using Microsoft.Xna.Framework.Input;
 using TheGrid.Common;
+using TheGrid.Model.Instrument;
 
 namespace TheGrid.Logic.Render
 {
@@ -15,6 +16,22 @@ namespace TheGrid.Logic.Render
         public SpriteBatch SpriteBatch;
         public SpriteFont FontMenu { get; set; }
         public GameEngine GameEngine { get; set; }
+
+        public float ScreenWidth
+        {
+            get
+            {
+                return this.GameEngine.GraphicsDevice.Viewport.Width;
+            }
+        }
+
+        public float ScreenHeight
+        {
+            get
+            {
+                return this.GameEngine.GraphicsDevice.Viewport.Height;
+            }
+        }
 
         BasicEffect effect;
         BasicEffect effectSprite;
@@ -25,21 +42,22 @@ namespace TheGrid.Logic.Render
         public Matrix Projection;
         public Matrix World;
 
-        public Vector3 CameraPosition = new Vector3(0, 0, -3f);
-        public Vector3 CameraTarget = new Vector3(0, 0, 0f);
+        //public Vector3 CameraPosition = new Vector3(0, 0, -3f);
+        //public Vector3 CameraTarget = new Vector3(0, 0, 0f);
+
+        public Vector3 CameraPosition = new Vector3(3000, 2500, -11f);
+        public Vector3 CameraTarget = new Vector3(3000, 2500, 0f);
+
         public Vector3 CameraUp = new Vector3(0f, -1f, 0f);
 
         public bool updateViewScreen = false;
         public bool doScreenShot = false;
-        MeshHexa meshHexa = null;
-        private Texture2D texEmpty = null;
-        private Texture2D texHexa = null;
-        private Texture2D texHexa2 = null;
 
         public Texture2D texHexa2D = null;
         private Texture2D textDirection = null;
         private Texture2D texRepeater = null;
         private Texture2D texSpeed = null;
+        private Texture2D texEmpty = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -60,30 +78,24 @@ namespace TheGrid.Logic.Render
 
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
-            //texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
-            //texHexa = GameEngine.Content.Load<Texture2D>(@"Texture\ImgHexa");
-            //texHexa2 = GameEngine.Content.Load<Texture2D>(@"Texture\ImgHexa2");
 
             texHexa2D = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D");
             textDirection = GameEngine.Content.Load<Texture2D>(@"Texture\Direction");
             texRepeater = GameEngine.Content.Load<Texture2D>(@"Texture\Repeater");
             texSpeed = GameEngine.Content.Load<Texture2D>(@"Texture\Speed");
+            texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
         }
 
         private void Initilize3DModel()
         {
             meshModels = new Dictionary<string, Microsoft.Xna.Framework.Graphics.Model>();
-
-            meshHexa = new MeshHexa(GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\Hexa"));
         }
 
         //Création de la caméra
         private void CreateCamera()
         {
             UpdateCamera();
-            //Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi / 2f, (float)GameEngine.Graphics.PreferredBackBufferWidth / (float)GameEngine.Graphics.PreferredBackBufferHeight, 0.01f, 1000.0f);
             Projection = Matrix.CreatePerspective(GameEngine.GraphicsDevice.Viewport.Width, GameEngine.GraphicsDevice.Viewport.Height, 1f, 100f);
-            //Projection = Matrix.CreateOrthographic(GameEngine.GraphicsDevice.Viewport.Width, GameEngine.GraphicsDevice.Viewport.Height, 1f, 100f);
             World = Matrix.Identity;
         }
 
@@ -103,7 +115,6 @@ namespace TheGrid.Logic.Render
             effect.TextureEnabled = false;
             effect.SpecularColor = new Vector3(0.3f, 0.5f, 0.3f);
             effect.SpecularPower = 1f;
-
 
             effectSprite = new BasicEffect(GameEngine.GraphicsDevice);
 
@@ -156,6 +167,10 @@ namespace TheGrid.Logic.Render
             if (Context.CurrentMenu != null)
                 Context.CurrentMenu.Draw(GameEngine, effect, effectSprite, gameTime);
             //---
+
+            //--- Affiche la timeline
+            DrawTimeLine(gameTime);
+            //---
         }
 
         private void DrawCell(Cell cell, GameTime gameTime)
@@ -174,7 +189,7 @@ namespace TheGrid.Logic.Render
                 colorChannel = Color.White;
 
             SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
-            SpriteBatch.DrawString(FontMenu, cell.Coord.ToString(), cellLocation, colorChannel);
+            //SpriteBatch.DrawString(FontMenu, cell.Coord.ToString(), cellLocation, colorChannel);
 
             //--- Direction
             for (int i = 0; i < 6; i++)
@@ -193,7 +208,7 @@ namespace TheGrid.Logic.Render
             {
                 if (cell.Clip != null && cell.Clip.Repeater.HasValue && i <= cell.Clip.Repeater.Value)
                 {
-                    double angle = MathHelper.TwoPi / 6 * i-MathHelper.TwoPi/12;
+                    double angle = MathHelper.TwoPi / 6 * i - MathHelper.TwoPi / 12;
                     Vector2 center = new Vector2(0.5f * texRepeater.Width, 0.5f * texRepeater.Height + 0.4f * HexaWidth);
                     SpriteBatch.Draw(texRepeater, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
                 }
@@ -226,6 +241,74 @@ namespace TheGrid.Logic.Render
                 }
             }
             //---
+        }
+
+        private void DrawTimeLine(GameTime gameTime)
+        {
+            float timelineDuration = 1000f * 60;
+            SpriteBatch.Begin();
+
+            SpriteBatch.Draw(texEmpty, new Rectangle(
+                (int)(0.1f * ScreenWidth),
+                (int)(0.05f * ScreenHeight),
+                (int)(0.8f * ScreenWidth),
+                (int)(0.1f * ScreenHeight)), Color.DarkGray);
+
+            float channelHeight = 0.1f * ScreenHeight / (float)Context.Channels.Count;
+            float channelWidth = (0.8f * ScreenWidth - 0.02f * ScreenWidth);
+
+            for (int i = 0; i < Context.Channels.Count; i++)
+            {
+                float fi = (float)i;
+
+                float channelX = 0.1f * ScreenWidth + 0.01f * ScreenWidth;
+                float channelY = 0.05f * ScreenHeight + channelHeight * fi + 0.2f * channelHeight;
+
+                Rectangle recChannel = new Rectangle(
+                    (int)channelX,
+                    (int)channelY,
+                    (int)channelWidth,
+                    (int)(channelHeight - 0.2f * channelHeight));
+
+                SpriteBatch.Draw(texEmpty, recChannel, Context.Channels[i].Color);
+
+                if (Context.Channels[i].ListMusician == null || Context.Channels[i].ListMusician.Count == 0)
+                    continue;
+
+                float heightPerMusician = (channelHeight - 0.2f * channelHeight) / (float)Context.Channels[i].ListMusician.Count;
+                for (int j = 0; j < Context.Channels[i].ListMusician.Count; j++)
+                {
+                    float fj = (float)j;
+
+                    foreach (InstrumentBase instrument in Context.Channels[i].ListMusician[j].Instruments)
+                    {
+                        if (instrument.StartTime.TotalMilliseconds < timelineDuration)
+                        {
+                            SpriteBatch.Draw(texEmpty, new Rectangle(
+                                (int)(channelX + instrument.StartTime.TotalMilliseconds / timelineDuration * channelWidth),
+                                (int)(channelY + heightPerMusician * fj),
+                                (int)(500f / timelineDuration * channelWidth),
+                                (int)(heightPerMusician)), Color.Black);
+                        }
+                    }
+
+
+                }
+            }
+
+            ////--- Direction
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    if (cell.Clip != null && cell.Clip.Directions[i])
+            //    {
+            //        double angle = MathHelper.TwoPi / 6 * i;
+            //        Vector2 center = new Vector2(0.5f * textDirection.Width, 0.5f * textDirection.Height + 0.34f * HexaWidth);
+            //        SpriteBatch.Draw(textDirection, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
+            //    }
+            //}
+            ////---
+
+            SpriteBatch.End();
         }
     }
 }

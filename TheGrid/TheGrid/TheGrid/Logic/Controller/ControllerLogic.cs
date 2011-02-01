@@ -81,11 +81,10 @@ namespace TheGrid.Logic.Controller
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            //if (selectedCell != null && Context.SelectedCell == selectedCell && Context.CurrentMenu != null && Context.CurrentMenu.State == MenuState.Opened)
-
             if (Context.CurrentMenu != null && Context.CurrentMenu.Items.Exists(item => item.MouseOver))
             {
                 Context.CurrentMenu.MouseClick(GameEngine, gameTime, mouseState);
+                GameEngine.GamePlay.EvaluateMuscianGrid();
             }
             else
             {
