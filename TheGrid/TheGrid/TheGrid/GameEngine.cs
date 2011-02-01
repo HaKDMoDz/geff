@@ -34,7 +34,7 @@ namespace TheGrid
 
         public GameEngine()
         {
-            Mini = !(Environment.MachineName == "P64L03BIB69");
+            Mini = (Environment.MachineName == "P64L03BIB69");
 
             Graphics = new GraphicsDeviceManager(this);
 
@@ -74,12 +74,17 @@ namespace TheGrid
 
             if (Mini)
             {
-                Control window = Control.FromHandle(this.Window.Handle);
-                window.Location = new System.Drawing.Point(2100, 550);
-                window.Location = new System.Drawing.Point(2100, 550);
+                //Control window = Control.FromHandle(this.Window.Handle);
+                //window.Location = new System.Drawing.Point(2100, 550);
+                //window.Location = new System.Drawing.Point(2100, 550);
 
                 //MoveWindow(window.Handle, 100, 0, Window.ClientBounds.Width, Window.ClientBounds.Height, false);
             }
+
+            //Control window = Control.FromHandle(this.Window.Handle);
+
+            //window.Location = new System.Drawing.Point(0, 0);
+            //window.Location = new System.Drawing.Point(0, 0);
 
             base.Initialize();
 

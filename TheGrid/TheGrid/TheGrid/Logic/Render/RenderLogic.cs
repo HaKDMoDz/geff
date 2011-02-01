@@ -252,9 +252,9 @@ namespace TheGrid.Logic.Render
                 (int)(0.1f * ScreenWidth),
                 (int)(0.05f * ScreenHeight),
                 (int)(0.8f * ScreenWidth),
-                (int)(0.1f * ScreenHeight)), Color.DarkGray);
+                (int)(0.2f * ScreenHeight)), Color.DarkGray);
 
-            float channelHeight = 0.1f * ScreenHeight / (float)Context.Channels.Count;
+            float channelHeight = 0.2f * ScreenHeight / (float)Context.Channels.Count;
             float channelWidth = (0.8f * ScreenWidth - 0.02f * ScreenWidth);
 
             for (int i = 0; i < Context.Channels.Count; i++)

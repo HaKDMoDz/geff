@@ -117,10 +117,13 @@ namespace TheGrid.Logic.GamePlay
             if (elapsedTime.TotalMilliseconds > 1000 * 60 * 5)
                 return;
 
+            if (channel.ListMusician.Count >= 4)
+                return;
+
             musician.NextCell = null;
             List<Musician> listNewMusician = new List<Musician>();
 
-            if (cell.Clip != null)
+            if ((cell.Channel == null || cell.Channel == channel) && cell.Clip != null)
             {
                 if (cell.Clip.Instrument != null)
                 {
@@ -134,7 +137,7 @@ namespace TheGrid.Logic.GamePlay
                 {
                     if (cell.Clip.Directions[i])
                     {
-                        if (divided && channel.ListMusician.Count < 5)
+                        if (divided && channel.ListMusician.Count < 4)
                         {
                             musician = new Musician();
                             musician.Instruments = new List<InstrumentBase>();
@@ -147,22 +150,16 @@ namespace TheGrid.Logic.GamePlay
                         isample.StartTime = elapsedTime;
                         musician.Instruments.Add(isample);
                         musician.CurrentDirection = i;
-
                         listNewMusician.Add(musician);
                         //---
 
-                        //musician.NextCell = cell.Neighbourghs[i];
                         divided = true;
                     }
                 }
             }
 
-            //listNewMusician.Add(musician);
-
-            //musician.NextCell = cell.Neighbourghs[musician.CurrentDirection];
-
-            //if (musician.NextCell != null)
-            //    EvaluateMusicianPartition(musician, musician.NextCell, channel, elapsedTime);
+            if(!listNewMusician.Contains(musician))
+                listNewMusician.Add(musician);
 
             foreach (Musician newMusician in listNewMusician)
             {
