@@ -27,12 +27,12 @@ namespace TheGrid.Model
             this.MatrixLocation = Matrix.CreateTranslation(left, top, 0f);
 
             this.Neighbourghs = new Dictionary<int, Cell>();
-            this.Neighbourghs.Add(0,null);
-            this.Neighbourghs.Add(1,null);
-            this.Neighbourghs.Add(2,null);
-            this.Neighbourghs.Add(3,null);
-            this.Neighbourghs.Add(4,null);
-            this.Neighbourghs.Add(5,null);
+            this.Neighbourghs.Add(0, null);
+            this.Neighbourghs.Add(1, null);
+            this.Neighbourghs.Add(2, null);
+            this.Neighbourghs.Add(3, null);
+            this.Neighbourghs.Add(4, null);
+            this.Neighbourghs.Add(5, null);
 
             this.Points = new Dictionary<int, int>();
             this.Points.Add(1, -1);
@@ -47,7 +47,7 @@ namespace TheGrid.Model
         {
             get
             {
-                return (this.Coord.Y - 1) * this.Map.Width + this.Coord.X-1;
+                return (this.Coord.Y - 1) * this.Map.Width + this.Coord.X - 1;
             }
         }
 
@@ -60,6 +60,17 @@ namespace TheGrid.Model
         {
             if (Clip == null)
                 Clip = new Clip();
+        }
+
+        public Cell GetDirection(int direction, int iteration)
+        {
+            Cell cell = this;
+            for (int i = 0; i < iteration && cell != null; i++)
+            {
+                cell = cell.Neighbourghs[direction];
+            }
+
+            return cell;
         }
     }
 }

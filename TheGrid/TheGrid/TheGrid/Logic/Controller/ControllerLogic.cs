@@ -41,6 +41,7 @@ namespace TheGrid.Logic.Controller
         private KeyManager keyDown;
         private KeyManager keyNewMap;
         private KeyManager keyEvaluateMusicianPartition;
+        private KeyManager keyPalyStopMusician;
 
         private MouseManager mouseLeftButton;
         private MouseManager mouseMiddleButton;
@@ -59,9 +60,11 @@ namespace TheGrid.Logic.Controller
             this.keyLeft = new KeyManager(leftKey);
             this.keyNewMap = new KeyManager(Keys.N);
             this.keyEvaluateMusicianPartition = new KeyManager(Keys.C);
+            this.keyPalyStopMusician = new KeyManager(Keys.P);
 
             this.keyNewMap.KeyReleased += new KeyManager.KeyReleasedHandler(keyNewMap_KeyReleased);
             this.keyEvaluateMusicianPartition.KeyReleased += new KeyManager.KeyReleasedHandler(keyEvaluateMusicianPartition_KeyReleased);
+            this.keyPalyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPalyStopMusician_KeyReleased);
 
             this.mouseLeftButton = new MouseManager(MouseButtons.LeftButton);
             this.mouseMiddleButton = new MouseManager(MouseButtons.RightButton);
@@ -72,6 +75,22 @@ namespace TheGrid.Logic.Controller
             this.mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseRightButton_MouseReleased);
 
             this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
+        }
+
+        void keyPalyStopMusician_KeyReleased(Keys key, GameTime gameTime)
+        {
+            Context.IsPlaying = !Context.IsPlaying;
+
+            Context.Time = new TimeSpan(0, 0, 0);
+
+            foreach (Channel channel in Context.Channels)
+            {
+                foreach (Musician musician in channel.ListMusician)
+                {
+                    musician.CurrentCell = null;
+                    musician.NextCell = null;
+                }
+            }
         }
 
         void keyEvaluateMusicianPartition_KeyReleased(Keys key, GameTime gameTime)
@@ -220,6 +239,7 @@ namespace TheGrid.Logic.Controller
             }
 
             keyEvaluateMusicianPartition.Update(keyBoardState, gameTime);
+            keyPalyStopMusician.Update(keyBoardState, gameTime);
             //---
 
             //--- Gamepad

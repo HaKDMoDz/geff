@@ -40,8 +40,8 @@ namespace TheGrid
 
             if (Mini)
             {
-                Graphics.PreferredBackBufferWidth = 400;
-                Graphics.PreferredBackBufferHeight = 400;
+                Graphics.PreferredBackBufferWidth = 600;
+                Graphics.PreferredBackBufferHeight = 600;
             }
             else
             {
@@ -74,11 +74,9 @@ namespace TheGrid
 
             if (Mini)
             {
-                //Control window = Control.FromHandle(this.Window.Handle);
-                //window.Location = new System.Drawing.Point(2100, 550);
-                //window.Location = new System.Drawing.Point(2100, 550);
-
-                //MoveWindow(window.Handle, 100, 0, Window.ClientBounds.Width, Window.ClientBounds.Height, false);
+                Control window = Control.FromHandle(this.Window.Handle);
+                window.Location = new System.Drawing.Point(1900, 350);
+                window.Location = new System.Drawing.Point(1900, 350);
             }
 
             //Control window = Control.FromHandle(this.Window.Handle);

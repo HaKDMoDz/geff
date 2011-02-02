@@ -12,7 +12,7 @@ namespace TheGrid.Model.Menu
     public class Menu
     {
         #region Constants
-        private const double MENU_ANIMATION_DURATION = 300;
+        private const double MENU_ANIMATION_DURATION = 200;
         #endregion
 
         #region Membres publiques

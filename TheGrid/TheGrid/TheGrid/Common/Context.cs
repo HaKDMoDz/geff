@@ -19,6 +19,8 @@ namespace TheGrid.Common
 
         public static Player CurrentPlayer { get; set; }
         public static List<Player> Players { get; set; }
+        public static TimeSpan Time { get; set; }
+        public static Boolean IsPlaying { get; set; }
     }
 
     public enum ContextType

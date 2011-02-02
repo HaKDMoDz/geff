@@ -15,12 +15,29 @@ namespace TheGrid.Model
         public Cell CellStart { get; set; }
 
         public float Speed { get; set; }
+        public List<float> ListSpeed { get; set; }
+        public List<TimeSpan> ListSpeedTime { get; set; }
 
         public Channel(string name, Color color)
         {
             Name = name;
             Color = color;
             Speed = 1f;
+
+            ListSample = new List<Sample>();
+            ListMusician = new List<Musician>();
+            ListSpeed = new List<float>();
+            ListSpeedTime = new List<TimeSpan>();
+        }
+
+        public float GetSpeedFromTime(TimeSpan elapsedTime)
+        {
+            int index = ListSpeedTime.FindLastIndex(t => t < elapsedTime);
+
+            if (index != -1)
+                return ListSpeed[index];
+            else
+                return 1f;
         }
     }
 }

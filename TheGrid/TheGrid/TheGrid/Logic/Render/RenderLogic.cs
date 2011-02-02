@@ -54,12 +54,15 @@ namespace TheGrid.Logic.Render
         public bool doScreenShot = false;
 
         public Texture2D texHexa2D = null;
+        public Texture2D texMusician = null;
         private Texture2D textDirection = null;
         private Texture2D texRepeater = null;
         private Texture2D texSpeed = null;
         private Texture2D texEmpty = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
+
+        Microsoft.Xna.Framework.Graphics.Model meshMusician;
 
 
         public float HexaWidth = 512f;
@@ -80,6 +83,7 @@ namespace TheGrid.Logic.Render
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
 
             texHexa2D = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D");
+            texMusician = GameEngine.Content.Load<Texture2D>(@"Texture\Musician");
             textDirection = GameEngine.Content.Load<Texture2D>(@"Texture\Direction");
             texRepeater = GameEngine.Content.Load<Texture2D>(@"Texture\Repeater");
             texSpeed = GameEngine.Content.Load<Texture2D>(@"Texture\Speed");
@@ -89,6 +93,8 @@ namespace TheGrid.Logic.Render
         private void Initilize3DModel()
         {
             meshModels = new Dictionary<string, Microsoft.Xna.Framework.Graphics.Model>();
+
+            meshMusician = GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\IcoMusician");
         }
 
         //Création de la caméra
@@ -160,6 +166,16 @@ namespace TheGrid.Logic.Render
                 DrawCell(cell, gameTime);
             }
 
+            //---
+
+            //--- Affiche les musiciens
+            foreach (Channel channel in Context.Channels)
+            {
+                foreach (Musician musician in channel.ListMusician)
+                {
+                    DrawMusician(musician, gameTime);
+                }
+            }
             SpriteBatch.End();
             //---
 
@@ -243,9 +259,24 @@ namespace TheGrid.Logic.Render
             //---
         }
 
+        private void DrawMusician(Musician musician, GameTime gameTime)
+        {
+            //Matrix localWorld = Matrix.CreateTranslation(CameraTarget) * Matrix.CreateTranslation(musician.Position * HexaWidth);
+
+            //meshMusician.Draw(localWorld, View, Projection);
+
+            if (musician.CurrentCell == null)
+                return;
+
+            Vector2 midCellSize = new Vector2(HexaWidth / 2, HexaWidth / 2);
+            Vector2 cellLocation = Tools.GetVector2(musician.Position)* texHexa2D.Width + midCellSize - midCellSize/2;
+
+            SpriteBatch.Draw(texMusician, cellLocation, musician.Channel.Color);
+        }
+
         private void DrawTimeLine(GameTime gameTime)
         {
-            float timelineDuration = 1000f * 60;
+            float timelineDuration = 1000f * 10;
             SpriteBatch.Begin();
 
             SpriteBatch.Draw(texEmpty, new Rectangle(
@@ -280,34 +311,30 @@ namespace TheGrid.Logic.Render
                 {
                     float fj = (float)j;
 
-                    foreach (InstrumentBase instrument in Context.Channels[i].ListMusician[j].Instruments)
+                    for (int k = 0; k < Context.Channels[i].ListMusician[j].Partition.Count; k++)
                     {
-                        if (instrument.StartTime.TotalMilliseconds < timelineDuration)
+                        //if (Context.Channels[i].ListMusician[j].Partition[k].Instrument != null)
+                        if (Context.Channels[i].ListMusician[j].Partition[k].Clip != null)
                         {
-                            SpriteBatch.Draw(texEmpty, new Rectangle(
-                                (int)(channelX + instrument.StartTime.TotalMilliseconds / timelineDuration * channelWidth),
-                                (int)(channelY + heightPerMusician * fj),
-                                (int)(500f / timelineDuration * channelWidth),
-                                (int)(heightPerMusician)), Color.Black);
+                            double totalMs = Context.Channels[i].ListMusician[j].PartitionTime[k].Subtract(Context.Time).TotalMilliseconds;
+
+                            if (totalMs > -500f && totalMs < timelineDuration)
+                            {
+                                float sizeClip = 1f;
+
+                                if (totalMs < 0f)
+                                    sizeClip = 1f+ (float)totalMs /500f;
+
+                                SpriteBatch.Draw(texEmpty, new Rectangle(
+                                    (int)(channelX + ((1f-sizeClip)*500f + totalMs) / timelineDuration * channelWidth),
+                                    (int)(channelY + heightPerMusician * fj),
+                                    (int)(sizeClip * 500f / timelineDuration * channelWidth),
+                                    (int)(heightPerMusician)), Color.Black);
+                            }
                         }
                     }
-
-
                 }
             }
-
-            ////--- Direction
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    if (cell.Clip != null && cell.Clip.Directions[i])
-            //    {
-            //        double angle = MathHelper.TwoPi / 6 * i;
-            //        Vector2 center = new Vector2(0.5f * textDirection.Width, 0.5f * textDirection.Height + 0.34f * HexaWidth);
-            //        SpriteBatch.Draw(textDirection, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
-            //    }
-            //}
-            ////---
-
             SpriteBatch.End();
         }
     }
