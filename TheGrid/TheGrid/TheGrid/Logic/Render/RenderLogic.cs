@@ -58,6 +58,8 @@ namespace TheGrid.Logic.Render
         private Texture2D textDirection = null;
         private Texture2D texRepeater = null;
         private Texture2D texSpeed = null;
+        private Texture2D texMusicianStart = null;
+        private Texture2D texMusicianStop = null;
         private Texture2D texEmpty = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
@@ -87,6 +89,8 @@ namespace TheGrid.Logic.Render
             textDirection = GameEngine.Content.Load<Texture2D>(@"Texture\Direction");
             texRepeater = GameEngine.Content.Load<Texture2D>(@"Texture\Repeater");
             texSpeed = GameEngine.Content.Load<Texture2D>(@"Texture\Speed");
+            texMusicianStart = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MusicianStart");
+            texMusicianStop = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MusicianStop");
             texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
         }
 
@@ -207,6 +211,24 @@ namespace TheGrid.Logic.Render
             SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
             //SpriteBatch.DrawString(FontMenu, cell.Coord.ToString(), cellLocation, colorChannel);
 
+            //--- Instrument
+            if (cell.Clip != null && cell.Clip.Instrument != null)
+            {
+                Texture2D texInstrument = null;
+
+                if (cell.Clip.Instrument is InstrumentStart)
+                {
+                    texInstrument = texMusicianStart;
+                }
+                else if (cell.Clip.Instrument is InstrumentStop)
+                {
+                    texInstrument = texMusicianStop;
+                }
+
+                SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - midCellSize/4, null, Color.White);
+            }
+            //---
+
             //--- Direction
             for (int i = 0; i < 6; i++)
             {
@@ -265,7 +287,7 @@ namespace TheGrid.Logic.Render
 
             //meshMusician.Draw(localWorld, View, Projection);
 
-            if (musician.CurrentCell == null)
+            if (musician.CurrentCell == null || !musician.IsPlaying)
                 return;
 
             Vector2 midCellSize = new Vector2(HexaWidth / 2, HexaWidth / 2);

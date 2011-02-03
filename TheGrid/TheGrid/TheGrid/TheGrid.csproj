@@ -125,6 +125,8 @@
     <Compile Include="Model\Channel.cs" />
     <Compile Include="Model\Clip.cs" />
     <Compile Include="Model\EffectType.cs" />
+    <Compile Include="Model\Instrument\InstrumentStart.cs" />
+    <Compile Include="Model\Instrument\InstrumentStop.cs" />
     <Compile Include="Model\Instrument\InstrumentBase.cs" />
     <Compile Include="Model\Instrument\InstrumentEffect.cs" />
     <Compile Include="Model\Instrument\InstrumentSample.cs" />

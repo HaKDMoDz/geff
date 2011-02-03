@@ -18,6 +18,14 @@ namespace TheGrid.Model
         public List<float> ListSpeed { get; set; }
         public List<TimeSpan> ListSpeedTime { get; set; }
 
+        public int CountMusicianPlaying
+        {
+            get
+            {
+                return this.ListMusician.Count(m => m.IsPlaying);
+            }
+        }
+
         public Channel(string name, Color color)
         {
             Name = name;
@@ -38,6 +46,25 @@ namespace TheGrid.Model
                 return ListSpeed[index];
             else
                 return 1f;
+        }
+
+
+        public Musician GetMusicianNotPlaying()
+        {
+            Musician musician = this.ListMusician.Find(m => !m.IsPlaying);
+
+            if (musician == null && this.ListMusician.Count < 6)
+            {
+                musician = new Musician(this);
+                ListMusician.Add(musician);
+            }
+            
+            if(musician!=null)
+            {
+                musician.IsPlaying = true;
+            }
+
+            return musician;
         }
     }
 }

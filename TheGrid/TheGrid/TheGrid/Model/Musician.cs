@@ -20,6 +20,7 @@ namespace TheGrid.Model
         public List<TimeSpan> PartitionTime { get; set; }
 
         public Vector3 Position { get; set; }
+        public Boolean IsPlaying { get; set; }
 
         public Musician(Channel channel)
         {

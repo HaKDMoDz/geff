@@ -30,11 +30,65 @@ namespace TheGrid.Logic.GamePlay
             //Context.Map = new Map(5, 5);
             Context.Map.CreateGrid();
 
+            ////---
+            //Cell cell1 = Context.Map.Cells[15];
+            //cell1.InitClip();
+            //cell1.Clip.Directions[3] = true;
+            //cell1.Clip.Directions[2] = true;
+            //cell1.Clip.Instrument = new InstrumentStart();
+            //cell1.Channel = Context.Channels[2];
+            //Context.Channels[2].CellStart = cell1;
+
+            //Cell cell0 = cell1.GetDirection(3, 3);
+            //cell0.InitClip();
+            //cell0.Clip.Directions[2] = true;
+
+            //Cell cell2 = cell0.GetDirection(2, 3);
+            //cell2.InitClip();
+            //cell2.Clip.Directions[3] = true;
+
+            //Cell cell3 = cell2.GetDirection(3, 4);
+            //cell3.InitClip();
+            //cell3.Clip.Directions[1] = true;
+            //cell3.Clip.Directions[5] = true;
+
+            //Cell cell4 = cell1.GetDirection(2, 6);
+            //cell4.InitClip();
+            //cell4.Clip.Directions[4] = true;
+            ////---
+
+            ////---
+            //Cell cell1 = Context.Map.Cells[15];
+            //cell1.InitClip();
+            //cell1.Clip.Directions[3] = true;
+            //cell1.Clip.Instrument = new InstrumentStart();
+            //cell1.Channel = Context.Channels[2];
+            //Context.Channels[2].CellStart = cell1;
+
+            //Cell cell0 = cell1.GetDirection(3, 3);
+            //cell0.InitClip();
+            //cell0.Clip.Directions[2] = true;
+            //cell0.Clip.Directions[3] = true;
+
+            //Cell cell2 = cell0.GetDirection(2, 3);
+            //cell2.InitClip();
+            //cell2.Clip.Directions[0] = true;
+
+            //Cell cell3 = cell2.GetDirection(0, 3);
+            //cell3.InitClip();
+            //cell3.Clip.Directions[4] = true;
+
+            //Cell cell4 = cell0.GetDirection(3, 4);
+            //cell4.InitClip();
+            //cell4.Clip.Instrument = new InstrumentStop();
+            ////---
+
+
             //---
             Cell cell1 = Context.Map.Cells[15];
             cell1.InitClip();
             cell1.Clip.Directions[3] = true;
-            cell1.Clip.Directions[2] = true;
+            cell1.Clip.Instrument = new InstrumentStart();
             cell1.Channel = Context.Channels[2];
             Context.Channels[2].CellStart = cell1;
 
@@ -44,20 +98,35 @@ namespace TheGrid.Logic.GamePlay
 
             Cell cell2 = cell0.GetDirection(2, 3);
             cell2.InitClip();
+            cell2.Clip.Directions[0] = true;
+            cell2.Clip.Directions[1] = true;
+            cell2.Clip.Directions[2] = true;
             cell2.Clip.Directions[3] = true;
+            cell2.Clip.Directions[4] = true;
 
-            Cell cell3 = cell2.GetDirection(3, 4);
+            Cell cell3 = cell2.GetDirection(0, 3);
             cell3.InitClip();
-            cell3.Clip.Directions[1] = true;
-            cell3.Clip.Directions[5] = true;
+            cell3.Clip.Directions[4] = true;
 
-            Cell cell4 = cell1.GetDirection(2, 6);
+            Cell cell4 = cell2.GetDirection(1, 2);
             cell4.InitClip();
-            cell4.Clip.Directions[4] = true;
+            cell4.Clip.Instrument = new InstrumentStop();
+
+            Cell cell5 = cell2.GetDirection(2, 2);
+            cell5.InitClip();
+            cell5.Clip.Instrument = new InstrumentStop();
+
+            Cell cell6 = cell2.GetDirection(3, 2);
+            cell6.InitClip();
+            cell6.Clip.Instrument = new InstrumentStop();
+
+            Cell cell7 = cell2.GetDirection(4, 2);
+            cell7.InitClip();
+            cell7.Clip.Instrument = new InstrumentStop();
             //---
+
+            EvaluateMuscianGrid();
         }
-
-
 
         private void InitializeChannel()
         {
@@ -119,8 +188,8 @@ namespace TheGrid.Logic.GamePlay
                         {
                             musician.CurrentIndex = 0;
                             musician.CurrentCell = musician.Partition[musician.CurrentIndex];
+                            musician.IsPlaying = true;
                         }
-
 
                         if (musician.CurrentCell != null && musician.Partition.Count > musician.CurrentIndex + 1)
                         {
@@ -135,13 +204,21 @@ namespace TheGrid.Logic.GamePlay
 
                             musician.Position = new Vector3(musician.CurrentCell.Location + (musician.NextCell.Location - musician.CurrentCell.Location) * (float)percent, 0f);
 
-
                             //---> Passe à la cellule suivante
                             if (Context.Time >= musician.PartitionTime[musician.CurrentIndex + 1])
                             {
                                 musician.CurrentIndex++;
                                 musician.CurrentCell = musician.Partition[musician.CurrentIndex];
+
                                 //TODO : SoundLogic
+                                if (musician.CurrentCell.Clip != null && musician.CurrentCell.Clip.Instrument is InstrumentStop)
+                                {
+                                    musician.IsPlaying = false;
+                                }
+                                else if (musician.CurrentCell.Clip != null)
+                                {
+                                    musician.IsPlaying = true;
+                                }
                             }
                         }
                     }
@@ -149,7 +226,159 @@ namespace TheGrid.Logic.GamePlay
             }
         }
 
+
         public void EvaluateMuscianGrid()
+        {
+            TimeSpan elapsedTime = new TimeSpan(0, 0, 0);
+
+            //--- Initialisation
+            foreach (Channel channel in Context.Channels)
+            {
+                channel.ListMusician = new List<Musician>();
+                channel.ListSpeed = new List<float>();
+                channel.ListSpeedTime = new List<TimeSpan>();
+
+                channel.Speed = 1f;
+                channel.ListSpeed.Add(1f);
+                channel.ListSpeedTime.Add(new TimeSpan());
+
+                if (channel.CellStart != null)
+                {
+                    Musician musician = channel.GetMusicianNotPlaying();
+                    musician.IsPlaying = true;
+                    musician.NextCell = channel.CellStart;
+                }
+            }
+            //---
+
+            //TODO : gérer un canal de temps par channel
+            while (elapsedTime.TotalMilliseconds < 1000 * 60 * 1)
+            {
+                foreach (Channel channel in Context.Channels)
+                {
+                    List<Musician> newMusicians = new List<Musician>();
+
+                    foreach (Musician musician in channel.ListMusician)
+                    {
+                        if (musician.NextCell != null)
+                        {
+                            Cell cell = musician.NextCell;
+
+                            if (cell != null && (cell.Channel == null || cell.Channel == channel) && cell.Clip != null)
+                            {
+                                //--- Speed
+                                if (cell.Clip.Speed.HasValue)
+                                {
+                                    float speed = channel.GetSpeedFromTime(elapsedTime);
+
+                                    speed *= (0.22f * (float)(cell.Clip.Speed.Value)) + 1f;
+
+                                    if (speed < 1f / 16f)
+                                        speed = 1f / 16f;
+                                    else if (speed > 4f)
+                                        speed = 4f;
+
+                                    channel.ListSpeed.Add(speed);
+                                    channel.ListSpeedTime.Add(elapsedTime);
+                                }
+                                //---
+
+                                //--- Instrument
+                                if (cell.Clip.Instrument is InstrumentStop)
+                                {
+                                    musician.IsPlaying = false;
+                                }
+                                //---
+
+                                //--- Direction
+                                bool divided = false;
+
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    if (cell.Clip.Directions[i])
+                                    {
+                                        if (divided)
+                                        {
+                                            Musician newMusician = new Musician(channel);
+
+                                            newMusician.CurrentDirection = i;
+                                            newMusician.Partition.Add(cell);
+                                            newMusician.PartitionTime.Add(elapsedTime);
+
+                                            newMusician.CurrentCell = cell;
+                                            newMusician.NextCell = cell.Neighbourghs[newMusician.CurrentDirection];
+
+                                            newMusicians.Add(newMusician);
+                                        }
+
+                                        if (!divided)
+                                        {
+                                            musician.CurrentDirection = i;
+
+                                            divided = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (cell != null)
+                            {
+                                //--- Met à jour la partition du musicien
+                                musician.Partition.Add(cell);
+                                musician.PartitionTime.Add(elapsedTime);
+                                musician.NextCell = cell.Neighbourghs[musician.CurrentDirection];
+                                //---
+                            }
+                        }
+                    }
+
+                    //--- Création des nouveaux des musiciens
+                    foreach (Musician newMusician in newMusicians)
+                    {
+                        Musician musician = channel.GetMusicianNotPlaying();
+
+                        if (musician != null)
+                        {
+                            musician.Partition.Add(newMusician.CurrentCell);
+                            musician.PartitionTime.Add(elapsedTime);
+
+                            musician.NextCell = newMusician.NextCell;
+                            musician.CurrentDirection = newMusician.CurrentDirection;
+                        }
+                    }
+
+                    //--- Suppression des doublons de musiciens
+                    foreach (Musician musician in channel.ListMusician)
+                    {
+                        if (musician.IsPlaying && musician.NextCell != null)
+                        {
+                            List<Musician> doublonMusician = channel.ListMusician.FindAll(
+                                m => m.IsPlaying &&
+                                    m != musician &&
+                                    //m.Partition.Last() == musician.Partition.Last() &&
+                                    //m.PartitionTime.Last() == musician.PartitionTime.Last() &&
+                                    m.NextCell != null &&
+                                    m.NextCell.IndexPosition == musician.NextCell.IndexPosition);
+
+
+                            if (doublonMusician.Count > 0)
+                            {
+                                int a = 0;
+                            }
+
+                            doublonMusician.ForEach(m => m.IsPlaying = false);
+                        }
+                    }
+                    //---
+                }
+
+                //--- Incrémente le temps
+                elapsedTime = elapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)musicianSpeed));
+                //---
+            }
+        }
+
+        public void EvaluateMuscianGrid2()
         {
             TimeSpan elapsedTime = new TimeSpan(0, 0, 0);
 
@@ -165,8 +394,7 @@ namespace TheGrid.Logic.GamePlay
 
                 if (channel.CellStart != null)
                 {
-                    Musician musician = new Musician(channel);
-                    channel.ListMusician.Add(musician);
+                    Musician musician = channel.GetMusicianNotPlaying();
 
                     musician.Partition.Add(channel.CellStart);
                     musician.PartitionTime.Add(new TimeSpan());
@@ -180,7 +408,7 @@ namespace TheGrid.Logic.GamePlay
         {
             musician.NextCell = null;
             List<Musician> listNewMusician = new List<Musician>();
-            
+
             if (elapsedTime.TotalMilliseconds > 1000 * 60 * 1)
                 return;
 
@@ -204,18 +432,23 @@ namespace TheGrid.Logic.GamePlay
                         channel.ListSpeedTime.Add(elapsedTime);
                     }
 
+                    if (cell.Clip.Instrument is InstrumentStop)
+                    {
+                        musician.IsPlaying = false;
+                    }
+
                     for (int i = 0; i < 6; i++)
                     {
                         if (cell.Clip.Directions[i])
                         {
-                            if (listNewMusician.Count > 0 && channel.ListMusician.Count < 4)
+                            if (listNewMusician.Count > 0 && channel.CountMusicianPlaying < 4)
                             {
-                                musician = new Musician(channel);
+                                musician = channel.GetMusicianNotPlaying();
                                 musician.CurrentDirection = i;
                                 musician.Partition.Add(cell);
                                 musician.PartitionTime.Add(elapsedTime);
 
-                                channel.ListMusician.Add(musician);
+                                //channel.ListMusician.Add(musician);
                                 listNewMusician.Add(musician);
                             }
 
@@ -237,7 +470,7 @@ namespace TheGrid.Logic.GamePlay
                 newMusician.NextCell = cell.Neighbourghs[newMusician.CurrentDirection];
 
                 TimeSpan newElapsedTime = new TimeSpan(elapsedTime.Ticks);
-                
+
                 newElapsedTime = elapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(musicianSpeed / channel.GetSpeedFromTime(newElapsedTime))));
 
                 if (newMusician.NextCell != null)
@@ -314,15 +547,6 @@ namespace TheGrid.Logic.GamePlay
 
             item.ParentMenu.ParentCell.Channel = Context.Channels[item.Value];
 
-            //TODO : à supprimer par la suite
-            foreach (Channel channel in Context.Channels)
-            {
-                if (channel.CellStart == item.ParentMenu.ParentCell)
-                    channel.CellStart = null;
-            }
-
-            item.ParentMenu.ParentCell.Channel.CellStart = item.ParentMenu.ParentCell;
-
             Context.NextMenu = item.ParentMenu.ParentMenu;
         }
         #endregion
@@ -330,6 +554,84 @@ namespace TheGrid.Logic.GamePlay
         #region Menu Instrument
         void itemMenuInstrument_Selected(Item item, GameTime gameTime)
         {
+            item.ParentMenu.Close(gameTime);
+
+            Menu menuInstrument = new Menu(item.ParentMenu.ParentCell, item.ParentMenu, true);
+
+            Item itemReset = new Item(menuInstrument, "Reset");
+            itemReset.Selected += new Item.SelectedHandler(itemInstrumentReset_Selected);
+            menuInstrument.Items.Add(itemReset);
+
+            Item itemSample = new Item(menuInstrument, "Sample");
+            itemSample.Selected += new Item.SelectedHandler(itemSample_Selected);
+            menuInstrument.Items.Add(itemSample);
+
+            Item itemNote = new Item(menuInstrument, "Note");
+            itemNote.Selected += new Item.SelectedHandler(itemNote_Selected);
+            menuInstrument.Items.Add(itemNote);
+
+            Item itemEffect = new Item(menuInstrument, "Effect");
+            itemEffect.Selected += new Item.SelectedHandler(itemEffect_Selected);
+            menuInstrument.Items.Add(itemEffect);
+
+            Item itemMusicianStart = new Item(menuInstrument, "MusicianStart");
+            itemMusicianStart.Selected += new Item.SelectedHandler(itemMusicianStart_Selected);
+            menuInstrument.Items.Add(itemMusicianStart);
+
+            Item itemMusicianStop = new Item(menuInstrument, "MusicianStop");
+            itemMusicianStop.Selected += new Item.SelectedHandler(itemMusicianStop_Selected);
+            menuInstrument.Items.Add(itemMusicianStop);
+
+            Context.NextMenu = menuInstrument;
+        }
+
+        void itemInstrumentReset_Selected(Item item, GameTime gameTime)
+        {
+            item.ParentMenu.Close(gameTime);
+
+            item.ParentMenu.ParentCell.InitClip();
+            item.ParentMenu.ParentCell.Clip.Instrument = null;
+
+            Context.NextMenu = item.ParentMenu.ParentMenu;
+        }
+
+        void itemSample_Selected(Item item, GameTime gameTime)
+        {
+        }
+
+        void itemNote_Selected(Item item, GameTime gameTime)
+        {
+        }
+
+        void itemEffect_Selected(Item item, GameTime gameTime)
+        {
+        }
+
+        void itemMusicianStart_Selected(Item item, GameTime gameTime)
+        {
+            if (item.ParentMenu.ParentCell.Channel == null || item.ParentMenu.ParentCell.Channel.Name == "Empty")
+            {
+                itemMenuChannel_Selected(item, gameTime);
+            }
+            else
+            {
+                if (item.ParentMenu.ParentCell.Channel.CellStart != null)
+                    item.ParentMenu.ParentCell.Channel.CellStart.Clip.Instrument = null;
+
+                item.ParentMenu.ParentCell.Channel.CellStart = item.ParentMenu.ParentCell;
+                item.ParentMenu.ParentCell.Channel.CellStart.InitClip();
+                item.ParentMenu.ParentCell.Channel.CellStart.Clip.Instrument = new InstrumentStart();
+
+                item.ParentMenu.Close(gameTime);
+
+                Context.NextMenu = item.ParentMenu.ParentMenu;
+            }
+        }
+
+        void itemMusicianStop_Selected(Item item, GameTime gameTime)
+        {
+            item.ParentMenu.ParentCell.InitClip();
+            item.ParentMenu.ParentCell.Clip.Instrument = new InstrumentStop();
         }
         #endregion
 
