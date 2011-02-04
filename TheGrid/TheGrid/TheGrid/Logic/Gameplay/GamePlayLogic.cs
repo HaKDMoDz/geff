@@ -259,7 +259,7 @@ namespace TheGrid.Logic.GamePlay
             }
             //---
 
-            if (Context.IsPlaying)
+            if (Context.IsPlaying || Context.IsNavigatingThroughTime)
                 UpdateMusicians(gameTime);
 
             GameEngine.Window.Title = Context.Time.ToString();// +" - " + Context.Channels[2].CountMusicianPlaying.ToString();
@@ -268,8 +268,11 @@ namespace TheGrid.Logic.GamePlay
         public void UpdateMusicians(GameTime gameTime)
         {
             //---> Met à jour le temps écoulé
-            TimeSpan time = new TimeSpan((long)((float)gameTime.ElapsedGameTime.Ticks * Context.SpeedFactor));
-            Context.Time = Context.Time.Add(time);
+            if (!Context.IsNavigatingThroughTime)
+            {
+                TimeSpan time = new TimeSpan((long)((float)gameTime.ElapsedGameTime.Ticks * Context.SpeedFactor));
+                Context.Time = Context.Time.Add(time);
+            }
 
             foreach (Channel channel in Context.Channels)
             {
@@ -491,6 +494,31 @@ namespace TheGrid.Logic.GamePlay
                         //---
 
                         channelCalculationInProgress++;
+                    }
+                }
+            }
+        }
+
+        public void UpdateMusiciansToTime()
+        {
+            foreach (Channel channel in Context.Channels)
+            {
+                foreach (Musician musician in channel.ListMusician)
+                {
+                    int index = musician.Partition.FindLastIndex(p => p.Time <= Context.Time);
+
+                    if (index == -1)
+                    {
+                        musician.IsPlaying = false;
+                        index = 0;
+                    }
+
+                    musician.CurrentIndex = index;
+                    musician.CurrentCell = musician.Partition[index].Value;
+
+                    if (musician.CurrentCell.Clip != null && musician.CurrentCell.Clip.Instrument != null && musician.CurrentCell.Clip.Instrument is InstrumentStop)
+                    {
+                        musician.IsPlaying = false;
                     }
                 }
             }

@@ -239,10 +239,10 @@ namespace TheGrid.Model.Menu
             {
                 Items[currentIndex].MouseOver = true;
 
-                gameEngine.Window.Title = (currentIndex).ToString();
+                //gameEngine.Window.Title = (currentIndex).ToString();
             }
-            else
-                gameEngine.Window.Title = "";
+            //else
+            //    gameEngine.Window.Title = "";
         }
     }
 }

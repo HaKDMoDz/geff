@@ -23,6 +23,7 @@ namespace TheGrid.Common
         public static Boolean IsPlaying { get; set; }
         public static float SpeedFactor { get; set; }
         public static TimeSpan PartitionDuration { get; set; }
+        public static Boolean IsNavigatingThroughTime { get; set; }
     }
 
     public enum ContextType

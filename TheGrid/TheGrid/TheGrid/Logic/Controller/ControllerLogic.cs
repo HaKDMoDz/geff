@@ -79,7 +79,9 @@ namespace TheGrid.Logic.Controller
             this.keyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopMusician_KeyReleased);
 
             this.keyForward.KeyPressed += new KeyManager.KeyPressedHandler(keyForward_KeyPressed);
+            this.keyForward.KeyReleased += new KeyManager.KeyReleasedHandler(keyForward_KeyReleased);
             this.keyBackward.KeyPressed += new KeyManager.KeyPressedHandler(keyBackward_KeyPressed);
+            this.keyBackward.KeyReleased += new KeyManager.KeyReleasedHandler(keyBackward_KeyReleased);
             this.keySpeedUp.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedUp_KeyPressed);
             this.keySpeedDown.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedDown_KeyPressed);
 
@@ -96,16 +98,32 @@ namespace TheGrid.Logic.Controller
 
         void keyBackward_KeyPressed(Keys key, GameTime gameTime)
         {
+            Context.IsNavigatingThroughTime = true;
             float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
             TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
             Context.Time = Context.Time.Subtract(time);
+
+            GameEngine.GamePlay.UpdateMusiciansToTime();
+        }
+
+        void keyBackward_KeyReleased(Keys key, GameTime gameTime)
+        {
+            Context.IsNavigatingThroughTime = false;
         }
 
         void keyForward_KeyPressed(Keys key, GameTime gameTime)
         {
+            Context.IsNavigatingThroughTime = true;
             float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
             TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
             Context.Time = Context.Time.Add(time);
+
+            GameEngine.GamePlay.UpdateMusiciansToTime();
+        }
+
+        void keyForward_KeyReleased(Keys key, GameTime gameTime)
+        {
+            Context.IsNavigatingThroughTime = false;
         }
 
         void keySpeedDown_KeyPressed(Keys key, GameTime gameTime)
