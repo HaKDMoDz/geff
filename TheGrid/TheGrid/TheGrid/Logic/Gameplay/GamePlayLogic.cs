@@ -21,6 +21,7 @@ namespace TheGrid.Logic.GamePlay
             this.GameEngine = gameEngine;
 
             Context.SpeedFactor = 1f;
+            Context.PartitionDuration = new TimeSpan(0, 1, 0);
 
             InitializeChannel();
             InitializePlayers();
@@ -270,7 +271,6 @@ namespace TheGrid.Logic.GamePlay
             TimeSpan time = new TimeSpan((long)((float)gameTime.ElapsedGameTime.Ticks * Context.SpeedFactor));
             Context.Time = Context.Time.Add(time);
 
-
             foreach (Channel channel in Context.Channels)
             {
                 foreach (Musician musician in channel.ListMusician)
@@ -278,30 +278,30 @@ namespace TheGrid.Logic.GamePlay
                     if (musician.Partition.Count > 0)
                     {
                         //---> Première cellule
-                        if (musician.CurrentCell == null && musician.PartitionTime[0] <= Context.Time)
+                        if (musician.CurrentCell == null && musician.Partition[0].Time <= Context.Time)
                         {
                             musician.CurrentIndex = 0;
-                            musician.CurrentCell = musician.Partition[musician.CurrentIndex];
+                            musician.CurrentCell = musician.Partition[musician.CurrentIndex].Value;
                             musician.IsPlaying = true;
                         }
 
                         if (musician.CurrentCell != null && musician.Partition.Count > musician.CurrentIndex + 1)
                         {
-                            musician.NextCell = musician.Partition[musician.CurrentIndex + 1];
+                            musician.NextCell = musician.Partition[musician.CurrentIndex + 1].Value;
 
-                            TimeSpan durationToNextCell = musician.PartitionTime[musician.CurrentIndex + 1].Subtract(musician.PartitionTime[musician.CurrentIndex]);
+                            TimeSpan durationToNextCell = musician.Partition[musician.CurrentIndex + 1].Time.Subtract(musician.Partition[musician.CurrentIndex].Time);
 
                             double percent =
-                                (Context.Time.Subtract(musician.PartitionTime[musician.CurrentIndex])).TotalMilliseconds /
-                                (musician.PartitionTime[musician.CurrentIndex + 1].Subtract(musician.PartitionTime[musician.CurrentIndex])).TotalMilliseconds;
+                                (Context.Time.Subtract(musician.Partition[musician.CurrentIndex].Time)).TotalMilliseconds /
+                                (musician.Partition[musician.CurrentIndex + 1].Time.Subtract(musician.Partition[musician.CurrentIndex].Time)).TotalMilliseconds;
 
                             musician.Position = new Vector3(musician.CurrentCell.Location + (musician.NextCell.Location - musician.CurrentCell.Location) * (float)percent, 0f);
 
                             //---> Passe à la cellule suivante
-                            if (Context.Time >= musician.PartitionTime[musician.CurrentIndex + 1])
+                            if (Context.Time >= musician.Partition[musician.CurrentIndex + 1].Time)
                             {
                                 musician.CurrentIndex++;
-                                musician.CurrentCell = musician.Partition[musician.CurrentIndex];
+                                musician.CurrentCell = musician.Partition[musician.CurrentIndex].Value;
 
                                 //TODO : SoundLogic
                                 if (musician.CurrentCell.Clip != null && (musician.CurrentCell.Channel == null || musician.CurrentCell.Channel == musician.Channel) && musician.CurrentCell.Clip.Instrument is InstrumentStop)
@@ -322,18 +322,13 @@ namespace TheGrid.Logic.GamePlay
 
         public void EvaluateMuscianGrid()
         {
-            TimeSpan elapsedTime = new TimeSpan(0, 0, 0);
-
             //--- Initialisation
             foreach (Channel channel in Context.Channels)
             {
                 channel.ListMusician = new List<Musician>();
-                channel.ListSpeed = new List<float>();
-                channel.ListSpeedTime = new List<TimeSpan>();
-
-                channel.Speed = 1f;
-                channel.ListSpeed.Add(1f);
-                channel.ListSpeedTime.Add(new TimeSpan());
+                channel.ElapsedTime = new TimeSpan();
+                channel.ListSpeed = new List<TimeValue<float>>();
+                channel.ListSpeed.Add(new TimeValue<float>(new TimeSpan(), 1f));
 
                 if (channel.CellStart != null)
                 {
@@ -344,139 +339,160 @@ namespace TheGrid.Logic.GamePlay
             }
             //---
 
-            //TODO : gérer un canal de temps par channel
-            while (elapsedTime.TotalMilliseconds < 1000 * 60 * 1)
+            int channelCalculationInProgress = Context.Channels.Count;
+
+            while (channelCalculationInProgress > 0)
             {
+                channelCalculationInProgress = 0;
+
                 foreach (Channel channel in Context.Channels)
                 {
-                    List<Musician> newMusicians = new List<Musician>();
-
-                    foreach (Musician musician in channel.ListMusician)
+                    if (channel.ElapsedTime < Context.PartitionDuration)
                     {
-                        if (musician.NextCell != null)
+                        List<Musician> newMusicians = new List<Musician>();
+
+                        foreach (Musician musician in channel.ListMusician)
                         {
-                            Cell cell = musician.NextCell;
-
-                            if (cell != null && (cell.Channel == null || cell.Channel == channel) && cell.Clip != null)
+                            if (musician.NextCell != null)
                             {
-                                //--- Speed
-                                if (cell.Clip.Speed.HasValue)
+                                Cell cell = musician.NextCell;
+
+                                if (cell != null && (cell.Channel == null || cell.Channel == channel) && cell.Clip != null)
                                 {
-                                    float speed = channel.GetSpeedFromTime(elapsedTime);
+                                    bool ignoreCell = false;
 
-                                    speed *= (0.22f * (float)(cell.Clip.Speed.Value)) + 1f;
-
-                                    if (speed < 1f / 16f)
-                                        speed = 1f / 16f;
-                                    else if (speed > 4f)
-                                        speed = 4f;
-
-                                    channel.ListSpeed.Add(speed);
-                                    channel.ListSpeedTime.Add(elapsedTime);
-                                }
-                                //---
-
-                                //--- Instrument
-                                if (cell.Clip.Instrument is InstrumentStop)
-                                {
-                                    musician.IsPlaying = false;
-                                    musician.NextCell = null;
-                                }
-                                //---
-
-                                //--- Direction
-                                bool divided = false;
-
-                                for (int i = 0; i < 6; i++)
-                                {
-                                    if (cell.Clip.Directions[i])
+                                    //--- Repeater
+                                    if (cell.Clip.Repeater.HasValue)
                                     {
-                                        if (divided)
+                                        TimeValue<Cell> part = musician.Partition.LastOrDefault(p => p.Value.Clip != null && p.Value.Clip.Instrument != null && p.Value.Clip.Instrument is InstrumentStop);
+                                        TimeSpan timePart = TimeSpan.Zero;
+
+                                        if (part != null)
+                                            timePart = part.Time;
+
+                                        ignoreCell = musician.Partition.Count(p => p.Time > timePart && p.Value == cell) >= (cell.Clip.Repeater.Value + 1);
+                                    }
+                                    //---
+
+                                    if (!ignoreCell)
+                                    {
+                                        //--- Speed
+                                        if (cell.Clip.Speed.HasValue)
                                         {
-                                            Musician newMusician = new Musician(channel);
+                                            float speed = channel.GetSpeedFromTime(channel.ElapsedTime);
 
-                                            newMusician.CurrentDirection = i;
-                                            newMusician.CurrentCell = cell;
-                                            newMusician.NextCell = cell.Neighbourghs[newMusician.CurrentDirection];
+                                            speed *= (0.22f * (float)(cell.Clip.Speed.Value)) + 1f;
 
-                                            newMusicians.Add(newMusician);
+                                            if (speed < 1f / 16f)
+                                                speed = 1f / 16f;
+                                            else if (speed > 4f)
+                                                speed = 4f;
+
+                                            channel.ListSpeed.Add(new TimeValue<float>(channel.ElapsedTime, speed));
                                         }
+                                        //---
 
-                                        if (!divided)
+                                        //--- Instrument
+                                        if (cell.Clip.Instrument is InstrumentStop)
                                         {
-                                            musician.CurrentDirection = i;
+                                            musician.IsPlaying = false;
+                                            musician.NextCell = null;
+                                        }
+                                        //---
 
-                                            divided = true;
+                                        //--- Direction
+                                        bool divided = false;
+
+                                        for (int i = 0; i < 6; i++)
+                                        {
+                                            if (cell.Clip.Directions[i])
+                                            {
+                                                if (divided)
+                                                {
+                                                    Musician newMusician = new Musician(channel);
+
+                                                    newMusician.CurrentDirection = i;
+                                                    newMusician.CurrentCell = cell;
+                                                    newMusician.NextCell = cell.Neighbourghs[newMusician.CurrentDirection];
+
+                                                    newMusicians.Add(newMusician);
+                                                }
+
+                                                if (!divided)
+                                                {
+                                                    musician.CurrentDirection = i;
+
+                                                    divided = true;
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            if (cell != null)
-                            {
-                                //--- Met à jour la partition du musicien
-                                musician.Partition.Add(cell);
-                                musician.PartitionTime.Add(elapsedTime);
-                                if(musician.IsPlaying)
-                                    musician.NextCell = cell.Neighbourghs[musician.CurrentDirection];
-                                //---
+                                if (cell != null)
+                                {
+                                    //--- Met à jour la partition du musicien
+                                    musician.Partition.Add(new TimeValue<Cell>(channel.ElapsedTime, cell));
+                                    if (musician.IsPlaying)
+                                        musician.NextCell = cell.Neighbourghs[musician.CurrentDirection];
+                                    //---
+                                }
                             }
                         }
-                    }
 
-                    //--- Création des nouveaux musiciens
-                    foreach (Musician newMusician in newMusicians)
-                    {
-                        Musician musician = channel.GetMusicianNotPlaying();
-
-                        if (musician != null)
+                        //--- Création des nouveaux musiciens
+                        foreach (Musician newMusician in newMusicians)
                         {
-                            musician.Partition.Add(newMusician.CurrentCell);
-                            musician.PartitionTime.Add(elapsedTime);
+                            Musician musician = channel.GetMusicianNotPlaying();
 
-                            musician.NextCell = newMusician.NextCell;
-                            musician.CurrentDirection = newMusician.CurrentDirection;
-                        }
-                    }
-
-                    //--- Suppression des doublons de musiciens
-                    foreach (Musician musician in channel.ListMusician)
-                    {
-                        if (musician.IsPlaying && musician.NextCell != null)
-                        {
-                            List<Musician> doublonMusician = channel.ListMusician.FindAll(
-                                m => m.IsPlaying &&
-                                    m != musician &&
-                                    m.Partition.Last() == musician.Partition.Last() &&
-                                    m.PartitionTime.Last() == musician.PartitionTime.Last() &&
-                                    m.NextCell != null &&
-                                    m.NextCell.IndexPosition == musician.NextCell.IndexPosition
-                                    );
-
-                            foreach (Musician doublon in doublonMusician)
+                            if (musician != null)
                             {
-                                //--- Création d'une cellule fictive pour la suppression du doublon
-                                Cell cell = doublon.Partition.Last();
-                                Cell cellDoublon = new Cell(Context.Map, cell.Coord.X, cell.Coord.Y, cell.Location.X, cell.Location.Y);
+                                musician.Partition.Add(new TimeValue<Cell>(channel.ElapsedTime, newMusician.CurrentCell));
 
-                                cellDoublon.InitClip();
-                                cellDoublon.Clip.Instrument = new InstrumentStop();
-                                //---
-
-                                doublon.IsPlaying = false;
-
-                                doublon.Partition.Add(cellDoublon);
-                                doublon.PartitionTime.Add(doublon.PartitionTime.Last());
-                                doublon.NextCell = null;
+                                musician.NextCell = newMusician.NextCell;
+                                musician.CurrentDirection = newMusician.CurrentDirection;
                             }
                         }
+                        //---
+
+                        //--- Suppression des doublons de musiciens
+                        foreach (Musician musician in channel.ListMusician)
+                        {
+                            if (musician.IsPlaying && musician.NextCell != null)
+                            {
+                                List<Musician> doublonMusician = channel.ListMusician.FindAll(
+                                    m => m.IsPlaying &&
+                                        m != musician &&
+                                        m.Partition.Last() == musician.Partition.Last() &&
+                                        m.NextCell != null &&
+                                        m.NextCell.IndexPosition == musician.NextCell.IndexPosition
+                                        );
+
+                                foreach (Musician doublon in doublonMusician)
+                                {
+                                    //--- Création d'une cellule fictive pour la suppression du doublon
+                                    Cell cell = doublon.Partition.Last().Value;
+                                    Cell cellDoublon = new Cell(Context.Map, cell.Coord.X, cell.Coord.Y, cell.Location.X, cell.Location.Y);
+
+                                    cellDoublon.InitClip();
+                                    cellDoublon.Clip.Instrument = new InstrumentStop();
+                                    //---
+
+                                    doublon.IsPlaying = false;
+                                    doublon.Partition.Add(new TimeValue<Cell>(doublon.Partition.Last().Time, cellDoublon));
+                                    doublon.NextCell = null;
+                                }
+                            }
+                        }
+                        //---
+
+                        //--- Incrémente le temps du channel selon la vitesse en cours
+                        channel.ElapsedTime = channel.ElapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(musicianSpeed / channel.GetSpeedFromTime(channel.ElapsedTime))));
+                        //---
+
+                        channelCalculationInProgress++;
                     }
-                    //---
                 }
-
-                //--- Incrémente le temps
-                elapsedTime = elapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)musicianSpeed));
-                //---
             }
         }
 

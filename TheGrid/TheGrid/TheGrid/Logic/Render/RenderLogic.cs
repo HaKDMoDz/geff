@@ -36,14 +36,9 @@ namespace TheGrid.Logic.Render
         BasicEffect effect;
         BasicEffect effectSprite;
 
-        VertexBuffer vBuffer;
-
         public Matrix View;
         public Matrix Projection;
         public Matrix World;
-
-        //public Vector3 CameraPosition = new Vector3(0, 0, -3f);
-        //public Vector3 CameraTarget = new Vector3(0, 0, 0f);
 
         public Vector3 CameraPosition = new Vector3(3000, 2500, -11f);
         public Vector3 CameraTarget = new Vector3(3000, 2500, 0f);
@@ -336,9 +331,9 @@ namespace TheGrid.Logic.Render
                     for (int k = 0; k < Context.Channels[i].ListMusician[j].Partition.Count; k++)
                     {
                         //if (Context.Channels[i].ListMusician[j].Partition[k].Instrument != null)
-                        if (Context.Channels[i].ListMusician[j].Partition[k].Clip != null)
+                        if (Context.Channels[i].ListMusician[j].Partition[k].Value.Clip != null)
                         {
-                            double totalMs = Context.Channels[i].ListMusician[j].PartitionTime[k].Subtract(Context.Time).TotalMilliseconds;
+                            double totalMs = Context.Channels[i].ListMusician[j].Partition[k].Time.Subtract(Context.Time).TotalMilliseconds;
 
                             if (totalMs > -500f && totalMs < timelineDuration)
                             {

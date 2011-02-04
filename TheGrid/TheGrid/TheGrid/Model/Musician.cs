@@ -12,15 +12,19 @@ namespace TheGrid.Model
         public Channel Channel { get; set; }
         public Cell CurrentCell { get; set; }
         public Cell NextCell { get; set; }
-        public int CurrentIndex { get; set; }
-
-        public int CurrentDirection { get; set; }
-        
-        public List<Cell> Partition  { get; set; }
-        public List<TimeSpan> PartitionTime { get; set; }
-
         public Vector3 Position { get; set; }
         public Boolean IsPlaying { get; set; }
+        public List<TimeValue<Cell>> Partition { get; set; }
+
+        /// <summary>
+        /// Direction courante (pour l'écriture de la partition)
+        /// </summary>
+        public int CurrentDirection { get; set; }
+
+        /// <summary>
+        /// Index courant de la partition (Pour la lecture de la partition)
+        /// </summary>
+        public int CurrentIndex { get; set; }
 
         public Musician(Channel channel)
         {
@@ -28,8 +32,7 @@ namespace TheGrid.Model
             CurrentCell = null;
             CurrentDirection = 0;
             NextCell = null;
-            Partition = new List<Cell>();
-            PartitionTime = new List<TimeSpan>();
+            Partition = new List<TimeValue<Cell>>();
             Position = Vector3.Zero;
         }
     }
