@@ -155,7 +155,7 @@ namespace TheGrid.Model.Menu
 
             vBuffer = new VertexBuffer(gameEngine.GraphicsDevice, typeof(VertexPositionColor), nbVertex * 3, BufferUsage.None);
 
-            float localSize = size * gameEngine.Render.HexaWidth / 2f;
+            float localSize = size * gameEngine.Render.HexaWidth / 2f;// *(-gameEngine.Render.CameraPosition.Z / 4f) * 3f;
 
             for (int i = 0; i < nbVertex; i++)
             {

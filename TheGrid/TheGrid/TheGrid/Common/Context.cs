@@ -21,6 +21,7 @@ namespace TheGrid.Common
         public static List<Player> Players { get; set; }
         public static TimeSpan Time { get; set; }
         public static Boolean IsPlaying { get; set; }
+        public static float SpeedFactor { get; set; }
     }
 
     public enum ContextType

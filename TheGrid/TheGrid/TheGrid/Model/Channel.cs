@@ -62,6 +62,7 @@ namespace TheGrid.Model
             if(musician!=null)
             {
                 musician.IsPlaying = true;
+                musician.NextCell = null;
             }
 
             return musician;

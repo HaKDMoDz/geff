@@ -41,7 +41,13 @@ namespace TheGrid.Logic.Controller
         private KeyManager keyDown;
         private KeyManager keyNewMap;
         private KeyManager keyEvaluateMusicianPartition;
-        private KeyManager keyPalyStopMusician;
+        private KeyManager keyPlayPauseMusician;
+        private KeyManager keyStopMusician;
+
+        private KeyManager keyForward;
+        private KeyManager keyBackward;
+        private KeyManager keySpeedUp;
+        private KeyManager keySpeedDown;
 
         private MouseManager mouseLeftButton;
         private MouseManager mouseMiddleButton;
@@ -60,11 +66,22 @@ namespace TheGrid.Logic.Controller
             this.keyLeft = new KeyManager(leftKey);
             this.keyNewMap = new KeyManager(Keys.N);
             this.keyEvaluateMusicianPartition = new KeyManager(Keys.C);
-            this.keyPalyStopMusician = new KeyManager(Keys.P);
+            this.keyPlayPauseMusician = new KeyManager(Keys.P);
+            this.keyStopMusician = new KeyManager(Keys.Enter);
+            this.keyForward = new KeyManager(Keys.Right);
+            this.keyBackward = new KeyManager(Keys.Left);
+            this.keySpeedUp = new KeyManager(Keys.Up);
+            this.keySpeedDown = new KeyManager(Keys.Down);
 
             this.keyNewMap.KeyReleased += new KeyManager.KeyReleasedHandler(keyNewMap_KeyReleased);
             this.keyEvaluateMusicianPartition.KeyReleased += new KeyManager.KeyReleasedHandler(keyEvaluateMusicianPartition_KeyReleased);
-            this.keyPalyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPalyStopMusician_KeyReleased);
+            this.keyPlayPauseMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPlayPauseMusician_KeyReleased);
+            this.keyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopMusician_KeyReleased);
+
+            this.keyForward.KeyPressed += new KeyManager.KeyPressedHandler(keyForward_KeyPressed);
+            this.keyBackward.KeyPressed += new KeyManager.KeyPressedHandler(keyBackward_KeyPressed);
+            this.keySpeedUp.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedUp_KeyPressed);
+            this.keySpeedDown.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedDown_KeyPressed);
 
             this.mouseLeftButton = new MouseManager(MouseButtons.LeftButton);
             this.mouseMiddleButton = new MouseManager(MouseButtons.RightButton);
@@ -77,7 +94,34 @@ namespace TheGrid.Logic.Controller
             this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
         }
 
-        void keyPalyStopMusician_KeyReleased(Keys key, GameTime gameTime)
+        void keyBackward_KeyPressed(Keys key, GameTime gameTime)
+        {
+            float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+            TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
+            Context.Time = Context.Time.Subtract(time);
+        }
+
+        void keyForward_KeyPressed(Keys key, GameTime gameTime)
+        {
+            float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+            TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
+            Context.Time = Context.Time.Add(time);
+        }
+
+        void keySpeedDown_KeyPressed(Keys key, GameTime gameTime)
+        {
+            Context.SpeedFactor -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+
+            if (Context.SpeedFactor < 0f)
+                Context.SpeedFactor = 0f;
+        }
+
+        void keySpeedUp_KeyPressed(Keys key, GameTime gameTime)
+        {
+            Context.SpeedFactor += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+        }
+
+        void keyStopMusician_KeyReleased(Keys key, GameTime gameTime)
         {
             Context.IsPlaying = !Context.IsPlaying;
 
@@ -89,8 +133,14 @@ namespace TheGrid.Logic.Controller
                 {
                     musician.CurrentCell = null;
                     musician.NextCell = null;
+                    musician.IsPlaying = false;
                 }
             }
+        }
+
+        void keyPlayPauseMusician_KeyReleased(Keys key, GameTime gameTime)
+        {
+            Context.IsPlaying = !Context.IsPlaying;
         }
 
         void keyEvaluateMusicianPartition_KeyReleased(Keys key, GameTime gameTime)
@@ -239,7 +289,12 @@ namespace TheGrid.Logic.Controller
             }
 
             keyEvaluateMusicianPartition.Update(keyBoardState, gameTime);
-            keyPalyStopMusician.Update(keyBoardState, gameTime);
+            keyPlayPauseMusician.Update(keyBoardState, gameTime);
+            keyStopMusician.Update(keyBoardState, gameTime);
+            keyForward.Update(keyBoardState, gameTime);
+            keyBackward.Update(keyBoardState, gameTime);
+            keySpeedUp.Update(keyBoardState, gameTime);
+            keySpeedDown.Update(keyBoardState, gameTime);
             //---
 
             //--- Gamepad
@@ -358,7 +413,7 @@ namespace TheGrid.Logic.Controller
 
             Vector3 mousePosition = new Vector3((float)mouseState.X - (float)GameEngine.GraphicsDevice.Viewport.Width / 2f, (float)mouseState.Y - (float)GameEngine.GraphicsDevice.Viewport.Height / 2f, 0f);
 
-            Matrix mtx = Matrix.CreateScale(- GameEngine.Render.CameraPosition.Z) *Matrix.CreateTranslation(GameEngine.Render.CameraPosition.X, GameEngine.Render.CameraPosition.Y, GameEngine.Render.CameraPosition.Z);
+            Matrix mtx = Matrix.CreateScale(-GameEngine.Render.CameraPosition.Z) * Matrix.CreateTranslation(GameEngine.Render.CameraPosition.X, GameEngine.Render.CameraPosition.Y, GameEngine.Render.CameraPosition.Z);
 
             mousePosition = Vector3.Transform(mousePosition, mtx);
 
