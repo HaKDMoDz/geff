@@ -94,66 +94,6 @@ namespace TheGrid.Common
             return normal;
         }
 
-        public static Vector3 NormalCell(Map map, Cell cell)
-        {
-            float? pickDistance = float.MaxValue;
-            float pickCurDistance = 0f;
-            float barycentricU = 0f;
-            float barycentricV = 0f;
-            Vector3 rayPosition = new Vector3(cell.Location, 50f);
-            Vector3 normal = Vector3.UnitZ;
-
-            for (int i = 0; i < 4; i++)
-            {
-                bool intersect = RayIntersectTriangle(rayPosition, -Vector3.UnitZ,
-                                    map.Points[cell.Points[listTriangle[i][0]]],
-                                    map.Points[cell.Points[listTriangle[i][2]]],
-                                    map.Points[cell.Points[listTriangle[i][1]]],
-                                    ref pickCurDistance, ref barycentricU, ref barycentricV);
-
-                if (intersect && pickCurDistance < pickDistance)
-                {
-                    pickDistance = pickCurDistance;
-
-                    normal = NormalTriangle(
-                                    map.Points[cell.Points[listTriangle[i][0]]],
-                                    map.Points[cell.Points[listTriangle[i][1]]],
-                                    map.Points[cell.Points[listTriangle[i][2]]]);
-                }
-
-
-            }
-
-            return normal;
-        }
-
-        public static float? RayIntersectCell(Vector3 rayPosition, Vector3 rayDirection, Map map, Cell cell)
-        {
-            float? pickDistance = float.MaxValue;
-            float pickCurDistance = 0f;
-            float barycentricU = 0f;
-            float barycentricV = 0f;
-
-            for (int i = 0; i < 4; i++)
-            {
-                bool intersect = RayIntersectTriangle(rayPosition, rayDirection,
-                                    map.Points[cell.Points[listTriangle[i][0]]],
-                                    map.Points[cell.Points[listTriangle[i][2]]],
-                                    map.Points[cell.Points[listTriangle[i][1]]],
-                                    ref pickCurDistance, ref barycentricU, ref barycentricV);
-
-                if (intersect && pickCurDistance < pickDistance)
-                {
-                    pickDistance = pickCurDistance;
-                }
-            }
-
-            if (pickDistance == float.MaxValue)
-                return null;
-            else
-                return pickDistance;
-        }
-
         public static bool RayIntersectTriangle(Vector3 rayPosition, Vector3 rayDirection, Vector3 tri0, Vector3 tri1, Vector3 tri2, ref float pickDistance, ref float barycentricU, ref float barycentricV)
         {
             // Find vectors for two edges sharing vert0

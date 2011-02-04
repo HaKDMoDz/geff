@@ -40,11 +40,7 @@ namespace TheGrid.Model
         {
             TimeValue<float> timeSpeed = ListSpeed.FindLast(s => s.Time <= elapsedTime);
 
-            //TODO : voir si la condition du dessous est utile. Normalement au démarrage, chaque channel contient une vitesse 0 sec ,1
-            //if (timeSpeed == null)
-            //    return 1f;
-            //else
-                return timeSpeed.Value;
+            return timeSpeed.Value;
         }
 
 
@@ -57,8 +53,8 @@ namespace TheGrid.Model
                 musician = new Musician(this);
                 ListMusician.Add(musician);
             }
-            
-            if(musician!=null)
+
+            if (musician != null)
             {
                 musician.IsPlaying = true;
                 musician.NextCell = null;

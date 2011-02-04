@@ -22,7 +22,7 @@ namespace TheGrid.Model
         {
             this.Width = width;
             this.Height = height;
-            this.R = 0.5f;// 9.9855f;
+            this.R = 0.5f;
         }
 
         public void CreateGrid()
@@ -30,8 +30,6 @@ namespace TheGrid.Model
             Cells = new List<Cell>();
 
             Random rnd = new Random();
-
-            //float d = (float)Math.Sqrt(0.75);
 
             float width = R;
             float height = R * (float)Math.Sin(MathHelper.Pi / 3);
@@ -51,11 +49,8 @@ namespace TheGrid.Model
                          fy);
 
                     Cells.Add(cell2);
-
-                    cell2.Height = 0;
                 }
 
-                //for (int x = 1; x <= Math.Round((double)Width / 2, MidpointRounding.AwayFromZero); x++)
                 for (int x = 1; x <= Width / 2; x++)
                 {
                     float fx = (float)x;
@@ -69,14 +64,10 @@ namespace TheGrid.Model
                          fy);
 
                     Cells.Add(cell1);
-
-                    cell1.Height = 0;
                 }
             }
 
             CalcNeighborough();
-
-            //DrawMapIntoImageFile();
         }
 
         public void CalcNeighborough()
@@ -112,47 +103,6 @@ namespace TheGrid.Model
         private Cell GetNeighborough(Cell cell, int offsetX, int offsetY)
         {
             return Cells.Find(c => c.Coord.X == cell.Coord.X + offsetX && c.Coord.Y == cell.Coord.Y + offsetY);
-        }
-
-
-        public void DrawMapIntoImageFile()
-        {
-            System.Drawing.Image img = new System.Drawing.Bitmap(3000, 800);
-
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(img);
-            //Bitmap b = new Bitmap(600, 600, g);
-
-            g.Clear(System.Drawing.Color.White);
-
-            int index = 0;
-            int d = 5;
-
-            foreach (Cell cell in Cells)
-            {
-                //g.DrawRectangle(System.Drawing.Pens.Black, cell.Location.X * d, cell.Location.Y * d, 7 * d, d*2);
-                g.DrawString(cell.Coord.ToString() + " " + index.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, new System.Drawing.PointF(cell.Location.X * d - 40, cell.Location.Y * d - d));
-                index++;
-
-                int prevPoint = -1;
-                for (int i = 1; i <= 6; i++)
-                {
-                    if (prevPoint != -1)
-                        g.DrawLine(System.Drawing.Pens.Red, Points[cell.Points[prevPoint]].X * d, Points[cell.Points[prevPoint]].Y * d, Points[cell.Points[i]].X * d, Points[cell.Points[i]].Y * d);
-
-                    prevPoint = i;
-                }
-
-                g.DrawLine(System.Drawing.Pens.Red, Points[cell.Points[prevPoint]].X * d, Points[cell.Points[prevPoint]].Y * d, Points[cell.Points[1]].X * d, Points[cell.Points[1]].Y * d);
-
-                //for (int i = 1; i <= 6; i++)
-                //{
-                //    //g.DrawRectangle(System.Drawing.Pens.Blue, cell.Points[i].X * d, cell.Points[i].Y * d, 5, 5);
-
-                //    g.DrawString(i.ToString(), new System.Drawing.Font("Arial", 10f), System.Drawing.Brushes.Black, Points[cell.Points[1]].X * d, Points[cell.Points[1]].Y * d);
-                //}
-            }
-
-            img.Save(@"D:\test.png", System.Drawing.Imaging.ImageFormat.Png);
         }
     }
 }

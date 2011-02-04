@@ -99,11 +99,15 @@ namespace TheGrid.Logic.Controller
         void keyBackward_KeyPressed(Keys key, GameTime gameTime)
         {
             Context.IsNavigatingThroughTime = true;
-            float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
-            TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
-            Context.Time = Context.Time.Subtract(time);
 
-            GameEngine.GamePlay.UpdateMusiciansToTime();
+            if (Context.Time >= TimeSpan.Zero)
+            {
+                float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
+                Context.Time = Context.Time.Subtract(time);
+
+                GameEngine.GamePlay.UpdateMusiciansToTime();
+            }
         }
 
         void keyBackward_KeyReleased(Keys key, GameTime gameTime)
@@ -114,11 +118,14 @@ namespace TheGrid.Logic.Controller
         void keyForward_KeyPressed(Keys key, GameTime gameTime)
         {
             Context.IsNavigatingThroughTime = true;
-            float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
-            TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
-            Context.Time = Context.Time.Add(time);
+            if (Context.Time < Context.PartitionDuration)
+            {
+                float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
+                Context.Time = Context.Time.Add(time);
 
-            GameEngine.GamePlay.UpdateMusiciansToTime();
+                GameEngine.GamePlay.UpdateMusiciansToTime();
+            }
         }
 
         void keyForward_KeyReleased(Keys key, GameTime gameTime)
@@ -449,41 +456,6 @@ namespace TheGrid.Logic.Controller
             }
 
             return null;
-        }
-
-        public Cell GetSelectedCell3D(MouseState mouseState)
-        {
-            Vector3 nearsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 0f);
-            Vector3 farsource = new Vector3((float)mouseState.X, (float)mouseState.Y, 1f);
-
-            Matrix world = Matrix.CreateTranslation(0, 0, 0);
-
-            Vector3 nearPoint = GameEngine.GraphicsDevice.Viewport.Unproject(nearsource,
-                GameEngine.Render.Projection, GameEngine.Render.View, world);
-
-            Vector3 farPoint = GameEngine.GraphicsDevice.Viewport.Unproject(farsource,
-                GameEngine.Render.Projection, GameEngine.Render.View, world);
-
-            Vector3 direction = farPoint - nearPoint;
-            direction.Normalize();
-            Ray pickRay = new Ray(nearPoint, direction);
-
-            Cell selectedCell = null;
-            float minimalDistance = float.MaxValue;
-
-            foreach (Cell cell in Context.Map.Cells)
-            {
-                BoundingSphere s = new BoundingSphere(new Vector3(cell.Location.X, cell.Location.Y, cell.Height), Context.Map.R);
-                float? distance = pickRay.Intersects(s);
-
-                if (distance.HasValue && distance.Value < minimalDistance)
-                {
-                    selectedCell = cell;
-                    minimalDistance = distance.Value;
-                }
-            }
-
-            return selectedCell;
         }
     }
 }

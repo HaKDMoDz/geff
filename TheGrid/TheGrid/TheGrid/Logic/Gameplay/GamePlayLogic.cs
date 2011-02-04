@@ -226,8 +226,8 @@ namespace TheGrid.Logic.GamePlay
             Context.Channels.Add(new Channel("Empty", Color.White));
             Context.Channels.Add(new Channel("Drums", Color.Red));
             Context.Channels.Add(new Channel("Keys", Color.Blue));
-            //Context.Channels.Add(new Channel("Guitar", Color.Yellow));
-            //Context.Channels.Add(new Channel("Bass", Color.Purple));
+            Context.Channels.Add(new Channel("Guitar", Color.Yellow));
+            Context.Channels.Add(new Channel("Bass", Color.Purple));
         }
 
         private void InitializePlayers()
@@ -272,6 +272,9 @@ namespace TheGrid.Logic.GamePlay
             {
                 TimeSpan time = new TimeSpan((long)((float)gameTime.ElapsedGameTime.Ticks * Context.SpeedFactor));
                 Context.Time = Context.Time.Add(time);
+
+                if (Context.Time >= Context.PartitionDuration)
+                    Context.IsPlaying = false;
             }
 
             foreach (Channel channel in Context.Channels)
@@ -420,8 +423,7 @@ namespace TheGrid.Logic.GamePlay
 
                                                     newMusicians.Add(newMusician);
                                                 }
-
-                                                if (!divided)
+                                                else
                                                 {
                                                     musician.CurrentDirection = i;
 
@@ -510,15 +512,20 @@ namespace TheGrid.Logic.GamePlay
                     if (index == -1)
                     {
                         musician.IsPlaying = false;
-                        index = 0;
+                        musician.CurrentIndex = 0;
+                        musician.CurrentCell = null;
                     }
-
-                    musician.CurrentIndex = index;
-                    musician.CurrentCell = musician.Partition[index].Value;
-
-                    if (musician.CurrentCell.Clip != null && musician.CurrentCell.Clip.Instrument != null && musician.CurrentCell.Clip.Instrument is InstrumentStop)
+                    else
                     {
-                        musician.IsPlaying = false;
+                        musician.CurrentIndex = index;
+                        musician.CurrentCell = musician.Partition[index].Value;
+
+                        musician.IsPlaying = true;
+
+                        if (musician.CurrentCell.Clip != null && musician.CurrentCell.Clip.Instrument != null && musician.CurrentCell.Clip.Instrument is InstrumentStop)
+                        {
+                            musician.IsPlaying = false;
+                        }
                     }
                 }
             }
