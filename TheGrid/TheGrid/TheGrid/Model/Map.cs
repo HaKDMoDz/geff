@@ -8,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace TheGrid.Model
 {
+    [Serializable]
     public class Map
     {
         public List<Cell> Cells { get; set; }
-        public List<Vector3> Points { get; set; }
-        public List<Vector3> Normals { get; set; }
+        public List<Channel> Channels { get; set; }
 
         public int Width { get; set; }
         public int Height { get; set; }
-        public float R { get; set; }
+
+        public Map() { }
 
         public Map(int width, int height)
         {
             this.Width = width;
             this.Height = height;
-            this.R = 0.5f;
         }
 
         public void CreateGrid()
@@ -31,8 +31,8 @@ namespace TheGrid.Model
 
             Random rnd = new Random();
 
-            float width = R;
-            float height = R * (float)Math.Sin(MathHelper.Pi / 3);
+            float width = 0.5f;
+            float height = 0.5f * (float)Math.Sin(MathHelper.Pi / 3);
 
             for (int y = 1; y <= Height; y++)
             {
@@ -74,6 +74,8 @@ namespace TheGrid.Model
         {
             foreach (Cell cell in Cells)
             {
+                cell.Neighbourghs = new Cell[6];
+
                 if (cell.IndexPosition == 20)
                 {
                     int a = 0;

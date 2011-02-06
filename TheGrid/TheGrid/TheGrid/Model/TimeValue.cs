@@ -5,10 +5,13 @@ using System.Text;
 
 namespace TheGrid.Model
 {
+    [Serializable]
     public class TimeValue<T>
     {
         public TimeSpan Time { get; set; }
         public T Value { get; set; }
+
+        public TimeValue() { }
 
         public TimeValue(TimeSpan time, T value)
         {

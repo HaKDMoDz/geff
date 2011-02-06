@@ -40,6 +40,7 @@ namespace TheGrid.Logic.Controller
         private KeyManager keyUp;
         private KeyManager keyDown;
         private KeyManager keyNewMap;
+        private KeyManager keySaveMap;
         private KeyManager keyEvaluateMusicianPartition;
         private KeyManager keyPlayPauseMusician;
         private KeyManager keyStopMusician;
@@ -65,6 +66,7 @@ namespace TheGrid.Logic.Controller
 
             this.keyLeft = new KeyManager(leftKey);
             this.keyNewMap = new KeyManager(Keys.N);
+            this.keySaveMap = new KeyManager(Keys.S);
             this.keyEvaluateMusicianPartition = new KeyManager(Keys.C);
             this.keyPlayPauseMusician = new KeyManager(Keys.P);
             this.keyStopMusician = new KeyManager(Keys.Enter);
@@ -74,6 +76,7 @@ namespace TheGrid.Logic.Controller
             this.keySpeedDown = new KeyManager(Keys.Down);
 
             this.keyNewMap.KeyReleased += new KeyManager.KeyReleasedHandler(keyNewMap_KeyReleased);
+            this.keySaveMap.KeyReleased += new KeyManager.KeyReleasedHandler(keySaveMap_KeyReleased);
             this.keyEvaluateMusicianPartition.KeyReleased += new KeyManager.KeyReleasedHandler(keyEvaluateMusicianPartition_KeyReleased);
             this.keyPlayPauseMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPlayPauseMusician_KeyReleased);
             this.keyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopMusician_KeyReleased);
@@ -94,6 +97,11 @@ namespace TheGrid.Logic.Controller
             this.mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseRightButton_MouseReleased);
 
             this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
+        }
+
+        void keySaveMap_KeyReleased(Keys key, GameTime gameTime)
+        {
+            FileSystem.SaveLevel(Context.Map, "Test-" + Guid.NewGuid().ToString());
         }
 
         void keyBackward_KeyPressed(Keys key, GameTime gameTime)
@@ -152,7 +160,7 @@ namespace TheGrid.Logic.Controller
 
             Context.Time = new TimeSpan(0, 0, 0);
 
-            foreach (Channel channel in Context.Channels)
+            foreach (Channel channel in Context.Map.Channels)
             {
                 foreach (Musician musician in channel.ListMusician)
                 {
@@ -313,6 +321,8 @@ namespace TheGrid.Logic.Controller
                 GameEngine.Render.updateViewScreen = true;
             }
 
+            keyNewMap.Update(keyBoardState, gameTime);
+            keySaveMap.Update(keyBoardState, gameTime);
             keyEvaluateMusicianPartition.Update(keyBoardState, gameTime);
             keyPlayPauseMusician.Update(keyBoardState, gameTime);
             keyStopMusician.Update(keyBoardState, gameTime);

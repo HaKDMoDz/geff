@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using System.Xml.Serialization;
 
 namespace TheGrid.Model
 {
+    [Serializable]
     public class Channel
     {
         public Color Color { get; set; }
         public string Name { get; set; }
+        [XmlIgnore]
         public Cell CellStart { get; set; }
+        [XmlIgnore]
         public List<Musician> ListMusician { get; set; }
+        [XmlIgnore]
         public List<Sample> ListSample { get; set; }
         public List<TimeValue<float>> ListSpeed { get; set; }
 
@@ -24,6 +29,8 @@ namespace TheGrid.Model
                 return this.ListMusician.Count(m => m.IsPlaying);
             }
         }
+
+        public Channel() { }
 
         public Channel(string name, Color color)
         {
@@ -48,7 +55,7 @@ namespace TheGrid.Model
         {
             Musician musician = this.ListMusician.Find(m => !m.IsPlaying);
 
-            if (musician == null && this.ListMusician.Count < 6)
+            if (musician == null && this.ListMusician.Count < 20)
             {
                 musician = new Musician(this);
                 ListMusician.Add(musician);

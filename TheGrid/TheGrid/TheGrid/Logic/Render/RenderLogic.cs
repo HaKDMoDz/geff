@@ -168,7 +168,7 @@ namespace TheGrid.Logic.Render
             //---
 
             //--- Affiche les musiciens
-            foreach (Channel channel in Context.Channels)
+            foreach (Channel channel in Context.Map.Channels)
             {
                 foreach (Musician musician in channel.ListMusician)
                 {
@@ -302,10 +302,10 @@ namespace TheGrid.Logic.Render
                 (int)(0.8f * ScreenWidth),
                 (int)(0.2f * ScreenHeight)), Color.DarkGray);
 
-            float channelHeight = 0.2f * ScreenHeight / (float)Context.Channels.Count;
+            float channelHeight = 0.2f * ScreenHeight / (float)Context.Map.Channels.Count;
             float channelWidth = (0.8f * ScreenWidth - 0.02f * ScreenWidth);
 
-            for (int i = 0; i < Context.Channels.Count; i++)
+            for (int i = 0; i < Context.Map.Channels.Count; i++)
             {
                 float fi = (float)i;
 
@@ -318,22 +318,22 @@ namespace TheGrid.Logic.Render
                     (int)channelWidth,
                     (int)(channelHeight - 0.2f * channelHeight));
 
-                SpriteBatch.Draw(texEmpty, recChannel, Context.Channels[i].Color);
+                SpriteBatch.Draw(texEmpty, recChannel, Context.Map.Channels[i].Color);
 
-                if (Context.Channels[i].ListMusician == null || Context.Channels[i].ListMusician.Count == 0)
+                if (Context.Map.Channels[i].ListMusician == null || Context.Map.Channels[i].ListMusician.Count == 0)
                     continue;
 
-                float heightPerMusician = (channelHeight - 0.2f * channelHeight) / (float)Context.Channels[i].ListMusician.Count;
-                for (int j = 0; j < Context.Channels[i].ListMusician.Count; j++)
+                float heightPerMusician = (channelHeight - 0.2f * channelHeight) / (float)Context.Map.Channels[i].ListMusician.Count;
+                for (int j = 0; j < Context.Map.Channels[i].ListMusician.Count; j++)
                 {
                     float fj = (float)j;
 
-                    for (int k = 0; k < Context.Channels[i].ListMusician[j].Partition.Count; k++)
+                    for (int k = 0; k < Context.Map.Channels[i].ListMusician[j].Partition.Count; k++)
                     {
-                        //if (Context.Channels[i].ListMusician[j].Partition[k].Instrument != null)
-                        if (Context.Channels[i].ListMusician[j].Partition[k].Value.Clip != null)
+                        //if (Context.Map.Channels[i].ListMusician[j].Partition[k].Instrument != null)
+                        if (Context.Map.Channels[i].ListMusician[j].Partition[k].Value.Clip != null)
                         {
-                            double totalMs = Context.Channels[i].ListMusician[j].Partition[k].Time.Subtract(Context.Time).TotalMilliseconds;
+                            double totalMs = Context.Map.Channels[i].ListMusician[j].Partition[k].Time.Subtract(Context.Time).TotalMilliseconds;
 
                             if (totalMs > -500f && totalMs < timelineDuration)
                             {

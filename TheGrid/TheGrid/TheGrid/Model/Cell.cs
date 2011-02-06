@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using System.Xml.Serialization;
 
 namespace TheGrid.Model
 {
+    [Serializable]
     public class Cell
     {
+        [XmlIgnore]
         public Map Map { get; set; }
         public Point Coord { get; set; }
         public Vector2 Location { get; set; }
-        public Dictionary<int, Cell> Neighbourghs { get; set; }
+        [XmlIgnore]
+        public Cell[] Neighbourghs { get; set; }
         public Clip Clip { get; set; }
         public Channel Channel { get; set; }
+
+        public Cell() { }
 
         public Cell(Map map, int x, int y, float left, float top)
         {
@@ -21,13 +27,7 @@ namespace TheGrid.Model
             this.Coord = new Point(x, y);
             this.Location = new Vector2(left, top);
 
-            this.Neighbourghs = new Dictionary<int, Cell>();
-            this.Neighbourghs.Add(0, null);
-            this.Neighbourghs.Add(1, null);
-            this.Neighbourghs.Add(2, null);
-            this.Neighbourghs.Add(3, null);
-            this.Neighbourghs.Add(4, null);
-            this.Neighbourghs.Add(5, null);
+            this.Neighbourghs = new Cell[6];
         }
 
         public int IndexPosition

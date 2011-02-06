@@ -7,6 +7,8 @@ using TheGrid.Common;
 using Microsoft.Xna.Framework;
 using TheGrid.Model.Menu;
 using TheGrid.Model.Instrument;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace TheGrid.Logic.GamePlay
 {
@@ -23,9 +25,10 @@ namespace TheGrid.Logic.GamePlay
             Context.SpeedFactor = 1f;
             Context.PartitionDuration = new TimeSpan(0, 1, 0);
 
-            InitializeChannel();
             InitializePlayers();
-            InitializeMap();
+
+            Context.Map = FileSystem.LoadLevel("Test-57d7e720-4cf7-47c7-920c-1675056d72b2");
+            EvaluateMuscianGrid();
         }
 
         private void InitializeMap()
@@ -33,14 +36,15 @@ namespace TheGrid.Logic.GamePlay
             Context.Map = new Map(15, 15);
             Context.Map.CreateGrid();
 
+            InitializeChannel();
             ////---
             //Cell cell1 = Context.Map.Cells[15];
             //cell1.InitClip();
             //cell1.Clip.Directions[3] = true;
             //cell1.Clip.Directions[2] = true;
             //cell1.Clip.Instrument = new InstrumentStart();
-            //cell1.Channel = Context.Channels[2];
-            //Context.Channels[2].CellStart = cell1;
+            //cell1.Channel = Context.Map.Channels[2];
+            //Context.Map.Channels[2].CellStart = cell1;
 
             //Cell cell0 = cell1.GetDirection(3, 3);
             //cell0.InitClip();
@@ -65,8 +69,8 @@ namespace TheGrid.Logic.GamePlay
             //cell1.InitClip();
             //cell1.Clip.Directions[3] = true;
             //cell1.Clip.Instrument = new InstrumentStart();
-            //cell1.Channel = Context.Channels[2];
-            //Context.Channels[2].CellStart = cell1;
+            //cell1.Channel = Context.Map.Channels[2];
+            //Context.Map.Channels[2].CellStart = cell1;
 
             //Cell cell0 = cell1.GetDirection(3, 3);
             //cell0.InitClip();
@@ -92,8 +96,8 @@ namespace TheGrid.Logic.GamePlay
             //cell1.InitClip();
             //cell1.Clip.Directions[3] = true;
             //cell1.Clip.Instrument = new InstrumentStart();
-            //cell1.Channel = Context.Channels[2];
-            //Context.Channels[2].CellStart = cell1;
+            //cell1.Channel = Context.Map.Channels[2];
+            //Context.Map.Channels[2].CellStart = cell1;
 
             //Cell cell0 = cell1.GetDirection(3, 3);
             //cell0.InitClip();
@@ -133,8 +137,8 @@ namespace TheGrid.Logic.GamePlay
             //cell1.InitClip();
             //cell1.Clip.Directions[3] = true;
             //cell1.Clip.Instrument = new InstrumentStart();
-            //cell1.Channel = Context.Channels[2];
-            //Context.Channels[2].CellStart = cell1;
+            //cell1.Channel = Context.Map.Channels[2];
+            //Context.Map.Channels[2].CellStart = cell1;
 
             //Cell cell0 = cell1.GetDirection(3, 3);
             //cell0.InitClip();
@@ -177,8 +181,8 @@ namespace TheGrid.Logic.GamePlay
             cell1.Clip.Directions[2] = true;
             cell1.Clip.Directions[3] = true;
             cell1.Clip.Instrument = new InstrumentStart();
-            cell1.Channel = Context.Channels[2];
-            Context.Channels[2].CellStart = cell1;
+            cell1.Channel = Context.Map.Channels[2];
+            Context.Map.Channels[2].CellStart = cell1;
 
             Cell cell0 = cell1.GetDirection(3, 3);
             cell0.InitClip();
@@ -221,13 +225,13 @@ namespace TheGrid.Logic.GamePlay
 
         private void InitializeChannel()
         {
-            Context.Channels = new List<Channel>();
+            Context.Map.Channels = new List<Channel>();
 
-            Context.Channels.Add(new Channel("Empty", Color.White));
-            Context.Channels.Add(new Channel("Drums", Color.Red));
-            Context.Channels.Add(new Channel("Keys", Color.Blue));
-            Context.Channels.Add(new Channel("Guitar", Color.Yellow));
-            Context.Channels.Add(new Channel("Bass", Color.Purple));
+            Context.Map.Channels.Add(new Channel("Empty", Color.White));
+            Context.Map.Channels.Add(new Channel("Drums", Color.Red));
+            Context.Map.Channels.Add(new Channel("Keys", Color.Blue));
+            Context.Map.Channels.Add(new Channel("Guitar", Color.Yellow));
+            Context.Map.Channels.Add(new Channel("Bass", Color.Purple));
         }
 
         private void InitializePlayers()
@@ -262,7 +266,7 @@ namespace TheGrid.Logic.GamePlay
             if (Context.IsPlaying || Context.IsNavigatingThroughTime)
                 UpdateMusicians(gameTime);
 
-            GameEngine.Window.Title = Context.Time.ToString();// +" - " + Context.Channels[2].CountMusicianPlaying.ToString();
+            GameEngine.Window.Title = Context.Time.ToString();// +" - " + Context.Map.Channels[2].CountMusicianPlaying.ToString();
         }
 
         public void UpdateMusicians(GameTime gameTime)
@@ -277,7 +281,7 @@ namespace TheGrid.Logic.GamePlay
                     Context.IsPlaying = false;
             }
 
-            foreach (Channel channel in Context.Channels)
+            foreach (Channel channel in Context.Map.Channels)
             {
                 foreach (Musician musician in channel.ListMusician)
                 {
@@ -329,7 +333,7 @@ namespace TheGrid.Logic.GamePlay
         public void EvaluateMuscianGrid()
         {
             //--- Initialisation
-            foreach (Channel channel in Context.Channels)
+            foreach (Channel channel in Context.Map.Channels)
             {
                 channel.ListMusician = new List<Musician>();
                 channel.ElapsedTime = new TimeSpan();
@@ -345,13 +349,13 @@ namespace TheGrid.Logic.GamePlay
             }
             //---
 
-            int channelCalculationInProgress = Context.Channels.Count;
+            int channelCalculationInProgress = Context.Map.Channels.Count;
 
             while (channelCalculationInProgress > 0)
             {
                 channelCalculationInProgress = 0;
 
-                foreach (Channel channel in Context.Channels)
+                foreach (Channel channel in Context.Map.Channels)
                 {
                     if (channel.ElapsedTime < Context.PartitionDuration)
                     {
@@ -503,7 +507,7 @@ namespace TheGrid.Logic.GamePlay
 
         public void UpdateMusiciansToTime()
         {
-            foreach (Channel channel in Context.Channels)
+            foreach (Channel channel in Context.Map.Channels)
             {
                 foreach (Musician musician in channel.ListMusician)
                 {
@@ -571,15 +575,15 @@ namespace TheGrid.Logic.GamePlay
             item.ParentMenu.Close(gameTime);
 
             Menu menuChannel = new Menu(item.ParentMenu.ParentCell, item.ParentMenu, false);
-            menuChannel.AngleDeltaRender = MathHelper.TwoPi / Context.Channels.Count / 4;
+            menuChannel.AngleDeltaRender = MathHelper.TwoPi / Context.Map.Channels.Count / 4;
             menuChannel.AngleDeltaMouse = 0;
 
-            for (int i = 0; i < Context.Channels.Count; i++)
+            for (int i = 0; i < Context.Map.Channels.Count; i++)
             {
-                Item itemChannel = new Item(menuChannel, Context.Channels[i].Name, i);
-                itemChannel.Color = Context.Channels[i].Color;
+                Item itemChannel = new Item(menuChannel, Context.Map.Channels[i].Name, i);
+                itemChannel.Color = Context.Map.Channels[i].Color;
 
-                if (item.ParentMenu.ParentCell.Channel != null && item.ParentMenu.ParentCell.Channel == Context.Channels[i])
+                if (item.ParentMenu.ParentCell.Channel != null && item.ParentMenu.ParentCell.Channel == Context.Map.Channels[i])
                     itemChannel.Checked = true;
 
                 itemChannel.Selected += new Item.SelectedHandler(itemChannel_Selected);
@@ -593,7 +597,7 @@ namespace TheGrid.Logic.GamePlay
         {
             item.ParentMenu.Close(gameTime);
 
-            item.ParentMenu.ParentCell.Channel = Context.Channels[item.Value];
+            item.ParentMenu.ParentCell.Channel = Context.Map.Channels[item.Value];
 
             Context.NextMenu = item.ParentMenu.ParentMenu;
         }

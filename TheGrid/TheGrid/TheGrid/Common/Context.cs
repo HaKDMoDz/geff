@@ -15,7 +15,6 @@ namespace TheGrid.Common
         public static Menu CurrentMenu { get; set; }
         public static Menu NextMenu { get; set; }
         public static Map Map { get; set; }
-        public static List<Channel> Channels { get; set; }
 
         public static Player CurrentPlayer { get; set; }
         public static List<Player> Players { get; set; }

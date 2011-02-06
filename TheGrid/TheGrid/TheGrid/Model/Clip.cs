@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TheGrid.Model.Instrument;
+using System.Xml.Serialization;
 
 namespace TheGrid.Model
 {
+    [Serializable, XmlInclude(typeof(InstrumentStart)), XmlInclude(typeof(InstrumentStop)), XmlInclude(typeof(InstrumentEffect)), XmlInclude(typeof(InstrumentSample))]
     public class Clip
     {
         public InstrumentBase Instrument { get; set; }
