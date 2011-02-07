@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace TheGrid.Model.Menu
+namespace TheGrid.Model.UI.Menu
 {
     public class Item
     {

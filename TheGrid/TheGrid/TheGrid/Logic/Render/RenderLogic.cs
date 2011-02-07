@@ -16,6 +16,7 @@ namespace TheGrid.Logic.Render
         public SpriteBatch SpriteBatch;
         public SpriteFont FontMenu { get; set; }
         public GameEngine GameEngine { get; set; }
+        public GraphicsDevice GraphicsDevice { get { return GameEngine.GraphicsDevice; } }
 
         public float ScreenWidth
         {
@@ -33,8 +34,8 @@ namespace TheGrid.Logic.Render
             }
         }
 
-        BasicEffect effect;
-        BasicEffect effectSprite;
+        public BasicEffect effect;
+        public BasicEffect effectSprite;
 
         public Matrix View;
         public Matrix Projection;
@@ -50,12 +51,12 @@ namespace TheGrid.Logic.Render
 
         public Texture2D texHexa2D = null;
         public Texture2D texMusician = null;
+        public Texture2D texEmpty = null;
         private Texture2D textDirection = null;
         private Texture2D texRepeater = null;
         private Texture2D texSpeed = null;
         private Texture2D texMusicianStart = null;
         private Texture2D texMusicianStop = null;
-        private Texture2D texEmpty = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -93,7 +94,7 @@ namespace TheGrid.Logic.Render
         {
             meshModels = new Dictionary<string, Microsoft.Xna.Framework.Graphics.Model>();
 
-            meshMusician = GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\IcoMusician");
+            //meshMusician = GameEngine.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(@"3DModel\IcoMusician");
         }
 
         //Création de la caméra
@@ -178,14 +179,9 @@ namespace TheGrid.Logic.Render
             SpriteBatch.End();
             //---
 
-            //--- Affiche le menu
-            if (Context.CurrentMenu != null)
-                Context.CurrentMenu.Draw(GameEngine, effect, effectSprite, gameTime);
-            //---
-
-            //--- Affiche la timeline
-            DrawTimeLine(gameTime);
-            //---
+            ////--- Affiche la timeline
+            //DrawTimeLine(gameTime);
+            ////---
         }
 
         private void DrawCell(Cell cell, GameTime gameTime)
@@ -293,66 +289,7 @@ namespace TheGrid.Logic.Render
 
         private void DrawTimeLine(GameTime gameTime)
         {
-            float timelineDuration = 1000f * 10;
-            SpriteBatch.Begin();
-
-            SpriteBatch.Draw(texEmpty, new Rectangle(
-                (int)(0.1f * ScreenWidth),
-                (int)(0.05f * ScreenHeight),
-                (int)(0.8f * ScreenWidth),
-                (int)(0.2f * ScreenHeight)), Color.DarkGray);
-
-            float channelHeight = 0.2f * ScreenHeight / (float)Context.Map.Channels.Count;
-            float channelWidth = (0.8f * ScreenWidth - 0.02f * ScreenWidth);
-
-            for (int i = 0; i < Context.Map.Channels.Count; i++)
-            {
-                float fi = (float)i;
-
-                float channelX = 0.1f * ScreenWidth + 0.01f * ScreenWidth;
-                float channelY = 0.05f * ScreenHeight + channelHeight * fi + 0.2f * channelHeight;
-
-                Rectangle recChannel = new Rectangle(
-                    (int)channelX,
-                    (int)channelY,
-                    (int)channelWidth,
-                    (int)(channelHeight - 0.2f * channelHeight));
-
-                SpriteBatch.Draw(texEmpty, recChannel, Context.Map.Channels[i].Color);
-
-                if (Context.Map.Channels[i].ListMusician == null || Context.Map.Channels[i].ListMusician.Count == 0)
-                    continue;
-
-                float heightPerMusician = (channelHeight - 0.2f * channelHeight) / (float)Context.Map.Channels[i].ListMusician.Count;
-                for (int j = 0; j < Context.Map.Channels[i].ListMusician.Count; j++)
-                {
-                    float fj = (float)j;
-
-                    for (int k = 0; k < Context.Map.Channels[i].ListMusician[j].Partition.Count; k++)
-                    {
-                        //if (Context.Map.Channels[i].ListMusician[j].Partition[k].Instrument != null)
-                        if (Context.Map.Channels[i].ListMusician[j].Partition[k].Value.Clip != null)
-                        {
-                            double totalMs = Context.Map.Channels[i].ListMusician[j].Partition[k].Time.Subtract(Context.Time).TotalMilliseconds;
-
-                            if (totalMs > -500f && totalMs < timelineDuration)
-                            {
-                                float sizeClip = 1f;
-
-                                if (totalMs < 0f)
-                                    sizeClip = 1f+ (float)totalMs /500f;
-
-                                SpriteBatch.Draw(texEmpty, new Rectangle(
-                                    (int)(channelX + ((1f-sizeClip)*500f + totalMs) / timelineDuration * channelWidth),
-                                    (int)(channelY + heightPerMusician * fj),
-                                    (int)(sizeClip * 500f / timelineDuration * channelWidth),
-                                    (int)(heightPerMusician)), Color.Black);
-                            }
-                        }
-                    }
-                }
-            }
-            SpriteBatch.End();
+            
         }
     }
 }

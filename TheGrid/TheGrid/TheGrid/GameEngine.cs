@@ -15,6 +15,7 @@ using TheGrid.Logic.GamePlay;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TheGrid.Common;
+using TheGrid.Logic.UI;
 
 namespace TheGrid
 {
@@ -29,6 +30,8 @@ namespace TheGrid
         public RenderLogic Render { get; set; }
         public ControllerLogic Controller { get; set; }
         public GamePlayLogic GamePlay { get; set; }
+        public UILogic UI { get; set; }
+
         public GraphicsDeviceManager Graphics;
         public bool Mini = false;
 
@@ -57,10 +60,6 @@ namespace TheGrid
             this.IsMouseVisible = true;
             this.Window.Title = "Analyse";
             Content.RootDirectory = "Content";
-
-            GamePlay = new GamePlayLogic(this);
-            Render = new RenderLogic(this);
-            Controller = new ControllerLogic(this);
         }
 
         /// <summary>
@@ -79,15 +78,13 @@ namespace TheGrid
                 window.Location = new System.Drawing.Point(1900, 350);
             }
 
-            //Control window = Control.FromHandle(this.Window.Handle);
-
-            //window.Location = new System.Drawing.Point(0, 0);
-            //window.Location = new System.Drawing.Point(0, 0);
-
             base.Initialize();
 
-
+            Render = new RenderLogic(this);
             Render.InitRender();
+            UI = new UILogic(this);
+            GamePlay = new GamePlayLogic(this);
+            Controller = new ControllerLogic(this);
         }
 
         /// <summary>
@@ -114,9 +111,14 @@ namespace TheGrid
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            Controller.UpdateBegin(gameTime);
+            if (IsActive)
+            {
+                Controller.UpdateBegin(gameTime);
 
-            Controller.UpdateEnd(gameTime);
+                Controller.UpdateEnd(gameTime);
+
+                UI.Update(gameTime);
+            }
 
             GamePlay.Update(gameTime);
 
@@ -130,6 +132,8 @@ namespace TheGrid
         protected override void Draw(GameTime gameTime)
         {
             Render.Draw(gameTime);
+
+            UI.Draw(gameTime);
 
             base.Draw(gameTime);
         }

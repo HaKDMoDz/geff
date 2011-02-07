@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using TheGrid.Common;
 using TheGrid.Model;
-using TheGrid.Model.Menu;
+using TheGrid.Model.UI.Menu;
 
 namespace TheGrid.Logic.Controller
 {
@@ -183,9 +183,11 @@ namespace TheGrid.Logic.Controller
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            if (Context.CurrentMenu != null && Context.CurrentMenu.Items.Exists(item => item.MouseOver))
+            Menu currentMenu = (Menu)GameEngine.UI.ListUIComponent.Find(ui => ui is Menu);
+
+            if (currentMenu != null && currentMenu.State == MenuState.Opened && currentMenu.Items.Exists(item => item.MouseOver))
             {
-                Context.CurrentMenu.MouseClick(GameEngine, gameTime, mouseState);
+                currentMenu.MouseClick(gameTime);
                 GameEngine.GamePlay.EvaluateMuscianGrid();
             }
             else
@@ -197,16 +199,30 @@ namespace TheGrid.Logic.Controller
                 if (Context.SelectedCell != null)
                 {
                     //--- Ferme le précédent menu
-                    if (Context.CurrentMenu != null)
+                    if (currentMenu != null)
                     {
-                        Context.CurrentMenu.Close(gameTime);
-                        Context.NextMenu = GameEngine.GamePlay.CreateMenu(Context.SelectedCell);
+                        currentMenu.Close(gameTime);
+
+                        //---> Supprime le menu dépendant du menu courant
+                        GameEngine.UI.ListUIComponent.RemoveAll(ui => ui is Menu && ui.UIDependency != null && ui.UIDependency == currentMenu);
+
+                        //--- Créé un nouveau menu ayant comme dépendance le menu courant
+                        Menu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell);
+                        newMenu.Alive = true;
+                        newMenu.UIDependency = currentMenu;
+                        newMenu.State = MenuState.WaitDependency;
+
+                        GameEngine.UI.ListUIComponent.Add(newMenu);
+                        //---
                     }
-                    else
+                    else if (currentMenu == null || currentMenu.State == MenuState.Closing || currentMenu.State == MenuState.Closed)
                     {
                         //---> Ouvre le nouveau menu
-                        Context.CurrentMenu = GameEngine.GamePlay.CreateMenu(Context.SelectedCell);
-                        Context.CurrentMenu.Open(gameTime);
+                        Menu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell);
+                        newMenu.Alive = true;
+                        GameEngine.UI.ListUIComponent.Add(newMenu);
+
+                        newMenu.Open(gameTime);
                     }
                     //---
                 }
@@ -229,10 +245,21 @@ namespace TheGrid.Logic.Controller
 
         void mouseRightButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            if (Context.CurrentMenu != null && Tools.Distance(Point.Zero, distance) < 5f)
+            Menu currentMenu = (Menu)GameEngine.UI.ListUIComponent.Find(ui => ui is Menu);
+
+            if (currentMenu != null && 
+                (currentMenu.State == MenuState.Opened || currentMenu.State == MenuState.Opening) && 
+                Tools.Distance(Point.Zero, distance) < 5f)
             {
-                Context.NextMenu = Context.CurrentMenu.ParentMenu;
-                Context.CurrentMenu.Close(gameTime);
+                if (currentMenu.ParentMenu != null)
+                {
+                    currentMenu.UIDependency = null;
+                    currentMenu.ParentMenu.UIDependency = currentMenu;
+                    currentMenu.ParentMenu.Alive = true;
+                    currentMenu.ParentMenu.Visible = false;
+                    GameEngine.UI.ListUIComponent.Add(currentMenu.ParentMenu);
+                }
+                currentMenu.Close(gameTime);
             }
         }
 
@@ -407,10 +434,11 @@ namespace TheGrid.Logic.Controller
             //---
 
             //---
-            if (Context.CurrentMenu != null)
-            {
-                Context.CurrentMenu.MouseOver(GameEngine, gameTime, mouseState);
-            }
+            //Menu currentMenu = (Menu)GameEngine.UI.ListUIComponent.Find(ui => ui is Menu);
+            //if (currentMenu != null)
+            //{
+            //    currentMenu.MouseOver(GameEngine, gameTime, mouseState);
+            //}
             //---
 
             if (GameEngine.Render.updateViewScreen)
