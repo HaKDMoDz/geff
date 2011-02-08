@@ -14,6 +14,7 @@ namespace TheGrid.Model
         public Cell NextCell { get; set; }
         public Vector3 Position { get; set; }
         public Boolean IsPlaying { get; set; }
+        public TypePlaying TypePlaying { get; set; }
         public List<TimeValue<Cell>> Partition { get; set; }
 
         /// <summary>

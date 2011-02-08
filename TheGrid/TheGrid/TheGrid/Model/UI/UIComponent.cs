@@ -18,6 +18,7 @@ namespace TheGrid.Model.UI
         public ControllerLogic Controller { get { return UI.GameEngine.Controller; } }
         public GamePlayLogic GamePlay { get { return UI.GameEngine.GamePlay; } }
 
+        public TimeSpan CreationTime { get; set; }
         public bool Visible { get; set; }
         public bool Alive { get; set; }
         public List<UIComponent> ListUIChildren { get; set; }
@@ -31,6 +32,8 @@ namespace TheGrid.Model.UI
         {
             if (Alive && Visible && ListUIChildren != null)
             {
+                ListUIChildren.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
+
                 foreach (UIComponent uiComponent in ListUIChildren)
                 {
                     if (uiComponent.Alive && uiComponent.Visible) 
@@ -43,6 +46,8 @@ namespace TheGrid.Model.UI
         {
             if (Alive && Visible && ListUIChildren != null)
             {
+                ListUIChildren.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
+
                 foreach (UIComponent uiComponent in ListUIChildren)
                 {
                     if (uiComponent.Alive && uiComponent.Visible)
@@ -51,8 +56,9 @@ namespace TheGrid.Model.UI
             }
         }
 
-        public UIComponent(UILogic uiLogic)
+        public UIComponent(UILogic uiLogic, TimeSpan creationTime)
         {
+            this.CreationTime = creationTime;
             this.Alive = true;
             this.Visible = false;
             this.UI = uiLogic;

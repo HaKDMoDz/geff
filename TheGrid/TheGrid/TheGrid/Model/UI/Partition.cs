@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using TheGrid.Logic.UI;
 using Microsoft.Xna.Framework.Graphics;
 using TheGrid.Common;
+using Microsoft.Xna.Framework.Input;
 
 namespace TheGrid.Model.UI
 {
@@ -13,8 +14,8 @@ namespace TheGrid.Model.UI
     {
         private Ribbon ribbon;
 
-        public Partition(Ribbon ribbon, UILogic uiLogic)
-            : base(uiLogic)
+        public Partition(Ribbon ribbon, UILogic uiLogic, TimeSpan creationTime)
+            : base(uiLogic, creationTime)
         {
             this.ribbon = ribbon;
             Visible = true;
@@ -23,23 +24,97 @@ namespace TheGrid.Model.UI
             Rec = new Rectangle(Ribbon.MARGE, Ribbon.MARGE, (int)(0.7f * Render.ScreenWidth), ribbon.Rec.Height - Ribbon.MARGE * 2);
         }
 
+        public void Init(TimeSpan creationTime)
+        {
+            ListUIChildren = new List<UIComponent>();
+
+            float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
+            float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
+
+            for (int i = 1; i < Context.Map.Channels.Count; i++)
+            {
+                float fi = (float)(i - 1);
+
+                float channelX = Rec.X + Ribbon.MARGE + 100;
+                float channelY = (float)Rec.Y + channelHeight * fi;
+
+                ClickableImage imgMuteChannel = new ClickableImage(UI, creationTime, "MuteChannel" + i.ToString(), Render.texMuteChannel, Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY - Ribbon.MARGE + Render.texSoloChannel.Height / 2));
+                ClickableImage imgSoloChannel = new ClickableImage(UI, creationTime, "SoloChannel" + i.ToString(), Render.texSoloChannel, Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY - Ribbon.MARGE + Render.texMuteChannel.Height / 2));
+
+                imgMuteChannel.Tag = i;
+                imgSoloChannel.Tag = i;
+
+                imgMuteChannel.ClickImage += new ClickableImage.ClickImageHandler(imgMuteChannel_ClickImage);
+                imgSoloChannel.ClickImage += new ClickableImage.ClickImageHandler(imgSoloChannel_ClickImage);
+
+                ListUIChildren.Add(imgMuteChannel);
+                ListUIChildren.Add(imgSoloChannel);
+
+                for (int j = 0; j < Context.Map.Channels[i].ListMusician.Count; j++)
+                {
+                    float fj = (float)j;
+
+                }
+            }
+        }
+
+        private void UpdateButtonState()
+        {
+            for (int i = 1; i < Context.Map.Channels.Count; i++)
+            {
+                ClickableImage imgMuteChannel = (ClickableImage)ListUIChildren.Find(ui => ui is ClickableImage && ((ClickableImage)ui).Name == "MuteChannel" + i.ToString());
+                ClickableImage imgSoloChannel = (ClickableImage)ListUIChildren.Find(ui => ui is ClickableImage && ((ClickableImage)ui).Name == "SoloChannel" + i.ToString());
+
+                TypePlaying typePlaying = Context.Map.Channels[i].TypePlaying;
+
+                if (typePlaying == TypePlaying.Muted)
+                {
+                    imgMuteChannel.Color = Color.Blue;
+                    imgSoloChannel.Color = Color.White;
+                }
+                else if (typePlaying == TypePlaying.Solo)
+                {
+                    imgMuteChannel.Color = Color.White;
+                    imgSoloChannel.Color = Color.Blue;
+                }
+                else if (typePlaying == TypePlaying.Playing)
+                {
+                    imgMuteChannel.Color = Color.White;
+                    imgSoloChannel.Color = Color.White;
+                }
+            }
+        }
+
+        void imgMuteChannel_ClickImage(ClickableImage image, MouseState mouseState, GameTime gameTime)
+        {
+            GamePlay.MuteChannel((int)image.Tag);
+            UpdateButtonState();
+        }
+
+        void imgSoloChannel_ClickImage(ClickableImage image, MouseState mouseState, GameTime gameTime)
+        {
+            GamePlay.SoloChannel((int)image.Tag);
+            UpdateButtonState();
+        }
+
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
             float timelineDuration = 1000f * 10;
 
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, new Color(0.2f, 0.2f, 0.2f));
+            Rectangle rec = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.2f));
+
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, new Color(0.2f, 0.2f, 0.2f));
 
             float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
             float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
 
-            for (int i = 0; i < Context.Map.Channels.Count; i++)
+            for (int i = 1; i < Context.Map.Channels.Count; i++)
             {
-                if (i == 0) continue;
-
                 float fi = (float)(i - 1);
 
                 float channelX = Rec.X + Ribbon.MARGE + 100;
@@ -55,13 +130,9 @@ namespace TheGrid.Model.UI
                 Render.SpriteBatch.DrawString(Render.FontMenu, Context.Map.Channels[i].ListMusician.Count(m => m.IsPlaying).ToString(), new Vector2(Rec.X + Ribbon.MARGE, channelY - Ribbon.MARGE), Color.White);
                 //---
 
-                //--- Mute / Solo par channel
-                //TODO : afficher par des clickable image
-                Render.SpriteBatch.Draw(Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY - Ribbon.MARGE + Render.texSoloChannel.Height / 2), Color.White);
-                Render.SpriteBatch.Draw(Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY - Ribbon.MARGE + Render.texMuteChannel.Height / 2), Color.White);
-                //---
-
+                //--- Channel
                 Render.SpriteBatch.Draw(Render.texEmptyGradient, recChannel, Context.Map.Channels[i].Color);
+                //---
 
                 if (Context.Map.Channels[i].ListMusician == null || Context.Map.Channels[i].ListMusician.Count == 0)
                     continue;
@@ -69,9 +140,6 @@ namespace TheGrid.Model.UI
                 float heightPerMusician = channelHeight / (float)Context.Map.Channels[i].ListMusician.Count;
                 for (int j = 0; j < Context.Map.Channels[i].ListMusician.Count; j++)
                 {
-                    //--- Mute / Solo par musicien
-                    //---
-
                     float fj = (float)j;
 
                     for (int k = 0; k < Context.Map.Channels[i].ListMusician[j].Partition.Count; k++)
@@ -98,6 +166,8 @@ namespace TheGrid.Model.UI
                     }
                 }
             }
+
+            base.Draw(gameTime);
         }
     }
 }

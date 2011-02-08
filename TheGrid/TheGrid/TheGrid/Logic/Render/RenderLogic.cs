@@ -185,7 +185,6 @@ namespace TheGrid.Logic.Render
             {
                 DrawCell(cell, gameTime);
             }
-
             //---
 
             //--- Affiche les musiciens

@@ -17,6 +17,7 @@ namespace TheGrid.Logic.GamePlay
     {
         private Random rnd = new Random();
         private float musicianSpeed = 500f;
+        private Ribbon ribbon;
         public GameEngine GameEngine { get; set; }
 
         public GamePlayLogic(GameEngine gameEngine)
@@ -28,11 +29,12 @@ namespace TheGrid.Logic.GamePlay
 
             InitializePlayers();
 
-            Context.Map = FileSystem.LoadLevel("Test2");
-            EvaluateMuscianGrid();
-            Stop();
+            ribbon = new Ribbon(GameEngine.UI, TimeSpan.MaxValue);
+            GameEngine.UI.ListUIComponent.Add(ribbon);
 
-            GameEngine.UI.ListUIComponent.Add(new Ribbon(GameEngine.UI));
+            Context.Map = FileSystem.LoadLevel("Test2");
+            EvaluateMuscianGrid(TimeSpan.Zero);
+            Stop();
         }
 
         private void InitializeMap()
@@ -224,7 +226,7 @@ namespace TheGrid.Logic.GamePlay
             cell7.Clip.Directions[1] = true;
             //---
 
-            EvaluateMuscianGrid();
+            //EvaluateMuscianGrid();
         }
 
         private void InitializeChannel()
@@ -313,7 +315,7 @@ namespace TheGrid.Logic.GamePlay
             }
         }
 
-        public void EvaluateMuscianGrid()
+        public void EvaluateMuscianGrid(TimeSpan time)
         {
             //--- Initialisation
             foreach (Channel channel in Context.Map.Channels)
@@ -486,6 +488,10 @@ namespace TheGrid.Logic.GamePlay
                     }
                 }
             }
+
+            //--- Met à jour le visuel de la partition
+            ribbon.Partition.Init(time);
+            //---
         }
 
         public void UpdateMusiciansToTime()
@@ -586,6 +592,81 @@ namespace TheGrid.Logic.GamePlay
 
             if (Context.SpeedFactor > 4f)
                 Context.SpeedFactor = 4f;
+        }
+
+        public TypePlaying MuteChannel(int idChannel)
+        {
+            TypePlaying prevTypePlaying = Context.Map.Channels[idChannel].TypePlaying;
+
+            for (int i = 1; i < Context.Map.Channels.Count; i++)
+            {
+                if (i == idChannel)
+                {
+                    if (prevTypePlaying == TypePlaying.Muted)
+                        Context.Map.Channels[i].TypePlaying = TypePlaying.Playing;
+                    else
+                        Context.Map.Channels[i].TypePlaying = TypePlaying.Muted;
+                }
+                else if (prevTypePlaying == TypePlaying.Muted)
+                {
+                    Context.Map.Channels[i].TypePlaying = TypePlaying.Playing;
+                }
+            }
+
+            return Context.Map.Channels[idChannel].TypePlaying;
+        }
+
+        public TypePlaying SoloChannel(int idChannel)
+        {
+            TypePlaying prevTypePlaying = Context.Map.Channels[idChannel].TypePlaying;
+
+            for (int i = 1; i < Context.Map.Channels.Count; i++)
+            {
+                if (i == idChannel)
+                {
+                    if (prevTypePlaying == TypePlaying.Solo)
+                        Context.Map.Channels[i].TypePlaying = TypePlaying.Playing;
+                    else
+                        Context.Map.Channels[i].TypePlaying = TypePlaying.Solo;
+                }
+                else if (prevTypePlaying != TypePlaying.Solo)
+                {
+                    Context.Map.Channels[i].TypePlaying = TypePlaying.Muted;
+                }
+                else if (prevTypePlaying == TypePlaying.Solo)
+                {
+                    Context.Map.Channels[i].TypePlaying = TypePlaying.Playing;
+                }
+            }
+
+            return Context.Map.Channels[idChannel].TypePlaying;
+        }
+
+        public TypePlaying MuteMusician(int idChannel, int idMusician)
+        {
+            for (int i = 0; i < Context.Map.Channels.Count; i++)
+            {
+                for (int j = 0; j < Context.Map.Channels[i].ListMusician.Count; j++)
+                {
+                    //if (i == idChannel && j == idMusician)
+                    //    Context.Map.Channels[i].IsPlaying = !;
+                }
+            }
+
+            return Context.Map.Channels[idChannel].ListMusician[idMusician].TypePlaying;
+        }
+
+        public TypePlaying SoloMusician(int idChannel, int idMusician)
+        {
+            for (int i = 0; i < Context.Map.Channels.Count; i++)
+            {
+                for (int j = 0; j < Context.Map.Channels[i].ListMusician.Count; j++)
+                {
+                    //Context.Map.Channels[i].IsPlaying = i == idChannel;
+                }
+            }
+
+            return Context.Map.Channels[idChannel].ListMusician[idMusician].TypePlaying;
         }
     }
 }

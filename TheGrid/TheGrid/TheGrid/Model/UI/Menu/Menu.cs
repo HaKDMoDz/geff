@@ -37,7 +37,8 @@ namespace TheGrid.Model.UI.Menu
         private TimeSpan LastStateChanged { get; set; }
         #endregion
 
-        public Menu(UILogic uiLogic, Cell parentCell, Menu parentMenu, bool showIcon) : base(uiLogic)
+        public Menu(UILogic uiLogic, TimeSpan creationTime, Cell parentCell, Menu parentMenu, bool showIcon)
+            : base(uiLogic, creationTime)
         {
             ParentCell = parentCell;
             ParentMenu = parentMenu;
@@ -234,7 +235,7 @@ namespace TheGrid.Model.UI.Menu
                 }
 
                 Render.SpriteBatch.End();
-                Render.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, Render.effectSprite, Matrix.Identity);
+                Render.SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.DepthRead, RasterizerState.CullNone, Render.effectSprite, Matrix.Identity);
                 for (int i = 0; i < Items.Count; i++)
                 {
                     double angle = ((double)i - d) * angleItem - AngleDeltaRenderIcon;
@@ -243,7 +244,7 @@ namespace TheGrid.Model.UI.Menu
 
                     Rectangle rec = new Rectangle((int)(nearPoint.X + vec.X), (int)(nearPoint.Y + vec.Y), (int)(128f * size), (int)(128f * size));
 
-                    Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), rec, new Color((float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility));
+                    Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), rec,null, new Color((float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility),0f,Vector2.Zero, SpriteEffects.None, 0f);
                 }
                 Render.SpriteBatch.End();
                 Render.SpriteBatch.Begin();

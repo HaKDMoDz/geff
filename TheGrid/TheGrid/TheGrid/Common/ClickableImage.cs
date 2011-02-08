@@ -18,6 +18,9 @@ namespace TheGrid.Common
         private bool isIn = false;
         private ButtonState leftMouseButtonState = ButtonState.Released;
         public bool IsOn = false;
+        public Object Tag;
+        public Color Color;
+        public string Name { get; set; }
 
         public Vector2 Position
         {
@@ -41,15 +44,17 @@ namespace TheGrid.Common
         public event ClickImageHandler ClickImage;
         #endregion
 
-        public ClickableImage(UILogic uiLogic, Texture2D textureMouseIn, Texture2D textureMouseOut, Vector2 position)
-            : base(uiLogic)
+        public ClickableImage(UILogic uiLogic, TimeSpan creationTime, string name, Texture2D textureMouseIn, Texture2D textureMouseOut, Vector2 position)
+            : base(uiLogic, creationTime)
         {
             this._textureMouseIn = textureMouseIn;
             this._textureMouseOut = textureMouseOut;
             this.Position = position;
+            this.Color = Color.White;
 
             this.Alive = true;
             this.Visible = true;
+            this.Name = name;
         }
 
         public override void Update(GameTime gameTime)
@@ -95,7 +100,7 @@ namespace TheGrid.Common
 
         public override void Draw(GameTime gameTime)
         {
-            Draw(gameTime, Color.White);
+            Draw(gameTime, this.Color);
         }
     }
 }

@@ -135,6 +135,7 @@
     <Compile Include="Model\Instrument\InstrumentEffect.cs" />
     <Compile Include="Model\Instrument\InstrumentSample.cs" />
     <Compile Include="Model\Map.cs" />
+    <Compile Include="Model\TypePlaying.cs" />
     <Compile Include="Model\UI\Menu\Item.cs" />
     <Compile Include="Model\UI\Menu\Menu.cs" />
     <Compile Include="Model\UI\Menu\MenuState.cs" />

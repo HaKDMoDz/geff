@@ -42,8 +42,8 @@ namespace TheGrid.Common
         public event ClickTextHandler ClickText;
         #endregion
 
-        public ClickableText(UILogic uiLogic, string spriteFontMouseIn, string spriteFontMouseOut, string text, Vector2 position)
-            : base(uiLogic)
+        public ClickableText(UILogic uiLogic, TimeSpan creationTime, string spriteFontMouseIn, string spriteFontMouseOut, string text, Vector2 position)
+            : base(uiLogic, creationTime)
         {
             this._spriteFontMouseIn = uiLogic.GameEngine.Content.Load<SpriteFont>(@"Content\Font\" + spriteFontMouseIn);
             this._spriteFontMouseOut = uiLogic.GameEngine.Content.Load<SpriteFont>(@"Content\Font\" + spriteFontMouseOut);

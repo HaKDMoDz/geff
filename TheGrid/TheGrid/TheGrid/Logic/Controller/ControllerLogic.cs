@@ -152,7 +152,7 @@ namespace TheGrid.Logic.Controller
 
         void keyEvaluateMusicianPartition_KeyReleased(Keys key, GameTime gameTime)
         {
-            GameEngine.GamePlay.EvaluateMuscianGrid();
+            GameEngine.GamePlay.EvaluateMuscianGrid(gameTime.TotalGameTime);
         }
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
@@ -162,7 +162,7 @@ namespace TheGrid.Logic.Controller
             if (currentMenu != null && currentMenu.State == MenuState.Opened && currentMenu.Items.Exists(item => item.MouseOver))
             {
                 currentMenu.MouseClick(gameTime);
-                GameEngine.GamePlay.EvaluateMuscianGrid();
+                GameEngine.GamePlay.EvaluateMuscianGrid(gameTime.TotalGameTime);
             }
             else
             {
@@ -181,7 +181,7 @@ namespace TheGrid.Logic.Controller
                         GameEngine.UI.ListUIComponent.RemoveAll(ui => ui is Menu && ui.UIDependency != null && ui.UIDependency == currentMenu);
 
                         //--- Créé un nouveau menu ayant comme dépendance le menu courant
-                        Menu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell);
+                        Menu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
                         newMenu.Alive = true;
                         newMenu.UIDependency = currentMenu;
                         newMenu.State = MenuState.WaitDependency;
@@ -192,7 +192,7 @@ namespace TheGrid.Logic.Controller
                     else if (currentMenu == null || currentMenu.State == MenuState.Closing || currentMenu.State == MenuState.Closed)
                     {
                         //---> Ouvre le nouveau menu
-                        Menu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell);
+                        Menu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
                         newMenu.Alive = true;
                         GameEngine.UI.ListUIComponent.Add(newMenu);
 

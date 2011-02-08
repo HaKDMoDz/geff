@@ -19,8 +19,10 @@ namespace TheGrid.Model
         [XmlIgnore]
         public List<Sample> ListSample { get; set; }
         public List<TimeValue<float>> ListSpeed { get; set; }
-
         public TimeSpan ElapsedTime { get; set; }
+
+        [XmlIgnore]
+        public TypePlaying TypePlaying { get; set; }
 
         public int CountMusicianPlaying
         {
