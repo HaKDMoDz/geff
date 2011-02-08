@@ -55,7 +55,7 @@ namespace TheGrid.Model
         {
             Musician musician = this.ListMusician.Find(m => !m.IsPlaying);
 
-            if (musician == null && this.ListMusician.Count < 20)
+            if (musician == null && this.ListMusician.Count < 6)
             {
                 musician = new Musician(this);
                 ListMusician.Add(musician);

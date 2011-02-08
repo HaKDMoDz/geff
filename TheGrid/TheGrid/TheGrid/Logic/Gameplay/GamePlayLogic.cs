@@ -30,6 +30,7 @@ namespace TheGrid.Logic.GamePlay
 
             Context.Map = FileSystem.LoadLevel("Test2");
             EvaluateMuscianGrid();
+            Stop();
 
             GameEngine.UI.ListUIComponent.Add(new Ribbon(GameEngine.UI));
         }
@@ -230,7 +231,7 @@ namespace TheGrid.Logic.GamePlay
         {
             Context.Map.Channels = new List<Channel>();
 
-            Context.Map.Channels.Add(new Channel("Empty", Color.White));
+            Context.Map.Channels.Add(new Channel("Empty", new Color(0.3f, 0.3f, 0.3f)));
             Context.Map.Channels.Add(new Channel("Drums", Color.Red));
             Context.Map.Channels.Add(new Channel("Keys", Color.Blue));
             Context.Map.Channels.Add(new Channel("Guitar", Color.Yellow));
@@ -515,6 +516,76 @@ namespace TheGrid.Logic.GamePlay
                     }
                 }
             }
+        }
+
+        public void Play()
+        {
+            Context.IsPlaying = true;
+        }
+
+        public void Pause()
+        {
+            Context.IsPlaying = false;
+        }
+
+        public void Stop()
+        {
+            Context.IsPlaying = false;
+
+            Context.Time = new TimeSpan(0, 0, 0);
+
+            foreach (Channel channel in Context.Map.Channels)
+            {
+                foreach (Musician musician in channel.ListMusician)
+                {
+                    musician.CurrentCell = null;
+                    musician.NextCell = null;
+                    musician.IsPlaying = false;
+                }
+            }
+        }
+
+        public void Backward(GameTime gameTime)
+        {
+            Context.IsNavigatingThroughTime = true;
+
+            if (Context.Time >= TimeSpan.Zero)
+            {
+                float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
+                Context.Time = Context.Time.Subtract(time);
+
+                GameEngine.GamePlay.UpdateMusiciansToTime();
+            }
+        }
+
+        public void Forward(GameTime gameTime)
+        {
+            Context.IsNavigatingThroughTime = true;
+            if (Context.Time < Context.PartitionDuration)
+            {
+                float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
+                Context.Time = Context.Time.Add(time);
+
+                GameEngine.GamePlay.UpdateMusiciansToTime();
+            }
+        }
+
+        public void SpeedDown(GameTime gameTime)
+        {
+            Context.SpeedFactor -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+
+            if (Context.SpeedFactor < 0f)
+                Context.SpeedFactor = 0f;
+        }
+
+        public void SpeedUp(GameTime gameTime)
+        {
+            Context.SpeedFactor += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+
+            if (Context.SpeedFactor > 4f)
+                Context.SpeedFactor = 4f;
         }
     }
 }

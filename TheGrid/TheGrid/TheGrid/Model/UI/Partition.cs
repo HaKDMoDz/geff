@@ -20,7 +20,7 @@ namespace TheGrid.Model.UI
             Visible = true;
             Alive = true;
 
-            Rec = new Rectangle(Ribbon.MARGE, Ribbon.MARGE, (int)(0.7f * Render.ScreenWidth), ribbon.Rec.Height - Ribbon.MARGE);
+            Rec = new Rectangle(Ribbon.MARGE, Ribbon.MARGE, (int)(0.7f * Render.ScreenWidth), ribbon.Rec.Height - Ribbon.MARGE * 2);
         }
 
         public override void Update(GameTime gameTime)
@@ -31,37 +31,42 @@ namespace TheGrid.Model.UI
         {
             float timelineDuration = 1000f * 10;
 
-            Render.SpriteBatch.Draw(Render.texEmpty, Rec, Color.DarkGray);
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, new Color(0.2f, 0.2f, 0.2f));
 
-            float channelHeight = 0.2f * Render.ScreenHeight / (float)Context.Map.Channels.Count;
-            float channelWidth = (0.8f * Render.ScreenWidth - 0.02f * Render.ScreenWidth);
+            float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
+            float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
 
             for (int i = 0; i < Context.Map.Channels.Count; i++)
             {
-                float fi = (float)i;
+                if (i == 0) continue;
 
-                float channelX = 0.1f * Render.ScreenWidth + 0.01f * Render.ScreenWidth;
-                float channelY = 0.05f * Render.ScreenHeight + channelHeight * fi + 0.2f * channelHeight;
+                float fi = (float)(i - 1);
+
+                float channelX = Rec.X + Ribbon.MARGE + 100;
+                float channelY = (float)Rec.Y + channelHeight * fi;
 
                 Rectangle recChannel = new Rectangle(
                     (int)channelX,
                     (int)channelY,
                     (int)channelWidth,
-                    (int)(channelHeight - 0.2f * channelHeight));
+                    (int)channelHeight);
 
                 //--- Nombre de musiciens en cours
-                //Render.SpriteBatch.DrawString
+                Render.SpriteBatch.DrawString(Render.FontMenu, Context.Map.Channels[i].ListMusician.Count(m => m.IsPlaying).ToString(), new Vector2(Rec.X + Ribbon.MARGE, channelY - Ribbon.MARGE), Color.White);
                 //---
 
                 //--- Mute / Solo par channel
+                //TODO : afficher par des clickable image
+                Render.SpriteBatch.Draw(Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY - Ribbon.MARGE + Render.texSoloChannel.Height / 2), Color.White);
+                Render.SpriteBatch.Draw(Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY - Ribbon.MARGE + Render.texMuteChannel.Height / 2), Color.White);
                 //---
 
-                Render.SpriteBatch.Draw(Render.texEmpty, recChannel, Context.Map.Channels[i].Color);
+                Render.SpriteBatch.Draw(Render.texEmptyGradient, recChannel, Context.Map.Channels[i].Color);
 
                 if (Context.Map.Channels[i].ListMusician == null || Context.Map.Channels[i].ListMusician.Count == 0)
                     continue;
 
-                float heightPerMusician = (channelHeight - 0.2f * channelHeight) / (float)Context.Map.Channels[i].ListMusician.Count;
+                float heightPerMusician = channelHeight / (float)Context.Map.Channels[i].ListMusician.Count;
                 for (int j = 0; j < Context.Map.Channels[i].ListMusician.Count; j++)
                 {
                     //--- Mute / Solo par musicien

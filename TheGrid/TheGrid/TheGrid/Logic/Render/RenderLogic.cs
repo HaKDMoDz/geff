@@ -50,13 +50,23 @@ namespace TheGrid.Logic.Render
         public bool doScreenShot = false;
 
         public Texture2D texHexa2D = null;
+        public Texture2D texHexa2DClip = null;
         public Texture2D texMusician = null;
         public Texture2D texEmpty = null;
+        public Texture2D texEmptyGradient = null;
         private Texture2D textDirection = null;
         private Texture2D texRepeater = null;
         private Texture2D texSpeed = null;
         private Texture2D texMusicianStart = null;
         private Texture2D texMusicianStop = null;
+
+        public Texture2D texPlay = null;
+        public Texture2D texPause = null;
+        public Texture2D texStop = null;
+        public Texture2D texSoloChannel = null;
+        public Texture2D texMuteChannel = null;
+        public Texture2D texSoloMusician = null;
+        public Texture2D texMuteMusician = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -81,6 +91,7 @@ namespace TheGrid.Logic.Render
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
 
             texHexa2D = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D");
+            texHexa2DClip = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D_Clip");
             texMusician = GameEngine.Content.Load<Texture2D>(@"Texture\Musician");
             textDirection = GameEngine.Content.Load<Texture2D>(@"Texture\Direction");
             texRepeater = GameEngine.Content.Load<Texture2D>(@"Texture\Repeater");
@@ -88,6 +99,15 @@ namespace TheGrid.Logic.Render
             texMusicianStart = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MusicianStart");
             texMusicianStop = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MusicianStop");
             texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
+            texEmptyGradient = GameEngine.Content.Load<Texture2D>(@"Texture\ImgEmptyGradient");
+
+            texPlay = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Play");
+            texPause = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Pause");
+            texStop = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Stop");
+            texSoloChannel = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\SoloChannel");
+            texMuteChannel = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MuteChannel");
+            texSoloMusician = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\SoloMusician");
+            texMuteMusician = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MuteMusician");
         }
 
         private void Initilize3DModel()
@@ -197,9 +217,18 @@ namespace TheGrid.Logic.Render
             if (cell.Channel != null)
                 colorChannel = cell.Channel.Color;
             else if (cell.Clip != null)
-                colorChannel = Color.White;
+                colorChannel = new Color(0.3f, 0.3f, 0.3f);
 
-            SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
+            if (cell.Clip != null)
+            {
+                SpriteBatch.Draw(texHexa2DClip, cellLocation, colorChannel);
+            }
+            else
+            {
+                SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
+            }
+
+
             //SpriteBatch.DrawString(FontMenu, cell.Coord.ToString(), cellLocation, colorChannel);
 
             //--- Instrument
@@ -216,7 +245,7 @@ namespace TheGrid.Logic.Render
                     texInstrument = texMusicianStop;
                 }
 
-                SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - midCellSize/4, null, Color.White);
+                SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - midCellSize / 4, null, Color.White);
             }
             //---
 
@@ -282,14 +311,14 @@ namespace TheGrid.Logic.Render
                 return;
 
             Vector2 midCellSize = new Vector2(HexaWidth / 2, HexaWidth / 2);
-            Vector2 cellLocation = Tools.GetVector2(musician.Position)* texHexa2D.Width + midCellSize - midCellSize/2;
+            Vector2 cellLocation = Tools.GetVector2(musician.Position) * texHexa2D.Width + midCellSize - midCellSize / 2;
 
             SpriteBatch.Draw(texMusician, cellLocation, musician.Channel.Color);
         }
 
         private void DrawTimeLine(GameTime gameTime)
         {
-            
+
         }
     }
 }

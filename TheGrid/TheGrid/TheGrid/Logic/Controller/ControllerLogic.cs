@@ -72,8 +72,8 @@ namespace TheGrid.Logic.Controller
             this.keyStopMusician = new KeyManager(Keys.Enter);
             this.keyForward = new KeyManager(Keys.Right);
             this.keyBackward = new KeyManager(Keys.Left);
-            this.keySpeedUp = new KeyManager(Keys.Up);
-            this.keySpeedDown = new KeyManager(Keys.Down);
+            this.keySpeedUp = new KeyManager(Keys.Down);
+            this.keySpeedDown = new KeyManager(Keys.Up);
 
             this.keyNewMap.KeyReleased += new KeyManager.KeyReleasedHandler(keyNewMap_KeyReleased);
             this.keySaveMap.KeyReleased += new KeyManager.KeyReleasedHandler(keySaveMap_KeyReleased);
@@ -106,16 +106,7 @@ namespace TheGrid.Logic.Controller
 
         void keyBackward_KeyPressed(Keys key, GameTime gameTime)
         {
-            Context.IsNavigatingThroughTime = true;
-
-            if (Context.Time >= TimeSpan.Zero)
-            {
-                float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
-                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
-                Context.Time = Context.Time.Subtract(time);
-
-                GameEngine.GamePlay.UpdateMusiciansToTime();
-            }
+            GameEngine.GamePlay.Backward(gameTime);
         }
 
         void keyBackward_KeyReleased(Keys key, GameTime gameTime)
@@ -125,15 +116,7 @@ namespace TheGrid.Logic.Controller
 
         void keyForward_KeyPressed(Keys key, GameTime gameTime)
         {
-            Context.IsNavigatingThroughTime = true;
-            if (Context.Time < Context.PartitionDuration)
-            {
-                float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
-                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
-                Context.Time = Context.Time.Add(time);
-
-                GameEngine.GamePlay.UpdateMusiciansToTime();
-            }
+            GameEngine.GamePlay.Forward(gameTime);
         }
 
         void keyForward_KeyReleased(Keys key, GameTime gameTime)
@@ -143,37 +126,28 @@ namespace TheGrid.Logic.Controller
 
         void keySpeedDown_KeyPressed(Keys key, GameTime gameTime)
         {
-            Context.SpeedFactor -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
-
-            if (Context.SpeedFactor < 0f)
-                Context.SpeedFactor = 0f;
+            GameEngine.GamePlay.SpeedDown(gameTime);
         }
 
         void keySpeedUp_KeyPressed(Keys key, GameTime gameTime)
         {
-            Context.SpeedFactor += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+            GameEngine.GamePlay.SpeedUp(gameTime);
         }
 
         void keyStopMusician_KeyReleased(Keys key, GameTime gameTime)
         {
-            Context.IsPlaying = !Context.IsPlaying;
-
-            Context.Time = new TimeSpan(0, 0, 0);
-
-            foreach (Channel channel in Context.Map.Channels)
-            {
-                foreach (Musician musician in channel.ListMusician)
-                {
-                    musician.CurrentCell = null;
-                    musician.NextCell = null;
-                    musician.IsPlaying = false;
-                }
-            }
+            if (Context.IsPlaying)
+                GameEngine.GamePlay.Stop();
+            else
+                GameEngine.GamePlay.Play();
         }
 
         void keyPlayPauseMusician_KeyReleased(Keys key, GameTime gameTime)
         {
-            Context.IsPlaying = !Context.IsPlaying;
+            if(Context.IsPlaying)
+                GameEngine.GamePlay.Pause();
+            else
+                GameEngine.GamePlay.Play();
         }
 
         void keyEvaluateMusicianPartition_KeyReleased(Keys key, GameTime gameTime)

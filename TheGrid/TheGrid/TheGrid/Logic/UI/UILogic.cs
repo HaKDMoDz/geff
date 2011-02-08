@@ -27,7 +27,11 @@ namespace TheGrid.Logic.UI
         {
             foreach (UIComponent uiComponent in ListUIComponent)
             {
-                uiComponent.Update(gameTime);
+                if (uiComponent.Visible)
+                {
+                    uiComponent.Update(gameTime);
+                }
+
                 uiComponent.UpdateUIDependency(gameTime);
             }
 

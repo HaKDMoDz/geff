@@ -233,6 +233,7 @@ namespace TheGrid.Model.UI.Menu
                     //delta = 32f * localSize / 100f;
                 }
 
+                Render.SpriteBatch.End();
                 Render.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, Render.effectSprite, Matrix.Identity);
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -245,6 +246,7 @@ namespace TheGrid.Model.UI.Menu
                     Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), rec, new Color((float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility));
                 }
                 Render.SpriteBatch.End();
+                Render.SpriteBatch.Begin();
             }
         }
 

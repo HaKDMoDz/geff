@@ -47,6 +47,9 @@ namespace TheGrid.Common
             this._textureMouseIn = textureMouseIn;
             this._textureMouseOut = textureMouseOut;
             this.Position = position;
+
+            this.Alive = true;
+            this.Visible = true;
         }
 
         public override void Update(GameTime gameTime)

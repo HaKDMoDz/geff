@@ -7,6 +7,7 @@ using TheGrid.Logic.UI;
 using TheGrid.Logic.Render;
 using System.ComponentModel;
 using TheGrid.Logic.Controller;
+using TheGrid.Logic.GamePlay;
 
 namespace TheGrid.Model.UI
 {
@@ -15,6 +16,7 @@ namespace TheGrid.Model.UI
         public UILogic UI { get; set; }
         public RenderLogic Render { get { return UI.GameEngine.Render; } }
         public ControllerLogic Controller { get { return UI.GameEngine.Controller; } }
+        public GamePlayLogic GamePlay { get { return UI.GameEngine.GamePlay; } }
 
         public bool Visible { get; set; }
         public bool Alive { get; set; }
@@ -31,7 +33,8 @@ namespace TheGrid.Model.UI
             {
                 foreach (UIComponent uiComponent in ListUIChildren)
                 {
-                    uiComponent.Update(gameTime);
+                    if (uiComponent.Alive && uiComponent.Visible) 
+                        uiComponent.Update(gameTime);
                 }
             }
         }
@@ -42,7 +45,8 @@ namespace TheGrid.Model.UI
             {
                 foreach (UIComponent uiComponent in ListUIChildren)
                 {
-                    uiComponent.Draw(gameTime);
+                    if (uiComponent.Alive && uiComponent.Visible)
+                        uiComponent.Draw(gameTime);
                 }
             }
         }
