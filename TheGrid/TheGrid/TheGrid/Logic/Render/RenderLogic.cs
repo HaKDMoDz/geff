@@ -67,6 +67,7 @@ namespace TheGrid.Logic.Render
         public Texture2D texMuteChannel = null;
         public Texture2D texSoloMusician = null;
         public Texture2D texMuteMusician = null;
+        public Texture2D texTimeMarker = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -108,6 +109,7 @@ namespace TheGrid.Logic.Render
             texMuteChannel = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MuteChannel");
             texSoloMusician = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\SoloMusician");
             texMuteMusician = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MuteMusician");
+            texTimeMarker = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\TimeMarker");
         }
 
         private void Initilize3DModel()
@@ -197,10 +199,6 @@ namespace TheGrid.Logic.Render
             }
             SpriteBatch.End();
             //---
-
-            ////--- Affiche la timeline
-            //DrawTimeLine(gameTime);
-            ////---
         }
 
         private void DrawCell(Cell cell, GameTime gameTime)
@@ -313,11 +311,6 @@ namespace TheGrid.Logic.Render
             Vector2 cellLocation = Tools.GetVector2(musician.Position) * texHexa2D.Width + midCellSize - midCellSize / 2;
 
             SpriteBatch.Draw(texMusician, cellLocation, musician.Channel.Color);
-        }
-
-        private void DrawTimeLine(GameTime gameTime)
-        {
-
         }
     }
 }

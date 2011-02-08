@@ -13,6 +13,9 @@ namespace TheGrid.Model.UI
     public class Partition : UIComponent
     {
         private Ribbon ribbon;
+        private List<float> listTimeSegment;
+        private float timelineDuration = 1000f * 20;
+        private Color colorTimeSegmnet = new Color(0.3f, 0.3f, 0.3f, 0.4f);
 
         public Partition(Ribbon ribbon, UILogic uiLogic, TimeSpan creationTime)
             : base(uiLogic, creationTime)
@@ -21,13 +24,14 @@ namespace TheGrid.Model.UI
             Visible = true;
             Alive = true;
 
-            Rec = new Rectangle(Ribbon.MARGE, Ribbon.MARGE, (int)(0.7f * Render.ScreenWidth), ribbon.Rec.Height - Ribbon.MARGE * 2);
+            Rec = new Rectangle(Ribbon.MARGE * 2, Ribbon.MARGE * 2, (int)(0.7f * Render.ScreenWidth), ribbon.Rec.Height - Ribbon.MARGE * 3);
         }
 
         public void Init(TimeSpan creationTime)
         {
             ListUIChildren = new List<UIComponent>();
 
+            float channelX = Rec.X + Ribbon.MARGE + 100;
             float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
             float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
 
@@ -35,7 +39,6 @@ namespace TheGrid.Model.UI
             {
                 float fi = (float)(i - 1);
 
-                float channelX = Rec.X + Ribbon.MARGE + 100;
                 float channelY = (float)Rec.Y + channelHeight * fi;
 
                 ClickableImage imgMuteChannel = new ClickableImage(UI, creationTime, "MuteChannel" + i.ToString(), Render.texMuteChannel, Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY - Ribbon.MARGE + Render.texSoloChannel.Height / 2));
@@ -56,6 +59,19 @@ namespace TheGrid.Model.UI
 
                 }
             }
+
+            //--- Calcul des segments
+            listTimeSegment = new List<float>();
+
+            int nbSeg = (int)(Context.PartitionDuration.TotalMilliseconds / 500f);
+
+            for (int s = 0; s < nbSeg; s++)
+            {
+                float x = channelX + (float)s * ((500f * channelWidth) / timelineDuration);
+
+                listTimeSegment.Add((int)x);
+            }
+            //---
         }
 
         private void UpdateButtonState()
@@ -104,20 +120,20 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            float timelineDuration = 1000f * 10;
-
             Rectangle rec = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.2f));
 
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, new Color(0.2f, 0.2f, 0.2f));
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, new Color(0.2f, 0.2f, 0.2f,0.1f));
 
             float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
             float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
+            float posPartBegin = (Rec.Width - 100 - Ribbon.MARGE) * 0.1f;
+            float channelX = Rec.X + Ribbon.MARGE + 100;
+            int elapsedMs = (int)(((float)Context.Time.TotalMilliseconds * channelWidth) / timelineDuration);
 
             for (int i = 1; i < Context.Map.Channels.Count; i++)
             {
                 float fi = (float)(i - 1);
 
-                float channelX = Rec.X + Ribbon.MARGE + 100;
                 float channelY = (float)Rec.Y + channelHeight * fi;
 
                 Rectangle recChannel = new Rectangle(
@@ -132,6 +148,20 @@ namespace TheGrid.Model.UI
 
                 //--- Channel
                 Render.SpriteBatch.Draw(Render.texEmptyGradient, recChannel, Context.Map.Channels[i].Color);
+                //---
+
+                //--- Affichage des ségments de temps
+                for (int s = 0; s < listTimeSegment.Count; s++)
+                {
+                    float x = listTimeSegment[s] - elapsedMs;
+                    int width = 1;
+
+                    if (s % 4 == 0)
+                        width = 5;
+
+                    if (x > channelX && x < (channelX + channelWidth))
+                        Render.SpriteBatch.Draw(Render.texEmptyGradient, new Rectangle((int)x, (int)channelY, width, (int)channelHeight), colorTimeSegmnet);
+                }
                 //---
 
                 if (Context.Map.Channels[i].ListMusician == null || Context.Map.Channels[i].ListMusician.Count == 0)
@@ -149,7 +179,7 @@ namespace TheGrid.Model.UI
                         {
                             double totalMs = Context.Map.Channels[i].ListMusician[j].Partition[k].Time.Subtract(Context.Time).TotalMilliseconds;
 
-                            if (totalMs > -500f && totalMs < timelineDuration)
+                            if (totalMs > -500f * 2 && totalMs < timelineDuration)
                             {
                                 float sizeClip = 1f;
 
@@ -157,7 +187,7 @@ namespace TheGrid.Model.UI
                                     sizeClip = 1f + (float)totalMs / 500f;
 
                                 Render.SpriteBatch.Draw(Render.texEmpty, new Rectangle(
-                                    (int)(channelX + ((1f - sizeClip) * 500f + totalMs) / timelineDuration * channelWidth),
+                                    (int)(channelX + ((1f - sizeClip) * 500f + totalMs) / timelineDuration * channelWidth + posPartBegin),
                                     (int)(channelY + heightPerMusician * fj),
                                     (int)(sizeClip * 500f / timelineDuration * channelWidth),
                                     (int)(heightPerMusician)), Color.Black);
@@ -166,6 +196,9 @@ namespace TheGrid.Model.UI
                     }
                 }
             }
+
+            Render.SpriteBatch.Draw(Render.texTimeMarker, new Vector2(Rec.X + Ribbon.MARGE + 100 - Render.texTimeMarker.Width / 2 + posPartBegin, Rec.Y), Color.White);
+
 
             base.Draw(gameTime);
         }

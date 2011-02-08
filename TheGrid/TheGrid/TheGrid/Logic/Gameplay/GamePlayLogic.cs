@@ -607,7 +607,7 @@ namespace TheGrid.Logic.GamePlay
                     else
                         Context.Map.Channels[i].TypePlaying = TypePlaying.Muted;
                 }
-                else if (prevTypePlaying == TypePlaying.Muted)
+                else if (prevTypePlaying == TypePlaying.Muted && Context.Map.Channels[i].TypePlaying == TypePlaying.Solo)
                 {
                     Context.Map.Channels[i].TypePlaying = TypePlaying.Playing;
                 }
