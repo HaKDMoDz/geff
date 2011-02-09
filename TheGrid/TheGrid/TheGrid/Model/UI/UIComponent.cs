@@ -23,10 +23,11 @@ namespace TheGrid.Model.UI
         public bool Alive { get; set; }
         public List<UIComponent> ListUIChildren { get; set; }
         public UIComponent UIDependency { get; set; }
+        public Object Tag { get; set; }
 
-        public virtual Rectangle Rec {get ;set;}
+        public virtual Rectangle Rec { get; set; }
 
-        public virtual void UpdateUIDependency(GameTime gameTime){}
+        public virtual void UpdateUIDependency(GameTime gameTime) { }
 
         public virtual void Update(GameTime gameTime)
         {
@@ -34,9 +35,11 @@ namespace TheGrid.Model.UI
             {
                 ListUIChildren.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
 
-                foreach (UIComponent uiComponent in ListUIChildren)
+                for (int i = 0; i < ListUIChildren.Count; i++)
                 {
-                    if (uiComponent.Alive && uiComponent.Visible) 
+                    UIComponent uiComponent = ListUIChildren[i];
+
+                    if (uiComponent.Alive && uiComponent.Visible)
                         uiComponent.Update(gameTime);
                 }
             }

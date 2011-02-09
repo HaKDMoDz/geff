@@ -15,6 +15,7 @@ namespace TheGrid.Logic.Render
     {
         public SpriteBatch SpriteBatch;
         public SpriteFont FontMenu { get; set; }
+        public SpriteFont FontText { get; set; }
         public GameEngine GameEngine { get; set; }
         public GraphicsDevice GraphicsDevice { get { return GameEngine.GraphicsDevice; } }
 
@@ -90,6 +91,7 @@ namespace TheGrid.Logic.Render
 
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
+            FontText = GameEngine.Content.Load<SpriteFont>(@"Font\FontText");
 
             texHexa2D = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D");
             texHexa2DClip = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D_Clip");

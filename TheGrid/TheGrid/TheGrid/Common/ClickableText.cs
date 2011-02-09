@@ -45,10 +45,14 @@ namespace TheGrid.Common
         public ClickableText(UILogic uiLogic, TimeSpan creationTime, string spriteFontMouseIn, string spriteFontMouseOut, string text, Vector2 position)
             : base(uiLogic, creationTime)
         {
-            this._spriteFontMouseIn = uiLogic.GameEngine.Content.Load<SpriteFont>(@"Content\Font\" + spriteFontMouseIn);
-            this._spriteFontMouseOut = uiLogic.GameEngine.Content.Load<SpriteFont>(@"Content\Font\" + spriteFontMouseOut);
+            this._spriteFontMouseIn = uiLogic.GameEngine.Content.Load<SpriteFont>(@"Font\" + spriteFontMouseIn);
+            this._spriteFontMouseOut = uiLogic.GameEngine.Content.Load<SpriteFont>(@"Font\" + spriteFontMouseOut);
             this._text = text;
             this._position = position;
+            this.Rec = new Rectangle((int)this.Position.X, (int)this.Position.Y, (int)this._spriteFontMouseIn.MeasureString(text).X, (int)this._spriteFontMouseIn.MeasureString(text).Y);
+
+            this.Alive = true;
+            this.Visible = true;
         }
 
         public override void Update(GameTime gameTime)

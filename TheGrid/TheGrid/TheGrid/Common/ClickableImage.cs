@@ -18,7 +18,6 @@ namespace TheGrid.Common
         private bool isIn = false;
         private ButtonState leftMouseButtonState = ButtonState.Released;
         public bool IsOn = false;
-        public Object Tag;
         public Color Color;
         public string Name { get; set; }
 
@@ -51,6 +50,7 @@ namespace TheGrid.Common
             this._textureMouseOut = textureMouseOut;
             this.Position = position;
             this.Color = Color.White;
+            this.Rec = new Rectangle((int)this.Position.X,(int) this.Position.Y, this._textureMouseIn.Width, this._textureMouseIn.Height);
 
             this.Alive = true;
             this.Visible = true;

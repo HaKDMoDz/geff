@@ -14,8 +14,9 @@ namespace TheGrid.Model.UI
     {
         private Ribbon ribbon;
         private List<float> listTimeSegment;
-        private float timelineDuration = 1000f * 20;
+        private float timelineDuration = 1000f * 10;
         private Color colorTimeSegmnet = new Color(0.3f, 0.3f, 0.3f, 0.4f);
+        private float measureWidth = 5f;
 
         public Partition(Ribbon ribbon, UILogic uiLogic, TimeSpan creationTime)
             : base(uiLogic, creationTime)
@@ -41,8 +42,8 @@ namespace TheGrid.Model.UI
 
                 float channelY = (float)Rec.Y + channelHeight * fi;
 
-                ClickableImage imgMuteChannel = new ClickableImage(UI, creationTime, "MuteChannel" + i.ToString(), Render.texMuteChannel, Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY - Ribbon.MARGE + Render.texSoloChannel.Height / 2));
-                ClickableImage imgSoloChannel = new ClickableImage(UI, creationTime, "SoloChannel" + i.ToString(), Render.texSoloChannel, Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY - Ribbon.MARGE + Render.texMuteChannel.Height / 2));
+                ClickableImage imgMuteChannel = new ClickableImage(UI, creationTime, "MuteChannel" + i.ToString(), Render.texMuteChannel, Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY - channelHeight/2 + Render.texSoloChannel.Height / 2));
+                ClickableImage imgSoloChannel = new ClickableImage(UI, creationTime, "SoloChannel" + i.ToString(), Render.texSoloChannel, Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY - channelHeight/2 + Render.texMuteChannel.Height / 2));
 
                 imgMuteChannel.Tag = i;
                 imgSoloChannel.Tag = i;
@@ -127,8 +128,10 @@ namespace TheGrid.Model.UI
             float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
             float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
             float posPartBegin = (Rec.Width - 100 - Ribbon.MARGE) * 0.1f;
+            float timePartBegin = (posPartBegin / channelWidth) * timelineDuration;
+
             float channelX = Rec.X + Ribbon.MARGE + 100;
-            int elapsedMs = (int)(((float)Context.Time.TotalMilliseconds * channelWidth) / timelineDuration);
+            int elapsedTimeWidth = (int)(((float)Context.Time.TotalMilliseconds * channelWidth) / timelineDuration);
 
             for (int i = 1; i < Context.Map.Channels.Count; i++)
             {
@@ -148,19 +151,20 @@ namespace TheGrid.Model.UI
 
                 //--- Channel
                 Render.SpriteBatch.Draw(Render.texEmptyGradient, recChannel, Context.Map.Channels[i].Color);
+                //Render.SpriteBatch.Draw(Render.texEmptyGradient, recChannel, new Color(0.1f,0.1f,0.1f));
                 //---
 
                 //--- Affichage des ségments de temps
                 for (int s = 0; s < listTimeSegment.Count; s++)
                 {
-                    float x = listTimeSegment[s] - elapsedMs;
+                    float x = listTimeSegment[s] - elapsedTimeWidth;
                     int width = 1;
 
                     if (s % 4 == 0)
-                        width = 5;
+                        width = (int)measureWidth;
 
-                    if (x > channelX && x < (channelX + channelWidth))
-                        Render.SpriteBatch.Draw(Render.texEmptyGradient, new Rectangle((int)x, (int)channelY, width, (int)channelHeight), colorTimeSegmnet);
+                    if (x + posPartBegin > channelX && x + posPartBegin < (channelX + channelWidth))
+                        Render.SpriteBatch.Draw(Render.texEmptyGradient, new Rectangle((int)(x+posPartBegin), (int)channelY, width, (int)channelHeight), colorTimeSegmnet);
                 }
                 //---
 
@@ -177,20 +181,40 @@ namespace TheGrid.Model.UI
                         //if (Context.Map.Channels[i].ListMusician[j].Partition[k].Instrument != null)
                         if (Context.Map.Channels[i].ListMusician[j].Partition[k].Value.Clip != null)
                         {
-                            double totalMs = Context.Map.Channels[i].ListMusician[j].Partition[k].Time.Subtract(Context.Time).TotalMilliseconds;
+                            float totalMs = (float)Context.Map.Channels[i].ListMusician[j].Partition[k].Time.Subtract(Context.Time).TotalMilliseconds;
 
-                            if (totalMs > -500f * 2 && totalMs < timelineDuration)
+                            if (totalMs > -timePartBegin-500f && totalMs < timelineDuration)
                             {
                                 float sizeClip = 1f;
 
-                                if (totalMs < 0f)
-                                    sizeClip = 1f + (float)totalMs / 500f;
+                                float partPos = (float)Context.Map.Channels[i].ListMusician[j].Partition[k].Time.TotalMilliseconds * channelWidth / timelineDuration;
+                                float timePos = (float)Context.Time.TotalMilliseconds * channelWidth / timelineDuration;
+                                
+                                float musicianX = (int)channelX + (int)partPos-(int)timePos + (int)posPartBegin;
+                                float musicianWidth = 500f / timelineDuration * channelWidth;
+
+                                if (totalMs < -timePartBegin)
+                                {
+                                    sizeClip = 1f + (totalMs + timePartBegin) / 500f;
+                                    musicianX = (int)channelX + (int)(((1f - sizeClip) * 500f + totalMs) / timelineDuration * channelWidth) + (int)posPartBegin;
+                                    musicianWidth = sizeClip * 500f / timelineDuration * channelWidth;
+                                }
+                                else if (totalMs+timePartBegin > timelineDuration - 500f)
+                                {
+                                    musicianWidth = channelWidth - musicianX+channelX;
+                                }
+
+                                if ((Context.Map.Channels[i].ListMusician[j].Partition[k].Time.TotalMilliseconds / 500f) % 4 == 0)
+                                {
+                                    musicianX += measureWidth;
+                                    musicianWidth -= measureWidth;
+                                }
 
                                 Render.SpriteBatch.Draw(Render.texEmpty, new Rectangle(
-                                    (int)(channelX + ((1f - sizeClip) * 500f + totalMs) / timelineDuration * channelWidth + posPartBegin),
-                                    (int)(channelY + heightPerMusician * fj),
-                                    (int)(sizeClip * 500f / timelineDuration * channelWidth),
-                                    (int)(heightPerMusician)), Color.Black);
+                                   (int)(musicianX+1),
+                                   (int)(channelY + heightPerMusician * fj),
+                                   (int)(musicianWidth-1),
+                                   (int)(heightPerMusician-1)), Color.Black);
                             }
                         }
                     }

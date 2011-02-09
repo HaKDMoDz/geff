@@ -5,6 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using TheGrid.Logic.UI;
 using TheGrid.Common;
+using Microsoft.Xna.Framework.Input;
+using System.Windows.Forms;
+using System.IO;
 
 namespace TheGrid.Model.UI
 {
@@ -16,6 +19,8 @@ namespace TheGrid.Model.UI
         private ClickableImage imgPlay;
         private ClickableImage imgPause;
         private ClickableImage imgStop;
+        private ClickableText txtLoadMap;
+        private ClickableText txtSaveMap;
 
         public Ribbon(UILogic uiLogic, TimeSpan creationTime)
             : base(uiLogic, creationTime)
@@ -40,22 +45,41 @@ namespace TheGrid.Model.UI
             imgPause.ClickImage += new ClickableImage.ClickImageHandler(imgPause_ClickImage);
             imgStop.ClickImage += new ClickableImage.ClickImageHandler(imgStop_ClickImage);
 
+            txtLoadMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "FontMenu", "Load", new Vector2(imgStop.Rec.Right + MARGE, Partition.Rec.Y));
+            txtSaveMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "FontMenu", "Save", new Vector2(imgStop.Rec.Right + MARGE, txtLoadMap.Rec.Bottom + MARGE));
+
+            txtLoadMap.ClickText += new ClickableText.ClickTextHandler(txtLoadMap_ClickText);
+            txtSaveMap.ClickText += new ClickableText.ClickTextHandler(txtSaveMap_ClickText);
+
+            this.ListUIChildren.Add(txtLoadMap);
+            this.ListUIChildren.Add(txtSaveMap);
+
             this.ListUIChildren.Add(imgPlay);
             this.ListUIChildren.Add(imgPause);
             this.ListUIChildren.Add(imgStop);
         }
 
-        void imgPlay_ClickImage(ClickableImage image, Microsoft.Xna.Framework.Input.MouseState mouseState, GameTime gameTime)
+        void txtLoadMap_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
+        {
+            ListFile listFile = new ListFile(this.UI, gameTime.TotalGameTime, Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Level\"));
+            this.ListUIChildren.Add(listFile);
+        }
+
+        void txtSaveMap_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
+        {
+        }
+
+        void imgPlay_ClickImage(ClickableImage image, MouseState mouseState, GameTime gameTime)
         {
             GamePlay.Play();
         }
 
-        void imgPause_ClickImage(ClickableImage image, Microsoft.Xna.Framework.Input.MouseState mouseState, GameTime gameTime)
+        void imgPause_ClickImage(ClickableImage image, MouseState mouseState, GameTime gameTime)
         {
             GamePlay.Pause();
         }
 
-        void imgStop_ClickImage(ClickableImage image, Microsoft.Xna.Framework.Input.MouseState mouseState, GameTime gameTime)
+        void imgStop_ClickImage(ClickableImage image, MouseState mouseState, GameTime gameTime)
         {
             GamePlay.Stop();
         }

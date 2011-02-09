@@ -38,7 +38,7 @@ namespace TheGrid.Common
                     cell.Channel = map.Channels.Find(c => c.Name == cell.Channel.Name);
                 }
 
-                if (cell.Clip != null && cell.Clip.Instrument is InstrumentStart)
+                if (cell.Channel != null && cell.Clip != null && cell.Clip.Instrument is InstrumentStart)
                     cell.Channel.CellStart = cell;
             }
             //---
