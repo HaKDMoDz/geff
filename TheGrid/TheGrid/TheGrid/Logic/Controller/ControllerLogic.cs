@@ -19,8 +19,6 @@ namespace TheGrid.Logic.Controller
         private Keys leftKey = Keys.Q;
         private Keys rightKey = Keys.D;
 
-        private int prevMouseWheel = 0;
-
         public MouseState mouseState;
         public KeyboardState keyBoardState = Keyboard.GetState();
         public GamePadState gamePadState;
@@ -66,7 +64,7 @@ namespace TheGrid.Logic.Controller
 
             KeyManager keyExit = AddKey(Keys.Escape);
             KeyManager keyPlayPauseMusician = AddKey(Keys.P);
-            KeyManager keyStopMusician = AddKey(Keys.End);
+            KeyManager keyStopMusician = AddKey(Keys.Enter);
 
             KeyManager keyForward = AddKey(Keys.Right);
             KeyManager keyBackward = AddKey(Keys.Left);
@@ -120,8 +118,8 @@ namespace TheGrid.Logic.Controller
             GameEngine.Render.CameraPosition.Z -= 0.5f;
             GameEngine.Render.updateViewScreen = true;
 
-            if (GameEngine.Render.CameraPosition.Z > RenderLogic.ZOOM_OUT_MAX)
-                GameEngine.Render.CameraPosition.Z = RenderLogic.ZOOM_OUT_MAX;
+            if (GameEngine.Render.CameraPosition.Z < RenderLogic.ZOOM_IN_MAX)
+                GameEngine.Render.CameraPosition.Z = RenderLogic.ZOOM_IN_MAX;
         }
 
         void keyDown_KeyPressed(Keys key, GameTime gameTime)
@@ -152,11 +150,6 @@ namespace TheGrid.Logic.Controller
         void keyNewMap_KeyReleased(Keys key, GameTime gameTime)
         {
             Context.Map.CreateGrid();
-        }
-
-        void keySaveMap_KeyReleased(Keys key, GameTime gameTime)
-        {
-            FileSystem.SaveLevel(Context.Map, "Test-" + Guid.NewGuid().ToString());
         }
 
         void keyBackward_KeyPressed(Keys key, GameTime gameTime)
@@ -203,11 +196,6 @@ namespace TheGrid.Logic.Controller
                 GameEngine.GamePlay.Pause();
             else
                 GameEngine.GamePlay.Play();
-        }
-
-        void keyEvaluateMusicianPartition_KeyReleased(Keys key, GameTime gameTime)
-        {
-            GameEngine.GamePlay.EvaluateMuscianGrid(gameTime.TotalGameTime);
         }
         #endregion
 

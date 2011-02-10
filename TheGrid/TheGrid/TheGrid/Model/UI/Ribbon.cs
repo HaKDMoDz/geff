@@ -19,6 +19,7 @@ namespace TheGrid.Model.UI
         private ClickableImage imgPlay;
         private ClickableImage imgPause;
         private ClickableImage imgStop;
+        private ClickableText txtNewMap;
         private ClickableText txtLoadMap;
         private ClickableText txtSaveMap;
 
@@ -45,18 +46,27 @@ namespace TheGrid.Model.UI
             imgPause.ClickImage += new ClickableImage.ClickImageHandler(imgPause_ClickImage);
             imgStop.ClickImage += new ClickableImage.ClickImageHandler(imgStop_ClickImage);
 
-            txtLoadMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "Load", new Vector2(imgStop.Rec.Right + MARGE, Partition.Rec.Y), Color.White, Color.LightBlue);
+            txtNewMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "New", new Vector2(imgStop.Rec.Right + MARGE, Partition.Rec.Y), Color.White, Color.LightBlue);
+            txtLoadMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "Load", new Vector2(imgStop.Rec.Right + MARGE, txtNewMap.Rec.Bottom + MARGE), Color.White, Color.LightBlue);
             txtSaveMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "Save", new Vector2(imgStop.Rec.Right + MARGE, txtLoadMap.Rec.Bottom + MARGE), Color.White, Color.LightBlue);
 
+            txtNewMap.ClickText += new ClickableText.ClickTextHandler(txtNewMap_ClickText);
             txtLoadMap.ClickText += new ClickableText.ClickTextHandler(txtLoadMap_ClickText);
             txtSaveMap.ClickText += new ClickableText.ClickTextHandler(txtSaveMap_ClickText);
 
+            this.ListUIChildren.Add(txtNewMap);
             this.ListUIChildren.Add(txtLoadMap);
             this.ListUIChildren.Add(txtSaveMap);
 
             this.ListUIChildren.Add(imgPlay);
             this.ListUIChildren.Add(imgPause);
             this.ListUIChildren.Add(imgStop);
+        }
+
+        void txtNewMap_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
+        {
+            ListLibrary listLibrary = new ListLibrary(this.UI, gameTime.TotalGameTime);
+            this.ListUIChildren.Add(listLibrary);
         }
 
         void txtLoadMap_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
@@ -67,6 +77,14 @@ namespace TheGrid.Model.UI
 
         void txtSaveMap_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
         {
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.InitialDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Level\");
+            dlg.Filter = "Niveau The Grid (*.xml)|*.xml";
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                FileSystem.SaveLevel(Context.Map, Path.GetFileNameWithoutExtension(dlg.FileName));
+            }
         }
 
         void imgPlay_ClickImage(ClickableImage image, MouseState mouseState, GameTime gameTime)

@@ -76,11 +76,6 @@ namespace TheGrid.Model
             {
                 cell.Neighbourghs = new Cell[6];
 
-                if (cell.IndexPosition == 20)
-                {
-                    int a = 0;
-                }
-
                 if (cell.Coord.Y % 2 == 1)
                 {
                     cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);

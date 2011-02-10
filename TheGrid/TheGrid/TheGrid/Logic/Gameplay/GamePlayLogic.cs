@@ -10,6 +10,8 @@ using TheGrid.Model.Instrument;
 using System.Xml.Serialization;
 using System.Xml;
 using TheGrid.Model.UI;
+using System.IO;
+using System.Windows.Forms;
 
 namespace TheGrid.Logic.GamePlay
 {
@@ -35,6 +37,29 @@ namespace TheGrid.Logic.GamePlay
             Context.Map = FileSystem.LoadLevel("Test2");
             EvaluateMuscianGrid(TimeSpan.Zero);
             Stop();
+        }
+
+        public void NewMap(string libraryName)
+        {
+            InitializeMap();
+            
+            string libraryDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Sound\Library", libraryName);
+
+            foreach (string channelDirectory in Directory.GetDirectories(libraryDirectory))
+            {
+                Channel channel = Context.Map.Channels.Find(c => c.Name.ToUpper() == Path.GetFileName(channelDirectory).ToUpper());
+
+                if (channel != null)
+                {
+                    foreach (string sampleFileName in Directory.GetFiles(channelDirectory))
+                    {
+                        Sample sample = new Sample() { FileName = sampleFileName };
+                        channel.ListSample.Add(sample);
+                    }
+                }
+            }
+
+            Context.Map.Channels.RemoveAll(c => c.ListSample.Count == 0 && c.Name != "Empty");
         }
 
         private void InitializeMap()
@@ -234,8 +259,8 @@ namespace TheGrid.Logic.GamePlay
             Context.Map.Channels = new List<Channel>();
 
             Context.Map.Channels.Add(new Channel("Empty", new Color(0.3f, 0.3f, 0.3f)));
-            Context.Map.Channels.Add(new Channel("Drums", Color.Red));
-            Context.Map.Channels.Add(new Channel("Keys", Color.Blue));
+            Context.Map.Channels.Add(new Channel("Drum", Color.Red));
+            Context.Map.Channels.Add(new Channel("Key", Color.Blue));
             Context.Map.Channels.Add(new Channel("Guitar", Color.Yellow));
             Context.Map.Channels.Add(new Channel("Bass", Color.Purple));
         }

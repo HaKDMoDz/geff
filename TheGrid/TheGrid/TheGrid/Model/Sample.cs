@@ -8,5 +8,6 @@ namespace TheGrid.Model
     public class Sample
     {
         public Channel Channel { get; set; }
+        public String FileName { get; set; }
     }
 }
