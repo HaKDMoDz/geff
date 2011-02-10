@@ -45,8 +45,8 @@ namespace TheGrid.Model.UI
             imgPause.ClickImage += new ClickableImage.ClickImageHandler(imgPause_ClickImage);
             imgStop.ClickImage += new ClickableImage.ClickImageHandler(imgStop_ClickImage);
 
-            txtLoadMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "FontMenu", "Load", new Vector2(imgStop.Rec.Right + MARGE, Partition.Rec.Y));
-            txtSaveMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "FontMenu", "Save", new Vector2(imgStop.Rec.Right + MARGE, txtLoadMap.Rec.Bottom + MARGE));
+            txtLoadMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "Load", new Vector2(imgStop.Rec.Right + MARGE, Partition.Rec.Y), Color.White, Color.LightBlue);
+            txtSaveMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "Save", new Vector2(imgStop.Rec.Right + MARGE, txtLoadMap.Rec.Bottom + MARGE), Color.White, Color.LightBlue);
 
             txtLoadMap.ClickText += new ClickableText.ClickTextHandler(txtLoadMap_ClickText);
             txtSaveMap.ClickText += new ClickableText.ClickTextHandler(txtSaveMap_ClickText);

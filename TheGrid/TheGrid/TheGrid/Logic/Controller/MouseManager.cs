@@ -12,14 +12,17 @@ namespace TheGrid.Logic.Controller
         private ButtonState mouseButtonState;
         private MouseButtons mouseButton;
         private Point mousePosition;
+        private int mouseWheelValue;
 
         public delegate void MouseFirstPressedHandler(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime);
         public delegate void MousePressedHandler(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance);
         public delegate void MouseReleasedHandler(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance);
+        public delegate void MouseWheelChangedHandler(MouseState mouseState, GameTime gameTime, int prevMousewheel);
 
         public event MousePressedHandler MousePressed;
         public event MouseFirstPressedHandler MouseFirstPressed;
         public event MouseReleasedHandler MouseReleased;
+        public event MouseWheelChangedHandler MouseWheelChanged;
 
         public MouseManager(MouseButtons mouseButton)
         {
@@ -29,41 +32,53 @@ namespace TheGrid.Logic.Controller
         public void Update(MouseState mouseState, GameTime gameTime)
         {
             bool pressed = false;
+            int newMouseWheelValue = 0;
 
             switch (mouseButton)
-	        {
-		        case MouseButtons.LeftButton:
+            {
+                case MouseButtons.LeftButton:
                     pressed = mouseState.LeftButton == ButtonState.Pressed;
-                 break;
+                    break;
                 case MouseButtons.RightButton:
                     pressed = mouseState.RightButton == ButtonState.Pressed;
-                 break;
+                    break;
                 case MouseButtons.MiddleButton:
                     pressed = mouseState.MiddleButton == ButtonState.Pressed;
-                 break;
+                    break;
+                case MouseButtons.Wheel:
+                    newMouseWheelValue = mouseState.ScrollWheelValue;
+                    break;
                 default:
-                 break;
-	        }
+                    break;
+            }
 
-            if (mouseButtonState == ButtonState.Released  && pressed)
+            if (newMouseWheelValue != mouseWheelValue)
+            {
+                if (MouseWheelChanged != null)
+                    MouseWheelChanged(mouseState, gameTime, mouseWheelValue);
+
+                mouseWheelValue = newMouseWheelValue;
+            }
+
+            if (mouseButtonState == ButtonState.Released && pressed)
             {
                 mousePosition = new Point(mouseState.X, mouseState.Y);
 
-                if (MouseFirstPressed != null) 
+                if (MouseFirstPressed != null)
                     MouseFirstPressed(mouseButton, mouseState, gameTime);
             }
-            else if(mouseButtonState == ButtonState.Pressed  && pressed)
+            else if (mouseButtonState == ButtonState.Pressed && pressed)
             {
                 if (MousePressed != null)
                     MousePressed(mouseButton, mouseState, gameTime, new Point(mousePosition.X - mouseState.X, mousePosition.Y - mouseState.Y));
             }
-            else if(mouseButtonState == ButtonState.Pressed  && !pressed)
+            else if (mouseButtonState == ButtonState.Pressed && !pressed)
             {
-                if(MouseReleased != null)
+                if (MouseReleased != null)
                     MouseReleased(mouseButton, mouseState, gameTime, new Point(mousePosition.X - mouseState.X, mousePosition.Y - mouseState.Y));
             }
 
-            mouseButtonState = pressed?ButtonState.Pressed:ButtonState.Released;
+            mouseButtonState = pressed ? ButtonState.Pressed : ButtonState.Released;
         }
     }
 
@@ -71,6 +86,7 @@ namespace TheGrid.Logic.Controller
     {
         LeftButton,
         RightButton,
-        MiddleButton
+        MiddleButton,
+        Wheel
     }
 }

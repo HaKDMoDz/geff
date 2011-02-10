@@ -13,6 +13,9 @@ namespace TheGrid.Logic.Render
 {
     public class RenderLogic
     {
+        public const float ZOOM_IN_MAX = -30f;
+        public const float ZOOM_OUT_MAX = -1f;
+
         public SpriteBatch SpriteBatch;
         public SpriteFont FontMenu { get; set; }
         public SpriteFont FontText { get; set; }
@@ -169,6 +172,17 @@ namespace TheGrid.Logic.Render
 
             //float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             //effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
+        }
+
+
+        public void MoveCamera(Vector2 translation, GameTime gameTime)
+        {
+            float deltaTranslation = GameEngine.Render.CameraPosition.Z * ZOOM_OUT_MAX * 0.5f;
+
+            Vector2 vecTempTranslation = deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * translation;
+
+            GameEngine.Render.CameraPosition += Tools.GetVector3(vecTempTranslation);
+            GameEngine.Render.CameraTarget += Tools.GetVector3(vecTempTranslation);
         }
 
         /// <summary>

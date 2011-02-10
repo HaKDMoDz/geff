@@ -116,9 +116,7 @@ namespace TheGrid
         {
             if (IsActive)
             {
-                Controller.UpdateBegin(gameTime);
-
-                Controller.UpdateEnd(gameTime);
+                Controller.Update(gameTime);
 
                 UI.Update(gameTime);
             }

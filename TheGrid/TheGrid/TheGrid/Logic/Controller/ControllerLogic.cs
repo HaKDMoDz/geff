@@ -7,16 +7,12 @@ using Microsoft.Xna.Framework;
 using TheGrid.Common;
 using TheGrid.Model;
 using TheGrid.Model.UI.Menu;
+using TheGrid.Logic.Render;
 
 namespace TheGrid.Logic.Controller
 {
     public class ControllerLogic
     {
-        #region Constants
-        private const float ZOOM_IN_MAX = -30f;
-        private const float ZOOM_OUT_MAX = -1f;
-        #endregion
-
         #region Keyboard and Mouse
         private Keys upKey = Keys.Z;
         private Keys downKey = Keys.S;
@@ -32,71 +28,130 @@ namespace TheGrid.Logic.Controller
         public Vector2 mousePosition;
         public Point mousePositionPoint;
 
-        private bool isPKeyPressed = false;
-        private bool isSKeyPressed = false;
-
-        private KeyManager keyLeft;
-        private KeyManager keyRight;
-        private KeyManager keyUp;
-        private KeyManager keyDown;
-        private KeyManager keyNewMap;
-        private KeyManager keySaveMap;
-        private KeyManager keyEvaluateMusicianPartition;
-        private KeyManager keyPlayPauseMusician;
-        private KeyManager keyStopMusician;
-
-        private KeyManager keyForward;
-        private KeyManager keyBackward;
-        private KeyManager keySpeedUp;
-        private KeyManager keySpeedDown;
-
-        private MouseManager mouseLeftButton;
-        private MouseManager mouseMiddleButton;
-        private MouseManager mouseRightButton;
-
         private float prevRightStickLength;
         private Vector3 prevCameraPosition = Vector3.Zero;
         #endregion
 
         private GameEngine GameEngine { get; set; }
 
+        private List<KeyManager> ListKeyManager = new List<KeyManager>();
+        private List<MouseManager> ListMouseManager = new List<MouseManager>();
+
+        private KeyManager AddKey(Keys keys)
+        {
+            KeyManager keyManager = new KeyManager(keys);
+            ListKeyManager.Add(keyManager);
+
+            return keyManager;
+        }
+
+        private MouseManager AddMouse(MouseButtons mouseButton)
+        {
+            MouseManager mouseManager = new MouseManager(mouseButton);
+            ListMouseManager.Add(mouseManager);
+
+            return mouseManager;
+        }
+
         public ControllerLogic(GameEngine gameEngine)
         {
             this.GameEngine = gameEngine;
 
-            this.keyLeft = new KeyManager(leftKey);
-            this.keyNewMap = new KeyManager(Keys.N);
-            this.keySaveMap = new KeyManager(Keys.S);
-            this.keyEvaluateMusicianPartition = new KeyManager(Keys.C);
-            this.keyPlayPauseMusician = new KeyManager(Keys.P);
-            this.keyStopMusician = new KeyManager(Keys.Enter);
-            this.keyForward = new KeyManager(Keys.Right);
-            this.keyBackward = new KeyManager(Keys.Left);
-            this.keySpeedUp = new KeyManager(Keys.Down);
-            this.keySpeedDown = new KeyManager(Keys.Up);
+            KeyManager keyLeft = AddKey(leftKey);
+            KeyManager keyRight = AddKey(rightKey);
+            KeyManager keyUp = AddKey(upKey);
+            KeyManager keyDown = AddKey(downKey);
+            KeyManager keyZoomIn = AddKey(Keys.PageDown);
+            KeyManager keyZoomOut = AddKey(Keys.PageUp);
 
-            this.keyNewMap.KeyReleased += new KeyManager.KeyReleasedHandler(keyNewMap_KeyReleased);
-            this.keySaveMap.KeyReleased += new KeyManager.KeyReleasedHandler(keySaveMap_KeyReleased);
-            this.keyEvaluateMusicianPartition.KeyReleased += new KeyManager.KeyReleasedHandler(keyEvaluateMusicianPartition_KeyReleased);
-            this.keyPlayPauseMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPlayPauseMusician_KeyReleased);
-            this.keyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopMusician_KeyReleased);
+            KeyManager keyExit = AddKey(Keys.Escape);
+            KeyManager keyPlayPauseMusician = AddKey(Keys.P);
+            KeyManager keyStopMusician = AddKey(Keys.End);
 
-            this.keyForward.KeyPressed += new KeyManager.KeyPressedHandler(keyForward_KeyPressed);
-            this.keyForward.KeyReleased += new KeyManager.KeyReleasedHandler(keyForward_KeyReleased);
-            this.keyBackward.KeyPressed += new KeyManager.KeyPressedHandler(keyBackward_KeyPressed);
-            this.keyBackward.KeyReleased += new KeyManager.KeyReleasedHandler(keyBackward_KeyReleased);
-            this.keySpeedUp.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedUp_KeyPressed);
-            this.keySpeedDown.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedDown_KeyPressed);
+            KeyManager keyForward = AddKey(Keys.Right);
+            KeyManager keyBackward = AddKey(Keys.Left);
+            KeyManager keySpeedUp = AddKey(Keys.Down);
+            KeyManager keySpeedDown = AddKey(Keys.Up);
 
-            this.mouseLeftButton = new MouseManager(MouseButtons.LeftButton);
-            this.mouseMiddleButton = new MouseManager(MouseButtons.RightButton);
-            this.mouseRightButton = new MouseManager(MouseButtons.RightButton);
+            keyLeft.KeyPressed += new KeyManager.KeyPressedHandler(keyLeft_KeyPressed);
+            keyRight.KeyPressed += new KeyManager.KeyPressedHandler(keyRight_KeyPressed);
+            keyUp.KeyPressed += new KeyManager.KeyPressedHandler(keyUp_KeyPressed);
+            keyDown.KeyPressed += new KeyManager.KeyPressedHandler(keyDown_KeyPressed);
+            keyZoomIn.KeyPressed += new KeyManager.KeyPressedHandler(keyZoomIn_KeyPressed);
+            keyZoomOut.KeyPressed += new KeyManager.KeyPressedHandler(keyZoomOut_KeyPressed);
 
-            this.mouseRightButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseRightButton_MouseFirstPressed);
-            this.mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseRightButton_MousePressed);
-            this.mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseRightButton_MouseReleased);
+            keyExit.KeyReleased += new KeyManager.KeyReleasedHandler(keyExit_KeyReleased);
+            keyPlayPauseMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPlayPauseMusician_KeyReleased);
+            keyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopMusician_KeyReleased);
 
-            this.mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
+            keyForward.KeyPressed += new KeyManager.KeyPressedHandler(keyForward_KeyPressed);
+            keyForward.KeyReleased += new KeyManager.KeyReleasedHandler(keyForward_KeyReleased);
+            keyBackward.KeyPressed += new KeyManager.KeyPressedHandler(keyBackward_KeyPressed);
+            keyBackward.KeyReleased += new KeyManager.KeyReleasedHandler(keyBackward_KeyReleased);
+            keySpeedUp.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedUp_KeyPressed);
+            keySpeedDown.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedDown_KeyPressed);
+
+            MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
+            //MouseManager mouseMiddleButton = AddMouse(MouseButtons.MiddleButton);
+            MouseManager mouseRightButton = AddMouse(MouseButtons.RightButton);
+            MouseManager mouseWheel = AddMouse(MouseButtons.Wheel);
+
+            mouseRightButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseRightButton_MouseFirstPressed);
+            mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseRightButton_MousePressed);
+            mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseRightButton_MouseReleased);
+
+            mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
+
+            mouseWheel.MouseWheelChanged += new MouseManager.MouseWheelChangedHandler(mouseWheel_MouseWheelChanged);
+        }
+
+        #region Évènement clavier
+        void keyZoomOut_KeyPressed(Keys key, GameTime gameTime)
+        {
+            GameEngine.Render.CameraPosition.Z += 0.5f;
+            GameEngine.Render.updateViewScreen = true;
+
+            if (GameEngine.Render.CameraPosition.Z > RenderLogic.ZOOM_OUT_MAX)
+                GameEngine.Render.CameraPosition.Z = RenderLogic.ZOOM_OUT_MAX;
+        }
+
+        void keyZoomIn_KeyPressed(Keys key, GameTime gameTime)
+        {
+            GameEngine.Render.CameraPosition.Z -= 0.5f;
+            GameEngine.Render.updateViewScreen = true;
+
+            if (GameEngine.Render.CameraPosition.Z > RenderLogic.ZOOM_OUT_MAX)
+                GameEngine.Render.CameraPosition.Z = RenderLogic.ZOOM_OUT_MAX;
+        }
+
+        void keyDown_KeyPressed(Keys key, GameTime gameTime)
+        {
+            GameEngine.Render.MoveCamera(Vector2.UnitY, gameTime);
+        }
+
+        void keyUp_KeyPressed(Keys key, GameTime gameTime)
+        {
+            GameEngine.Render.MoveCamera(-Vector2.UnitY, gameTime);
+        }
+
+        void keyRight_KeyPressed(Keys key, GameTime gameTime)
+        {
+            GameEngine.Render.MoveCamera(Vector2.UnitX, gameTime);
+        }
+
+        void keyLeft_KeyPressed(Keys key, GameTime gameTime)
+        {
+            GameEngine.Render.MoveCamera(-Vector2.UnitX, gameTime);
+        }
+
+        void keyExit_KeyReleased(Keys key, GameTime gameTime)
+        {
+            GameEngine.Exit();
+        }
+
+        void keyNewMap_KeyReleased(Keys key, GameTime gameTime)
+        {
+            Context.Map.CreateGrid();
         }
 
         void keySaveMap_KeyReleased(Keys key, GameTime gameTime)
@@ -144,7 +199,7 @@ namespace TheGrid.Logic.Controller
 
         void keyPlayPauseMusician_KeyReleased(Keys key, GameTime gameTime)
         {
-            if(Context.IsPlaying)
+            if (Context.IsPlaying)
                 GameEngine.GamePlay.Pause();
             else
                 GameEngine.GamePlay.Play();
@@ -154,7 +209,9 @@ namespace TheGrid.Logic.Controller
         {
             GameEngine.GamePlay.EvaluateMuscianGrid(gameTime.TotalGameTime);
         }
+        #endregion
 
+        #region Évènement souris
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
             Menu currentMenu = (Menu)GameEngine.UI.ListUIComponent.Find(ui => ui is Menu);
@@ -212,7 +269,7 @@ namespace TheGrid.Logic.Controller
         {
             if (Tools.Distance(Point.Zero, distance) > 5f)
             {
-                GameEngine.Render.CameraPosition = new Vector3(prevCameraPosition.X, prevCameraPosition.Y, GameEngine.Render.CameraPosition.Z) + new Vector3(distance.X, distance.Y, 0f) * GameEngine.Render.CameraPosition.Z * ZOOM_OUT_MAX;
+                GameEngine.Render.CameraPosition = new Vector3(prevCameraPosition.X, prevCameraPosition.Y, GameEngine.Render.CameraPosition.Z) + new Vector3(distance.X, distance.Y, 0f) * GameEngine.Render.CameraPosition.Z * RenderLogic.ZOOM_OUT_MAX;
                 GameEngine.Render.CameraTarget = new Vector3(GameEngine.Render.CameraPosition.X, GameEngine.Render.CameraPosition.Y, 0f);
             }
         }
@@ -221,8 +278,8 @@ namespace TheGrid.Logic.Controller
         {
             Menu currentMenu = (Menu)GameEngine.UI.ListUIComponent.Find(ui => ui is Menu);
 
-            if (currentMenu != null && 
-                (currentMenu.State == MenuState.Opened || currentMenu.State == MenuState.Opening) && 
+            if (currentMenu != null &&
+                (currentMenu.State == MenuState.Opened || currentMenu.State == MenuState.Opening) &&
                 Tools.Distance(Point.Zero, distance) < 5f)
             {
                 if (currentMenu.ParentMenu != null)
@@ -237,12 +294,28 @@ namespace TheGrid.Logic.Controller
             }
         }
 
-        void keyNewMap_KeyReleased(Keys key, GameTime gameTime)
+        void mouseWheel_MouseWheelChanged(MouseState mouseState, GameTime gameTime, int prevMouseWheel)
         {
-            Context.Map.CreateGrid();
-        }
+            int curMouseWheel = mouseState.ScrollWheelValue;
 
-        public void UpdateBegin(GameTime gameTime)
+            float estimatedZoom = GameEngine.Render.CameraPosition.Z - (float)(prevMouseWheel - curMouseWheel) / 200f;
+
+            if (GameEngine.Render.CameraPosition.Z != estimatedZoom && estimatedZoom > RenderLogic.ZOOM_IN_MAX && estimatedZoom < RenderLogic.ZOOM_OUT_MAX)
+            {
+                GameEngine.Render.CameraPosition.Z = estimatedZoom;
+            }
+
+            if (prevMouseWheel != curMouseWheel)
+            {
+                prevMouseWheel = curMouseWheel;
+            }
+
+            if (GameEngine.Render.CameraPosition.Z > RenderLogic.ZOOM_OUT_MAX)
+                GameEngine.Render.CameraPosition.Z = RenderLogic.ZOOM_OUT_MAX;
+        }
+        #endregion
+
+        public void Update(GameTime gameTime)
         {
             //--- Update Mouse & Keyboard state
             mouseState = Mouse.GetState();
@@ -254,83 +327,16 @@ namespace TheGrid.Logic.Controller
             mousePositionPoint = new Point(mouseState.X, mouseState.Y);
             //---
 
-            //--- Mouse wheel
-            int curMouseWheel = mouseState.ScrollWheelValue;
-
-            float estimatedZoom = GameEngine.Render.CameraPosition.Z - (float)(prevMouseWheel - curMouseWheel) / 200f;
-
-            if (GameEngine.Render.CameraPosition.Z != estimatedZoom && estimatedZoom > ZOOM_IN_MAX && estimatedZoom < ZOOM_OUT_MAX)
+            //--- Key & Mouse Manager
+            foreach (KeyManager keyManager in ListKeyManager)
             {
-                GameEngine.Render.CameraPosition.Z = estimatedZoom;
-                GameEngine.Render.updateViewScreen = true;
+                keyManager.Update(keyBoardState, gameTime);
             }
 
-            if (prevMouseWheel != curMouseWheel)
+            foreach (MouseManager mouseManager in ListMouseManager)
             {
-                prevMouseWheel = curMouseWheel;
+                mouseManager.Update(mouseState, gameTime);
             }
-            //---
-
-            //--- Zoom clavier
-            if (keyBoardState.IsKeyDown(Keys.PageUp))
-            {
-                GameEngine.Render.CameraPosition.Z += 0.5f;
-                GameEngine.Render.updateViewScreen = true;
-            }
-            if (keyBoardState.IsKeyDown(Keys.PageDown))
-            {
-                GameEngine.Render.CameraPosition.Z -= 0.5f;
-                GameEngine.Render.updateViewScreen = true;
-            }
-
-            if (GameEngine.Render.CameraPosition.Z > ZOOM_OUT_MAX)
-                GameEngine.Render.CameraPosition.Z = ZOOM_OUT_MAX;
-            //---
-
-            //--- Keyboard
-            float deltaTranslation = GameEngine.Render.CameraPosition.Z / 200f;
-            Vector2 vecTempTranslation = Vector2.Zero;
-
-            if (deltaTranslation >= 0.5f)
-                deltaTranslation = 0.3f;
-
-            if (keyBoardState.IsKeyDown(Keys.LeftShift))
-                deltaTranslation *= 2;
-
-            if (keyBoardState.IsKeyDown(upKey))
-            {
-                vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * -Vector2.UnitY;
-                GameEngine.Render.updateViewScreen = true;
-            }
-
-            if (keyBoardState.IsKeyDown(downKey))
-            {
-                vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * Vector2.UnitY;
-                GameEngine.Render.updateViewScreen = true;
-            }
-
-            if (keyBoardState.IsKeyDown(rightKey))
-            {
-                vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * -Vector2.UnitX;
-                GameEngine.Render.updateViewScreen = true;
-            }
-
-            if (keyBoardState.IsKeyDown(leftKey))
-            {
-                vecTempTranslation += deltaTranslation * gameTime.ElapsedGameTime.Milliseconds * Vector2.UnitX;
-
-                GameEngine.Render.updateViewScreen = true;
-            }
-
-            keyNewMap.Update(keyBoardState, gameTime);
-            keySaveMap.Update(keyBoardState, gameTime);
-            keyEvaluateMusicianPartition.Update(keyBoardState, gameTime);
-            keyPlayPauseMusician.Update(keyBoardState, gameTime);
-            keyStopMusician.Update(keyBoardState, gameTime);
-            keyForward.Update(keyBoardState, gameTime);
-            keyBackward.Update(keyBoardState, gameTime);
-            keySpeedUp.Update(keyBoardState, gameTime);
-            keySpeedDown.Update(keyBoardState, gameTime);
             //---
 
             //--- Gamepad
@@ -400,48 +406,6 @@ namespace TheGrid.Logic.Controller
                 #endregion
             }
             //---
-
-            //--- Mouse
-            mouseLeftButton.Update(mouseState, gameTime);
-            mouseMiddleButton.Update(mouseState, gameTime);
-            mouseRightButton.Update(mouseState, gameTime);
-            //---
-
-            //---
-            //Menu currentMenu = (Menu)GameEngine.UI.ListUIComponent.Find(ui => ui is Menu);
-            //if (currentMenu != null)
-            //{
-            //    currentMenu.MouseOver(GameEngine, gameTime, mouseState);
-            //}
-            //---
-
-            if (GameEngine.Render.updateViewScreen)
-            {
-                GameEngine.Render.CameraPosition += Tools.GetVector3(vecTempTranslation);
-                GameEngine.Render.CameraTarget += Tools.GetVector3(vecTempTranslation);
-            }
-
-            //--- ScreenShot
-            if (keyBoardState.IsKeyDown(Keys.N))
-            {
-                if (!isSKeyPressed)
-                    isSKeyPressed = true;
-            }
-            else if (isSKeyPressed)
-            {
-                GameEngine.Render.doScreenShot = true;
-                isSKeyPressed = false;
-            }
-            //---
-
-            if (keyBoardState.IsKeyDown(Keys.Space))
-            {
-                this.GameEngine.Exit();
-            }
-        }
-
-        public void UpdateEnd(GameTime gameTime)
-        {
         }
 
         public Cell GetSelectedCell(MouseState mouseState)

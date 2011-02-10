@@ -33,7 +33,7 @@ namespace TheGrid.Model.UI
                 string newFile = Path.GetFileNameWithoutExtension(file);
                 //ListFile.Add(newFile);
 
-                ClickableText txtFile = new ClickableText(this.UI, creationTime, "FontText", "FontText", newFile.Substring(0, Math.Min(20, newFile.Length)), vec);
+                ClickableText txtFile = new ClickableText(this.UI, creationTime, "FontText", newFile.Substring(0, Math.Min(20, newFile.Length)), vec, Color.White, Color.LightBlue);
                 txtFile.Tag = file;
                 vec.Y += sizeFileName.Y + Ribbon.MARGE;
 

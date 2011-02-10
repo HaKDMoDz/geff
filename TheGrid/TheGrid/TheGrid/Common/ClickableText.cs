@@ -14,11 +14,13 @@ namespace TheGrid.Common
         #region Propriétés
         private SpriteFont _spriteFontMouseIn;
         private SpriteFont _spriteFontMouseOut;
+        private Color _colorIn;
+        private Color _colorOut;
         private String _text;
         private Vector2 _position;
         private bool isIn = false;
         private ButtonState leftMouseButtonState = ButtonState.Released;
-        public bool IsOn = false;
+        public bool IsChecked = false;
 
         public Vector2 Position
         {
@@ -28,12 +30,12 @@ namespace TheGrid.Common
 
         public int Width
         {
-            get { return (int)_spriteFontMouseIn.MeasureString(_text).X; }
+            get { return (int)_spriteFontMouseOut.MeasureString(_text).X; }
         }
 
         public int Height
         {
-            get { return (int)_spriteFontMouseIn.MeasureString(_text).Y; }
+            get { return (int)_spriteFontMouseOut.MeasureString(_text).Y; }
         }
         #endregion
 
@@ -49,10 +51,24 @@ namespace TheGrid.Common
             this._spriteFontMouseOut = uiLogic.GameEngine.Content.Load<SpriteFont>(@"Font\" + spriteFontMouseOut);
             this._text = text;
             this._position = position;
-            this.Rec = new Rectangle((int)this.Position.X, (int)this.Position.Y, (int)this._spriteFontMouseIn.MeasureString(text).X, (int)this._spriteFontMouseIn.MeasureString(text).Y);
+            this.Rec = new Rectangle((int)this.Position.X, (int)this.Position.Y, (int)this._spriteFontMouseOut.MeasureString(text).X, (int)this._spriteFontMouseOut.MeasureString(text).Y);
 
             this.Alive = true;
             this.Visible = true;
+        }
+
+        public ClickableText(UILogic uiLogic, TimeSpan creationTime, string spriteFont, string text, Vector2 position, Color colorOut, Color colorIn)
+            : base(uiLogic, creationTime)
+        {
+            this._spriteFontMouseOut = uiLogic.GameEngine.Content.Load<SpriteFont>(@"Font\" + spriteFont);
+            this._text = text;
+            this._position = position;
+            this.Rec = new Rectangle((int)this.Position.X, (int)this.Position.Y, (int)this._spriteFontMouseOut.MeasureString(text).X, (int)this._spriteFontMouseOut.MeasureString(text).Y);
+
+            this.Alive = true;
+            this.Visible = true;
+            this._colorIn = colorIn;
+            this._colorOut = colorOut;
         }
 
         public override void Update(GameTime gameTime)
@@ -80,19 +96,19 @@ namespace TheGrid.Common
 
         public void Draw(GameTime gameTime, Color color)
         {
-            if (IsOn)
+            if (isIn || IsChecked)
             {
-                if (isIn)
+                if (_spriteFontMouseIn != null)
                     Render.SpriteBatch.DrawString(_spriteFontMouseIn, _text, this.Position, color);
                 else
-                    Render.SpriteBatch.DrawString(_spriteFontMouseOut, _text, this.Position, color);
+                    Render.SpriteBatch.DrawString(_spriteFontMouseOut, _text, this.Position, _colorIn);
             }
             else
             {
-                if (isIn)
-                    Render.SpriteBatch.DrawString(_spriteFontMouseIn, _text, this.Position, color);
-                else
+                if (_spriteFontMouseIn != null)
                     Render.SpriteBatch.DrawString(_spriteFontMouseOut, _text, this.Position, color);
+                else
+                    Render.SpriteBatch.DrawString(_spriteFontMouseOut, _text, this.Position, _colorOut);
             }
         }
 
