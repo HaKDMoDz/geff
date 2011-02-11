@@ -19,7 +19,7 @@ namespace TheGrid.Model
             this.Channel = channel;
             this.FileName = fileName;
             
-            this.WaveStream = CreateInputStream(FileName);
+            //this.WaveStream = CreateInputStream(FileName);
         }
 
         private WaveStream CreateInputStream(string fileName)

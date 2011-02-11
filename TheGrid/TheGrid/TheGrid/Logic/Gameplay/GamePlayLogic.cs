@@ -268,10 +268,10 @@ namespace TheGrid.Logic.GamePlay
             Context.Map.Channels.Add(new Channel("Guitar", new Color(0f, 0.6f, 0.3f)));
             Context.Map.Channels.Add(new Channel("Bass", new Color(0.7f,0f,0.5f)));
 
-            foreach (Channel channel in Context.Map.Channels)
-            {
-                channel.Color = Color.Lerp(Color.Black, channel.Color, 0.3f);
-            }
+            //foreach (Channel channel in Context.Map.Channels)
+            //{
+            //    channel.Color = Color.Lerp(Color.Black, channel.Color, 0.3f);
+            //}
         }
 
         private void InitializePlayers()
