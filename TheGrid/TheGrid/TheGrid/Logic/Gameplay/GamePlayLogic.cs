@@ -34,14 +34,19 @@ namespace TheGrid.Logic.GamePlay
             ribbon = new Ribbon(GameEngine.UI, TimeSpan.MaxValue);
             GameEngine.UI.ListUIComponent.Add(ribbon);
 
-            Context.Map = FileSystem.LoadLevel("Test2");
+            //Context.Map = FileSystem.LoadLevel("Test2");
+            NewMap("Bass");
+            InitializeMap();
+
             EvaluateMuscianGrid(TimeSpan.Zero);
             Stop();
         }
 
         public void NewMap(string libraryName)
         {
-            InitializeMap();
+            Context.Map = new Map(15, 15);
+            Context.Map.CreateGrid();
+            InitializeChannel();
             
             string libraryDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Sound\Library", libraryName);
 
@@ -53,7 +58,7 @@ namespace TheGrid.Logic.GamePlay
                 {
                     foreach (string sampleFileName in Directory.GetFiles(channelDirectory))
                     {
-                        Sample sample = new Sample() { FileName = sampleFileName };
+                        Sample sample = new Sample(channel, sampleFileName);
                         channel.ListSample.Add(sample);
                     }
                 }
@@ -64,10 +69,9 @@ namespace TheGrid.Logic.GamePlay
 
         private void InitializeMap()
         {
-            Context.Map = new Map(15, 15);
-            Context.Map.CreateGrid();
+            //Context.Map = new Map(15, 15);
+            //Context.Map.CreateGrid();
 
-            InitializeChannel();
             ////---
             //Cell cell1 = Context.Map.Cells[15];
             //cell1.InitClip();
@@ -212,8 +216,8 @@ namespace TheGrid.Logic.GamePlay
             cell1.Clip.Directions[2] = true;
             cell1.Clip.Directions[3] = true;
             cell1.Clip.Instrument = new InstrumentStart();
-            cell1.Channel = Context.Map.Channels[2];
-            Context.Map.Channels[2].CellStart = cell1;
+            cell1.Channel = Context.Map.Channels[1];
+            Context.Map.Channels[1].CellStart = cell1;
 
             Cell cell0 = cell1.GetDirection(3, 3);
             cell0.InitClip();
@@ -259,10 +263,15 @@ namespace TheGrid.Logic.GamePlay
             Context.Map.Channels = new List<Channel>();
 
             Context.Map.Channels.Add(new Channel("Empty", new Color(0.3f, 0.3f, 0.3f)));
-            Context.Map.Channels.Add(new Channel("Drum", Color.Red));
-            Context.Map.Channels.Add(new Channel("Key", Color.Blue));
-            Context.Map.Channels.Add(new Channel("Guitar", Color.Yellow));
-            Context.Map.Channels.Add(new Channel("Bass", Color.Purple));
+            Context.Map.Channels.Add(new Channel("Drum", new Color(1f,0.2f,0.2f)));
+            Context.Map.Channels.Add(new Channel("Key", new Color(0f, 0.3f, 0.8f)));
+            Context.Map.Channels.Add(new Channel("Guitar", new Color(0f, 0.6f, 0.3f)));
+            Context.Map.Channels.Add(new Channel("Bass", new Color(0.7f,0f,0.5f)));
+
+            foreach (Channel channel in Context.Map.Channels)
+            {
+                channel.Color = Color.Lerp(Color.Black, channel.Color, 0.3f);
+            }
         }
 
         private void InitializePlayers()
@@ -277,7 +286,7 @@ namespace TheGrid.Logic.GamePlay
             if (Context.IsPlaying || Context.IsNavigatingThroughTime)
                 UpdateMusicians(gameTime);
 
-            GameEngine.Window.Title = Context.Time.ToString();// +" - " + Context.Map.Channels[2].CountMusicianPlaying.ToString();
+            //GameEngine.Window.Title = Context.Time.ToString();
         }
 
         public void UpdateMusicians(GameTime gameTime)
@@ -324,7 +333,6 @@ namespace TheGrid.Logic.GamePlay
                                 musician.CurrentIndex++;
                                 musician.CurrentCell = musician.Partition[musician.CurrentIndex].Value;
 
-                                //TODO : SoundLogic
                                 if (musician.CurrentCell.Clip != null && (musician.CurrentCell.Channel == null || musician.CurrentCell.Channel == musician.Channel) && musician.CurrentCell.Clip.Instrument is InstrumentStop)
                                 {
                                     musician.IsPlaying = false;
@@ -332,6 +340,12 @@ namespace TheGrid.Logic.GamePlay
                                 else if (musician.CurrentCell.Clip != null)
                                 {
                                     musician.IsPlaying = true;
+
+
+                                    if (musician.CurrentCell.Channel != null && musician.CurrentCell.Channel == musician.Channel && musician.CurrentCell.Clip.Instrument is InstrumentSample)
+                                    {
+                                        GameEngine.Sound.PlaySample(((InstrumentSample)musician.CurrentCell.Clip.Instrument).Sample);
+                                    }
                                 }
                             }
                         }

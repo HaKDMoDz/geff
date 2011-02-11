@@ -9,5 +9,10 @@ namespace TheGrid.Model.Instrument
     public class InstrumentSample : InstrumentBase
     {
         public Sample Sample { get; set; }
+
+        public InstrumentSample(Sample sample)
+        {
+            this.Sample = sample;
+        }
     }
 }

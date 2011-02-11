@@ -8,6 +8,7 @@ using TheGrid.Common;
 using TheGrid.Model;
 using TheGrid.Model.UI.Menu;
 using TheGrid.Logic.Render;
+using TheGrid.Model.Instrument;
 
 namespace TheGrid.Logic.Controller
 {
@@ -61,6 +62,8 @@ namespace TheGrid.Logic.Controller
             KeyManager keyDown = AddKey(downKey);
             KeyManager keyZoomIn = AddKey(Keys.PageDown);
             KeyManager keyZoomOut = AddKey(Keys.PageUp);
+            KeyManager keyMenuP = AddKey(Keys.Add);
+            KeyManager keyMenuM = AddKey(Keys.Subtract);
 
             KeyManager keyExit = AddKey(Keys.Escape);
             KeyManager keyPlayPauseMusician = AddKey(Keys.P);
@@ -77,6 +80,8 @@ namespace TheGrid.Logic.Controller
             keyDown.KeyPressed += new KeyManager.KeyPressedHandler(keyDown_KeyPressed);
             keyZoomIn.KeyPressed += new KeyManager.KeyPressedHandler(keyZoomIn_KeyPressed);
             keyZoomOut.KeyPressed += new KeyManager.KeyPressedHandler(keyZoomOut_KeyPressed);
+            keyMenuP.KeyPressed += new KeyManager.KeyPressedHandler(keyMenuP_KeyPressed);
+            keyMenuM.KeyPressed += new KeyManager.KeyPressedHandler(keyMenuM_KeyPressed);
 
             keyExit.KeyReleased += new KeyManager.KeyReleasedHandler(keyExit_KeyReleased);
             keyPlayPauseMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPlayPauseMusician_KeyReleased);
@@ -89,9 +94,9 @@ namespace TheGrid.Logic.Controller
             keySpeedUp.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedUp_KeyPressed);
             keySpeedDown.KeyPressed += new KeyManager.KeyPressedHandler(keySpeedDown_KeyPressed);
 
-            MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
-            //MouseManager mouseMiddleButton = AddMouse(MouseButtons.MiddleButton);
             MouseManager mouseRightButton = AddMouse(MouseButtons.RightButton);
+            MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
+            MouseManager mouseMiddleButton = AddMouse(MouseButtons.MiddleButton);
             MouseManager mouseWheel = AddMouse(MouseButtons.Wheel);
 
             mouseRightButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseRightButton_MouseFirstPressed);
@@ -100,7 +105,22 @@ namespace TheGrid.Logic.Controller
 
             mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
 
+            mouseMiddleButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseMiddleButton_MouseReleased);
+
             mouseWheel.MouseWheelChanged += new MouseManager.MouseWheelChangedHandler(mouseWheel_MouseWheelChanged);
+        }
+
+        void keyMenuM_KeyPressed(Keys key, GameTime gameTime)
+        {
+            Context.MenuSize -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+
+            if (Context.SpeedFactor < 0f)
+                Context.SpeedFactor = 0f;
+        }
+
+        void keyMenuP_KeyPressed(Keys key, GameTime gameTime)
+        {
+            Context.MenuSize += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
         }
 
         #region Évènement clavier
@@ -200,6 +220,17 @@ namespace TheGrid.Logic.Controller
         #endregion
 
         #region Évènement souris
+        void mouseMiddleButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            Cell selectedCell = GetSelectedCell(mouseState);
+
+            if (selectedCell != null && selectedCell.Clip != null && selectedCell.Clip.Instrument is InstrumentSample)
+            {
+                GameEngine.Sound.PlaySample(((InstrumentSample)selectedCell.Clip.Instrument).Sample);
+                //selectedCell.Clip.Instrument
+            }
+        }
+
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
             Menu currentMenu = (Menu)GameEngine.UI.ListUIComponent.Find(ui => ui is Menu);

@@ -16,6 +16,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TheGrid.Common;
 using TheGrid.Logic.UI;
+using TheGrid.Logic.Sound;
 
 namespace TheGrid
 {
@@ -31,6 +32,7 @@ namespace TheGrid
         public ControllerLogic Controller { get; set; }
         public GamePlayLogic GamePlay { get; set; }
         public UILogic UI { get; set; }
+        public SoundLogic Sound { get; set; }
 
         public GraphicsDeviceManager Graphics;
         public bool Mini = false;
@@ -70,15 +72,14 @@ namespace TheGrid
         /// </summary>
         protected override void Initialize()
         {
-
             if (Mini)
             {
                 Control window = Control.FromHandle(this.Window.Handle);
-                //window.Location = new System.Drawing.Point(1900, 350);
-                //window.Location = new System.Drawing.Point(1900, 350);
+                window.Location = new System.Drawing.Point(1950, 350);
+                window.Location = new System.Drawing.Point(1950, 350);
 
-                window.Location = new System.Drawing.Point(1950, 850);
-                window.Location = new System.Drawing.Point(1950, 850);
+                //window.Location = new System.Drawing.Point(1950, 850);
+                //window.Location = new System.Drawing.Point(1950, 850);
             }
 
             base.Initialize();
@@ -88,6 +89,7 @@ namespace TheGrid
             UI = new UILogic(this);
             GamePlay = new GamePlayLogic(this);
             Controller = new ControllerLogic(this);
+            Sound = new SoundLogic(this);
         }
 
         /// <summary>

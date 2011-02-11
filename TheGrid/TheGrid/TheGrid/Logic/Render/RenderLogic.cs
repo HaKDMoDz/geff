@@ -19,6 +19,7 @@ namespace TheGrid.Logic.Render
         public SpriteBatch SpriteBatch;
         public SpriteFont FontMenu { get; set; }
         public SpriteFont FontText { get; set; }
+        public SpriteFont FontMap { get; set; }
         public GameEngine GameEngine { get; set; }
         public GraphicsDevice GraphicsDevice { get { return GameEngine.GraphicsDevice; } }
 
@@ -95,6 +96,7 @@ namespace TheGrid.Logic.Render
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
             FontText = GameEngine.Content.Load<SpriteFont>(@"Font\FontText");
+            FontMap = GameEngine.Content.Load<SpriteFont>(@"Font\FontMap");
 
             texHexa2D = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D");
             texHexa2DClip = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D_Clip");
@@ -257,8 +259,21 @@ namespace TheGrid.Logic.Render
                 {
                     texInstrument = texMusicianStop;
                 }
+                else if (cell.Clip.Instrument is InstrumentSample)
+                {
+                    texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cell.Channel.Name);
+                }
 
-                SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - midCellSize / 4, null, Color.White);
+                SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width/2, texInstrument.Height/2), null, Color.White);
+
+                if (cell.Clip.Instrument is InstrumentSample)
+                {
+                    string sampleName = ((InstrumentSample)cell.Clip.Instrument).Sample.Name;
+                    Vector2 deltaSampleName = new Vector2(FontMap.MeasureString(sampleName).X / 2, FontMap.MeasureString(sampleName).Y/5);
+ 
+                        SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize - deltaSampleName, Color.White);
+                }
+
             }
             //---
 

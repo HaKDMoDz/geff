@@ -22,16 +22,12 @@ namespace TheGrid.Model.UI.Menu
         public List<Item> Items { get; set; }
         public MenuState State { get; set; }
         public double PercentVisibility { get; set; }
-        public double AngleDeltaMouse { get; set; }
-        public double AngleDeltaRender { get; set; }
-        public double AngleDeltaRenderIcon { get; set; }
-
+        public double AngleDelta { get; set; }
         public bool ShowIcon { get; set; }
         #endregion
 
         #region Membres privés
-        private int nbVertex = 24;
-        private float size = 1.5f;
+        public int nbVertex = 24;
 
         private VertexBuffer vBuffer;
         private TimeSpan LastStateChanged { get; set; }
@@ -74,16 +70,15 @@ namespace TheGrid.Model.UI.Menu
             if (color2.A > 240)
                 color2.A = 240;
 
-            //if (Items.Count > 8)
             nbVertex = Items.Count * 4;
 
             int nbPointPerItem = nbVertex / Items.Count;
-            double angleItem = MathHelper.TwoPi / (double)Items.Count - AngleDeltaRender - MathHelper.Pi;
+            double angleItem = AngleDelta - MathHelper.PiOver2 - ((MathHelper.TwoPi / (double)Items.Count) / 2);
             double angleVertex = MathHelper.TwoPi / (double)nbVertex;
 
             vBuffer = new VertexBuffer(Render.GraphicsDevice, typeof(VertexPositionColor), nbVertex * 3, BufferUsage.None);
 
-            float localSize = size * Render.HexaWidth / 2f;// *(-gameEngine.Render.CameraPosition.Z / 4f) * 3f;
+            float localSize = Context.MenuSize * Render.HexaWidth / 2f;// *(-gameEngine.Render.CameraPosition.Z / 4f) * 3f;
 
             for (int i = 0; i < nbVertex; i++)
             {
@@ -139,26 +134,30 @@ namespace TheGrid.Model.UI.Menu
 
             mousePosition = Vector3.Transform(mousePosition, mtx);
 
-            float localSize = size * 1.2f * Render.HexaWidth / 2f;
-            double angleItem = MathHelper.TwoPi / (double)Items.Count;
+            int nbPointPerItem = nbVertex / Items.Count;
+            float localSize = Context.MenuSize * 1.2f * Render.HexaWidth / 2f;
+            double angleItem = AngleDelta - MathHelper.PiOver2 - ((MathHelper.TwoPi / (double)Items.Count) / 2); 
+            double angleVertex = MathHelper.TwoPi / (double)nbVertex;
 
             int currentIndex = -1;
-            for (int i = 0; i < Items.Count; i++)
+            for (int i = 0; i < nbVertex; i++)
             {
-                double angle2 = ((double)i - 0.5) * angleItem - MathHelper.PiOver2 + AngleDeltaMouse;
-                double angle1 = ((double)i + 0.5) * angleItem - MathHelper.PiOver2 + AngleDeltaMouse;
+                double angle1 = angleItem + (double)(i+1) * angleVertex;
+                double angle2 = angleItem + (double)(i) * angleVertex;
 
                 Vector3 vec1 = new Vector3(localSize * (float)Math.Cos(angle1), localSize * (float)Math.Sin(angle1), 0f) + Tools.GetVector3(ParentCell.Location * Render.HexaWidth) + midHexa;
                 Vector3 vec3 = new Vector3(localSize * (float)Math.Cos(angle2), localSize * (float)Math.Sin(angle2), 0f) + Tools.GetVector3(ParentCell.Location * Render.HexaWidth) + midHexa;
 
                 Vector3 vec2 = Tools.GetVector3(ParentCell.Location * Render.HexaWidth) + midHexa;
 
+                int index  = ((i / nbPointPerItem)) % Items.Count;
+
                 if (Tools.RayIntersectTriangle(mousePosition, -Vector3.UnitZ, vec1, vec2, vec3, ref pickCurDistance, ref barycentricU, ref barycentricV))
                 {
-                    currentIndex = i;
+                    currentIndex = index;
                 }
 
-                Items[i].MouseOver = false;
+                Items[index].MouseOver = false;
             }
 
             if (currentIndex != -1)
@@ -216,35 +215,28 @@ namespace TheGrid.Model.UI.Menu
 
             if (ShowIcon)
             {
-                Vector3 nearPoint = new Vector3(ParentCell.Location * Render.HexaWidth, 0f);
-                //gameEngine.GraphicsDevice.Viewport.Project(new Vector3(ParentCell.Location*512f, 5f),
-                //    gameEngine.Render.Projection, gameEngine.Render.View, gameEngine.Render.World);
+                Vector2 nearPoint = (ParentCell.Location + new Vector2(0.5f, .5f)) * Render.HexaWidth;
 
-                //float localSize = size * 380f / gameEngine.Render.CameraPosition.Z;
-                //float delta = 32f * localSize / 80f;
-
-                float localSize = size * Render.HexaWidth / 3f;
-                float delta = -size * 120f;
+                float localSize = Context.MenuSize * Render.HexaWidth / 3f;
                 double angleItem = MathHelper.TwoPi / (double)Items.Count;
 
                 double d = 1.5;
                 if (Items.Count == 9)
                 {
                     d = 2.3;
-                    //delta = 32f * localSize / 100f;
                 }
+
+                Color color = new Color((float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility);
 
                 Render.SpriteBatch.End();
                 Render.SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.DepthRead, RasterizerState.CullNone, Render.effectSprite, Matrix.Identity);
                 for (int i = 0; i < Items.Count; i++)
                 {
-                    double angle = ((double)i - d) * angleItem - AngleDeltaRenderIcon;
+                    double angle = ((double)i - d) * angleItem - AngleDelta;
 
-                    Vector2 vec = new Vector2(localSize * (float)Math.Cos(angle) - delta, localSize * (float)Math.Sin(angle) - delta);
+                    Vector2 vec = new Vector2(localSize * (float)Math.Cos(angle), localSize * (float)Math.Sin(angle));
 
-                    Rectangle rec = new Rectangle((int)(nearPoint.X + vec.X), (int)(nearPoint.Y + vec.Y), (int)(128f * size), (int)(128f * size));
-
-                    Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), rec,null, new Color((float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility),0f,Vector2.Zero, SpriteEffects.None, 0f);
+                    Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), nearPoint + vec, null, color, 0f, new Vector2(64f), Context.MenuSize, SpriteEffects.None, 0f);
                 }
                 Render.SpriteBatch.End();
                 Render.SpriteBatch.Begin();

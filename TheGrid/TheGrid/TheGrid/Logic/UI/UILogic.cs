@@ -107,8 +107,6 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.Close(gameTime);
 
             Menu menuChannel = new Menu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, false);
-            menuChannel.AngleDeltaRender = MathHelper.TwoPi / Context.Map.Channels.Count / 4;
-            menuChannel.AngleDeltaMouse = 0;
 
             for (int i = 0; i < Context.Map.Channels.Count; i++)
             {
@@ -121,6 +119,8 @@ namespace TheGrid.Logic.UI
                 itemChannel.Selected += new Item.SelectedHandler(itemChannel_Selected);
                 menuChannel.Items.Add(itemChannel);
             }
+
+            menuChannel.nbVertex = menuChannel.Items.Count * 4;
 
             menuChannel.UIDependency = item.ParentMenu;
             this.ListUIComponent.Add(menuChannel);
@@ -182,6 +182,17 @@ namespace TheGrid.Logic.UI
 
         void itemSample_Selected(Item item, GameTime gameTime)
         {
+            item.ParentMenu.Close(gameTime);
+
+            if (item.ParentMenu.ParentCell.Channel == null || item.ParentMenu.ParentCell.Channel.Name == "Empty")
+            {
+                itemMenuChannel_Selected(item, gameTime);
+            }
+            else
+            {
+                ListSample listSample = new ListSample(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell);
+                this.ListUIComponent.Add(listSample);
+            }
         }
 
         void itemNote_Selected(Item item, GameTime gameTime)
@@ -235,7 +246,6 @@ namespace TheGrid.Logic.UI
 
             //---
             Menu menuSpeed = new Menu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, true);
-            menuSpeed.AngleDeltaRender = -MathHelper.TwoPi / 36 * 3;
 
             for (int i = 0; i < 9; i++)
             {
@@ -284,9 +294,7 @@ namespace TheGrid.Logic.UI
 
             //---
             Menu menuRepeater = new Menu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, true);
-            menuRepeater.AngleDeltaRender = MathHelper.TwoPi / 12;
-            menuRepeater.AngleDeltaRenderIcon = MathHelper.TwoPi / 12;
-            menuRepeater.AngleDeltaMouse = -MathHelper.TwoPi / 12;
+            menuRepeater.AngleDelta = MathHelper.TwoPi / 12;
 
             for (int i = 0; i < 6; i++)
             {
