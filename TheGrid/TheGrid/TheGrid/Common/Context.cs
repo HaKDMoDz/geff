@@ -11,6 +11,7 @@ namespace TheGrid.Common
     {
         public static ContextType ContextType { get; set; }
         public static Cell SelectedCell { get; set; }
+        public static Cell CopiedCell { get; set; }
 
         public static Map Map { get; set; }
 

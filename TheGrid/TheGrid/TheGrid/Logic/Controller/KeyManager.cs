@@ -26,6 +26,11 @@ namespace TheGrid.Logic.Controller
             this.keyState = KeyState.Up;
         }
 
+        public void Reset()
+        {
+            keyState = KeyState.Up;
+        }
+
         public void Update(KeyboardState keyBoardState, GameTime gameTime)
         {
             bool pressed = keyBoardState.IsKeyDown(key);

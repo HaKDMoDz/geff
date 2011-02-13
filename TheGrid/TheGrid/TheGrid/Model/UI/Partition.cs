@@ -28,9 +28,10 @@ namespace TheGrid.Model.UI
             Rec = new Rectangle(Ribbon.MARGE * 2, Ribbon.MARGE * 2, (int)(0.7f * Render.ScreenWidth), ribbon.Rec.Height - Ribbon.MARGE * 3);
         }
 
-        public void Init(TimeSpan creationTime)
+        public void Init()
         {
             ListUIChildren = new List<UIComponent>();
+            countChildren = 0;
 
             float channelX = Rec.X + Ribbon.MARGE + 100;
             float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
@@ -42,8 +43,8 @@ namespace TheGrid.Model.UI
 
                 float channelY = (float)Rec.Y + channelHeight * fi;
 
-                ClickableImage imgMuteChannel = new ClickableImage(UI, creationTime, "MuteChannel" + i.ToString(), Render.texMuteChannel, Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY - channelHeight/2 + Render.texSoloChannel.Height / 2));
-                ClickableImage imgSoloChannel = new ClickableImage(UI, creationTime, "SoloChannel" + i.ToString(), Render.texSoloChannel, Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY - channelHeight/2 + Render.texMuteChannel.Height / 2));
+                ClickableImage imgMuteChannel = new ClickableImage(UI, GetNewTimeSpan(), "MuteChannel" + i.ToString(), Render.texMuteChannel, Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY + channelHeight/2 - Render.texSoloChannel.Height / 2));
+                ClickableImage imgSoloChannel = new ClickableImage(UI, GetNewTimeSpan(), "SoloChannel" + i.ToString(), Render.texSoloChannel, Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY + channelHeight/2 - Render.texMuteChannel.Height / 2));
 
                 imgMuteChannel.Tag = i;
                 imgSoloChannel.Tag = i;
@@ -146,7 +147,7 @@ namespace TheGrid.Model.UI
                     (int)channelHeight);
 
                 //--- Nombre de musiciens en cours
-                Render.SpriteBatch.DrawString(Render.FontMenu, Context.Map.Channels[i].ListMusician.Count(m => m.IsPlaying).ToString(), new Vector2(Rec.X + Ribbon.MARGE, channelY - Ribbon.MARGE), Color.White);
+                Render.SpriteBatch.DrawString(Render.FontMenu, Context.Map.Channels[i].ListMusician.Count(m => m.IsPlaying).ToString(), new Vector2(Rec.X + Ribbon.MARGE, channelY + channelHeight / 2 - +Render.FontMenu.MeasureString("0").Y/2), Color.White);
                 //---
 
                 //--- Channel

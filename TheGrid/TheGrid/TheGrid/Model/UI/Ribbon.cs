@@ -26,7 +26,7 @@ namespace TheGrid.Model.UI
         public Ribbon(UILogic uiLogic, TimeSpan creationTime)
             : base(uiLogic, creationTime)
         {
-            CreationTime = TimeSpan.MaxValue;
+            CreationTime = creationTime;
 
             Visible = true;
             Alive = true;
@@ -34,21 +34,21 @@ namespace TheGrid.Model.UI
 
             Rec = new Rectangle(0, 0, (int)Render.ScreenWidth, (int)(0.2f * Render.ScreenHeight));
 
-            Partition = new Partition(this, uiLogic, creationTime);
+            Partition = new Partition(this, uiLogic, GetNewTimeSpan());
             this.ListUIChildren.Add(Partition);
 
-            imgPlay = new ClickableImage(this.UI, this.CreationTime, "Play", Render.texPlay, Render.texPlay, new Vector2(Partition.Rec.Right + (int)(0.03f * Render.ScreenWidth) + MARGE * 2, Partition.Rec.Y));
-            imgPause = new ClickableImage(this.UI, this.CreationTime, "Pause", Render.texPause, Render.texPause, new Vector2(Partition.Rec.Right + (int)(0.03f * Render.ScreenWidth) + MARGE * 2, Partition.Rec.Y));
+            imgPlay = new ClickableImage(this.UI, GetNewTimeSpan(), "Play", Render.texPlay, Render.texPlay, new Vector2(Partition.Rec.Right + (int)(0.03f * Render.ScreenWidth) + MARGE * 2, Partition.Rec.Y));
+            imgPause = new ClickableImage(this.UI, GetNewTimeSpan(), "Pause", Render.texPause, Render.texPause, new Vector2(Partition.Rec.Right + (int)(0.03f * Render.ScreenWidth) + MARGE * 2, Partition.Rec.Y));
             imgPause.Visible = false;
-            imgStop = new ClickableImage(this.UI, this.CreationTime, "Stop", Render.texStop, Render.texStop, new Vector2(Partition.Rec.Right + (int)(0.03f * Render.ScreenWidth) + MARGE * 3 + Render.texPlay.Width, Partition.Rec.Y));
+            imgStop = new ClickableImage(this.UI, GetNewTimeSpan(), "Stop", Render.texStop, Render.texStop, new Vector2(Partition.Rec.Right + (int)(0.03f * Render.ScreenWidth) + MARGE * 3 + Render.texPlay.Width, Partition.Rec.Y));
 
             imgPlay.ClickImage += new ClickableImage.ClickImageHandler(imgPlay_ClickImage);
             imgPause.ClickImage += new ClickableImage.ClickImageHandler(imgPause_ClickImage);
             imgStop.ClickImage += new ClickableImage.ClickImageHandler(imgStop_ClickImage);
 
-            txtNewMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "New", new Vector2(imgStop.Rec.Right + MARGE, Partition.Rec.Y), Color.White, Color.LightBlue);
-            txtLoadMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "Load", new Vector2(imgStop.Rec.Right + MARGE, txtNewMap.Rec.Bottom + MARGE), Color.White, Color.LightBlue);
-            txtSaveMap = new ClickableText(this.UI, this.CreationTime, "FontMenu", "Save", new Vector2(imgStop.Rec.Right + MARGE, txtLoadMap.Rec.Bottom + MARGE), Color.White, Color.LightBlue);
+            txtNewMap = new ClickableText(this.UI, GetNewTimeSpan(), "FontMenu", "New", new Vector2(imgStop.Rec.Right + MARGE, Partition.Rec.Y), Color.White, Color.LightBlue);
+            txtLoadMap = new ClickableText(this.UI, GetNewTimeSpan(), "FontMenu", "Load", new Vector2(imgStop.Rec.Right + MARGE, txtNewMap.Rec.Bottom + MARGE), Color.White, Color.LightBlue);
+            txtSaveMap = new ClickableText(this.UI, GetNewTimeSpan(), "FontMenu", "Save", new Vector2(imgStop.Rec.Right + MARGE, txtLoadMap.Rec.Bottom + MARGE), Color.White, Color.LightBlue);
 
             txtNewMap.ClickText += new ClickableText.ClickTextHandler(txtNewMap_ClickText);
             txtLoadMap.ClickText += new ClickableText.ClickTextHandler(txtLoadMap_ClickText);

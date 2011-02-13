@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework;
 using TheGrid.Logic.UI;
 using System.IO;
 using TheGrid.Common;
+using TheGrid.Logic.Controller;
+using Microsoft.Xna.Framework.Input;
 
 namespace TheGrid.Model.UI
 {
@@ -15,6 +17,7 @@ namespace TheGrid.Model.UI
 
         public ListFile(UILogic uiLogic, TimeSpan creationTime, string directory) : base(uiLogic, creationTime)
         {
+            this.Modal = true;
             this.Alive = true;
             this.Visible = true;
             this.Directory = directory;
@@ -43,20 +46,27 @@ namespace TheGrid.Model.UI
             //---
 
             //---
+            KeyManager keyClose = AddKey(Keys.Escape);
+            keyClose.KeyReleased += new KeyManager.KeyReleasedHandler(keyClose_KeyReleased);
             //---
+        }
+
+        void keyClose_KeyReleased(Keys key, GameTime gameTime)
+        {
+            this.Alive = false;
         }
 
         void txtFile_ClickText(ClickableText clickableText, Microsoft.Xna.Framework.Input.MouseState mouseState, GameTime gameTime)
         {
-            Context.Map = FileSystem.LoadLevel(Path.GetFileNameWithoutExtension((string)clickableText.Tag));
-            GamePlay.EvaluateMuscianGrid(TimeSpan.Zero);
-            GamePlay.Stop();
+            GamePlay.LoadMap(Path.GetFileNameWithoutExtension((string)clickableText.Tag));//, Context.Map);
 
             this.Alive = false;
         }
 
         public override void Draw(GameTime gameTime)
         {
+            Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, new Color(0.1f, 0.1f, 0.1f, 0.85f));
+
             Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, new Color(0.2f, 0.2f, 0.2f, 0.95f));
 
             base.Draw(gameTime);

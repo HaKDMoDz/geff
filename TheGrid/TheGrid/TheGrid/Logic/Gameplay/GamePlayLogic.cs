@@ -31,28 +31,44 @@ namespace TheGrid.Logic.GamePlay
 
             InitializePlayers();
 
-            ribbon = new Ribbon(GameEngine.UI, TimeSpan.MaxValue);
+            ribbon = new Ribbon(GameEngine.UI, TimeSpan.FromDays(1));
             GameEngine.UI.ListUIComponent.Add(ribbon);
 
             //Context.Map = FileSystem.LoadLevel("Test2");
             NewMap("Bass");
             InitializeMap();
 
-            EvaluateMuscianGrid(TimeSpan.Zero);
+            EvaluateMuscianGrid();
+            Stop();
+        }
+
+        public void LoadMap(string levelFileName)
+        {
+            Context.Map = FileSystem.LoadLevel(this, Path.GetFileNameWithoutExtension(levelFileName));
+            EvaluateMuscianGrid();
+            ribbon.Partition.Init();
             Stop();
         }
 
         public void NewMap(string libraryName)
         {
+            Stop();
+
             Context.Map = new Map(15, 15);
             Context.Map.CreateGrid();
-            InitializeChannel();
-            
+            InitializeChannel(Context.Map);
+
+            LoadLibrary(libraryName, Context.Map);
+        }
+
+        public void LoadLibrary(string libraryName, Map map)
+        {
+            map.LibraryName = libraryName;
             string libraryDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Sound\Library", libraryName);
 
             foreach (string channelDirectory in Directory.GetDirectories(libraryDirectory))
             {
-                Channel channel = Context.Map.Channels.Find(c => c.Name.ToUpper() == Path.GetFileName(channelDirectory).ToUpper());
+                Channel channel = map.Channels.Find(c => c.Name.ToUpper() == Path.GetFileName(channelDirectory).ToUpper());
 
                 if (channel != null)
                 {
@@ -64,7 +80,7 @@ namespace TheGrid.Logic.GamePlay
                 }
             }
 
-            Context.Map.Channels.RemoveAll(c => c.ListSample.Count == 0 && c.Name != "Empty");
+            map.Channels.RemoveAll(c => c.ListSample.Count == 0 && c.Name != "Empty");
         }
 
         private void InitializeMap()
@@ -258,15 +274,15 @@ namespace TheGrid.Logic.GamePlay
             //EvaluateMuscianGrid();
         }
 
-        private void InitializeChannel()
+        private void InitializeChannel(Map map)
         {
-            Context.Map.Channels = new List<Channel>();
+            map.Channels = new List<Channel>();
 
-            Context.Map.Channels.Add(new Channel("Empty", new Color(0.3f, 0.3f, 0.3f)));
-            Context.Map.Channels.Add(new Channel("Drum", new Color(1f,0.2f,0.2f)));
-            Context.Map.Channels.Add(new Channel("Key", new Color(0f, 0.3f, 0.8f)));
-            Context.Map.Channels.Add(new Channel("Guitar", new Color(0f, 0.6f, 0.3f)));
-            Context.Map.Channels.Add(new Channel("Bass", new Color(0.7f,0f,0.5f)));
+            map.Channels.Add(new Channel("Empty", new Color(0.3f, 0.3f, 0.3f)));
+            map.Channels.Add(new Channel("Drum", new Color(1f, 0.2f, 0.2f)));
+            map.Channels.Add(new Channel("Key", new Color(0f, 0.3f, 0.8f)));
+            map.Channels.Add(new Channel("Guitar", new Color(0f, 0.6f, 0.3f)));
+            map.Channels.Add(new Channel("Bass", new Color(0.7f, 0f, 0.5f)));
 
             //foreach (Channel channel in Context.Map.Channels)
             //{
@@ -354,7 +370,7 @@ namespace TheGrid.Logic.GamePlay
             }
         }
 
-        public void EvaluateMuscianGrid(TimeSpan time)
+        public void EvaluateMuscianGrid()
         {
             //--- Initialisation
             foreach (Channel channel in Context.Map.Channels)
@@ -529,7 +545,7 @@ namespace TheGrid.Logic.GamePlay
             }
 
             //--- Met à jour le visuel de la partition
-            ribbon.Partition.Init(time);
+            ribbon.Partition.Init();
             //---
         }
 
@@ -565,6 +581,9 @@ namespace TheGrid.Logic.GamePlay
 
         public void Play()
         {
+            if (Context.Time >= Context.PartitionDuration)
+                Stop();
+
             Context.IsPlaying = true;
         }
 
@@ -579,13 +598,16 @@ namespace TheGrid.Logic.GamePlay
 
             Context.Time = new TimeSpan(0, 0, 0);
 
-            foreach (Channel channel in Context.Map.Channels)
+            if (Context.Map != null)
             {
-                foreach (Musician musician in channel.ListMusician)
+                foreach (Channel channel in Context.Map.Channels)
                 {
-                    musician.CurrentCell = null;
-                    musician.NextCell = null;
-                    musician.IsPlaying = false;
+                    foreach (Musician musician in channel.ListMusician)
+                    {
+                        musician.CurrentCell = null;
+                        musician.NextCell = null;
+                        musician.IsPlaying = false;
+                    }
                 }
             }
         }

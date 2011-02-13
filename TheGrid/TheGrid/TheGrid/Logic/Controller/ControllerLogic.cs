@@ -27,7 +27,8 @@ namespace TheGrid.Logic.Controller
         public Vector2 mousePosition;
         public Point mousePositionPoint;
 
-        private float prevRightStickLength;
+        
+        //private float prevRightStickLength;
         private Vector3 prevCameraPosition = Vector3.Zero;
         #endregion
 
@@ -64,8 +65,9 @@ namespace TheGrid.Logic.Controller
             KeyManager keyZoomOut = AddKey(Keys.PageUp);
             KeyManager keyMenuP = AddKey(Keys.Add);
             KeyManager keyMenuM = AddKey(Keys.Subtract);
+            KeyManager keyCloneCell = AddKey(Keys.LeftControl);
 
-            KeyManager keyExit = AddKey(Keys.Escape);
+            //KeyManager keyExit = AddKey(Keys.);
             KeyManager keyPlayPauseMusician = AddKey(Keys.P);
             KeyManager keyStopMusician = AddKey(Keys.Enter);
 
@@ -82,8 +84,9 @@ namespace TheGrid.Logic.Controller
             keyZoomOut.KeyPressed += new KeyManager.KeyPressedHandler(keyZoomOut_KeyPressed);
             keyMenuP.KeyPressed += new KeyManager.KeyPressedHandler(keyMenuP_KeyPressed);
             keyMenuM.KeyPressed += new KeyManager.KeyPressedHandler(keyMenuM_KeyPressed);
+            keyCloneCell.KeyReleased += new KeyManager.KeyReleasedHandler(keyCloneCell_KeyReleased);
 
-            keyExit.KeyReleased += new KeyManager.KeyReleasedHandler(keyExit_KeyReleased);
+            //keyExit.KeyReleased += new KeyManager.KeyReleasedHandler(keyExit_KeyReleased);
             keyPlayPauseMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPlayPauseMusician_KeyReleased);
             keyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopMusician_KeyReleased);
 
@@ -110,6 +113,12 @@ namespace TheGrid.Logic.Controller
             mouseWheel.MouseWheelChanged += new MouseManager.MouseWheelChangedHandler(mouseWheel_MouseWheelChanged);
         }
 
+        #region Évènement clavier
+        void keyCloneCell_KeyReleased(Keys key, GameTime gameTime)
+        {
+            Context.CopiedCell = null;
+        }
+
         void keyMenuM_KeyPressed(Keys key, GameTime gameTime)
         {
             Context.MenuSize -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
@@ -123,7 +132,6 @@ namespace TheGrid.Logic.Controller
             Context.MenuSize += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
         }
 
-        #region Évènement clavier
         void keyZoomOut_KeyPressed(Keys key, GameTime gameTime)
         {
             GameEngine.Render.CameraPosition.Z += 0.5f;
@@ -227,7 +235,6 @@ namespace TheGrid.Logic.Controller
             if (selectedCell != null && selectedCell.Clip != null && selectedCell.Clip.Instrument is InstrumentSample)
             {
                 GameEngine.Sound.PlaySample(((InstrumentSample)selectedCell.Clip.Instrument).Sample);
-                //selectedCell.Clip.Instrument
             }
         }
 
@@ -238,15 +245,46 @@ namespace TheGrid.Logic.Controller
             if (currentMenu != null && currentMenu.State == MenuState.Opened && currentMenu.Items.Exists(item => item.MouseOver))
             {
                 currentMenu.MouseClick(gameTime);
-                GameEngine.GamePlay.EvaluateMuscianGrid(gameTime.TotalGameTime);
+                GameEngine.GamePlay.EvaluateMuscianGrid();
             }
             else
             {
                 Cell selectedCell = GetSelectedCell(mouseState);
-
                 Context.SelectedCell = selectedCell;
 
-                if (Context.SelectedCell != null)
+                if (keyBoardState.IsKeyDown(Keys.LeftControl) && selectedCell != null)
+                {
+                    if (Context.CopiedCell == null)
+                    {
+                        Context.CopiedCell = selectedCell;
+                    }
+                    else
+                    {
+                        selectedCell.Clip = null;
+                        selectedCell.Channel = Context.CopiedCell.Channel;
+                        if (Context.CopiedCell.Clip != null)
+                        {
+                            selectedCell.Clip = new Clip();
+                            for (int i = 0; i < 6; i++)
+                            {
+                                selectedCell.Clip.Directions[i] = Context.CopiedCell.Clip.Directions[i];
+                            }
+                            selectedCell.Clip.Repeater = Context.CopiedCell.Clip.Repeater;
+                            selectedCell.Clip.Speed = Context.CopiedCell.Clip.Speed;
+
+                            if (Context.CopiedCell.Clip.Instrument != null && !(Context.CopiedCell.Clip.Instrument is InstrumentStart))
+                            {
+                                if (Context.CopiedCell.Clip.Instrument is InstrumentSample)
+                                {
+                                    selectedCell.Clip.Instrument = new InstrumentSample(((InstrumentSample)Context.CopiedCell.Clip.Instrument).Sample);
+                                }
+                            }
+                        }
+
+                        GameEngine.GamePlay.EvaluateMuscianGrid();
+                    }
+                }
+                else if (Context.SelectedCell != null)
                 {
                     //--- Ferme le précédent menu
                     if (currentMenu != null)
@@ -346,15 +384,36 @@ namespace TheGrid.Logic.Controller
             mousePositionPoint = new Point(mouseState.X, mouseState.Y);
             //---
 
+
             //--- Key & Mouse Manager
-            foreach (KeyManager keyManager in ListKeyManager)
+            if (GameEngine.UI.IsUIModalActive())
             {
-                keyManager.Update(keyBoardState, gameTime);
+                foreach (KeyManager keyManager in ListKeyManager)
+                {
+                    keyManager.Reset();
+                }
+            }
+            else
+            {
+                foreach (KeyManager keyManager in ListKeyManager)
+                {
+                    keyManager.Update(keyBoardState, gameTime);
+                }
             }
 
-            foreach (MouseManager mouseManager in ListMouseManager)
+            if (GameEngine.UI.IsMouseHandled())
             {
-                mouseManager.Update(mouseState, gameTime);
+                foreach (MouseManager mouseManager in ListMouseManager)
+                {
+                    mouseManager.Reset();
+                }
+            }
+            else
+            {
+                foreach (MouseManager mouseManager in ListMouseManager)
+                {
+                    mouseManager.Update(mouseState, gameTime);
+                }
             }
             //---
 

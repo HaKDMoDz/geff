@@ -6,8 +6,9 @@ using Microsoft.Xna.Framework;
 using TheGrid.Logic.UI;
 using System.IO;
 using TheGrid.Common;
-using System.Windows.Forms;
 using TheGrid.Model.Instrument;
+using TheGrid.Logic.Controller;
+using Microsoft.Xna.Framework.Input;
 
 namespace TheGrid.Model.UI
 {
@@ -18,6 +19,7 @@ namespace TheGrid.Model.UI
         public ListSample(UILogic uiLogic, TimeSpan creationTime, Cell cell)
             : base(uiLogic, creationTime)
         {
+            this.Modal = true;
             this.Alive = true;
             this.Visible = true;
             this.ListUIChildren = new List<UIComponent>();
@@ -40,6 +42,16 @@ namespace TheGrid.Model.UI
                 ListUIChildren.Add(txtSample);
             }
             //---
+
+            //---
+            KeyManager keyClose = AddKey(Keys.Escape);
+            keyClose.KeyReleased += new KeyManager.KeyReleasedHandler(keyClose_KeyReleased);
+            //---
+        }
+
+        void keyClose_KeyReleased(Keys key, GameTime gameTime)
+        {
+            this.Alive = false;
         }
 
         void txtSample_ClickText(ClickableText clickableText, Microsoft.Xna.Framework.Input.MouseState mouseState, GameTime gameTime)
@@ -52,6 +64,8 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
+            Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, new Color(0.1f, 0.1f, 0.1f, 0.85f));
+
             Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, new Color(0.2f, 0.2f, 0.2f, 0.95f));
 
             base.Draw(gameTime);

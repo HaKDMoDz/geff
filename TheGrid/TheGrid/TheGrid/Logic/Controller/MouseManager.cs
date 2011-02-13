@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace TheGrid.Logic.Controller
 {
-    class MouseManager
+    public class MouseManager
     {
         private ButtonState mouseButtonState;
         private MouseButtons mouseButton;
@@ -27,6 +27,11 @@ namespace TheGrid.Logic.Controller
         public MouseManager(MouseButtons mouseButton)
         {
             this.mouseButton = mouseButton;
+        }
+
+        public void Reset()
+        {
+            mouseButtonState = ButtonState.Released;
         }
 
         public void Update(MouseState mouseState, GameTime gameTime)

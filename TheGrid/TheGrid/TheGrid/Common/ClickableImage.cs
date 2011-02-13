@@ -59,18 +59,22 @@ namespace TheGrid.Common
 
         public override void Update(GameTime gameTime)
         {
+            MouseHandled = false;
+
             if (this.Position.X <= Controller.mouseState.X && this.Position.X + this.Width >= Controller.mouseState.X &&
-                this.Position.Y <= Controller.mouseState.Y && this.Position.Y + this.Height >= Controller.mouseState.Y)
+                this.Position.Y <= Controller.mouseState.Y && this.Position.Y + this.Height >= Controller.mouseState.Y && Visible)
             {
                 isIn = true;
 
                 if (Controller.mouseState.LeftButton == ButtonState.Pressed)
                 {
+                    MouseHandled = true;
                     leftMouseButtonState = ButtonState.Pressed;
                 }
                 else if (Controller.mouseState.LeftButton == ButtonState.Released && leftMouseButtonState == ButtonState.Pressed && ClickImage != null)
                 {
                     leftMouseButtonState = ButtonState.Released;
+                    MouseHandled = true;
                     ClickImage(this, Controller.mouseState, gameTime);
                 }
             }

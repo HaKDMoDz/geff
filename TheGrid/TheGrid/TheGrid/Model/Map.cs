@@ -13,6 +13,7 @@ namespace TheGrid.Model
     {
         public List<Cell> Cells { get; set; }
         public List<Channel> Channels { get; set; }
+        public String LibraryName { get; set; }
 
         public int Width { get; set; }
         public int Height { get; set; }

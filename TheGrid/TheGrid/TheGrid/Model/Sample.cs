@@ -14,6 +14,10 @@ namespace TheGrid.Model
         public String Name { get { return Path.GetFileNameWithoutExtension(FileName); } }
         public WaveStream WaveStream;
 
+        public Sample()
+        {
+        }
+        
         public Sample(Channel channel, string fileName)
         {
             this.Channel = channel;

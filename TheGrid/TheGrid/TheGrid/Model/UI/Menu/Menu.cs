@@ -19,6 +19,7 @@ namespace TheGrid.Model.UI.Menu
         #region Membres publiques
         public Cell ParentCell { get; set; }
         public Menu ParentMenu { get; set; }
+        public Item ParentItem { get; set; }
         public List<Item> Items { get; set; }
         public MenuState State { get; set; }
         public double PercentVisibility { get; set; }
@@ -33,11 +34,12 @@ namespace TheGrid.Model.UI.Menu
         private TimeSpan LastStateChanged { get; set; }
         #endregion
 
-        public Menu(UILogic uiLogic, TimeSpan creationTime, Cell parentCell, Menu parentMenu, bool showIcon)
+        public Menu(UILogic uiLogic, TimeSpan creationTime, Cell parentCell, Menu parentMenu, Item parentItem, bool showIcon)
             : base(uiLogic, creationTime)
         {
             ParentCell = parentCell;
             ParentMenu = parentMenu;
+            ParentItem = parentItem;
             ShowIcon = showIcon;
 
             Items = new List<Item>();

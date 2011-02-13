@@ -32,7 +32,13 @@ namespace TheGrid.Model
             }
         }
 
-        public Channel() { }
+        public Channel() 
+        {
+            ListSample = new List<Sample>();
+            ListMusician = new List<Musician>();
+
+            ListSpeed = new List<TimeValue<float>>();
+        }
 
         public Channel(string name, Color color)
         {
