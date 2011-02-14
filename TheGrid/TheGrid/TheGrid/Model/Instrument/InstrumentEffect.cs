@@ -9,5 +9,16 @@ namespace TheGrid.Model.Instrument
     public class InstrumentEffect : InstrumentBase
     {
         public EffectType EffectType { get; set; }
+        public bool FixedValue { get; set; }
+        public List<float> ListValue { get; set; }
+
+        public InstrumentEffect()
+        {
+            this.ListValue = new List<float>();
+        }
+
+        public InstrumentEffect(EffectType effectType) : this()
+        {
+        }
     }
 }

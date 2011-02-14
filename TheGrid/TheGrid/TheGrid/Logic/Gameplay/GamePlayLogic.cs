@@ -12,6 +12,7 @@ using System.Xml;
 using TheGrid.Model.UI;
 using System.IO;
 using System.Windows.Forms;
+using TheGrid.Model.Effect;
 
 namespace TheGrid.Logic.GamePlay
 {
@@ -35,19 +36,39 @@ namespace TheGrid.Logic.GamePlay
             GameEngine.UI.ListUIComponent.Add(ribbon);
 
             //Context.Map = FileSystem.LoadLevel("Test2");
-            NewMap("Bass");
-            InitializeMap();
+            //NewMap("Bass");
+            //InitializeMap();
 
-            EvaluateMuscianGrid();
-            Stop();
+            //EvaluateMuscianGrid();
+            //Stop();
+
+            //NewMap("Bass");
+            LoadMap("Test2");
         }
 
         public void LoadMap(string levelFileName)
         {
             Context.Map = FileSystem.LoadLevel(this, Path.GetFileNameWithoutExtension(levelFileName));
+            foreach (Channel channel in Context.Map.Channels)
+            {
+                channel.InitChannelEffect();
+
+                ChannelEffect channelEffect = channel.ListEffect.Find(e => e.Name == "SuperPitch");
+
+                Curve curve = channelEffect.ListEffectProperty[2].Curve;
+
+                curve.Keys.Add(new CurveKey(0f, 0f));
+                curve.Keys.Add(new CurveKey(10000f, 10f));
+                curve.Keys.Add(new CurveKey(20000f, 0f));
+
+                curve.ComputeTangents(CurveTangent.Smooth);
+            }
+
             EvaluateMuscianGrid();
             ribbon.Partition.Init();
             Stop();
+
+            GameEngine.Sound.Init();
         }
 
         public void NewMap(string libraryName)
@@ -57,8 +78,11 @@ namespace TheGrid.Logic.GamePlay
             Context.Map = new Map(15, 15);
             Context.Map.CreateGrid();
             InitializeChannel(Context.Map);
+            ribbon.Partition.Init();
 
             LoadLibrary(libraryName, Context.Map);
+
+            GameEngine.Sound.Init();
         }
 
         public void LoadLibrary(string libraryName, Map map)
@@ -284,10 +308,13 @@ namespace TheGrid.Logic.GamePlay
             map.Channels.Add(new Channel("Guitar", new Color(0f, 0.6f, 0.3f)));
             map.Channels.Add(new Channel("Bass", new Color(0.7f, 0f, 0.5f)));
 
-            //foreach (Channel channel in Context.Map.Channels)
-            //{
-            //    channel.Color = Color.Lerp(Color.Black, channel.Color, 0.3f);
-            //}
+            if (GameEngine.Mini)
+            {
+                foreach (Channel channel in Context.Map.Channels)
+                {
+                    channel.Color = Color.Lerp(Color.Black, channel.Color, 0.3f);
+                }
+            }
         }
 
         private void InitializePlayers()
@@ -319,6 +346,10 @@ namespace TheGrid.Logic.GamePlay
 
             foreach (Channel channel in Context.Map.Channels)
             {
+                //--- Met à jour les effets associés au channel
+                channel.Update(GameEngine.Sound, gameTime);
+                //---
+
                 foreach (Musician musician in channel.ListMusician)
                 {
                     if (musician.Partition.Count > 0)

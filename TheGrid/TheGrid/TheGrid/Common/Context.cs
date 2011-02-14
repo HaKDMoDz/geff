@@ -23,6 +23,7 @@ namespace TheGrid.Common
         public static TimeSpan PartitionDuration { get; set; }
         public static Boolean IsNavigatingThroughTime { get; set; }
         public static float MenuSize = 3f;
+        public static GameEngine GameEngine { get; set; }
     }
 
     public enum ContextType

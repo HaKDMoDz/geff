@@ -84,12 +84,13 @@ namespace TheGrid
 
             base.Initialize();
 
+            Context.GameEngine = this;
             Render = new RenderLogic(this);
             Render.InitRender();
             UI = new UILogic(this);
+            Sound = new SoundLogic(this);
             GamePlay = new GamePlayLogic(this);
             Controller = new ControllerLogic(this);
-            Sound = new SoundLogic(this);
         }
 
         /// <summary>

@@ -7,9 +7,10 @@ namespace TheGrid.Model
 {
     public enum EffectType
     {
-        Echo,
-        Saturation,
-        Gargle,
-        Chorus
+        Volume,
+        Chorus,
+        Delay,
+        Flanger,
+        Tremolo
     }
 }
