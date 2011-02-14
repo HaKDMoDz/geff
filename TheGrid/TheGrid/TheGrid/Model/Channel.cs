@@ -59,7 +59,7 @@ namespace TheGrid.Model
         {
             ListEffect = new List<ChannelEffect>();
 
-            //ListEffect.Add(AddEffect("Volume"));
+            ListEffect.Add(AddEffect("Volume"));
             ListEffect.Add(AddEffect("Chorus"));
             ListEffect.Add(AddEffect("Delay"));
             ListEffect.Add(AddEffect("Flanger"));
@@ -77,8 +77,10 @@ namespace TheGrid.Model
             {
                 EffectProperty effectProperty = new EffectProperty();
                 effectProperty.Description = slider.Description;
+                effectProperty.Default = slider.Default;
                 effectProperty.MinValue = slider.Minimum;
                 effectProperty.MaxValue = slider.Maximum;
+                effectProperty.Curve.Keys.Add(new CurveKey(0f, float.MinValue));
 
                 channelEffect.ListEffectProperty.Add(effectProperty);
             }

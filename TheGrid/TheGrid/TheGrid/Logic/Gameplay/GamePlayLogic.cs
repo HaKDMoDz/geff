@@ -35,15 +35,7 @@ namespace TheGrid.Logic.GamePlay
             ribbon = new Ribbon(GameEngine.UI, TimeSpan.FromDays(1));
             GameEngine.UI.ListUIComponent.Add(ribbon);
 
-            //Context.Map = FileSystem.LoadLevel("Test2");
-            //NewMap("Bass");
-            //InitializeMap();
-
-            //EvaluateMuscianGrid();
-            //Stop();
-
-            //NewMap("Bass");
-            LoadMap("Test2");
+            LoadMap("Test4");
         }
 
         public void LoadMap(string levelFileName)
@@ -51,17 +43,31 @@ namespace TheGrid.Logic.GamePlay
             Context.Map = FileSystem.LoadLevel(this, Path.GetFileNameWithoutExtension(levelFileName));
             foreach (Channel channel in Context.Map.Channels)
             {
-                channel.InitChannelEffect();
+                if (channel.Name != "Empty")
+                {
+                    channel.InitChannelEffect();
 
-                ChannelEffect channelEffect = channel.ListEffect.Find(e => e.Name == "SuperPitch");
+                    ChannelEffect channelEffect = channel.ListEffect.Find(e => e.Name == "Volume");
 
-                Curve curve = channelEffect.ListEffectProperty[2].Curve;
+                    foreach (EffectProperty effectProperty in channelEffect.ListEffectProperty)
+                    {
+                        effectProperty.Curve.Keys.Clear();
+                        effectProperty.Curve.Keys.Add(new CurveKey(0f, effectProperty.Default));
+                    }
 
-                curve.Keys.Add(new CurveKey(0f, 0f));
-                curve.Keys.Add(new CurveKey(10000f, 10f));
-                curve.Keys.Add(new CurveKey(20000f, 0f));
+                    Curve curve = channelEffect.ListEffectProperty[0].Curve;
 
-                curve.ComputeTangents(CurveTangent.Smooth);
+                    float step = 10f;
+                    curve.Keys.Clear();
+                    curve.Keys.Add(new CurveKey(0f, channelEffect.ListEffectProperty[0].MinValue));
+                    curve.Keys.Add(new CurveKey(1 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
+                    curve.Keys.Add(new CurveKey(2 * step * 1000f, channelEffect.ListEffectProperty[0].MinValue/2));
+                    curve.Keys.Add(new CurveKey(3 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
+                    curve.Keys.Add(new CurveKey(4 * step * 1000f, channelEffect.ListEffectProperty[0].MinValue/2));
+                    curve.Keys.Add(new CurveKey(5 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
+
+                    curve.ComputeTangents(CurveTangent.Smooth);
+                }
             }
 
             EvaluateMuscianGrid();
@@ -332,6 +338,8 @@ namespace TheGrid.Logic.GamePlay
             //GameEngine.Window.Title = Context.Time.ToString();
         }
 
+        private TimeSpan lastEffectApplied = TimeSpan.Zero;
+
         public void UpdateMusicians(GameTime gameTime)
         {
             //---> Met à jour le temps écoulé
@@ -344,10 +352,26 @@ namespace TheGrid.Logic.GamePlay
                     Context.IsPlaying = false;
             }
 
+            //--- Met à jour les effets associés au channel
+            bool applyEfffect = false;
+
+            if (lastEffectApplied == TimeSpan.Zero)
+                lastEffectApplied = gameTime.TotalGameTime;
+
+            if (gameTime.TotalGameTime.Subtract(lastEffectApplied).TotalMilliseconds > 100)
+            {
+                applyEfffect = true;
+                lastEffectApplied = gameTime.TotalGameTime;
+            }
+            //---
+
             foreach (Channel channel in Context.Map.Channels)
             {
                 //--- Met à jour les effets associés au channel
-                channel.Update(GameEngine.Sound, gameTime);
+                if (applyEfffect)
+                {
+                    channel.Update(GameEngine.Sound, gameTime);
+                }
                 //---
 
                 foreach (Musician musician in channel.ListMusician)
@@ -625,6 +649,7 @@ namespace TheGrid.Logic.GamePlay
 
         public void Stop()
         {
+            lastEffectApplied = TimeSpan.Zero;
             Context.IsPlaying = false;
 
             Context.Time = new TimeSpan(0, 0, 0);

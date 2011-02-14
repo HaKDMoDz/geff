@@ -64,12 +64,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="irrKlang.NET4">
-      <HintPath>..\Lib\irrKlang.NET4.dll</HintPath>
-    </Reference>
-    <Reference Include="JSNet">
-      <HintPath>..\Lib\JSNet.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
@@ -172,6 +166,10 @@
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Lib\JSNet\JSNet.csproj">
+      <Project>{9A41CAC8-1D4F-44D6-B324-E0076D0AD590}</Project>
+      <Name>JSNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TheGridContent\TheGridContent.contentproj">
       <Name>TheGridContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>

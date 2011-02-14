@@ -10,6 +10,7 @@ namespace TheGrid.Model.Effect
     [Serializable]
     public class EffectProperty
     {
+        public float Default { get; set; }
         public float MinValue { get; set; }
         public float MaxValue { get; set; }
         public String Description { get; set; }

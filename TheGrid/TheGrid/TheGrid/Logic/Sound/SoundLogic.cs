@@ -5,7 +5,6 @@ using System.Text;
 using TheGrid.Model;
 using NAudio.Wave;
 using NAudio.CoreAudioApi;
-using IrrKlang;
 using TheGrid.Common;
 using JSNet;
 using Microsoft.Xna.Framework;
@@ -16,36 +15,33 @@ namespace TheGrid.Logic.Sound
 {
     public class SoundLogic
     {
-        ISoundEngine _soundEngine;
-        public void PlaySample2(Sample sample)
-        {
-            ISound sound = _soundEngine.Play2D(sample.FileName);
-        }
+        private IWavePlayer waveOutDevice;
+        private WaveMixerStream32 mixer;
+        WaveStream[] reader;
+        EffectStream[] offsetStream;
+        WaveChannel32[] channelSteam;
+        Dictionary<String, int> dicSample;
+        Dictionary<String, List<Effect>> dicEffect;
 
         public GameEngine GameEngine { get; set; }
 
         public SoundLogic(GameEngine gameEngine)
         {
             this.GameEngine = gameEngine;
-
-
-            //_soundEngine = new ISoundEngine();
         }
 
-        private IWavePlayer waveOutDevice;
-        private WaveMixerStream32 mixer;
-        WaveStream[] reader = new WaveStream[4];
-        EffectStream[] offsetStream = new EffectStream[4];
-        WaveChannel32[] channelSteam = new WaveChannel32[4];
-        Dictionary<String, int> dicSample;
-        Dictionary<String, List<Effect>> dicEffect;
+        ~SoundLogic()
+        {
+            waveOutDevice.Dispose();
+        }
 
         public void Init()
         {
             mixer = new WaveMixerStream32();
-            mixer.AutoStop = false;
+            mixer.AutoStop = true;
 
-            waveOutDevice = new NAudio.Wave.DirectSoundOut();
+            //waveOutDevice = new NAudio.Wave.DirectSoundOut();
+            waveOutDevice = new NAudio.Wave.AsioOut();
 
             waveOutDevice.Init(mixer);
             waveOutDevice.Play();
@@ -60,6 +56,9 @@ namespace TheGrid.Logic.Sound
             dicEffect = new Dictionary<String, List<Effect>>();
 
             LoadSample();
+
+            mixer.Position = long.MaxValue;
+            mixer.AutoStop = false;
         }
 
         public void PlaySample(Sample sample)
@@ -83,10 +82,10 @@ namespace TheGrid.Logic.Sound
 
                     reader[index] = outStream;
 
-                    offsetStream[index] = new EffectStream(CreateEffectChain(sample), new WaveOffsetStream(reader[index]));
+                    offsetStream[index] = new EffectStream(CreateEffectChain(sample), reader[index]);
                     channelSteam[index] = new WaveChannel32(offsetStream[index]);
 
-
+                    channelSteam[index].Position = channelSteam[index].Length;
                     mixer.AddInputStream(channelSteam[index]);
 
                     dicSample.Add(sample.Name, index);
@@ -102,12 +101,21 @@ namespace TheGrid.Logic.Sound
             {
                 Effect effect = dicEffect[sample.Name].Find(e => e.Name == channelEffect.Name);
 
-                for (int i = 0; i < values.Length; i++)
+                if (values[0] == float.MinValue)
                 {
-                    effect.Sliders[i].Value = values[i];
+                    effect.Enabled = false;
                 }
+                else
+                {
+                    effect.Enabled = true;
 
-                effect.Slider();
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        effect.Sliders[i].Value = values[i];
+                    }
+
+                    effect.Slider();
+                }
             }
         }
 
@@ -118,45 +126,32 @@ namespace TheGrid.Logic.Sound
 
             dicEffect.Add(sample.Name, listEffect);
 
-            //Volume volume = new Volume();
-            //effectChain.Add(new JSNet.Volume());
-            //listEffect.Add(volume);
-            //volume.Sliders[0].Value = 0f;
-            //volume.Sliders[1].Value = 0f;
-            //volume.Enabled = true;
-            //volume.SampleRate = 44100f;
-            //volume.Init();
-            //volume.Slider();
-
-            Chorus chorus = new Chorus();
-            effectChain.Add(chorus);
-            listEffect.Add(chorus);
-            chorus.Enabled = false;
-
-            JSNet.Delay delay = new JSNet.Delay();
-            effectChain.Add(delay);
-            listEffect.Add(delay);
-            delay.Enabled = false;
-
-            Flanger flanger = new Flanger();
-            effectChain.Add(flanger);
-            listEffect.Add(flanger);
-            flanger.Enabled = false;
-
-            Tremolo tremolo = new Tremolo();
-            effectChain.Add(tremolo);
-            listEffect.Add(tremolo);
-            tremolo.Enabled = false;
-
-            SuperPitch superPtich = new SuperPitch();
-            effectChain.Add(superPtich);
-            listEffect.Add(superPtich);
-            superPtich.Enabled = true;
-            superPtich.Sliders[2].Value = 1f;
-            superPtich.Slider();
-
+            AddEffect(effectChain, listEffect, typeof(Volume));
+            AddEffect(effectChain, listEffect, typeof(Chorus));
+            AddEffect(effectChain, listEffect, typeof(JSNet.Delay));
+            AddEffect(effectChain, listEffect, typeof(Flanger));
+            AddEffect(effectChain, listEffect, typeof(Tremolo));
+            AddEffect(effectChain, listEffect, typeof(SuperPitch));
 
             return effectChain;
+        }
+
+        private Effect AddEffect(EffectChain effectChain, List<Effect> listEffect, Type typeOfEffect)
+        {
+            Effect effect = (Effect)Activator.CreateInstance(typeOfEffect);
+            effectChain.Add(effect);
+            listEffect.Add(effect);
+            effect.SampleRate = 44100f;
+            effect.Enabled = false;
+
+            foreach (Slider slider in effect.Sliders)
+            {
+                slider.Value = slider.Default;
+            }
+
+            effect.Slider();
+
+            return effect;
         }
 
         public IList<Slider> GetEffectParameters(string effectName)
@@ -175,8 +170,6 @@ namespace TheGrid.Logic.Sound
                 }
             }
 
-
-            
             Effect effect = (Effect)Activator.CreateInstance(type);
 
             return effect.Sliders;
