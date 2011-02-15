@@ -178,7 +178,7 @@ namespace TheGrid.Logic.Render
             effectSprite.Projection = Projection;
             effectSprite.World = World;
 
-            effectUI.View = Matrix.CreateLookAt(new Vector3(ScreenWidth / 2, 0, -10f), new Vector3(ScreenWidth / 2, 0, 0f), CameraUp);
+            effectUI.View = Matrix.CreateLookAt(new Vector3(ScreenWidth / 2, ScreenHeight / 2, -10f), new Vector3(ScreenWidth / 2, ScreenHeight / 2, 0f), CameraUp);
             //effectUI.Projection = Projection;
             //effectUI.World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
 

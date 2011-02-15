@@ -382,6 +382,7 @@ namespace TheGrid.Logic.Controller
 
             //--- Relative mouse position
             mousePositionPoint = new Point(mouseState.X, mouseState.Y);
+            mousePosition = new Vector2(mouseState.X, mouseState.Y);
             //---
 
 
@@ -401,7 +402,7 @@ namespace TheGrid.Logic.Controller
                 }
             }
 
-            if (GameEngine.UI.IsMouseHandled())
+            if (GameEngine.UI.IsMouseHandled() || GameEngine.UI.IsUIModalActive())
             {
                 foreach (MouseManager mouseManager in ListMouseManager)
                 {

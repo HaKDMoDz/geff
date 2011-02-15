@@ -249,7 +249,7 @@ namespace TheGrid.Logic.UI
             }
             else
             {
-                EffectPanel effectPanel = new EffectPanel(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell.Channel.ListEffect[0]);
+                EffectPanel effectPanel = new EffectPanel(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell.Channel.ListEffect[1]);
                 this.ListUIComponent.Add(effectPanel);
             }
         }

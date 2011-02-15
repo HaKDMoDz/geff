@@ -78,6 +78,7 @@ namespace TheGrid.Model
                 EffectProperty effectProperty = new EffectProperty();
                 effectProperty.Description = slider.Description;
                 effectProperty.Default = slider.Default;
+                effectProperty.Value = slider.Default;
                 effectProperty.MinValue = slider.Minimum;
                 effectProperty.MaxValue = slider.Maximum;
                 effectProperty.Curve.Keys.Add(new CurveKey(0f, float.MinValue));
