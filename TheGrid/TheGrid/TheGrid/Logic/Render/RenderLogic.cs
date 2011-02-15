@@ -41,6 +41,7 @@ namespace TheGrid.Logic.Render
 
         public BasicEffect effect;
         public BasicEffect effectSprite;
+        public BasicEffect effectUI;
 
         public Matrix View;
         public Matrix Projection;
@@ -77,7 +78,6 @@ namespace TheGrid.Logic.Render
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
         Microsoft.Xna.Framework.Graphics.Model meshMusician;
-
 
         public float HexaWidth = 512f;
 
@@ -157,6 +157,12 @@ namespace TheGrid.Logic.Render
             effectSprite.TextureEnabled = true;
             effectSprite.VertexColorEnabled = true;
 
+            effectUI = new BasicEffect(GameEngine.GraphicsDevice);
+
+            effectUI.LightingEnabled = false;
+            effectUI.TextureEnabled = false;
+            effectUI.VertexColorEnabled = true;
+
             UpdateShader(new GameTime());
         }
 
@@ -171,6 +177,14 @@ namespace TheGrid.Logic.Render
             effectSprite.View = View;
             effectSprite.Projection = Projection;
             effectSprite.World = World;
+
+            effectUI.View = Matrix.CreateLookAt(new Vector3(ScreenWidth / 2, 0, -10f), new Vector3(ScreenWidth / 2, 0, 0f), CameraUp);
+            //effectUI.Projection = Projection;
+            //effectUI.World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
+
+            //effectUI.View = View;
+            effectUI.Projection = Matrix.CreateOrthographic(GameEngine.GraphicsDevice.Viewport.Width, GameEngine.GraphicsDevice.Viewport.Height, 1f, 100f); ;
+            effectUI.World = World;
 
             //float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             //effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
@@ -264,14 +278,14 @@ namespace TheGrid.Logic.Render
                     texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cell.Channel.Name);
                 }
 
-                SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width/2, texInstrument.Height/2), null, Color.White);
+                SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2), null, Color.White);
 
                 if (cell.Clip.Instrument is InstrumentSample)
                 {
                     string sampleName = ((InstrumentSample)cell.Clip.Instrument).Sample.Name;
-                    Vector2 deltaSampleName = new Vector2(FontMap.MeasureString(sampleName).X / 2, FontMap.MeasureString(sampleName).Y/5);
- 
-                        SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize - deltaSampleName, Color.White);
+                    Vector2 deltaSampleName = new Vector2(FontMap.MeasureString(sampleName).X / 2, FontMap.MeasureString(sampleName).Y / 5);
+
+                    SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize - deltaSampleName, Color.White);
                 }
 
             }

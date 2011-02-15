@@ -16,6 +16,7 @@ namespace TheGrid.Model.Effect
         public String Description { get; set; }
         [XmlIgnore]
         public Curve Curve { get; set; }
+        public float Value { get; set; }
 
         public EffectProperty()
         {

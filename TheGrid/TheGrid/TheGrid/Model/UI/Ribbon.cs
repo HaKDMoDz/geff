@@ -115,9 +115,9 @@ namespace TheGrid.Model.UI
             Rectangle recManualSpeed = new Rectangle(Partition.Rec.Right + MARGE, Partition.Rec.Y, (int)(0.03f * Render.ScreenWidth), (int)((float)Partition.Rec.Height * Context.SpeedFactor / 4f));
             Rectangle rec = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.3f));
 
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, new Color(0.1f, 0.1f, 0.1f, 0.95f));//, 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
+            //Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, new Color(0.1f, 0.1f, 0.1f, 0.95f));//, 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
 
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, recManualSpeed, Color.White);
+            //Render.SpriteBatch.Draw(Render.texEmptyGradient, recManualSpeed, Color.White);
 
             base.Draw(gameTime);
         }

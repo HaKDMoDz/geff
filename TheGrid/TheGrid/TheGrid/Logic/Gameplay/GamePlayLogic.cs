@@ -404,6 +404,7 @@ namespace TheGrid.Logic.GamePlay
                                 musician.CurrentIndex++;
                                 musician.CurrentCell = musician.Partition[musician.CurrentIndex].Value;
 
+                                //---> Si la prochaine cellule est une InstrumentStop, le musicien disparait
                                 if (musician.CurrentCell.Clip != null && (musician.CurrentCell.Channel == null || musician.CurrentCell.Channel == musician.Channel) && musician.CurrentCell.Clip.Instrument is InstrumentStop)
                                 {
                                     musician.IsPlaying = false;
@@ -412,7 +413,7 @@ namespace TheGrid.Logic.GamePlay
                                 {
                                     musician.IsPlaying = true;
 
-
+                                    //---> Si la prochaine cellule est une InstrumentSample, le sample est joué
                                     if (musician.CurrentCell.Channel != null && musician.CurrentCell.Channel == musician.Channel && musician.CurrentCell.Clip.Instrument is InstrumentSample)
                                     {
                                         GameEngine.Sound.PlaySample(((InstrumentSample)musician.CurrentCell.Clip.Instrument).Sample);
@@ -544,21 +545,6 @@ namespace TheGrid.Logic.GamePlay
                             }
                         }
 
-                        //--- Création des nouveaux musiciens
-                        foreach (Musician newMusician in newMusicians)
-                        {
-                            Musician musician = channel.GetMusicianNotPlaying();
-
-                            if (musician != null)
-                            {
-                                musician.Partition.Add(new TimeValue<Cell>(channel.ElapsedTime, newMusician.CurrentCell));
-
-                                musician.NextCell = newMusician.NextCell;
-                                musician.CurrentDirection = newMusician.CurrentDirection;
-                            }
-                        }
-                        //---
-
                         //--- Suppression des doublons de musiciens
                         foreach (Musician musician in channel.ListMusician)
                         {
@@ -586,6 +572,21 @@ namespace TheGrid.Logic.GamePlay
                                     doublon.Partition.Add(new TimeValue<Cell>(doublon.Partition.Last().Time, cellDoublon));
                                     doublon.NextCell = null;
                                 }
+                            }
+                        }
+                        //---
+                        
+                        //--- Création des nouveaux musiciens
+                        foreach (Musician newMusician in newMusicians)
+                        {
+                            Musician musician = channel.GetMusicianNotPlaying();
+
+                            if (musician != null)
+                            {
+                                musician.Partition.Add(new TimeValue<Cell>(channel.ElapsedTime, newMusician.CurrentCell));
+
+                                musician.NextCell = newMusician.NextCell;
+                                musician.CurrentDirection = newMusician.CurrentDirection;
                             }
                         }
                         //---

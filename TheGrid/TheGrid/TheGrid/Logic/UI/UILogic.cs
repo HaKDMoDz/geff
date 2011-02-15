@@ -9,6 +9,7 @@ using TheGrid.Common;
 using TheGrid.Model.Instrument;
 using TheGrid.Model.UI;
 using Microsoft.Xna.Framework.Graphics;
+using TheGrid.Model.UI.Effect;
 
 namespace TheGrid.Logic.UI
 {
@@ -155,9 +156,6 @@ namespace TheGrid.Logic.UI
 
             menuChannel.nbVertex = menuChannel.Items.Count * 4;
 
-            //menuChannel.UIDependency = item.ParentMenu;
-            //this.ListUIComponent.Add(menuChannel);
-
             NextMenu(item.ParentMenu, menuChannel);
         }
 
@@ -171,6 +169,8 @@ namespace TheGrid.Logic.UI
                 itemSample_Selected(item, gameTime);
             else if (item.ParentMenu.ParentItem.Name == "MusicianStart")
                 itemMusicianStart_Selected(item, gameTime);
+            else if (item.ParentMenu.ParentItem.Name == "Effect")
+                itemEffect_Selected(item, gameTime);
             else
                 NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
         }
@@ -241,6 +241,17 @@ namespace TheGrid.Logic.UI
 
         void itemEffect_Selected(Item item, GameTime gameTime)
         {
+            item.ParentMenu.Close(gameTime);
+
+            if (item.ParentMenu.ParentCell.Channel == null || item.ParentMenu.ParentCell.Channel.Name == "Empty")
+            {
+                itemMenuChannel_Selected(item, gameTime);
+            }
+            else
+            {
+                EffectPanel effectPanel = new EffectPanel(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell.Channel.ListEffect[0]);
+                this.ListUIComponent.Add(effectPanel);
+            }
         }
 
         void itemMusicianStart_Selected(Item item, GameTime gameTime)
