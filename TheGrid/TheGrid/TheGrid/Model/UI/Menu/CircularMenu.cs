@@ -7,10 +7,11 @@ using Microsoft.Xna.Framework.Graphics;
 using TheGrid.Common;
 using Microsoft.Xna.Framework.Input;
 using TheGrid.Logic.UI;
+using TheGrid.Logic.Controller;
 
 namespace TheGrid.Model.UI.Menu
 {
-    public class Menu : UIComponent
+    public class CircularMenu : UIComponent
     {
         #region Constants
         private const double MENU_ANIMATION_DURATION = 200;
@@ -18,13 +19,17 @@ namespace TheGrid.Model.UI.Menu
 
         #region Membres publiques
         public Cell ParentCell { get; set; }
-        public Menu ParentMenu { get; set; }
+        public CircularMenu ParentMenu { get; set; }
         public Item ParentItem { get; set; }
         public List<Item> Items { get; set; }
         public MenuState State { get; set; }
         public double PercentVisibility { get; set; }
         public double AngleDelta { get; set; }
         public bool ShowIcon { get; set; }
+        public bool ShowName { get; set; }
+        public Vector2 Location { get; set; }
+        public BasicEffect Effect { get; set; }
+        public bool IsUI { get; set; }
         #endregion
 
         #region Membres privés
@@ -34,16 +39,43 @@ namespace TheGrid.Model.UI.Menu
         private TimeSpan LastStateChanged { get; set; }
         #endregion
 
-        public Menu(UILogic uiLogic, TimeSpan creationTime, Cell parentCell, Menu parentMenu, Item parentItem, bool showIcon)
+        public CircularMenu(UILogic uiLogic, TimeSpan creationTime, Cell parentCell, CircularMenu parentMenu, Item parentItem, bool showIcon)
+            : this(uiLogic, creationTime, parentCell, parentMenu, parentItem, showIcon, false)
+        {
+        }
+
+        public CircularMenu(UILogic uiLogic, TimeSpan creationTime, Cell parentCell, CircularMenu parentMenu, Item parentItem, bool showIcon, bool showName)
             : base(uiLogic, creationTime)
         {
             ParentCell = parentCell;
             ParentMenu = parentMenu;
             ParentItem = parentItem;
             ShowIcon = showIcon;
+            ShowName = showName;
+            Effect = Render.effect;
 
             Items = new List<Item>();
             ListUIChildren = new List<UIComponent>();
+
+            if (parentCell != null)
+            {
+                Location = ParentCell.Location * Render.HexaWidth;
+            }
+
+            MouseManager leftMouseButton = AddMouse(MouseButtons.LeftButton);
+            leftMouseButton.MouseReleased += new MouseManager.MouseReleasedHandler(leftMouseButton_MouseReleased);
+        }
+
+        void leftMouseButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            foreach (Item item in Items)
+            {
+                if (item.MouseOver)
+                {
+                    MouseHandled = true;
+                    item.OnSelected(gameTime);
+                }
+            }
         }
 
         public void Open(GameTime gameTime)
@@ -72,7 +104,7 @@ namespace TheGrid.Model.UI.Menu
             if (color2.A > 240)
                 color2.A = 240;
 
-            nbVertex = Items.Count * 4;
+            nbVertex = Items.Count * 8;
 
             int nbPointPerItem = nbVertex / Items.Count;
             double angleItem = AngleDelta - MathHelper.PiOver2 - ((MathHelper.TwoPi / (double)Items.Count) / 2);
@@ -80,7 +112,14 @@ namespace TheGrid.Model.UI.Menu
 
             vBuffer = new VertexBuffer(Render.GraphicsDevice, typeof(VertexPositionColor), nbVertex * 3, BufferUsage.None);
 
-            float localSize = Context.MenuSize * Render.HexaWidth / 2f;// *(-gameEngine.Render.CameraPosition.Z / 4f) * 3f;
+            float localSize = 0f;
+            if (IsUI)
+            {
+                localSize = Context.MenuSize * 20f;
+                midHexa = new Vector3(0f, 0f, 0f);
+            }
+            else
+                localSize = Context.MenuSize * Render.HexaWidth / 2f;// *(-gameEngine.Render.CameraPosition.Z / 4f) * 3f;
 
             for (int i = 0; i < nbVertex; i++)
             {
@@ -103,23 +142,12 @@ namespace TheGrid.Model.UI.Menu
                 if (Items[index].Color != Color.Transparent)
                     color2 = new Color(Items[index].Color.R, Items[index].Color.G, Items[index].Color.B, color2.A);
 
-                vertex.Add(new VertexPositionColor(position2 + Tools.GetVector3(ParentCell.Location * Render.HexaWidth) + midHexa, color));
-                vertex.Add(new VertexPositionColor(new Vector3(0, 0, 0f) + Tools.GetVector3(ParentCell.Location * Render.HexaWidth) + midHexa, color2));
-                vertex.Add(new VertexPositionColor(position1 + Tools.GetVector3(ParentCell.Location * Render.HexaWidth) + midHexa, color));
+                vertex.Add(new VertexPositionColor(position2 + Tools.GetVector3(Location) + midHexa, color));
+                vertex.Add(new VertexPositionColor(new Vector3(0, 0, 0f) + Tools.GetVector3(Location) + midHexa, color2));
+                vertex.Add(new VertexPositionColor(position1 + Tools.GetVector3(Location) + midHexa, color));
             }
 
             vBuffer.SetData<VertexPositionColor>(vertex.ToArray());
-        }
-
-        public void MouseClick(GameTime gameTime)
-        {
-            foreach (Item item in Items)
-            {
-                if (item.MouseOver)
-                {
-                    item.OnSelected(gameTime);
-                }
-            }
         }
 
         public void MouseOver(GameTime gameTime)
@@ -127,32 +155,40 @@ namespace TheGrid.Model.UI.Menu
             float pickCurDistance = 0f;
             float barycentricU = 0f;
             float barycentricV = 0f;
-
             Vector3 midHexa = new Vector3(Render.HexaWidth / 2f, Render.HexaWidth / 2f, 0f);
-
-            Vector3 mousePosition = new Vector3((float)Controller.mouseState.X - (float)Render.GraphicsDevice.Viewport.Width / 2f, (float)Controller.mouseState.Y - (float)Render.GraphicsDevice.Viewport.Height / 2f, 0f);
-
-            Matrix mtx = Matrix.CreateScale(-Render.CameraPosition.Z) * Matrix.CreateTranslation(Render.CameraPosition.X, Render.CameraPosition.Y, Render.CameraPosition.Z);
-
-            mousePosition = Vector3.Transform(mousePosition, mtx);
-
+            Vector3 mousePosition = Vector3.Zero;
             int nbPointPerItem = nbVertex / Items.Count;
-            float localSize = Context.MenuSize * 1.2f * Render.HexaWidth / 2f;
-            double angleItem = AngleDelta - MathHelper.PiOver2 - ((MathHelper.TwoPi / (double)Items.Count) / 2); 
+            float localSize = 0f;
+
+            if (IsUI)
+            {
+                mousePosition = new Vector3((float)Controller.mouseState.X, (float)Controller.mouseState.Y, 0f);
+                localSize = Context.MenuSize * 20f;
+                midHexa = new Vector3(0f, 0f, 0f);
+            }
+            else
+            {
+                mousePosition = new Vector3((float)Controller.mouseState.X - (float)Render.GraphicsDevice.Viewport.Width / 2f, (float)Controller.mouseState.Y - (float)Render.GraphicsDevice.Viewport.Height / 2f, 0f);
+                Matrix mtx = Matrix.CreateScale(-Render.CameraPosition.Z) * Matrix.CreateTranslation(Render.CameraPosition.X, Render.CameraPosition.Y, Render.CameraPosition.Z);
+                mousePosition = Vector3.Transform(mousePosition, mtx);
+                localSize = Context.MenuSize * Render.HexaWidth / 2f;// *(-gameEngine.Render.CameraPosition.Z / 4f) * 3f;
+            }
+
+            double angleItem = AngleDelta - MathHelper.PiOver2 - ((MathHelper.TwoPi / (double)Items.Count) / 2);
             double angleVertex = MathHelper.TwoPi / (double)nbVertex;
 
             int currentIndex = -1;
             for (int i = 0; i < nbVertex; i++)
             {
-                double angle1 = angleItem + (double)(i+1) * angleVertex;
+                double angle1 = angleItem + (double)(i + 1) * angleVertex;
                 double angle2 = angleItem + (double)(i) * angleVertex;
 
-                Vector3 vec1 = new Vector3(localSize * (float)Math.Cos(angle1), localSize * (float)Math.Sin(angle1), 0f) + Tools.GetVector3(ParentCell.Location * Render.HexaWidth) + midHexa;
-                Vector3 vec3 = new Vector3(localSize * (float)Math.Cos(angle2), localSize * (float)Math.Sin(angle2), 0f) + Tools.GetVector3(ParentCell.Location * Render.HexaWidth) + midHexa;
+                Vector3 vec1 = new Vector3(localSize * (float)Math.Cos(angle1), localSize * (float)Math.Sin(angle1), 0f) + Tools.GetVector3(Location) + midHexa;
+                Vector3 vec3 = new Vector3(localSize * (float)Math.Cos(angle2), localSize * (float)Math.Sin(angle2), 0f) + Tools.GetVector3(Location) + midHexa;
 
-                Vector3 vec2 = Tools.GetVector3(ParentCell.Location * Render.HexaWidth) + midHexa;
+                Vector3 vec2 = Tools.GetVector3(Location) + midHexa;
 
-                int index  = ((i / nbPointPerItem)) % Items.Count;
+                int index = ((i / nbPointPerItem)) % Items.Count;
 
                 if (Tools.RayIntersectTriangle(mousePosition, -Vector3.UnitZ, vec1, vec2, vec3, ref pickCurDistance, ref barycentricU, ref barycentricV))
                 {
@@ -198,6 +234,8 @@ namespace TheGrid.Model.UI.Menu
             {
                 MouseOver(gametime);
             }
+
+            base.Update(gametime);
         }
 
         public override void Draw(GameTime gameTime)
@@ -205,17 +243,20 @@ namespace TheGrid.Model.UI.Menu
             if (PercentVisibility == 0)
                 return;
 
-            Render.effect.Alpha = (float)PercentVisibility;
+            Render.SpriteBatch.End();
+            Effect.Alpha = (float)PercentVisibility;
 
             Render.GraphicsDevice.SetVertexBuffer(vBuffer);
 
-            foreach (EffectPass pass in Render.effect.CurrentTechnique.Passes)
+            foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 Render.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, nbVertex);
             }
 
-            if (ShowIcon)
+            Render.SpriteBatch.Begin();
+
+            if (ShowIcon || ShowName)
             {
                 Vector2 nearPoint = (ParentCell.Location + new Vector2(0.5f, .5f)) * Render.HexaWidth;
 
@@ -238,7 +279,10 @@ namespace TheGrid.Model.UI.Menu
 
                     Vector2 vec = new Vector2(localSize * (float)Math.Cos(angle), localSize * (float)Math.Sin(angle));
 
-                    Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), nearPoint + vec, null, color, 0f, new Vector2(64f), Context.MenuSize, SpriteEffects.None, 0f);
+                    if(ShowIcon)
+                        Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), nearPoint + vec, null, color, 0f, new Vector2(64f), Context.MenuSize, SpriteEffects.None, 0f);
+                    if (ShowName)
+                        Render.SpriteBatch.DrawString(Render.FontMapBig, Items[i].Name, nearPoint + vec - Render.FontMapBig.MeasureString(Items[i].Name)/2, color);
                 }
                 Render.SpriteBatch.End();
                 Render.SpriteBatch.Begin();
@@ -247,7 +291,7 @@ namespace TheGrid.Model.UI.Menu
 
         public override void UpdateUIDependency(GameTime gameTime)
         {
-            Menu menuDependecy = this.UIDependency as Menu;
+            CircularMenu menuDependecy = this.UIDependency as CircularMenu;
 
             if (menuDependecy != null && menuDependecy.State == MenuState.Closed && menuDependecy.Alive)
             {

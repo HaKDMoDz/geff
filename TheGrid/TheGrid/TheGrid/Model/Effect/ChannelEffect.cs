@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using TheGrid.Logic.Sound;
 using TheGrid.Common;
+using JSNet;
 
 namespace TheGrid.Model.Effect
 {
@@ -26,6 +27,27 @@ namespace TheGrid.Model.Effect
         {
             this.Channel = channel;
             this.Name = name;
+
+            AddEffectProperty();
+        }
+
+        private void AddEffectProperty()
+        {
+            IList<Slider> sliders = Context.GameEngine.Sound.GetEffectParameters(Name);
+            ListEffectProperty = new List<EffectProperty>();
+
+            foreach (Slider slider in sliders)
+            {
+                EffectProperty effectProperty = new EffectProperty();
+                effectProperty.Description = slider.Description;
+                effectProperty.Default = slider.Default;
+                effectProperty.Value = slider.Default;
+                effectProperty.MinValue = slider.Minimum;
+                effectProperty.MaxValue = slider.Maximum;
+                effectProperty.Curve.Keys.Add(new CurveKey(0f, float.MinValue));
+
+                ListEffectProperty.Add(effectProperty);
+            }
         }
 
         public void Update(SoundLogic soundLogic, GameTime gameTime)

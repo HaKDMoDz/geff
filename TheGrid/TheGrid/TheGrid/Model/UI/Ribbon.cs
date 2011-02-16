@@ -46,9 +46,9 @@ namespace TheGrid.Model.UI
             imgPause.ClickImage += new ClickableImage.ClickImageHandler(imgPause_ClickImage);
             imgStop.ClickImage += new ClickableImage.ClickImageHandler(imgStop_ClickImage);
 
-            txtNewMap = new ClickableText(this.UI, GetNewTimeSpan(), "FontMenu", "New", new Vector2(imgStop.Rec.Right + MARGE, Partition.Rec.Y), Color.White, Color.LightBlue);
-            txtLoadMap = new ClickableText(this.UI, GetNewTimeSpan(), "FontMenu", "Load", new Vector2(imgStop.Rec.Right + MARGE, txtNewMap.Rec.Bottom + MARGE), Color.White, Color.LightBlue);
-            txtSaveMap = new ClickableText(this.UI, GetNewTimeSpan(), "FontMenu", "Save", new Vector2(imgStop.Rec.Right + MARGE, txtLoadMap.Rec.Bottom + MARGE), Color.White, Color.LightBlue);
+            txtNewMap = new ClickableText(this.UI, GetNewTimeSpan(), "FontMenu", "New", new Vector2(imgStop.Rec.Right + MARGE, Partition.Rec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.Transparent, VisualStyle.BackForeColorMouseOver, false);
+            txtLoadMap = new ClickableText(this.UI, GetNewTimeSpan(), "FontMenu", "Load", new Vector2(imgStop.Rec.Right + MARGE, txtNewMap.Rec.Bottom + MARGE), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.Transparent, VisualStyle.BackForeColorMouseOver, false);
+            txtSaveMap = new ClickableText(this.UI, GetNewTimeSpan(), "FontMenu", "Save", new Vector2(imgStop.Rec.Right + MARGE, txtLoadMap.Rec.Bottom + MARGE), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.Transparent, VisualStyle.BackForeColorMouseOver, false);
 
             txtNewMap.ClickText += new ClickableText.ClickTextHandler(txtNewMap_ClickText);
             txtLoadMap.ClickText += new ClickableText.ClickTextHandler(txtLoadMap_ClickText);
@@ -115,7 +115,7 @@ namespace TheGrid.Model.UI
             Rectangle recManualSpeed = new Rectangle(Partition.Rec.Right + MARGE, Partition.Rec.Y, (int)(0.03f * Render.ScreenWidth), (int)((float)Partition.Rec.Height * Context.SpeedFactor / 4f));
             Rectangle rec = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.3f));
 
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, new Color(0.1f, 0.1f, 0.1f, 0.95f));//, 0f, Vector2.Zero, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, VisualStyle.BackColorDark);
 
             Render.SpriteBatch.Draw(Render.texEmptyGradient, recManualSpeed, Color.White);
 

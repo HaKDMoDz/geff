@@ -21,7 +21,7 @@ namespace TheGrid.Model.UI
             this.Visible = true;
             this.ListUIChildren = new List<UIComponent>();
 
-            Vector2 sizeLibraryName = Render.FontText.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE * 2);
+            Vector2 sizeLibraryName = Render.FontText.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE);
 
             Rec = new Rectangle((int)(Render.ScreenWidth / 2 - sizeLibraryName.X / 2), (int)(0.3f * Render.ScreenHeight), (int)sizeLibraryName.X, (int)(0.6f * Render.ScreenHeight));
 
@@ -36,9 +36,11 @@ namespace TheGrid.Model.UI
                 if (libraryName == ".svn")
                     continue;
 
-                ClickableText txtLibrary = new ClickableText(this.UI, creationTime, "FontText", libraryName.Substring(0, Math.Min(20, libraryName.Length)), vec, Color.White, Color.LightBlue);
+                ClickableText txtLibrary = new ClickableText(this.UI, creationTime, "FontText", libraryName.Substring(0, Math.Min(20, libraryName.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+                txtLibrary.Rec = new Rectangle(txtLibrary.Rec.X, txtLibrary.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtLibrary.Rec.Height);
                 txtLibrary.Tag = libraryName;
-                vec.Y += sizeLibraryName.Y + Ribbon.MARGE;
+
+                vec.Y += sizeLibraryName.Y;
 
                 txtLibrary.ClickText += new ClickableText.ClickTextHandler(txtLibrary_ClickText);
                 ListUIChildren.Add(txtLibrary);
@@ -65,9 +67,9 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, new Color(0.1f, 0.1f, 0.1f, 0.85f));
+            Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, VisualStyle.BackColorModalScreen);
 
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, new Color(0.2f, 0.2f, 0.2f, 0.95f));
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, VisualStyle.BackColorLight);
 
             base.Draw(gameTime);
         }

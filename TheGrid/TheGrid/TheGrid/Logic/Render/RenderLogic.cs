@@ -19,7 +19,9 @@ namespace TheGrid.Logic.Render
         public SpriteBatch SpriteBatch;
         public SpriteFont FontMenu { get; set; }
         public SpriteFont FontText { get; set; }
+        public SpriteFont FontTextSmall { get; set; }
         public SpriteFont FontMap { get; set; }
+        public SpriteFont FontMapBig { get; set; }
         public GameEngine GameEngine { get; set; }
         public GraphicsDevice GraphicsDevice { get { return GameEngine.GraphicsDevice; } }
 
@@ -63,6 +65,8 @@ namespace TheGrid.Logic.Render
         private Texture2D textDirection = null;
         private Texture2D texRepeater = null;
         private Texture2D texSpeed = null;
+        private Texture2D texEffect = null;
+
         private Texture2D texMusicianStart = null;
         private Texture2D texMusicianStop = null;
 
@@ -96,7 +100,9 @@ namespace TheGrid.Logic.Render
             SpriteBatch = new SpriteBatch(GameEngine.GraphicsDevice);
             FontMenu = GameEngine.Content.Load<SpriteFont>(@"Font\FontMenu");
             FontText = GameEngine.Content.Load<SpriteFont>(@"Font\FontText");
+            FontTextSmall = GameEngine.Content.Load<SpriteFont>(@"Font\FontTextSmall");
             FontMap = GameEngine.Content.Load<SpriteFont>(@"Font\FontMap");
+            FontMapBig = GameEngine.Content.Load<SpriteFont>(@"Font\FontMapBig");
 
             texHexa2D = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D");
             texHexa2DClip = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D_Clip");
@@ -104,6 +110,8 @@ namespace TheGrid.Logic.Render
             textDirection = GameEngine.Content.Load<Texture2D>(@"Texture\Direction");
             texRepeater = GameEngine.Content.Load<Texture2D>(@"Texture\Repeater");
             texSpeed = GameEngine.Content.Load<Texture2D>(@"Texture\Speed");
+            texEffect = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Effect");
+            
             texMusicianStart = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MusicianStart");
             texMusicianStop = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MusicianStop");
             texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
@@ -276,6 +284,10 @@ namespace TheGrid.Logic.Render
                 else if (cell.Clip.Instrument is InstrumentSample)
                 {
                     texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cell.Channel.Name);
+                }
+                else if (cell.Clip.Instrument is InstrumentEffect)
+                {
+                    texInstrument = texEffect;
                 }
 
                 SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2), null, Color.White);

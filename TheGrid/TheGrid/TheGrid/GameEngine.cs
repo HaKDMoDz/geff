@@ -85,6 +85,9 @@ namespace TheGrid
             base.Initialize();
 
             Context.GameEngine = this;
+            //VisualStyle.OpenVisualStyle("LightGray");
+            VisualStyle.OpenVisualStyle("AlmostDarkGrayBlue");
+            
             Render = new RenderLogic(this);
             Render.InitRender();
             UI = new UILogic(this);

@@ -41,34 +41,34 @@ namespace TheGrid.Logic.GamePlay
         public void LoadMap(string levelFileName)
         {
             Context.Map = FileSystem.LoadLevel(this, Path.GetFileNameWithoutExtension(levelFileName));
-            foreach (Channel channel in Context.Map.Channels)
-            {
-                if (channel.Name != "Empty")
-                {
-                    channel.InitChannelEffect();
+            //foreach (Channel channel in Context.Map.Channels)
+            //{
+            //    if (channel.Name != "Empty")
+            //    {
+            //        channel.InitChannelEffect();
 
-                    ChannelEffect channelEffect = channel.ListEffect.Find(e => e.Name == "Volume");
+            //        ChannelEffect channelEffect = channel.ListEffect.Find(e => e.Name == "Volume");
 
-                    foreach (EffectProperty effectProperty in channelEffect.ListEffectProperty)
-                    {
-                        effectProperty.Curve.Keys.Clear();
-                        effectProperty.Curve.Keys.Add(new CurveKey(0f, effectProperty.Default));
-                    }
+            //        foreach (EffectProperty effectProperty in channelEffect.ListEffectProperty)
+            //        {
+            //            effectProperty.Curve.Keys.Clear();
+            //            effectProperty.Curve.Keys.Add(new CurveKey(0f, effectProperty.Default));
+            //        }
 
-                    Curve curve = channelEffect.ListEffectProperty[0].Curve;
+            //        Curve curve = channelEffect.ListEffectProperty[0].Curve;
 
-                    float step = 10f;
-                    curve.Keys.Clear();
-                    curve.Keys.Add(new CurveKey(0f, channelEffect.ListEffectProperty[0].MinValue));
-                    curve.Keys.Add(new CurveKey(1 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
-                    curve.Keys.Add(new CurveKey(2 * step * 1000f, channelEffect.ListEffectProperty[0].MinValue/2));
-                    curve.Keys.Add(new CurveKey(3 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
-                    curve.Keys.Add(new CurveKey(4 * step * 1000f, channelEffect.ListEffectProperty[0].MinValue/2));
-                    curve.Keys.Add(new CurveKey(5 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
+            //        float step = 10f;
+            //        curve.Keys.Clear();
+            //        curve.Keys.Add(new CurveKey(0f, channelEffect.ListEffectProperty[0].MinValue));
+            //        curve.Keys.Add(new CurveKey(1 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
+            //        curve.Keys.Add(new CurveKey(2 * step * 1000f, channelEffect.ListEffectProperty[0].MinValue/2));
+            //        curve.Keys.Add(new CurveKey(3 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
+            //        curve.Keys.Add(new CurveKey(4 * step * 1000f, channelEffect.ListEffectProperty[0].MinValue/2));
+            //        curve.Keys.Add(new CurveKey(5 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
 
-                    curve.ComputeTangents(CurveTangent.Smooth);
-                }
-            }
+            //        curve.ComputeTangents(CurveTangent.Smooth);
+            //    }
+            //}
 
             EvaluateMuscianGrid();
             ribbon.Partition.Init();
@@ -81,8 +81,7 @@ namespace TheGrid.Logic.GamePlay
         {
             Stop();
 
-            Context.Map = new Map(15, 15);
-            Context.Map.CreateGrid();
+            Context.Map = new Map(20, 20);
             InitializeChannel(Context.Map);
             ribbon.Partition.Init();
 
@@ -111,197 +110,6 @@ namespace TheGrid.Logic.GamePlay
             }
 
             map.Channels.RemoveAll(c => c.ListSample.Count == 0 && c.Name != "Empty");
-        }
-
-        private void InitializeMap()
-        {
-            //Context.Map = new Map(15, 15);
-            //Context.Map.CreateGrid();
-
-            ////---
-            //Cell cell1 = Context.Map.Cells[15];
-            //cell1.InitClip();
-            //cell1.Clip.Directions[3] = true;
-            //cell1.Clip.Directions[2] = true;
-            //cell1.Clip.Instrument = new InstrumentStart();
-            //cell1.Channel = Context.Map.Channels[2];
-            //Context.Map.Channels[2].CellStart = cell1;
-
-            //Cell cell0 = cell1.GetDirection(3, 3);
-            //cell0.InitClip();
-            //cell0.Clip.Directions[2] = true;
-
-            //Cell cell2 = cell0.GetDirection(2, 3);
-            //cell2.InitClip();
-            //cell2.Clip.Directions[3] = true;
-
-            //Cell cell3 = cell2.GetDirection(3, 4);
-            //cell3.InitClip();
-            //cell3.Clip.Directions[1] = true;
-            //cell3.Clip.Directions[5] = true;
-
-            //Cell cell4 = cell1.GetDirection(2, 6);
-            //cell4.InitClip();
-            //cell4.Clip.Directions[4] = true;
-            ////---
-
-            ////---
-            //Cell cell1 = Context.Map.Cells[15];
-            //cell1.InitClip();
-            //cell1.Clip.Directions[3] = true;
-            //cell1.Clip.Instrument = new InstrumentStart();
-            //cell1.Channel = Context.Map.Channels[2];
-            //Context.Map.Channels[2].CellStart = cell1;
-
-            //Cell cell0 = cell1.GetDirection(3, 3);
-            //cell0.InitClip();
-            //cell0.Clip.Directions[2] = true;
-            //cell0.Clip.Directions[3] = true;
-
-            //Cell cell2 = cell0.GetDirection(2, 3);
-            //cell2.InitClip();
-            //cell2.Clip.Directions[0] = true;
-
-            //Cell cell3 = cell2.GetDirection(0, 3);
-            //cell3.InitClip();
-            //cell3.Clip.Directions[4] = true;
-
-            //Cell cell4 = cell0.GetDirection(3, 4);
-            //cell4.InitClip();
-            //cell4.Clip.Instrument = new InstrumentStop();
-            ////---
-
-
-            ////---
-            //Cell cell1 = Context.Map.Cells[15];
-            //cell1.InitClip();
-            //cell1.Clip.Directions[3] = true;
-            //cell1.Clip.Instrument = new InstrumentStart();
-            //cell1.Channel = Context.Map.Channels[2];
-            //Context.Map.Channels[2].CellStart = cell1;
-
-            //Cell cell0 = cell1.GetDirection(3, 3);
-            //cell0.InitClip();
-            //cell0.Clip.Directions[2] = true;
-
-            //Cell cell2 = cell0.GetDirection(2, 3);
-            //cell2.InitClip();
-            //cell2.Clip.Directions[0] = true;
-            //cell2.Clip.Directions[1] = true;
-            //cell2.Clip.Directions[2] = true;
-            //cell2.Clip.Directions[3] = true;
-            //cell2.Clip.Directions[4] = true;
-
-            //Cell cell3 = cell2.GetDirection(0, 3);
-            //cell3.InitClip();
-            //cell3.Clip.Directions[4] = true;
-
-            //Cell cell4 = cell2.GetDirection(1, 2);
-            //cell4.InitClip();
-            //cell4.Clip.Instrument = new InstrumentStop();
-
-            //Cell cell5 = cell2.GetDirection(2, 2);
-            //cell5.InitClip();
-            //cell5.Clip.Instrument = new InstrumentStop();
-
-            //Cell cell6 = cell2.GetDirection(3, 2);
-            //cell6.InitClip();
-            //cell6.Clip.Instrument = new InstrumentStop();
-
-            //Cell cell7 = cell2.GetDirection(4, 2);
-            //cell7.InitClip();
-            //cell7.Clip.Instrument = new InstrumentStop();
-            ////---
-
-            ////---
-            //Cell cell1 = Context.Map.Cells[15];
-            //cell1.InitClip();
-            //cell1.Clip.Directions[3] = true;
-            //cell1.Clip.Instrument = new InstrumentStart();
-            //cell1.Channel = Context.Map.Channels[2];
-            //Context.Map.Channels[2].CellStart = cell1;
-
-            //Cell cell0 = cell1.GetDirection(3, 3);
-            //cell0.InitClip();
-            //cell0.Clip.Directions[2] = true;
-
-            //Cell cell2 = cell0.GetDirection(2, 3);
-            //cell2.InitClip();
-            //cell2.Clip.Directions[0] = true;
-            //cell2.Clip.Directions[1] = true;
-            //cell2.Clip.Directions[2] = true;
-            //cell2.Clip.Directions[3] = true;
-            //cell2.Clip.Directions[4] = true;
-
-            //Cell cell3 = cell2.GetDirection(0, 3);
-            //cell3.InitClip();
-            //cell3.Clip.Directions[4] = true;
-
-            //Cell cell4 = cell2.GetDirection(1, 2);
-            //cell4.InitClip();
-            //cell4.Clip.Instrument = new InstrumentStop();
-
-            //Cell cell5 = cell2.GetDirection(2, 2);
-            //cell5.InitClip();
-            //cell5.Clip.Instrument = new InstrumentStop();
-
-            //Cell cell6 = cell2.GetDirection(3, 2);
-            //cell6.InitClip();
-            //cell6.Clip.Instrument = new InstrumentStop();
-
-            //Cell cell7 = cell2.GetDirection(4, 2);
-            //cell7.InitClip();
-            //cell7.Clip.Instrument = new InstrumentStop();
-            ////---
-
-
-
-            //---
-            Cell cell1 = Context.Map.Cells[15];
-            cell1.InitClip();
-            cell1.Clip.Directions[2] = true;
-            cell1.Clip.Directions[3] = true;
-            cell1.Clip.Instrument = new InstrumentStart();
-            cell1.Channel = Context.Map.Channels[1];
-            Context.Map.Channels[1].CellStart = cell1;
-
-            Cell cell0 = cell1.GetDirection(3, 3);
-            cell0.InitClip();
-            cell0.Clip.Directions[2] = true;
-
-            Cell cell01 = cell1.GetDirection(2, 3);
-            cell01.InitClip();
-            cell01.Clip.Directions[3] = true;
-
-            Cell cell2 = cell0.GetDirection(2, 3);
-            cell2.InitClip();
-            cell2.Clip.Directions[1] = true;
-
-            Cell cell3 = cell2.GetDirection(1, 1);
-            cell3.InitClip();
-            cell3.Clip.Directions[1] = true;
-
-            Cell cell4 = cell2.GetDirection(1, 3);
-            cell4.InitClip();
-            cell4.Clip.Directions[3] = true;
-            cell4.Clip.Directions[5] = true;
-
-            Cell cell5 = cell4.GetDirection(3, 3);
-            cell5.InitClip();
-            cell5.Clip.Directions[4] = true;
-            cell5.Clip.Directions[5] = true;
-
-            Cell cell6 = cell5.GetDirection(4, 3);
-            cell6.InitClip();
-            cell6.Clip.Directions[5] = true;
-
-            Cell cell7 = cell6.GetDirection(5, 3);
-            cell7.InitClip();
-            cell7.Clip.Directions[0] = true;
-            cell7.Clip.Directions[1] = true;
-            //---
-
-            //EvaluateMuscianGrid();
         }
 
         private void InitializeChannel(Map map)
@@ -435,6 +243,7 @@ namespace TheGrid.Logic.GamePlay
                 channel.ElapsedTime = new TimeSpan();
                 channel.ListSpeed = new List<TimeValue<float>>();
                 channel.ListSpeed.Add(new TimeValue<float>(new TimeSpan(), 1f));
+                channel.InitChannelEffect();
 
                 if (channel.CellStart != null)
                 {
@@ -503,6 +312,20 @@ namespace TheGrid.Logic.GamePlay
                                         {
                                             musician.IsPlaying = false;
                                             musician.NextCell = null;
+                                        }
+                                        //---
+
+                                        //--- Effet
+                                        if (cell.Clip.Instrument is InstrumentEffect)
+                                        {
+                                            InstrumentEffect effect = cell.Clip.Instrument as InstrumentEffect;
+
+                                            ChannelEffect channelEffect = cell.Channel.ListEffect.Find(ce => ce.Name == effect.ChannelEffect.Name);
+
+                                            for (int i = 0; i < channelEffect.ListEffectProperty.Count; i++)
+                                            {
+                                                channelEffect.ListEffectProperty[i].Curve.Keys.Add(new CurveKey((float)channel.ElapsedTime.TotalMilliseconds, effect.ChannelEffect.ListEffectProperty[i].Value));
+                                            }
                                         }
                                         //---
 
@@ -575,7 +398,7 @@ namespace TheGrid.Logic.GamePlay
                             }
                         }
                         //---
-                        
+
                         //--- Création des nouveaux musiciens
                         foreach (Musician newMusician in newMusicians)
                         {

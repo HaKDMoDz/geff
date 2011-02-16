@@ -59,34 +59,12 @@ namespace TheGrid.Model
         {
             ListEffect = new List<ChannelEffect>();
 
-            ListEffect.Add(AddEffect("Volume"));
-            ListEffect.Add(AddEffect("Chorus"));
-            ListEffect.Add(AddEffect("Delay"));
-            ListEffect.Add(AddEffect("Flanger"));
-            ListEffect.Add(AddEffect("Tremolo"));
-            ListEffect.Add(AddEffect("SuperPitch"));
-        }
-
-        private ChannelEffect AddEffect(string effectName)
-        {
-            IList<Slider> sliders = Context.GameEngine.Sound.GetEffectParameters(effectName);
-
-            ChannelEffect channelEffect = new ChannelEffect(this, effectName);
-
-            foreach (Slider slider in sliders)
-            {
-                EffectProperty effectProperty = new EffectProperty();
-                effectProperty.Description = slider.Description;
-                effectProperty.Default = slider.Default;
-                effectProperty.Value = slider.Default;
-                effectProperty.MinValue = slider.Minimum;
-                effectProperty.MaxValue = slider.Maximum;
-                effectProperty.Curve.Keys.Add(new CurveKey(0f, float.MinValue));
-
-                channelEffect.ListEffectProperty.Add(effectProperty);
-            }
-
-            return channelEffect;
+            ListEffect.Add(new ChannelEffect(this, "Volume"));
+            ListEffect.Add(new ChannelEffect(this, "Chorus"));
+            ListEffect.Add(new ChannelEffect(this, "Delay"));
+            ListEffect.Add(new ChannelEffect(this, "Flanger"));
+            ListEffect.Add(new ChannelEffect(this, "Tremolo"));
+            ListEffect.Add(new ChannelEffect(this, "SuperPitch"));
         }
 
         public float GetSpeedFromTime(TimeSpan elapsedTime)
@@ -95,7 +73,6 @@ namespace TheGrid.Model
 
             return timeSpeed.Value;
         }
-
 
         public Musician GetMusicianNotPlaying()
         {

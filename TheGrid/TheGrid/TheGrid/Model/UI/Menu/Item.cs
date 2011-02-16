@@ -8,16 +8,16 @@ namespace TheGrid.Model.UI.Menu
 {
     public class Item
     {
-        public Menu ParentMenu { get; set; }
+        public CircularMenu ParentMenu { get; set; }
         public bool Checked { get; set; }
         public int Value { get; set; }
         public String Name { get; set; }
         public Color Color { get; set; }
         public bool MouseOver { get; set; }
 
-        public Item(Menu parentMenu, string name) : this(parentMenu, name, 0) { }
+        public Item(CircularMenu parentMenu, string name) : this(parentMenu, name, 0) { }
 
-        public Item(Menu parentMenu, string name, int value)
+        public Item(CircularMenu parentMenu, string name, int value)
         {
             ParentMenu = parentMenu;
             Name = name;

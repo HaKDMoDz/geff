@@ -48,12 +48,20 @@ namespace TheGrid.Common
                     instrument.Sample = cell.Channel.ListSample.Find(s => s.Name == instrument.Sample.Name);
                 }
 
-
                 if (cell.Channel != null && cell.Clip != null && cell.Clip.Instrument is InstrumentStart)
                     cell.Channel.CellStart = cell;
             }
             //---
-            
+
+
+            foreach (Channel channel in map.Channels)
+            {
+                if (channel.Name != "Empty")
+                {
+                    channel.InitChannelEffect();
+                }
+            }
+
             map.CalcNeighborough();
 
             return map;

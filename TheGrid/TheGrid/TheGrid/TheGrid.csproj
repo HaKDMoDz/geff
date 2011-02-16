@@ -123,6 +123,7 @@
     <Compile Include="Common\Extension.cs" />
     <Compile Include="Common\FileSystem.cs" />
     <Compile Include="Common\Tools.cs" />
+    <Compile Include="Common\VisualStyle.cs" />
     <Compile Include="Logic\Controller\KeyManager.cs" />
     <Compile Include="Logic\Controller\MouseManager.cs" />
     <Compile Include="Logic\Gameplay\GamePlayLogic.cs" />
@@ -149,7 +150,7 @@
     <Compile Include="Model\UI\ListFile.cs" />
     <Compile Include="Model\UI\ListLibrary.cs" />
     <Compile Include="Model\UI\Menu\Item.cs" />
-    <Compile Include="Model\UI\Menu\Menu.cs" />
+    <Compile Include="Model\UI\Menu\CircularMenu.cs" />
     <Compile Include="Model\UI\Menu\MenuState.cs" />
     <Compile Include="Model\Musician.cs" />
     <Compile Include="Model\Player.cs" />

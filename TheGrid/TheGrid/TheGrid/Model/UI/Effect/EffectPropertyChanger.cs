@@ -87,16 +87,16 @@ namespace TheGrid.Model.UI.Effect
         {
             vecCenter = new Vector2((float)Rec.X + WIDTH *0.5f, Rec.Y + HEIGHT *0.6f);
 
-            Vector2 sizeText = Render.FontText.MeasureString(effectProperty.Description);
+            Vector2 sizeText = Render.FontTextSmall.MeasureString(effectProperty.Description);
             vecDescription = new Vector2(Rec.X + Ribbon.MARGE + Rec.Width * 0.5f - sizeText.X / 2, Rec.Y + Ribbon.MARGE);
 
-            sizeText = Render.FontText.MeasureString(effectProperty.MinValue.ToString());
+            sizeText = Render.FontTextSmall.MeasureString(effectProperty.MinValue.ToString());
             vecMinValue = new Vector2(Rec.X + Ribbon.MARGE + Rec.Width * 0.2f - sizeText.X / 2, Rec.Y + +Ribbon.MARGE * 5);
 
-            sizeText = Render.FontText.MeasureString(effectProperty.MaxValue.ToString());
+            sizeText = Render.FontTextSmall.MeasureString(effectProperty.MaxValue.ToString());
             vecMaxValue = new Vector2(Rec.X + Ribbon.MARGE + Rec.Width * 0.8f - sizeText.X / 2, Rec.Y + +Ribbon.MARGE * 5);
 
-            sizeText = Render.FontText.MeasureString(effectProperty.Value.ToString());
+            sizeText = Render.FontTextSmall.MeasureString(effectProperty.Value.ToString());
             vecValue = new Vector2(Rec.X + Ribbon.MARGE + Rec.Width * 0.5f - sizeText.X / 2, Rec.Y + Ribbon.MARGE * 5);
 
             CreateVertex();
@@ -185,12 +185,12 @@ namespace TheGrid.Model.UI.Effect
 
         public override void Draw(GameTime gameTime)
         {
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, new Color(0.2f, 0.21f, 0.22f, 0.95f));
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, VisualStyle.BackColorLight2);
 
-            Render.SpriteBatch.DrawString(Render.FontText, effectProperty.Description, vecDescription, Color.White);
-            Render.SpriteBatch.DrawString(Render.FontText, effectProperty.MinValue.ToString(), vecMinValue, Color.White);
-            Render.SpriteBatch.DrawString(Render.FontText, effectProperty.MaxValue.ToString(), vecMaxValue, Color.White);
-            Render.SpriteBatch.DrawString(Render.FontText, ((int)effectProperty.Value).ToString(), vecValue, Color.White);
+            Render.SpriteBatch.DrawString(Render.FontTextSmall, effectProperty.Description, vecDescription, Color.White);
+            Render.SpriteBatch.DrawString(Render.FontTextSmall, effectProperty.MinValue.ToString(), vecMinValue, Color.White);
+            Render.SpriteBatch.DrawString(Render.FontTextSmall, effectProperty.MaxValue.ToString(), vecMaxValue, Color.White);
+            Render.SpriteBatch.DrawString(Render.FontTextSmall, ((int)effectProperty.Value).ToString(), vecValue, Color.White);
 
             Render.SpriteBatch.End();
 

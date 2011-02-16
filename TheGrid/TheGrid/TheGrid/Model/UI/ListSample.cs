@@ -25,7 +25,7 @@ namespace TheGrid.Model.UI
             this.ListUIChildren = new List<UIComponent>();
             this._cell = cell;
 
-            Vector2 sizeLibraryName = Render.FontText.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE * 2);
+            Vector2 sizeLibraryName = Render.FontText.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE);
 
             Rec = new Rectangle((int)(Render.ScreenWidth / 2 - sizeLibraryName.X / 2), (int)(0.3f * Render.ScreenHeight), (int)sizeLibraryName.X, (int)(0.6f * Render.ScreenHeight));
 
@@ -34,11 +34,14 @@ namespace TheGrid.Model.UI
 
             foreach (Sample sample in _cell.Channel.ListSample)
             {
-                ClickableText txtSample = new ClickableText(this.UI, creationTime, "FontText", sample.Name.Substring(0, Math.Min(20, sample.Name.Length)), vec, Color.White, Color.LightBlue);
+                ClickableText txtSample = new ClickableText(this.UI, creationTime, "FontText", sample.Name.Substring(0, Math.Min(20, sample.Name.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+                txtSample.Rec = new Rectangle(txtSample.Rec.X, txtSample.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtSample.Rec.Height);
                 txtSample.Tag = sample;
                 vec.Y += sizeLibraryName.Y + Ribbon.MARGE;
 
                 txtSample.ClickText += new ClickableText.ClickTextHandler(txtSample_ClickText);
+                txtSample.MiddleButtonClickText += new ClickableText.MiddleButtonClickTextHandler(txtSample_MiddleButtonClickText);
+                txtSample.MouseEnter += new ClickableText.MouseEnterHandler(txtSample_MouseEnter);
                 ListUIChildren.Add(txtSample);
             }
             //---
@@ -47,6 +50,16 @@ namespace TheGrid.Model.UI
             KeyManager keyClose = AddKey(Keys.Escape);
             keyClose.KeyReleased += new KeyManager.KeyReleasedHandler(keyClose_KeyReleased);
             //---
+        }
+
+        void txtSample_MiddleButtonClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
+        {
+            UI.GameEngine.Sound.PlaySample((Sample)clickableText.Tag);
+        }
+
+        void txtSample_MouseEnter(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
+        {
+            UI.GameEngine.Sound.PlaySample((Sample)clickableText.Tag);
         }
 
         void keyClose_KeyReleased(Keys key, GameTime gameTime)
@@ -64,9 +77,9 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, new Color(0.1f, 0.1f, 0.1f, 0.85f));
+            Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, VisualStyle.BackColorModalScreen);
 
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, new Color(0.2f, 0.2f, 0.2f, 0.95f));
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, VisualStyle.BackColorLight);
 
             base.Draw(gameTime);
         }

@@ -124,7 +124,7 @@ namespace TheGrid.Model.UI
         {
             Rectangle rec = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.2f));
 
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, new Color(0.2f, 0.2f, 0.2f,0.1f));
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, VisualStyle.BackColorLight);
 
             float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
             float channelWidth = Rec.Width - 100 - Ribbon.MARGE;

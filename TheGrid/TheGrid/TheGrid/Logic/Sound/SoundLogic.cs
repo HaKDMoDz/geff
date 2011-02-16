@@ -37,6 +37,9 @@ namespace TheGrid.Logic.Sound
 
         public void Init()
         {
+            if (waveOutDevice != null)
+                waveOutDevice.Dispose();
+
             mixer = new WaveMixerStream32();
             mixer.AutoStop = true;
 
@@ -157,18 +160,9 @@ namespace TheGrid.Logic.Sound
         public IList<Slider> GetEffectParameters(string effectName)
         {
             string typeName = "JSNet." + effectName;
-            Type type = Type.GetType(typeName);
 
-            Assembly[] appAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-
-            foreach (Assembly assembly in appAssemblies)
-            {
-                foreach (Type assemblyType in assembly.GetTypes())
-                {
-                    if (assemblyType.ToString().Equals(typeName))
-                        type = assemblyType;
-                }
-            }
+            Assembly assembly = System.AppDomain.CurrentDomain.GetAssemblies().ToList().Find(a => a.GetName().Name == "JSNet");
+            Type type = assembly.GetType(typeName);
 
             Effect effect = (Effect)Activator.CreateInstance(type);
 

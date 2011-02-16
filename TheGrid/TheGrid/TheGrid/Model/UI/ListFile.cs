@@ -15,7 +15,8 @@ namespace TheGrid.Model.UI
     {
         public string Directory;
 
-        public ListFile(UILogic uiLogic, TimeSpan creationTime, string directory) : base(uiLogic, creationTime)
+        public ListFile(UILogic uiLogic, TimeSpan creationTime, string directory)
+            : base(uiLogic, creationTime)
         {
             this.Modal = true;
             this.Alive = true;
@@ -23,9 +24,9 @@ namespace TheGrid.Model.UI
             this.Directory = directory;
             this.ListUIChildren = new List<UIComponent>();
 
-            Vector2 sizeFileName = Render.FontText.MeasureString(new String(' ',40)) + new Vector2(Ribbon.MARGE*2, Ribbon.MARGE*2);
+            Vector2 sizeFileName = Render.FontText.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE);
 
-            Rec = new Rectangle((int)(Render.ScreenWidth/2-sizeFileName.X/2), (int)(0.3f * Render.ScreenHeight), (int)sizeFileName.X, (int)(0.6f*Render.ScreenHeight));
+            Rec = new Rectangle((int)(Render.ScreenWidth / 2 - sizeFileName.X / 2), (int)(0.3f * Render.ScreenHeight), (int)sizeFileName.X, (int)(0.6f * Render.ScreenHeight));
 
             //--- Charge la liste des fichiers
             String[] files = System.IO.Directory.GetFiles(directory);
@@ -36,9 +37,11 @@ namespace TheGrid.Model.UI
                 string newFile = Path.GetFileNameWithoutExtension(file);
                 //ListFile.Add(newFile);
 
-                ClickableText txtFile = new ClickableText(this.UI, creationTime, "FontText", newFile.Substring(0, Math.Min(20, newFile.Length)), vec, Color.White, Color.LightBlue);
+                ClickableText txtFile = new ClickableText(this.UI, creationTime, "FontText", newFile.Substring(0, Math.Min(20, newFile.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+                txtFile.Rec = new Rectangle(txtFile.Rec.X, txtFile.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtFile.Rec.Height);
                 txtFile.Tag = file;
-                vec.Y += sizeFileName.Y + Ribbon.MARGE;
+
+                vec.Y += sizeFileName.Y;
 
                 txtFile.ClickText += new ClickableText.ClickTextHandler(txtFile_ClickText);
                 ListUIChildren.Add(txtFile);
@@ -65,9 +68,9 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, new Color(0.1f, 0.1f, 0.1f, 0.85f));
+            Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, VisualStyle.BackColorModalScreen);
 
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, new Color(0.2f, 0.2f, 0.2f, 0.95f));
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, VisualStyle.BackColorLight);
 
             base.Draw(gameTime);
         }

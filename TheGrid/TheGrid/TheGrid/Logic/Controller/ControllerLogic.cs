@@ -240,11 +240,11 @@ namespace TheGrid.Logic.Controller
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            Menu currentMenu = (Menu)GameEngine.UI.ListUIComponent.Find(ui => ui is Menu);
+            CircularMenu currentMenu = (CircularMenu)GameEngine.UI.ListUIComponent.Find(ui => ui is CircularMenu);
 
             if (currentMenu != null && currentMenu.State == MenuState.Opened && currentMenu.Items.Exists(item => item.MouseOver))
             {
-                currentMenu.MouseClick(gameTime);
+            //    currentMenu.MouseClick(gameTime);
                 GameEngine.GamePlay.EvaluateMuscianGrid();
             }
             else
@@ -292,10 +292,10 @@ namespace TheGrid.Logic.Controller
                         currentMenu.Close(gameTime);
 
                         //---> Supprime le menu dépendant du menu courant
-                        GameEngine.UI.ListUIComponent.RemoveAll(ui => ui is Menu && ui.UIDependency != null && ui.UIDependency == currentMenu);
+                        GameEngine.UI.ListUIComponent.RemoveAll(ui => ui is CircularMenu && ui.UIDependency != null && ui.UIDependency == currentMenu);
 
                         //--- Créé un nouveau menu ayant comme dépendance le menu courant
-                        Menu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
+                        CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
                         newMenu.Alive = true;
                         newMenu.UIDependency = currentMenu;
                         newMenu.State = MenuState.WaitDependency;
@@ -306,7 +306,7 @@ namespace TheGrid.Logic.Controller
                     else if (currentMenu == null || currentMenu.State == MenuState.Closing || currentMenu.State == MenuState.Closed)
                     {
                         //---> Ouvre le nouveau menu
-                        Menu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
+                        CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
                         newMenu.Alive = true;
                         GameEngine.UI.ListUIComponent.Add(newMenu);
 
@@ -333,13 +333,13 @@ namespace TheGrid.Logic.Controller
 
         void mouseRightButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            Menu currentMenu = (Menu)GameEngine.UI.ListUIComponent.Find(ui => ui is Menu);
+            CircularMenu currentMenu = (CircularMenu)GameEngine.UI.ListUIComponent.Find(ui => ui is CircularMenu);
 
             if (currentMenu != null &&
                 (currentMenu.State == MenuState.Opened || currentMenu.State == MenuState.Opening) &&
                 Tools.Distance(Point.Zero, distance) < 5f)
             {
-                if (currentMenu.ParentMenu != null)
+                if (currentMenu.Items.Count(i => i.MouseOver) > 0 && currentMenu.ParentMenu != null)
                 {
                     currentMenu.UIDependency = null;
                     currentMenu.ParentMenu.UIDependency = currentMenu;
