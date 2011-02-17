@@ -141,7 +141,19 @@ namespace TheGrid.Logic.GamePlay
         public void Update(GameTime gameTime)
         {
             if (Context.IsPlaying || Context.IsNavigatingThroughTime)
+            {
                 UpdateMusicians(gameTime);
+
+                foreach (Cell cell in Context.Map.Cells)
+                {
+                    cell.Life -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds/3000f * Context.SpeedFactor);
+
+                    if (cell.Life < 0.01f)
+                        cell.Life = 0f;
+                    else
+                        cell.Life = cell.Life;
+                }
+            }
 
             //GameEngine.Window.Title = Context.Time.ToString();
         }
@@ -224,11 +236,49 @@ namespace TheGrid.Logic.GamePlay
                                     //---> Si la prochaine cellule est une InstrumentSample, le sample est joué
                                     if (musician.CurrentCell.Channel != null && musician.CurrentCell.Channel == musician.Channel && musician.CurrentCell.Clip.Instrument is InstrumentSample)
                                     {
+                                        NewBornCell(musician.CurrentCell);
+
                                         GameEngine.Sound.PlaySample(((InstrumentSample)musician.CurrentCell.Clip.Instrument).Sample);
                                     }
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        private void NewBornCell(Cell cell)
+        {
+            Dictionary<int, int> dicCell = new Dictionary<int, int>();
+
+            cell.Life = 1f;
+
+            dicCell.Add(cell.IndexPosition, 6);
+
+            NewBornCell(cell, 1f, dicCell);
+        }
+
+        private void NewBornCell(Cell cell, float life, Dictionary<int, int> dicCell)
+        {
+            if (life < 0.1f)
+                return;
+
+            float newLife = life * 0.7f;
+
+            for (int i = 0; i < 6; i++)
+            {
+                if (cell.Neighbourghs[i] != null && (!dicCell.ContainsKey(cell.Neighbourghs[i].IndexPosition) || dicCell[cell.Neighbourghs[i].IndexPosition] < 6))
+                {
+                    if (!dicCell.ContainsKey(cell.Neighbourghs[i].IndexPosition))
+                        dicCell.Add(cell.Neighbourghs[i].IndexPosition, 1);
+                    else
+                        dicCell[cell.Neighbourghs[i].IndexPosition]++;
+
+                    if (cell.Neighbourghs[i].Life < newLife)
+                    {
+                        cell.Neighbourghs[i].Life = newLife;
+                        NewBornCell(cell.Neighbourghs[i], newLife, dicCell);
                     }
                 }
             }

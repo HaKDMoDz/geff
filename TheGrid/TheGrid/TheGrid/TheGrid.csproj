@@ -137,6 +137,7 @@
     <Compile Include="Model\EffectType.cs" />
     <Compile Include="Model\Effect\ChannelEffect.cs" />
     <Compile Include="Model\Effect\EffectProperty.cs" />
+    <Compile Include="Model\Instrument\InstrumentNote.cs" />
     <Compile Include="Model\Instrument\InstrumentStart.cs" />
     <Compile Include="Model\Instrument\InstrumentStop.cs" />
     <Compile Include="Model\Instrument\InstrumentBase.cs" />

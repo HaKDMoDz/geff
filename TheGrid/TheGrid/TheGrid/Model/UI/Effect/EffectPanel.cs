@@ -31,6 +31,10 @@ namespace TheGrid.Model.UI.Effect
             this.ListUIChildren = new List<UIComponent>();
 
             //--- TODO : clone des valeurs du channelEffect en entrée dans le channelEffect courant
+            for (int i = 0; i < channelEffect.ListEffectProperty.Count; i++)
+            {
+                _channelEffect.ListEffectProperty[i].Value = channelEffect.ListEffectProperty[i].Value;
+            }
             //---
 
             Vector2 sizeWindow = new Vector2(_widthChannelChooser + Math.Min(channelEffect.ListEffectProperty.Count, 3) * (EffectPropertyChanger.WIDTH + Ribbon.MARGE), (int)Math.Round((float)channelEffect.ListEffectProperty.Count / 3f, MidpointRounding.AwayFromZero) * EffectPropertyChanger.HEIGHT);

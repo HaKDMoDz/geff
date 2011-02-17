@@ -256,6 +256,11 @@ namespace TheGrid.Logic.Render
             else if (cell.Clip != null)
                 colorChannel = new Color(0.3f, 0.3f, 0.3f);
 
+            if (cell.Life > 0f)
+            {
+                colorChannel = Color.Lerp(colorChannel, Color.White, cell.Life);
+            }
+
             if (cell.Clip != null)
             {
                 SpriteBatch.Draw(texHexa2DClip, cellLocation, colorChannel);
@@ -264,9 +269,6 @@ namespace TheGrid.Logic.Render
             {
                 SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
             }
-
-
-            //SpriteBatch.DrawString(FontMenu, cell.Coord.ToString(), cellLocation, colorChannel);
 
             //--- Instrument
             if (cell.Clip != null && cell.Clip.Instrument != null)

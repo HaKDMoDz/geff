@@ -242,77 +242,88 @@ namespace TheGrid.Logic.Controller
         {
             CircularMenu currentMenu = (CircularMenu)GameEngine.UI.ListUIComponent.Find(ui => ui is CircularMenu);
 
-            if (currentMenu != null && currentMenu.State == MenuState.Opened && currentMenu.Items.Exists(item => item.MouseOver))
-            {
-                //GameEngine.GamePlay.EvaluateMuscianGrid();
-            }
-            else
-            {
-                Cell selectedCell = GetSelectedCell(mouseState);
-                Context.SelectedCell = selectedCell;
 
-                if (keyBoardState.IsKeyDown(Keys.LeftControl) && selectedCell != null)
+            Cell selectedCell = GetSelectedCell(mouseState);
+            Context.SelectedCell = selectedCell;
+
+            if((keyBoardState.IsKeyDown(Keys.LeftAlt) && selectedCell != null))
+            {
+                if(selectedCell.Clip != null && selectedCell.Clip.Instrument != null)
                 {
-                    if (Context.CopiedCell == null)
+                    if(selectedCell.Clip.Instrument is InstrumentSample)
                     {
-                        Context.CopiedCell = selectedCell;
+                        GameEngine.UI.OpenListSample(gameTime, selectedCell);
                     }
-                    else
+                    else if(selectedCell.Clip.Instrument is InstrumentEffect)
                     {
-                        selectedCell.Clip = null;
-                        selectedCell.Channel = Context.CopiedCell.Channel;
-                        if (Context.CopiedCell.Clip != null)
+                        GameEngine.UI.OpenPannelEffect(gameTime, ((InstrumentEffect)selectedCell.Clip.Instrument).ChannelEffect, selectedCell);
+                    }
+                    else if(selectedCell.Clip.Instrument is InstrumentNote)
+                    {
+                    }
+                }
+            }
+            else if (keyBoardState.IsKeyDown(Keys.LeftControl) && selectedCell != null)
+            {
+                if (Context.CopiedCell == null)
+                {
+                    Context.CopiedCell = selectedCell;
+                }
+                else
+                {
+                    selectedCell.Clip = null;
+                    selectedCell.Channel = Context.CopiedCell.Channel;
+                    if (Context.CopiedCell.Clip != null)
+                    {
+                        selectedCell.Clip = new Clip();
+                        for (int i = 0; i < 6; i++)
                         {
-                            selectedCell.Clip = new Clip();
-                            for (int i = 0; i < 6; i++)
-                            {
-                                selectedCell.Clip.Directions[i] = Context.CopiedCell.Clip.Directions[i];
-                            }
-                            selectedCell.Clip.Repeater = Context.CopiedCell.Clip.Repeater;
-                            selectedCell.Clip.Speed = Context.CopiedCell.Clip.Speed;
+                            selectedCell.Clip.Directions[i] = Context.CopiedCell.Clip.Directions[i];
+                        }
+                        selectedCell.Clip.Repeater = Context.CopiedCell.Clip.Repeater;
+                        selectedCell.Clip.Speed = Context.CopiedCell.Clip.Speed;
 
-                            if (Context.CopiedCell.Clip.Instrument != null && !(Context.CopiedCell.Clip.Instrument is InstrumentStart))
+                        if (Context.CopiedCell.Clip.Instrument != null && !(Context.CopiedCell.Clip.Instrument is InstrumentStart))
+                        {
+                            if (Context.CopiedCell.Clip.Instrument is InstrumentSample)
                             {
-                                if (Context.CopiedCell.Clip.Instrument is InstrumentSample)
-                                {
-                                    selectedCell.Clip.Instrument = new InstrumentSample(((InstrumentSample)Context.CopiedCell.Clip.Instrument).Sample);
-                                }
+                                selectedCell.Clip.Instrument = new InstrumentSample(((InstrumentSample)Context.CopiedCell.Clip.Instrument).Sample);
                             }
                         }
-
-                        GameEngine.GamePlay.EvaluateMuscianGrid();
                     }
+
+                    GameEngine.GamePlay.EvaluateMuscianGrid();
                 }
-                else if (Context.SelectedCell != null)
+            }
+            else if (Context.SelectedCell != null)
+            {
+                //--- Ferme le précédent menu
+                if (currentMenu != null)
                 {
-                    //--- Ferme le précédent menu
-                    if (currentMenu != null)
-                    {
-                        currentMenu.Close(gameTime);
+                    currentMenu.Close(gameTime);
 
-                        //---> Supprime le menu dépendant du menu courant
-                        GameEngine.UI.ListUIComponent.RemoveAll(ui => ui is CircularMenu && ui.UIDependency != null && ui.UIDependency == currentMenu);
+                    //---> Supprime le menu dépendant du menu courant
+                    GameEngine.UI.ListUIComponent.RemoveAll(ui => ui is CircularMenu && ui.UIDependency != null && ui.UIDependency == currentMenu);
 
-                        //--- Créé un nouveau menu ayant comme dépendance le menu courant
-                        CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
-                        newMenu.Alive = true;
-                        newMenu.UIDependency = currentMenu;
-                        newMenu.State = MenuState.WaitDependency;
+                    //--- Créé un nouveau menu ayant comme dépendance le menu courant
+                    CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
+                    newMenu.Alive = true;
+                    newMenu.UIDependency = currentMenu;
+                    newMenu.State = MenuState.WaitDependency;
 
-                        GameEngine.UI.ListUIComponent.Add(newMenu);
-                        //---
-                    }
-                    else if (currentMenu == null || currentMenu.State == MenuState.Closing || currentMenu.State == MenuState.Closed)
-                    {
-                        //---> Ouvre le nouveau menu
-                        CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
-                        newMenu.Alive = true;
-                        GameEngine.UI.ListUIComponent.Add(newMenu);
-
-                        newMenu.Open(gameTime);
-                    }
+                    GameEngine.UI.ListUIComponent.Add(newMenu);
                     //---
                 }
+                else if (currentMenu == null || currentMenu.State == MenuState.Closing || currentMenu.State == MenuState.Closed)
+                {
+                    //---> Ouvre le nouveau menu
+                    CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
+                    newMenu.Alive = true;
+                    GameEngine.UI.ListUIComponent.Add(newMenu);
+
+                    newMenu.Open(gameTime);
+                }
+                //---
             }
         }
 
@@ -371,7 +382,7 @@ namespace TheGrid.Logic.Controller
         }
         #endregion
 
-        public void Update(GameTime gameTime)
+        public void UpdateBegin(GameTime gameTime)
         {
             //--- Update Mouse & Keyboard state
             mouseState = Mouse.GetState();
@@ -383,8 +394,10 @@ namespace TheGrid.Logic.Controller
             mousePositionPoint = new Point(mouseState.X, mouseState.Y);
             mousePosition = new Vector2(mouseState.X, mouseState.Y);
             //---
+        }
 
-
+        public void UpdateEnd(GameTime gameTime)
+        {
             //--- Key & Mouse Manager
             if (GameEngine.UI.IsUIModalActive())
             {

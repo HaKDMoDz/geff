@@ -93,6 +93,18 @@ namespace TheGrid.Logic.UI
             return isMouseHandled;
         }
 
+        public void OpenPannelEffect(GameTime gameTime, ChannelEffect channelEffect, Cell cell)
+        {
+            EffectPanel effectPanel = new EffectPanel(this, gameTime.TotalGameTime, channelEffect, cell);
+            this.ListUIComponent.Add(effectPanel);
+        }
+
+        public void OpenListSample(GameTime gameTime, Cell cell)
+        {
+            ListSample listSample = new ListSample(this, gameTime.TotalGameTime, cell);
+            this.ListUIComponent.Add(listSample);
+        }
+
         #region Menu
         private void NextMenu(CircularMenu previousMenu, CircularMenu nextMenu)
         {
@@ -236,8 +248,7 @@ namespace TheGrid.Logic.UI
             {
                 item.ParentMenu.Alive = false;
 
-                ListSample listSample = new ListSample(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell);
-                this.ListUIComponent.Add(listSample);
+                OpenListSample(gameTime, item.ParentMenu.ParentCell);
             }
         }
 
@@ -276,8 +287,7 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.Close(gameTime);
             item.ParentMenu.Alive = false;
 
-            EffectPanel effectPanel = new EffectPanel(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell.Channel.ListEffect[item.Value], item.ParentMenu.ParentCell);
-            this.ListUIComponent.Add(effectPanel);
+            OpenPannelEffect(gameTime, item.ParentMenu.ParentCell.Channel.ListEffect[item.Value], item.ParentMenu.ParentCell);
         }
 
         void itemMusicianStart_Selected(Item item, GameTime gameTime)
