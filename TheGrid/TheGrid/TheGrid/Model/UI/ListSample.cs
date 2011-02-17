@@ -71,6 +71,8 @@ namespace TheGrid.Model.UI
         {
             _cell.InitClip();
             _cell.Clip.Instrument = new InstrumentSample((Sample)clickableText.Tag);
+            
+            UI.GameEngine.GamePlay.EvaluateMuscianGrid();
 
             this.Alive = false;
         }

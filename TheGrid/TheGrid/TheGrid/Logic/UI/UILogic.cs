@@ -174,6 +174,8 @@ namespace TheGrid.Logic.UI
                 itemEffect_Selected(item, gameTime);
             else
                 NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
+
+            GameEngine.GamePlay.EvaluateMuscianGrid();
         }
         #endregion
 
@@ -218,6 +220,7 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.ParentCell.InitClip();
             item.ParentMenu.ParentCell.Clip.Instrument = null;
 
+            GameEngine.GamePlay.EvaluateMuscianGrid();
             NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
         }
 
@@ -297,6 +300,7 @@ namespace TheGrid.Logic.UI
 
                 item.ParentMenu.Close(gameTime);
 
+                GameEngine.GamePlay.EvaluateMuscianGrid();
                 NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
             }
         }
@@ -308,7 +312,7 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.ParentCell.InitClip();
             item.ParentMenu.ParentCell.Clip.Instrument = new InstrumentStop();
 
-
+            GameEngine.GamePlay.EvaluateMuscianGrid();
             NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
         }
         #endregion
@@ -357,6 +361,7 @@ namespace TheGrid.Logic.UI
 
             item.ParentMenu.ParentCell.Clip.Speed = item.Value;
 
+            GameEngine.GamePlay.EvaluateMuscianGrid();
             NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
         }
         #endregion
@@ -393,18 +398,19 @@ namespace TheGrid.Logic.UI
             int newValue = item.Value;
 
             if (item.ParentMenu.ParentCell.Clip.Repeater == item.Value)
-                newValue = 0;
+                newValue = -1;
 
             for (int i = 0; i < 6; i++)
             {
                 item.ParentMenu.Items[i].Checked = i <= newValue;
             }
 
-            if (newValue == 0)
+            if (newValue == -1)
                 item.ParentMenu.ParentCell.Clip.Repeater = null;
             else
                 item.ParentMenu.ParentCell.Clip.Repeater = newValue;
 
+            GameEngine.GamePlay.EvaluateMuscianGrid();
             NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
         }
         #endregion
@@ -438,6 +444,8 @@ namespace TheGrid.Logic.UI
 
             item.ParentMenu.ParentCell.InitClip();
             item.ParentMenu.ParentCell.Clip.Directions[item.Value] = item.Checked;
+
+            GameEngine.GamePlay.EvaluateMuscianGrid();
         }
         #endregion
 
@@ -456,6 +464,8 @@ namespace TheGrid.Logic.UI
 
             item.ParentMenu.ParentCell.Clip = null;
             item.ParentMenu.ParentCell.Channel = null;
+
+            GameEngine.GamePlay.EvaluateMuscianGrid();
         }
         #endregion
     }

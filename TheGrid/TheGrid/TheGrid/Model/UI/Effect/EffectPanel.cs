@@ -87,10 +87,12 @@ namespace TheGrid.Model.UI.Effect
 
         void txtOk_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
         {
-            this.Alive = false;
-
             _cell.InitClip();
             _cell.Clip.Instrument = new InstrumentEffect(_channelEffect);
+
+            UI.GameEngine.GamePlay.EvaluateMuscianGrid();
+
+            this.Alive = false;
         }
 
         void keyClose_KeyReleased(Keys key, GameTime gameTime)

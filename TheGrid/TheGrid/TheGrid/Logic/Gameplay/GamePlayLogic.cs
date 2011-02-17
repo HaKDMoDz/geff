@@ -161,14 +161,14 @@ namespace TheGrid.Logic.GamePlay
             }
 
             //--- Met à jour les effets associés au channel
-            bool applyEfffect = false;
+            bool applyEffect = false;
 
             if (lastEffectApplied == TimeSpan.Zero)
                 lastEffectApplied = gameTime.TotalGameTime;
 
-            if (gameTime.TotalGameTime.Subtract(lastEffectApplied).TotalMilliseconds > 100)
+            if (gameTime.TotalGameTime.Subtract(lastEffectApplied).TotalMilliseconds > 300)
             {
-                applyEfffect = true;
+                applyEffect = true;
                 lastEffectApplied = gameTime.TotalGameTime;
             }
             //---
@@ -176,7 +176,7 @@ namespace TheGrid.Logic.GamePlay
             foreach (Channel channel in Context.Map.Channels)
             {
                 //--- Met à jour les effets associés au channel
-                if (applyEfffect)
+                if (applyEffect)
                 {
                     channel.Update(GameEngine.Sound, gameTime);
                 }

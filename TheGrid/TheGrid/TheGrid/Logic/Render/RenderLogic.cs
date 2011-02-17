@@ -111,7 +111,7 @@ namespace TheGrid.Logic.Render
             texRepeater = GameEngine.Content.Load<Texture2D>(@"Texture\Repeater");
             texSpeed = GameEngine.Content.Load<Texture2D>(@"Texture\Speed");
             texEffect = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Effect");
-            
+
             texMusicianStart = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MusicianStart");
             texMusicianStop = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MusicianStop");
             texEmpty = GameEngine.Content.Load<Texture2D>(@"Texture\HexaEmpty");
@@ -285,12 +285,21 @@ namespace TheGrid.Logic.Render
                 {
                     texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cell.Channel.Name);
                 }
-                else if (cell.Clip.Instrument is InstrumentEffect)
+                
+                if (cell.Clip.Instrument is InstrumentEffect)
                 {
                     texInstrument = texEffect;
-                }
 
-                SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2), null, Color.White);
+                    string effectName = ((InstrumentEffect)cell.Clip.Instrument).ChannelEffect.Name;
+                    Vector2 deltaEffectName = new Vector2(FontMap.MeasureString(effectName).X / 2, FontMap.MeasureString(effectName).Y / 5);
+
+                    SpriteBatch.DrawString(FontMap, effectName, cellLocation + midCellSize - deltaEffectName, Color.White);
+                    SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height), null, Color.White);
+                }
+                else
+                {
+                    SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2), null, Color.White);
+                }
 
                 if (cell.Clip.Instrument is InstrumentSample)
                 {
@@ -299,7 +308,6 @@ namespace TheGrid.Logic.Render
 
                     SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize - deltaSampleName, Color.White);
                 }
-
             }
             //---
 

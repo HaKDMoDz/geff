@@ -27,7 +27,7 @@ namespace TheGrid.Logic.Controller
         public Vector2 mousePosition;
         public Point mousePositionPoint;
 
-        
+
         //private float prevRightStickLength;
         private Vector3 prevCameraPosition = Vector3.Zero;
         #endregion
@@ -244,8 +244,7 @@ namespace TheGrid.Logic.Controller
 
             if (currentMenu != null && currentMenu.State == MenuState.Opened && currentMenu.Items.Exists(item => item.MouseOver))
             {
-            //    currentMenu.MouseClick(gameTime);
-                GameEngine.GamePlay.EvaluateMuscianGrid();
+                //GameEngine.GamePlay.EvaluateMuscianGrid();
             }
             else
             {
