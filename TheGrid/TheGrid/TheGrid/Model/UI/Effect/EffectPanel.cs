@@ -63,7 +63,7 @@ namespace TheGrid.Model.UI.Effect
                 this.ListUIChildren.Add(effectPropertyChanger);
             }
 
-            CreateChannelMenu();
+            //CreateChannelMenu();
 
             //--- Bouton Valider
             ClickableText txtOk = new ClickableText(UI, GetNewTimeSpan(), "FontText", "Ok", new Vector2(Rec.X + _widthChannelChooser * 0.3f, Rec.Y + Rec.Height * 0.8f), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
