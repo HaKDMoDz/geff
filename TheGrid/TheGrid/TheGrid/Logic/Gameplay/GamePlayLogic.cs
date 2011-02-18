@@ -122,6 +122,7 @@ namespace TheGrid.Logic.GamePlay
             map.Channels.Add(new Channel("Key", new Color(0f, 0.3f, 0.8f)));
             map.Channels.Add(new Channel("Guitar", new Color(0f, 0.6f, 0.3f)));
             map.Channels.Add(new Channel("Bass", new Color(0.7f, 0f, 0.5f)));
+            map.Channels.Add(new Channel("Violin", new Color(233,255,145)));
 
             if (GameEngine.Mini)
             {

@@ -22,7 +22,7 @@ namespace TheGrid.Logic.Sound
         private WaveChannel32[] channelSteam;
         private Dictionary<String, List<int>> dicSample;
         private Dictionary<String, List<List<Effect>>> dicEffect;
-        private int CountInstancePerSample = 6;
+        private int CountInstancePerSample = 12;
 
         public GameEngine GameEngine { get; set; }
 
@@ -44,8 +44,8 @@ namespace TheGrid.Logic.Sound
             mixer = new WaveMixerStream32();
             mixer.AutoStop = true;
 
-            waveOutDevice = new NAudio.Wave.DirectSoundOut();
-            //waveOutDevice = new NAudio.Wave.AsioOut();
+            //waveOutDevice = new NAudio.Wave.DirectSoundOut();
+            waveOutDevice = new NAudio.Wave.AsioOut();
 
             waveOutDevice.Init(mixer);
             waveOutDevice.Play();
