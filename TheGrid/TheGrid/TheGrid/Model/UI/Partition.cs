@@ -65,7 +65,7 @@ namespace TheGrid.Model.UI
             //--- Calcul des segments
             listTimeSegment = new List<float>();
 
-            int nbSeg = (int)(Context.PartitionDuration.TotalMilliseconds / 500f);
+            int nbSeg = (int)(Context.Map.PartitionDuration.TotalMilliseconds / 500f);
 
             for (int s = 0; s < nbSeg; s++)
             {

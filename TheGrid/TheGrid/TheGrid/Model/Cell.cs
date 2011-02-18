@@ -18,7 +18,7 @@ namespace TheGrid.Model
         public Cell[] Neighbourghs { get; set; }
         public Clip Clip { get; set; }
         public Channel Channel { get; set; }
-        public float Life { get; set; }
+        public float[] Life { get; set; }
 
         public Cell() { }
 

@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using TheGrid.Common;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace TheGrid.Model
 {
@@ -14,6 +15,10 @@ namespace TheGrid.Model
         public List<Cell> Cells { get; set; }
         public List<Channel> Channels { get; set; }
         public String LibraryName { get; set; }
+        [DefaultValue(1f)]
+        public float SpeedFactor { get; set; }
+        [DefaultValue(typeof(TimeSpan), "60000")]
+        public TimeSpan PartitionDuration { get; set; }
 
         public int Width { get; set; }
         public int Height { get; set; }

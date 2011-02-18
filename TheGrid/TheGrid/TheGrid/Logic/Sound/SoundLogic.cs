@@ -17,11 +17,12 @@ namespace TheGrid.Logic.Sound
     {
         private IWavePlayer waveOutDevice;
         private WaveMixerStream32 mixer;
-        WaveStream[] reader;
-        EffectStream[] offsetStream;
-        WaveChannel32[] channelSteam;
-        Dictionary<String, int> dicSample;
-        Dictionary<String, List<Effect>> dicEffect;
+        private WaveStream[] reader;
+        private EffectStream[] offsetStream;
+        private WaveChannel32[] channelSteam;
+        private Dictionary<String, List<int>> dicSample;
+        private Dictionary<String, List<List<Effect>>> dicEffect;
+        private int CountInstancePerSample = 6;
 
         public GameEngine GameEngine { get; set; }
 
@@ -51,12 +52,13 @@ namespace TheGrid.Logic.Sound
 
             int countSample = 0;
             Context.Map.Channels.ForEach(c => c.ListSample.ForEach(s => countSample++));
+            countSample *= CountInstancePerSample;
 
             reader = new WaveStream[countSample];
             offsetStream = new EffectStream[countSample];
             channelSteam = new WaveChannel32[countSample];
-            dicSample = new Dictionary<String, int>();
-            dicEffect = new Dictionary<String, List<Effect>>();
+            dicSample = new Dictionary<String, List<int>>();
+            dicEffect = new Dictionary<String, List<List<Effect>>>();
 
             LoadSample();
 
@@ -66,7 +68,16 @@ namespace TheGrid.Logic.Sound
 
         public void PlaySample(Sample sample)
         {
-            channelSteam[dicSample[sample.Name]].Position = 0;
+            for (int i = 0; i < CountInstancePerSample; i++)
+            {
+                WaveChannel32 channel = channelSteam[dicSample[sample.Name][i]];
+
+                if (channel.CurrentTime == TimeSpan.Zero || channel.CurrentTime >= channel.TotalTime)
+                {
+                    channel.Position = 0;
+                    return;
+                }
+            }
         }
 
         private void LoadSample()
@@ -76,24 +87,30 @@ namespace TheGrid.Logic.Sound
             {
                 foreach (Sample sample in channel.ListSample)
                 {
-                    WaveStream outStream = null;
+                    List<int> listIndexSample = new List<int>();
+                    dicSample.Add(sample.Name, listIndexSample);
 
-                    outStream = new WaveFileReader(sample.FileName);
+                    for (int i = 0; i < CountInstancePerSample; i++)
+                    {
+                        WaveStream outStream = null;
 
-                    outStream = WaveFormatConversionStream.CreatePcmStream(outStream);
-                    outStream = new BlockAlignReductionStream(outStream);
+                        outStream = new WaveFileReader(sample.FileName);
 
-                    reader[index] = outStream;
+                        outStream = WaveFormatConversionStream.CreatePcmStream(outStream);
+                        outStream = new BlockAlignReductionStream(outStream);
 
-                    offsetStream[index] = new EffectStream(CreateEffectChain(sample), reader[index]);
-                    channelSteam[index] = new WaveChannel32(offsetStream[index]);
+                        reader[index] = outStream;
 
-                    channelSteam[index].Position = channelSteam[index].Length;
-                    mixer.AddInputStream(channelSteam[index]);
+                        offsetStream[index] = new EffectStream(CreateEffectChain(sample), reader[index]);
+                        channelSteam[index] = new WaveChannel32(offsetStream[index]);
 
-                    dicSample.Add(sample.Name, index);
+                        channelSteam[index].Position = channelSteam[index].Length;
+                        mixer.AddInputStream(channelSteam[index]);
 
-                    index++;
+                        listIndexSample.Add(index);
+
+                        index++;
+                    }
                 }
             }
         }
@@ -102,22 +119,25 @@ namespace TheGrid.Logic.Sound
         {
             foreach (Sample sample in channelEffect.Channel.ListSample)
             {
-                Effect effect = dicEffect[sample.Name].Find(e => e.Name == channelEffect.Name);
-
-                if (values[0] == float.MinValue)
+                for (int i = 0; i < CountInstancePerSample; i++)
                 {
-                    effect.Enabled = false;
-                }
-                else
-                {
-                    effect.Enabled = true;
+                    Effect effect = dicEffect[sample.Name][i].Find(e => e.Name == channelEffect.Name);
 
-                    for (int i = 0; i < values.Length; i++)
+                    if (values[0] == float.MinValue)
                     {
-                        effect.Sliders[i].Value = values[i];
+                        effect.Enabled = false;
                     }
+                    else
+                    {
+                        effect.Enabled = true;
 
-                    effect.Slider();
+                        for (int j = 0; j < values.Length; j++)
+                        {
+                            effect.Sliders[j].Value = values[j];
+                        }
+
+                        effect.Slider();
+                    }
                 }
             }
         }
@@ -127,7 +147,19 @@ namespace TheGrid.Logic.Sound
             EffectChain effectChain = new EffectChain();
             List<Effect> listEffect = new List<Effect>();
 
-            dicEffect.Add(sample.Name, listEffect);
+            List<List<Effect>> listListEffect;
+
+            if (dicEffect.ContainsKey(sample.Name))
+            {
+                listListEffect = dicEffect[sample.Name];
+            }
+            else
+            {
+                listListEffect = new List<List<Effect>>();
+                dicEffect.Add(sample.Name, listListEffect);
+            }
+
+            listListEffect.Add(listEffect);
 
             AddEffect(effectChain, listEffect, typeof(Volume));
             AddEffect(effectChain, listEffect, typeof(Chorus));

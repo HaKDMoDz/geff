@@ -253,13 +253,33 @@ namespace TheGrid.Logic.Render
 
             if (cell.Channel != null)
                 colorChannel = cell.Channel.Color;
-            else if (cell.Clip != null)
-                colorChannel = new Color(0.3f, 0.3f, 0.3f);
 
-            if (cell.Life > 0f)
+            //--- Calcul de la couleur de la cellule selon ses vies
+            float r = 0f, g = 0f, b = 0f, fj=0f;
+            int n = 0;
+
+            for (int i = 0; i < cell.Life.Length; i++)
             {
-                colorChannel = Color.Lerp(colorChannel, Color.White, cell.Life);
+                if (cell.Clip == null && cell.Life[i] > 0f)
+                    fj += cell.Life[i];
             }
+
+            for (int i = 0; i < cell.Life.Length; i++)
+            {
+                if (cell.Clip == null && cell.Life[i] > 0f)
+                {
+                    n++;
+                    Color c = Color.Lerp(colorChannel, Context.Map.Channels[i].Color, cell.Life[i]);
+
+                    r += (float)c.R / 255f * (cell.Life[i] / fj);
+                    g += (float)c.G / 255f * (cell.Life[i] / fj);
+                    b += (float)c.B / 255f * (cell.Life[i] / fj);
+                }
+            }
+
+            if (n > 0)
+                colorChannel = new Color(r, g, b);
+            //---
 
             if (cell.Clip != null)
             {
@@ -269,6 +289,8 @@ namespace TheGrid.Logic.Render
             {
                 SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
             }
+
+            //SpriteBatch.DrawString(FontMapBig, Math.Round(cell.Life, 2).ToString(), cellLocation+midCellSize, Color.White);
 
             //--- Instrument
             if (cell.Clip != null && cell.Clip.Instrument != null)
@@ -287,7 +309,7 @@ namespace TheGrid.Logic.Render
                 {
                     texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cell.Channel.Name);
                 }
-                
+
                 if (cell.Clip.Instrument is InstrumentEffect)
                 {
                     texInstrument = texEffect;

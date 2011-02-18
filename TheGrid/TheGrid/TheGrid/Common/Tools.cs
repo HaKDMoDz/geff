@@ -73,7 +73,7 @@ namespace TheGrid.Common
 
         public static float Distance(Vector2 point1, Vector2 point2)
         {
-            float distance = (int)Math.Sqrt((point1.X - point2.X) * (point1.X - point2.X) + (point1.Y - point2.Y) * (point1.Y - point2.Y));
+            float distance = (float)Math.Sqrt((point1.X - point2.X) * (point1.X - point2.X) + (point1.Y - point2.Y) * (point1.Y - point2.Y));
 
             return distance;
         }

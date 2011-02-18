@@ -123,8 +123,8 @@ namespace TheGrid.Logic.Controller
         {
             Context.MenuSize -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
 
-            if (Context.SpeedFactor < 0f)
-                Context.SpeedFactor = 0f;
+            if (Context.Map.SpeedFactor < 0f)
+                Context.Map.SpeedFactor = 0f;
         }
 
         void keyMenuP_KeyPressed(Keys key, GameTime gameTime)

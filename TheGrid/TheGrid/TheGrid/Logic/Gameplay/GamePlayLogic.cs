@@ -27,15 +27,14 @@ namespace TheGrid.Logic.GamePlay
         {
             this.GameEngine = gameEngine;
 
-            Context.SpeedFactor = 1f;
-            Context.PartitionDuration = new TimeSpan(0, 1, 0);
-
             InitializePlayers();
 
             ribbon = new Ribbon(GameEngine.UI, TimeSpan.FromDays(1));
             GameEngine.UI.ListUIComponent.Add(ribbon);
 
-            LoadMap("Test4");
+            //LoadMap("Test4");
+            LoadMap("TestColor");
+            //NewMap("Bass");
         }
 
         public void LoadMap(string levelFileName)
@@ -95,6 +94,8 @@ namespace TheGrid.Logic.GamePlay
             map.LibraryName = libraryName;
             string libraryDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Sound\Library", libraryName);
 
+            InitializeChannel(map);
+
             foreach (string channelDirectory in Directory.GetDirectories(libraryDirectory))
             {
                 Channel channel = map.Channels.Find(c => c.Name.ToUpper() == Path.GetFileName(channelDirectory).ToUpper());
@@ -124,10 +125,15 @@ namespace TheGrid.Logic.GamePlay
 
             if (GameEngine.Mini)
             {
-                foreach (Channel channel in Context.Map.Channels)
+                foreach (Channel channel in map.Channels)
                 {
                     channel.Color = Color.Lerp(Color.Black, channel.Color, 0.3f);
                 }
+            }
+
+            foreach (Cell cell in map.Cells)
+            {
+                cell.Life = new float[map.Channels.Count-1];
             }
         }
 
@@ -144,14 +150,17 @@ namespace TheGrid.Logic.GamePlay
             {
                 UpdateMusicians(gameTime);
 
+                float lifeDec = (float)(gameTime.ElapsedGameTime.TotalMilliseconds / 10000f * Context.Map.SpeedFactor);
+
                 foreach (Cell cell in Context.Map.Cells)
                 {
-                    cell.Life -= (float)(gameTime.ElapsedGameTime.TotalMilliseconds/3000f * Context.SpeedFactor);
+                    for (int i = 0; i < cell.Life.Length; i++)
+                    {
+                        cell.Life[i] -= lifeDec;
 
-                    if (cell.Life < 0.01f)
-                        cell.Life = 0f;
-                    else
-                        cell.Life = cell.Life;
+                        if (cell.Life[i] < 0.01f)
+                            cell.Life[i] = 0f;
+                    }
                 }
             }
 
@@ -165,10 +174,10 @@ namespace TheGrid.Logic.GamePlay
             //---> Met à jour le temps écoulé
             if (!Context.IsNavigatingThroughTime)
             {
-                TimeSpan time = new TimeSpan((long)((float)gameTime.ElapsedGameTime.Ticks * Context.SpeedFactor));
+                TimeSpan time = new TimeSpan((long)((float)gameTime.ElapsedGameTime.Ticks * Context.Map.SpeedFactor));
                 Context.Time = Context.Time.Add(time);
 
-                if (Context.Time >= Context.PartitionDuration)
+                if (Context.Time >= Context.Map.PartitionDuration)
                     Context.IsPlaying = false;
             }
 
@@ -250,35 +259,27 @@ namespace TheGrid.Logic.GamePlay
 
         private void NewBornCell(Cell cell)
         {
-            Dictionary<int, int> dicCell = new Dictionary<int, int>();
+            int indexChannel = Context.Map.Channels.IndexOf(cell.Channel);
 
-            cell.Life = 1f;
+            cell.Life[indexChannel] = 1f;
 
-            dicCell.Add(cell.IndexPosition, 6);
+            float min = 100f;
 
-            NewBornCell(cell, 1f, dicCell);
-        }
-
-        private void NewBornCell(Cell cell, float life, Dictionary<int, int> dicCell)
-        {
-            if (life < 0.1f)
-                return;
-
-            float newLife = life * 0.7f;
-
-            for (int i = 0; i < 6; i++)
+            float rayon = 4f;
+            foreach (Cell otherCell in Context.Map.Cells)
             {
-                if (cell.Neighbourghs[i] != null && (!dicCell.ContainsKey(cell.Neighbourghs[i].IndexPosition) || dicCell[cell.Neighbourghs[i].IndexPosition] < 6))
+                if (otherCell != cell && otherCell.Clip == null)
                 {
-                    if (!dicCell.ContainsKey(cell.Neighbourghs[i].IndexPosition))
-                        dicCell.Add(cell.Neighbourghs[i].IndexPosition, 1);
-                    else
-                        dicCell[cell.Neighbourghs[i].IndexPosition]++;
+                    float distance = Tools.Distance(cell.Location, otherCell.Location);
 
-                    if (cell.Neighbourghs[i].Life < newLife)
+                    if (distance < min)
+                        min = distance;
+
+                    if (distance <= rayon)
                     {
-                        cell.Neighbourghs[i].Life = newLife;
-                        NewBornCell(cell.Neighbourghs[i], newLife, dicCell);
+                        float newLife = 1f - (distance / rayon);
+                        if (otherCell.Life[indexChannel] < newLife)
+                            otherCell.Life[indexChannel] = newLife;
                     }
                 }
             }
@@ -312,7 +313,7 @@ namespace TheGrid.Logic.GamePlay
 
                 foreach (Channel channel in Context.Map.Channels)
                 {
-                    if (channel.ElapsedTime < Context.PartitionDuration)
+                    if (channel.ElapsedTime < Context.Map.PartitionDuration)
                     {
                         List<Musician> newMusicians = new List<Musician>();
 
@@ -510,7 +511,7 @@ namespace TheGrid.Logic.GamePlay
 
         public void Play()
         {
-            if (Context.Time >= Context.PartitionDuration)
+            if (Context.Time >= Context.Map.PartitionDuration)
                 Stop();
 
             Context.IsPlaying = true;
@@ -549,7 +550,7 @@ namespace TheGrid.Logic.GamePlay
             if (Context.Time >= TimeSpan.Zero)
             {
                 float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
-                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
+                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.Map.SpeedFactor));
                 Context.Time = Context.Time.Subtract(time);
 
                 GameEngine.GamePlay.UpdateMusiciansToTime();
@@ -559,10 +560,10 @@ namespace TheGrid.Logic.GamePlay
         public void Forward(GameTime gameTime)
         {
             Context.IsNavigatingThroughTime = true;
-            if (Context.Time < Context.PartitionDuration)
+            if (Context.Time < Context.Map.PartitionDuration)
             {
                 float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
-                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.SpeedFactor));
+                TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.Map.SpeedFactor));
                 Context.Time = Context.Time.Add(time);
 
                 GameEngine.GamePlay.UpdateMusiciansToTime();
@@ -571,18 +572,18 @@ namespace TheGrid.Logic.GamePlay
 
         public void SpeedDown(GameTime gameTime)
         {
-            Context.SpeedFactor -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+            Context.Map.SpeedFactor -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
 
-            if (Context.SpeedFactor < 0f)
-                Context.SpeedFactor = 0f;
+            if (Context.Map.SpeedFactor < 0f)
+                Context.Map.SpeedFactor = 0f;
         }
 
         public void SpeedUp(GameTime gameTime)
         {
-            Context.SpeedFactor += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+            Context.Map.SpeedFactor += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
 
-            if (Context.SpeedFactor > 4f)
-                Context.SpeedFactor = 4f;
+            if (Context.Map.SpeedFactor > 4f)
+                Context.Map.SpeedFactor = 4f;
         }
 
         public TypePlaying MuteChannel(int idChannel)

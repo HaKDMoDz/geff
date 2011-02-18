@@ -14,6 +14,7 @@ namespace TheGrid.Model.UI
     public class Ribbon : UIComponent
     {
         public const int MARGE = 5;
+        public static int HEIGHT = 0;
 
         public Partition Partition;
         private ClickableImage imgPlay;
@@ -32,7 +33,8 @@ namespace TheGrid.Model.UI
             Alive = true;
             this.ListUIChildren = new List<UIComponent>();
 
-            Rec = new Rectangle(0, 0, (int)Render.ScreenWidth, (int)(0.2f * Render.ScreenHeight));
+            Ribbon.HEIGHT = (int)(0.2f * Render.ScreenHeight);
+            Rec = new Rectangle(0, 0, (int)Render.ScreenWidth, Ribbon.HEIGHT);
 
             Partition = new Partition(this, uiLogic, GetNewTimeSpan());
             this.ListUIChildren.Add(Partition);
@@ -112,7 +114,7 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            Rectangle recManualSpeed = new Rectangle(Partition.Rec.Right + MARGE, Partition.Rec.Y, (int)(0.03f * Render.ScreenWidth), (int)((float)Partition.Rec.Height * Context.SpeedFactor / 4f));
+            Rectangle recManualSpeed = new Rectangle(Partition.Rec.Right + MARGE, Partition.Rec.Y, (int)(0.03f * Render.ScreenWidth), (int)((float)Partition.Rec.Height * Context.Map.SpeedFactor / 4f));
             Rectangle rec = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.3f));
 
             Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, VisualStyle.BackColorDark);
