@@ -81,6 +81,9 @@ namespace TheGrid.Logic.GamePlay
             Stop();
 
             Context.Map = new Map(20, 20);
+            Context.Map.SpeedFactor = 1f;
+            Context.Map.PartitionDuration = new TimeSpan(0, 1, 0);
+
             InitializeChannel(Context.Map);
             ribbon.Partition.Init();
 
@@ -122,7 +125,7 @@ namespace TheGrid.Logic.GamePlay
             map.Channels.Add(new Channel("Key", new Color(0f, 0.3f, 0.8f)));
             map.Channels.Add(new Channel("Guitar", new Color(0f, 0.6f, 0.3f)));
             map.Channels.Add(new Channel("Bass", new Color(0.7f, 0f, 0.5f)));
-            map.Channels.Add(new Channel("Violin", new Color(233,255,145)));
+            map.Channels.Add(new Channel("String", new Color(200,255,145)));
 
             if (GameEngine.Mini)
             {
@@ -134,7 +137,7 @@ namespace TheGrid.Logic.GamePlay
 
             foreach (Cell cell in map.Cells)
             {
-                cell.Life = new float[map.Channels.Count-1];
+                cell.Life = new float[map.Channels.Count];
             }
         }
 
@@ -542,6 +545,8 @@ namespace TheGrid.Logic.GamePlay
                     }
                 }
             }
+
+            GameEngine.Sound.Stop();
         }
 
         public void Backward(GameTime gameTime)

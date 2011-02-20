@@ -66,6 +66,7 @@ namespace TheGrid.Logic.Controller
             KeyManager keyMenuP = AddKey(Keys.Add);
             KeyManager keyMenuM = AddKey(Keys.Subtract);
             KeyManager keyCloneCell = AddKey(Keys.LeftControl);
+            KeyManager keyStopSound = AddKey(Keys.Space);
 
             //KeyManager keyExit = AddKey(Keys.);
             KeyManager keyPlayPauseMusician = AddKey(Keys.P);
@@ -85,7 +86,7 @@ namespace TheGrid.Logic.Controller
             keyMenuP.KeyPressed += new KeyManager.KeyPressedHandler(keyMenuP_KeyPressed);
             keyMenuM.KeyPressed += new KeyManager.KeyPressedHandler(keyMenuM_KeyPressed);
             keyCloneCell.KeyReleased += new KeyManager.KeyReleasedHandler(keyCloneCell_KeyReleased);
-
+            keyStopSound.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopSound_KeyReleased);
             //keyExit.KeyReleased += new KeyManager.KeyReleasedHandler(keyExit_KeyReleased);
             keyPlayPauseMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPlayPauseMusician_KeyReleased);
             keyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopMusician_KeyReleased);
@@ -114,6 +115,11 @@ namespace TheGrid.Logic.Controller
         }
 
         #region Évènement clavier
+        void keyStopSound_KeyReleased(Keys key, GameTime gameTime)
+        {
+            GameEngine.Sound.Stop();
+        }
+
         void keyCloneCell_KeyReleased(Keys key, GameTime gameTime)
         {
             Context.CopiedCell = null;

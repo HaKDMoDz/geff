@@ -12,7 +12,7 @@ namespace TheGrid.Model
         public Channel Channel { get; set; }
         public String FileName { get; set; }
         public String Name { get { return Path.GetFileNameWithoutExtension(FileName); } }
-        public WaveStream WaveStream;
+        public TimeSpan Duration { get; set; }
 
         public Sample()
         {
@@ -22,25 +22,6 @@ namespace TheGrid.Model
         {
             this.Channel = channel;
             this.FileName = fileName;
-            
-            //this.WaveStream = CreateInputStream(FileName);
-        }
-
-        private WaveStream CreateInputStream(string fileName)
-        {
-            WaveChannel32 inputStream;
-            if (fileName.EndsWith(".mp3"))
-            {
-                WaveStream reader = new Mp3FileReader(fileName);
-                inputStream = new WaveChannel32(reader);
-            }
-            else
-            {
-                WaveStream reader = new NAudio.Wave.WaveFileReader(fileName);
-                inputStream = new WaveChannel32(reader);
-            }
-            
-            return inputStream;
         }
     }
 }
