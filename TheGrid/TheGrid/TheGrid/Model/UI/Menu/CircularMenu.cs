@@ -265,9 +265,9 @@ namespace TheGrid.Model.UI.Menu
 
                 double d = 1.5;
                 if (Items.Count == 9)
-                {
                     d = 2.3;
-                }
+                else if (Items.Count == 4)
+                    d = 1;
 
                 Color color = new Color((float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility);
 

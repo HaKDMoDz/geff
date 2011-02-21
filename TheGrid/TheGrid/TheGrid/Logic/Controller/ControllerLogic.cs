@@ -248,11 +248,10 @@ namespace TheGrid.Logic.Controller
         {
             CircularMenu currentMenu = (CircularMenu)GameEngine.UI.ListUIComponent.Find(ui => ui is CircularMenu);
 
-
             Cell selectedCell = GetSelectedCell(mouseState);
             Context.SelectedCell = selectedCell;
 
-            if((keyBoardState.IsKeyDown(Keys.LeftAlt) && selectedCell != null))
+            if((keyBoardState.IsKeyDown(Keys.LeftShift) && selectedCell != null))
             {
                 if(selectedCell.Clip != null && selectedCell.Clip.Instrument != null)
                 {

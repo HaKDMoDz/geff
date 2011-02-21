@@ -16,11 +16,17 @@ namespace TheGrid.Model
         public Boolean IsPlaying { get; set; }
         public TypePlaying TypePlaying { get; set; }
         public List<TimeValue<Cell>> Partition { get; set; }
+        public TimeSpan ElapsedTime { get; set; }
 
         /// <summary>
         /// Direction courante (pour l'écriture de la partition)
         /// </summary>
         public int CurrentDirection { get; set; }
+
+        /// <summary>
+        /// Facteur de vitesse, noire, croche, double croche, triple croche (pour l'écriture de la partition)
+        /// </summary>
+        public float SpeedFactor { get; set; }
 
         /// <summary>
         /// Index courant de la partition (Pour la lecture de la partition)

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using TheGrid.Common;
 using Microsoft.Xna.Framework.Input;
 using TheGrid.Model.Instrument;
+using TheGrid.Logic.Controller;
 
 namespace TheGrid.Model.UI
 {
@@ -15,9 +16,13 @@ namespace TheGrid.Model.UI
     {
         private Ribbon ribbon;
         private List<float> listTimeSegment;
+        private Color colorTimeSegment = new Color(0.3f, 0.3f, 0.3f, 0.4f);
+        private float prevPartitionRatio = 0f;
+        private TimeSpan prevTime = TimeSpan.Zero;
+        private float measureBarWidth = 5f;
         private float timelineDuration = 1000f * 10;
-        private Color colorTimeSegmnet = new Color(0.3f, 0.3f, 0.3f, 0.4f);
-        private float measureWidth = 5f;
+        private float timeWidth = 20f;
+        private Rectangle recPartition;
 
         public Partition(Ribbon ribbon, UILogic uiLogic, TimeSpan creationTime)
             : base(uiLogic, creationTime)
@@ -27,6 +32,54 @@ namespace TheGrid.Model.UI
             Alive = true;
 
             Rec = new Rectangle(Ribbon.MARGE * 2, Ribbon.MARGE * 2, (int)(0.7f * Render.ScreenWidth), ribbon.Rec.Height - Ribbon.MARGE * 3);
+
+            recPartition = new Rectangle(Rec.X + Ribbon.MARGE + 100, Rec.Y, Rec.Width - 100 - Ribbon.MARGE, Rec.Height);
+
+            MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
+            mouseLeftButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseLeftButton_MouseFirstPressed);
+            mouseLeftButton.MousePressed += new MouseManager.MousePressedHandler(mouseLeftButton_MousePressed);
+            mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
+        }
+
+        void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            prevPartitionRatio = -1f;
+        }
+
+        void mouseLeftButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
+        {
+            if (recPartition.Contains(UI.GameEngine.Controller.mousePositionPoint))
+            {
+                prevPartitionRatio = Context.PartitionRatio;
+                prevTime = Context.Time;
+            }
+        }
+
+        void mouseLeftButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            if (prevPartitionRatio > -1f)
+            {
+                //bool moveMouse = false;
+
+                if (UI.GameEngine.Controller.keyBoardState.IsKeyDown(Keys.LeftControl))
+                {
+                    Context.PartitionRatio = prevPartitionRatio + (float)distance.X / 100f;
+                    this.InitSegment();
+                }
+                else
+                {
+                    Context.Time = prevTime.Add(new TimeSpan(0, 0, 0, 0, (int)((float)recPartition.Width / timelineDuration * (float)distance.X)));
+                }
+
+                if (mouseState.X > recPartition.Right)
+                {
+                    Mouse.SetPosition(recPartition.Left, mouseState.Y);
+                }
+                else if (mouseState.X < recPartition.Left)
+                {
+                    Mouse.SetPosition(recPartition.Right, mouseState.Y);
+                }
+            }
         }
 
         public void Init()
@@ -44,8 +97,8 @@ namespace TheGrid.Model.UI
 
                 float channelY = (float)Rec.Y + channelHeight * fi;
 
-                ClickableImage imgMuteChannel = new ClickableImage(UI, GetNewTimeSpan(), "MuteChannel" + i.ToString(), Render.texMuteChannel, Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY + channelHeight/2 - Render.texSoloChannel.Height / 2));
-                ClickableImage imgSoloChannel = new ClickableImage(UI, GetNewTimeSpan(), "SoloChannel" + i.ToString(), Render.texSoloChannel, Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY + channelHeight/2 - Render.texMuteChannel.Height / 2));
+                ClickableImage imgMuteChannel = new ClickableImage(UI, GetNewTimeSpan(), "MuteChannel" + i.ToString(), Render.texMuteChannel, Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY + channelHeight / 2 - Render.texSoloChannel.Height / 2));
+                ClickableImage imgSoloChannel = new ClickableImage(UI, GetNewTimeSpan(), "SoloChannel" + i.ToString(), Render.texSoloChannel, Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY + channelHeight / 2 - Render.texMuteChannel.Height / 2));
 
                 imgMuteChannel.Tag = i;
                 imgSoloChannel.Tag = i;
@@ -63,14 +116,24 @@ namespace TheGrid.Model.UI
                 }
             }
 
+            InitSegment();
+        }
+
+        private void InitSegment()
+        {
+            float channelX = Rec.X + Ribbon.MARGE + 100;
+            float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
+
             //--- Calcul des segments
+            timelineDuration = channelWidth / timeWidth * Context.Map.MusicianDuration * Context.PartitionRatio;
+
             listTimeSegment = new List<float>();
 
-            int nbSeg = (int)(Context.Map.PartitionDuration.TotalMilliseconds / 500f);
+            int nbSeg = (int)(Context.Map.PartitionDuration.TotalMilliseconds / Context.Map.MusicianDuration);
 
             for (int s = 0; s < nbSeg; s++)
             {
-                float x = channelX + (float)s * ((500f * channelWidth) / timelineDuration);
+                float x = channelX + (float)s * ((Context.Map.MusicianDuration * channelWidth) / timelineDuration);
 
                 listTimeSegment.Add((int)x);
             }
@@ -148,7 +211,7 @@ namespace TheGrid.Model.UI
                     (int)channelHeight);
 
                 //--- Nombre de musiciens en cours
-                Render.SpriteBatch.DrawString(Render.FontMenu, Context.Map.Channels[i].ListMusician.Count(m => m.IsPlaying).ToString(), new Vector2(Rec.X + Ribbon.MARGE, channelY + channelHeight / 2 - +Render.FontMenu.MeasureString("0").Y/2), Color.White);
+                Render.SpriteBatch.DrawString(Render.FontMenu, Context.Map.Channels[i].ListMusician.Count(m => m.IsPlaying).ToString(), new Vector2(Rec.X + Ribbon.MARGE, channelY + channelHeight / 2 - +Render.FontMenu.MeasureString("0").Y / 2), Color.White);
                 //---
 
                 //--- Channel
@@ -163,10 +226,10 @@ namespace TheGrid.Model.UI
                     int width = 1;
 
                     if (s % 4 == 0)
-                        width = (int)measureWidth;
+                        width = (int)measureBarWidth;
 
                     if (x + posPartBegin > channelX && x + posPartBegin < (channelX + channelWidth))
-                        Render.SpriteBatch.Draw(Render.texEmptyGradient, new Rectangle((int)(x+posPartBegin), (int)channelY, width, (int)channelHeight), colorTimeSegmnet);
+                        Render.SpriteBatch.Draw(Render.texEmptyGradient, new Rectangle((int)(x + posPartBegin), (int)channelY, width, (int)channelHeight), colorTimeSegment);
                 }
                 //---
 
@@ -185,13 +248,13 @@ namespace TheGrid.Model.UI
 
                         if (part.Value.Clip != null)
                         {
-                            if (part.Value.Clip.Instrument != null && 
-                                part.Value.Clip.Instrument is InstrumentSample && 
+                            if (part.Value.Clip.Instrument != null &&
+                                part.Value.Clip.Instrument is InstrumentSample &&
                                 Context.Map.Channels[i].ListMusician[j].Channel == part.Value.Channel)
                             {
                                 float totalMs = (float)part.Time.Subtract(Context.Time).TotalMilliseconds;
                                 float duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds;
-                                
+
                                 if (totalMs > -timePartBegin - duration && totalMs < timelineDuration)
                                 {
                                     float sizeClip = 1f;
@@ -215,15 +278,15 @@ namespace TheGrid.Model.UI
 
                                     if ((part.Time.TotalMilliseconds / duration) % 4 == 0)
                                     {
-                                        musicianX += measureWidth;
-                                        musicianWidth -= measureWidth;
+                                        musicianX += measureBarWidth;
+                                        musicianWidth -= measureBarWidth;
                                     }
 
                                     Render.SpriteBatch.Draw(Render.texEmpty, new Rectangle(
                                        (int)(musicianX + 1),
                                        (int)(channelY + heightPerMusician * fj),
                                        (int)(musicianWidth - 1),
-                                       (int)(heightPerMusician - 1)), new Color(0f,0f,0f,0.5f));
+                                       (int)(heightPerMusician - 1)), new Color(0f, 0f, 0f, 0.5f));
                                 }
                             }
                         }

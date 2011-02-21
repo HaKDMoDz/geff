@@ -65,6 +65,7 @@ namespace TheGrid.Logic.Render
         private Texture2D textDirection = null;
         private Texture2D texRepeater = null;
         private Texture2D texSpeed = null;
+        private Texture2D texDuration = null;
         private Texture2D texEffect = null;
 
         private Texture2D texMusicianStart = null;
@@ -110,6 +111,7 @@ namespace TheGrid.Logic.Render
             textDirection = GameEngine.Content.Load<Texture2D>(@"Texture\Direction");
             texRepeater = GameEngine.Content.Load<Texture2D>(@"Texture\Repeater");
             texSpeed = GameEngine.Content.Load<Texture2D>(@"Texture\Speed");
+            texDuration = GameEngine.Content.Load<Texture2D>(@"Texture\Duration");
             texEffect = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Effect");
 
             texMusicianStart = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MusicianStart");
@@ -382,6 +384,21 @@ namespace TheGrid.Logic.Render
                     Vector2 center = new Vector2(0.5f * texSpeed.Width, 0.5f * texSpeed.Height);
                     Vector2 location = new Vector2(-2f * texSpeed.Width + Math.Abs(i) * texSpeed.Width, 0.34f * HexaWidth - texSpeed.Height);
                     SpriteBatch.Draw(texSpeed, cellLocation + midCellSize + location, null, Color.White, 0f, center, 1f, SpriteEffects.FlipHorizontally, 0f);
+                }
+            }
+            //---
+
+            //--- Note duration
+            if (cell.Clip != null && cell.Clip.Duration < 1f)
+            {
+                int duration = (int)Math.Log((int)(1f / cell.Clip.Duration),2);
+                Vector2 durationPosition = new Vector2(HexaWidth * 0.5f - (float)(duration) * (float)texDuration.Width * 0.5f, 0.76f * HexaWidth - texDuration.Height);
+                Vector2 center = new Vector2(0.5f * texDuration.Width, 0.5f * texDuration.Height);
+
+                for (int i = 0; i <= duration; i++)
+                {
+                    Vector2 location = durationPosition + new Vector2(i*texDuration.Width, 0f);
+                    SpriteBatch.Draw(texDuration, cellLocation + location, null, Color.White, 0f, center, 1f, SpriteEffects.None, 0f);
                 }
             }
             //---

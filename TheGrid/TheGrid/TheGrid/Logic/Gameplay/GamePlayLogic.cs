@@ -19,8 +19,10 @@ namespace TheGrid.Logic.GamePlay
     public class GamePlayLogic
     {
         private Random rnd = new Random();
-        private float musicianSpeed = 500f;
+        //private float musicianSpeed = 500f;
         private Ribbon ribbon;
+        private TimeSpan lastEffectApplied = TimeSpan.Zero;
+
         public GameEngine GameEngine { get; set; }
 
         public GamePlayLogic(GameEngine gameEngine)
@@ -40,34 +42,6 @@ namespace TheGrid.Logic.GamePlay
         public void LoadMap(string levelFileName)
         {
             Context.Map = FileSystem.LoadLevel(this, Path.GetFileNameWithoutExtension(levelFileName));
-            //foreach (Channel channel in Context.Map.Channels)
-            //{
-            //    if (channel.Name != "Empty")
-            //    {
-            //        channel.InitChannelEffect();
-
-            //        ChannelEffect channelEffect = channel.ListEffect.Find(e => e.Name == "Volume");
-
-            //        foreach (EffectProperty effectProperty in channelEffect.ListEffectProperty)
-            //        {
-            //            effectProperty.Curve.Keys.Clear();
-            //            effectProperty.Curve.Keys.Add(new CurveKey(0f, effectProperty.Default));
-            //        }
-
-            //        Curve curve = channelEffect.ListEffectProperty[0].Curve;
-
-            //        float step = 10f;
-            //        curve.Keys.Clear();
-            //        curve.Keys.Add(new CurveKey(0f, channelEffect.ListEffectProperty[0].MinValue));
-            //        curve.Keys.Add(new CurveKey(1 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
-            //        curve.Keys.Add(new CurveKey(2 * step * 1000f, channelEffect.ListEffectProperty[0].MinValue/2));
-            //        curve.Keys.Add(new CurveKey(3 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
-            //        curve.Keys.Add(new CurveKey(4 * step * 1000f, channelEffect.ListEffectProperty[0].MinValue/2));
-            //        curve.Keys.Add(new CurveKey(5 * step * 1000f, channelEffect.ListEffectProperty[0].MaxValue));
-
-            //        curve.ComputeTangents(CurveTangent.Smooth);
-            //    }
-            //}
 
             EvaluateMuscianGrid();
             ribbon.Partition.Init();
@@ -125,7 +99,7 @@ namespace TheGrid.Logic.GamePlay
             map.Channels.Add(new Channel("Key", new Color(0f, 0.3f, 0.8f)));
             map.Channels.Add(new Channel("Guitar", new Color(0f, 0.6f, 0.3f)));
             map.Channels.Add(new Channel("Bass", new Color(0.7f, 0f, 0.5f)));
-            map.Channels.Add(new Channel("String", new Color(200,255,145)));
+            map.Channels.Add(new Channel("String", new Color(200, 255, 145)));
 
             if (GameEngine.Mini)
             {
@@ -170,8 +144,6 @@ namespace TheGrid.Logic.GamePlay
 
             //GameEngine.Window.Title = Context.Time.ToString();
         }
-
-        private TimeSpan lastEffectApplied = TimeSpan.Zero;
 
         public void UpdateMusicians(GameTime gameTime)
         {
@@ -267,17 +239,12 @@ namespace TheGrid.Logic.GamePlay
 
             cell.Life[indexChannel] = 1f;
 
-            float min = 100f;
-
             float rayon = 4f;
             foreach (Cell otherCell in Context.Map.Cells)
             {
                 if (otherCell != cell && otherCell.Clip == null)
                 {
                     float distance = Tools.Distance(cell.Location, otherCell.Location);
-
-                    if (distance < min)
-                        min = distance;
 
                     if (distance <= rayon)
                     {
@@ -295,7 +262,7 @@ namespace TheGrid.Logic.GamePlay
             foreach (Channel channel in Context.Map.Channels)
             {
                 channel.ListMusician = new List<Musician>();
-                channel.ElapsedTime = new TimeSpan();
+                //channel.ElapsedTime = new TimeSpan();
                 channel.ListSpeed = new List<TimeValue<float>>();
                 channel.ListSpeed.Add(new TimeValue<float>(new TimeSpan(), 1f));
                 channel.InitChannelEffect();
@@ -306,24 +273,32 @@ namespace TheGrid.Logic.GamePlay
                     musician.IsPlaying = true;
                     musician.NextCell = channel.CellStart;
                 }
+
+                foreach (Musician musician in channel.ListMusician)
+                {
+                    musician.ElapsedTime = TimeSpan.Zero;
+                }
             }
             //---
 
-            int channelCalculationInProgress = Context.Map.Channels.Count;
+            //int channelCalculationInProgress = Context.Map.Channels.Count;
+            int musicianCalculationInProgress = 1;
+            //0;
+            //Context.Map.Channels.ForEach(c => musicianCalculationInProgress += c.ListMusician.Count);
 
-            while (channelCalculationInProgress > 0)
+            while (musicianCalculationInProgress > 0)
             {
-                channelCalculationInProgress = 0;
+                musicianCalculationInProgress = 0;
 
                 foreach (Channel channel in Context.Map.Channels)
                 {
-                    if (channel.ElapsedTime < Context.Map.PartitionDuration)
+                    //if (channel.ElapsedTime < Context.Map.PartitionDuration)
                     {
                         List<Musician> newMusicians = new List<Musician>();
 
                         foreach (Musician musician in channel.ListMusician)
                         {
-                            if (musician.NextCell != null)
+                            if (musician.ElapsedTime < Context.Map.PartitionDuration && musician.NextCell != null)
                             {
                                 Cell cell = musician.NextCell;
 
@@ -349,7 +324,7 @@ namespace TheGrid.Logic.GamePlay
                                         //--- Speed
                                         if (cell.Clip.Speed.HasValue)
                                         {
-                                            float speed = channel.GetSpeedFromTime(channel.ElapsedTime);
+                                            float speed = channel.GetSpeedFromTime(musician.ElapsedTime);
 
                                             speed *= (0.22f * (float)(cell.Clip.Speed.Value)) + 1f;
 
@@ -358,8 +333,13 @@ namespace TheGrid.Logic.GamePlay
                                             else if (speed > 4f)
                                                 speed = 4f;
 
-                                            channel.ListSpeed.Add(new TimeValue<float>(channel.ElapsedTime, speed));
+                                            //channel.ListSpeed.Add(new TimeValue<float>(channel.ElapsedTime, speed));
+                                            channel.ListSpeed.Add(new TimeValue<float>(musician.ElapsedTime, speed));
                                         }
+                                        //---
+
+                                        //--- Note duration
+                                        musician.SpeedFactor = cell.Clip.Duration;
                                         //---
 
                                         //--- Instrument
@@ -379,7 +359,7 @@ namespace TheGrid.Logic.GamePlay
 
                                             for (int i = 0; i < channelEffect.ListEffectProperty.Count; i++)
                                             {
-                                                channelEffect.ListEffectProperty[i].Curve.Keys.Add(new CurveKey((float)channel.ElapsedTime.TotalMilliseconds, effect.ChannelEffect.ListEffectProperty[i].Value));
+                                                channelEffect.ListEffectProperty[i].Curve.Keys.Add(new CurveKey((float)musician.ElapsedTime.TotalMilliseconds, effect.ChannelEffect.ListEffectProperty[i].Value));
                                             }
                                         }
                                         //---
@@ -398,6 +378,7 @@ namespace TheGrid.Logic.GamePlay
                                                     newMusician.CurrentDirection = i;
                                                     newMusician.CurrentCell = cell;
                                                     newMusician.NextCell = cell.Neighbourghs[newMusician.CurrentDirection];
+                                                    newMusician.ElapsedTime = musician.ElapsedTime;
 
                                                     newMusicians.Add(newMusician);
                                                 }
@@ -415,10 +396,14 @@ namespace TheGrid.Logic.GamePlay
                                 if (cell != null)
                                 {
                                     //--- Met à jour la partition du musicien
-                                    musician.Partition.Add(new TimeValue<Cell>(channel.ElapsedTime, cell));
+                                    musician.Partition.Add(new TimeValue<Cell>(musician.ElapsedTime, cell));
+                                    musician.ElapsedTime = musician.ElapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(Context.Map.MusicianDuration * musician.SpeedFactor / channel.GetSpeedFromTime(musician.ElapsedTime))));
+
                                     if (musician.IsPlaying)
                                         musician.NextCell = cell.Neighbourghs[musician.CurrentDirection];
                                     //---
+
+                                    musicianCalculationInProgress++;
                                 }
                             }
                         }
@@ -461,7 +446,7 @@ namespace TheGrid.Logic.GamePlay
 
                             if (musician != null)
                             {
-                                musician.Partition.Add(new TimeValue<Cell>(channel.ElapsedTime, newMusician.CurrentCell));
+                                musician.Partition.Add(new TimeValue<Cell>(newMusician.ElapsedTime, newMusician.CurrentCell));
 
                                 musician.NextCell = newMusician.NextCell;
                                 musician.CurrentDirection = newMusician.CurrentDirection;
@@ -470,10 +455,10 @@ namespace TheGrid.Logic.GamePlay
                         //---
 
                         //--- Incrémente le temps du channel selon la vitesse en cours
-                        channel.ElapsedTime = channel.ElapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(musicianSpeed / channel.GetSpeedFromTime(channel.ElapsedTime))));
+                        //channel.ElapsedTime = channel.ElapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(Context.Map.MusicianSpeed / channel.GetSpeedFromTime(channel.ElapsedTime))));
                         //---
 
-                        channelCalculationInProgress++;
+                        //channelCalculationInProgress++;
                     }
                 }
             }
@@ -578,18 +563,27 @@ namespace TheGrid.Logic.GamePlay
 
         public void SpeedDown(GameTime gameTime)
         {
-            Context.Map.SpeedFactor -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+            float speedFactor = Context.Map.SpeedFactor;
+            speedFactor -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
 
-            if (Context.Map.SpeedFactor < 0f)
-                Context.Map.SpeedFactor = 0f;
+            if (speedFactor < 0f)
+                speedFactor = 1f/119f;
+
+            Context.Map.SpeedFactor = speedFactor;
+            EvaluateMuscianGrid();
         }
 
         public void SpeedUp(GameTime gameTime)
         {
-            Context.Map.SpeedFactor += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+            float speedFactor = Context.Map.SpeedFactor;
+            speedFactor += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
 
-            if (Context.Map.SpeedFactor > 4f)
-                Context.Map.SpeedFactor = 4f;
+            if (speedFactor > 2f)
+                speedFactor = 2f;
+
+            Context.Map.SpeedFactor = speedFactor;
+
+            EvaluateMuscianGrid();
         }
 
         public TypePlaying MuteChannel(int idChannel)

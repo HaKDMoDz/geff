@@ -21,6 +21,7 @@ namespace TheGrid.Common
         public static Boolean IsPlaying { get; set; }
         public static Boolean IsNavigatingThroughTime { get; set; }
         public static float MenuSize = 3f;
+        public static float PartitionRatio = 1f;
         public static GameEngine GameEngine { get; set; }
     }
 

@@ -39,10 +39,10 @@ namespace TheGrid.Model.UI
             Partition = new Partition(this, uiLogic, GetNewTimeSpan());
             this.ListUIChildren.Add(Partition);
 
-            imgPlay = new ClickableImage(this.UI, GetNewTimeSpan(), "Play", Render.texPlay, Render.texPlay, new Vector2(Partition.Rec.Right + (int)(0.03f * Render.ScreenWidth) + MARGE * 2, Partition.Rec.Y));
-            imgPause = new ClickableImage(this.UI, GetNewTimeSpan(), "Pause", Render.texPause, Render.texPause, new Vector2(Partition.Rec.Right + (int)(0.03f * Render.ScreenWidth) + MARGE * 2, Partition.Rec.Y));
+            imgPlay = new ClickableImage(this.UI, GetNewTimeSpan(), "Play", Render.texPlay, Render.texPlay, new Vector2(Partition.Rec.Right + 30 + MARGE * 2, Partition.Rec.Y));
+            imgPause = new ClickableImage(this.UI, GetNewTimeSpan(), "Pause", Render.texPause, Render.texPause, new Vector2(Partition.Rec.Right + 30 + MARGE * 2, Partition.Rec.Y));
             imgPause.Visible = false;
-            imgStop = new ClickableImage(this.UI, GetNewTimeSpan(), "Stop", Render.texStop, Render.texStop, new Vector2(Partition.Rec.Right + (int)(0.03f * Render.ScreenWidth) + MARGE * 3 + Render.texPlay.Width, Partition.Rec.Y));
+            imgStop = new ClickableImage(this.UI, GetNewTimeSpan(), "Stop", Render.texStop, Render.texStop, new Vector2(Partition.Rec.Right + 30 + MARGE * 3 + Render.texPlay.Width, Partition.Rec.Y));
 
             imgPlay.ClickImage += new ClickableImage.ClickImageHandler(imgPlay_ClickImage);
             imgPause.ClickImage += new ClickableImage.ClickImageHandler(imgPause_ClickImage);
@@ -114,12 +114,14 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            Rectangle recManualSpeed = new Rectangle(Partition.Rec.Right + MARGE, Partition.Rec.Y, (int)(0.03f * Render.ScreenWidth), (int)((float)Partition.Rec.Height * Context.Map.SpeedFactor / 4f));
+            Rectangle recManualSpeed = new Rectangle(Partition.Rec.Right + MARGE, Partition.Rec.Y, 30, (int)((float)Partition.Rec.Height * Context.Map.SpeedFactor / 2f));
             Rectangle rec = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.3f));
 
             Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, VisualStyle.BackColorDark);
 
             Render.SpriteBatch.Draw(Render.texEmptyGradient, recManualSpeed, Color.White);
+
+            Render.SpriteBatch.DrawString(Render.FontTextSmall, Context.Map.BPM.ToString(), new Vector2(Partition.Rec.Right + MARGE, Partition.Rec.Y + MARGE), Color.DarkGray);
 
             base.Draw(gameTime);
         }

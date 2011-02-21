@@ -6,17 +6,34 @@ using Microsoft.Xna.Framework;
 using TheGrid.Common;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace TheGrid.Model
 {
     [Serializable]
     public class Map
     {
+        private float _speedFactor = 1f;
+
         public List<Cell> Cells { get; set; }
         public List<Channel> Channels { get; set; }
         public String LibraryName { get; set; }
         [DefaultValue(1f)]
-        public float SpeedFactor { get; set; }
+        public float SpeedFactor {
+            get
+            {
+                return _speedFactor;
+            }
+            set
+            {
+                _speedFactor = value;
+                BPM = (int)(120f * _speedFactor);
+                MusicianDuration = 60000 / BPM / 4;
+            } 
+        }
+        [XmlIgnore]
+        public int BPM { get; set; }
+        public float MusicianDuration { get; set; }
         [DefaultValue(typeof(TimeSpan), "60000")]
         public TimeSpan PartitionDuration { get; set; }
 

@@ -14,10 +14,12 @@ namespace TheGrid.Model
         public bool[] Directions { get; set; }
         public int? Repeater { get; set; }
         public int? Speed { get; set; }
+        public float Duration { get; set; }
 
         public Clip()
         {
             Directions = new bool[6];
+            Duration = 1f;
         }
     }
 }

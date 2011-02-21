@@ -132,9 +132,13 @@ namespace TheGrid.Logic.UI
             itemMenuRepeater.Selected += new Item.SelectedHandler(itemMenuRepeater_Selected);
             menuRoot.Items.Add(itemMenuRepeater);
 
-            Item itemMenuSpeed = new Item(menuRoot, "Speed");
-            itemMenuSpeed.Selected += new Item.SelectedHandler(itemMenuSpeed_Selected);
-            menuRoot.Items.Add(itemMenuSpeed);
+            //Item itemMenuSpeed = new Item(menuRoot, "Speed");
+            //itemMenuSpeed.Selected += new Item.SelectedHandler(itemMenuSpeed_Selected);
+            //menuRoot.Items.Add(itemMenuSpeed);
+
+            Item itemMenuDuration = new Item(menuRoot, "Duration");
+            itemMenuDuration.Selected += new Item.SelectedHandler(itemMenuDuration_Selected);
+            menuRoot.Items.Add(itemMenuDuration);
 
             Item itemMenuInstrument = new Item(menuRoot, "Instrument");
             itemMenuInstrument.Selected += new Item.SelectedHandler(itemMenuInstrument_Selected);
@@ -370,6 +374,48 @@ namespace TheGrid.Logic.UI
             item.Checked = isChecked;
 
             item.ParentMenu.ParentCell.Clip.Speed = item.Value;
+
+            GameEngine.GamePlay.EvaluateMuscianGrid();
+            NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
+        }
+        #endregion
+
+        #region Menu Duration
+        void itemMenuDuration_Selected(Item item, GameTime gameTime)
+        {
+            item.ParentMenu.Close(gameTime);
+
+            //---
+            CircularMenu menuDuration = new CircularMenu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
+
+            Item itemDurationReset = new Item(menuDuration, "Reset", 1);
+            itemDurationReset.Selected += new Item.SelectedHandler(itemDuration_Selected);
+            menuDuration.Items.Add(itemDurationReset);
+
+            Item itemDuration2 = new Item(menuDuration, "Duration2", 2);
+            itemDuration2.Selected += new Item.SelectedHandler(itemDuration_Selected);
+            menuDuration.Items.Add(itemDuration2);
+
+
+            Item itemDuration3 = new Item(menuDuration, "Duration3", 4);
+            itemDuration3.Selected += new Item.SelectedHandler(itemDuration_Selected);
+            menuDuration.Items.Add(itemDuration3);
+
+            Item itemDuration4 = new Item(menuDuration, "Duration4", 8);
+            itemDuration4.Selected += new Item.SelectedHandler(itemDuration_Selected);
+            menuDuration.Items.Add(itemDuration4);
+            //---
+
+            NextMenu(item.ParentMenu, menuDuration);
+        }
+
+        private void itemDuration_Selected(Item item, GameTime gameTime)
+        {
+            item.ParentMenu.Close(gameTime);
+
+            item.ParentMenu.ParentCell.InitClip();
+
+            item.ParentMenu.ParentCell.Clip.Duration = 1f / (float)item.Value;
 
             GameEngine.GamePlay.EvaluateMuscianGrid();
             NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);

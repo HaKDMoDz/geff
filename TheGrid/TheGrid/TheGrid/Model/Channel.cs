@@ -14,6 +14,7 @@ namespace TheGrid.Model
     [Serializable]
     public class Channel
     {
+        [XmlIgnore]
         public Color Color { get; set; }
         public string Name { get; set; }
         [XmlIgnore]
@@ -22,13 +23,15 @@ namespace TheGrid.Model
         public List<Musician> ListMusician { get; set; }
         [XmlIgnore]
         public List<Sample> ListSample { get; set; }
+        [XmlIgnore]
         public List<TimeValue<float>> ListSpeed { get; set; }
-        public TimeSpan ElapsedTime { get; set; }
+        //public TimeSpan ElapsedTime { get; set; }
         public List<ChannelEffect> ListEffect { get; set; }
 
         [XmlIgnore]
         public TypePlaying TypePlaying { get; set; }
 
+        [XmlIgnore]
         public int CountMusicianPlaying
         {
             get
