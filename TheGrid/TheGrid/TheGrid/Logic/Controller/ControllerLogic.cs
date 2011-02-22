@@ -287,6 +287,7 @@ namespace TheGrid.Logic.Controller
                         }
                         selectedCell.Clip.Repeater = Context.CopiedCell.Clip.Repeater;
                         selectedCell.Clip.Speed = Context.CopiedCell.Clip.Speed;
+                        selectedCell.Clip.Duration = Context.CopiedCell.Clip.Duration;
 
                         if (Context.CopiedCell.Clip.Instrument != null && !(Context.CopiedCell.Clip.Instrument is InstrumentStart))
                         {
@@ -294,6 +295,8 @@ namespace TheGrid.Logic.Controller
                             {
                                 selectedCell.Clip.Instrument = new InstrumentSample(((InstrumentSample)Context.CopiedCell.Clip.Instrument).Sample);
                             }
+                            //TODO : cloner les effets
+                            //TODO : cloner les notes
                         }
                     }
 

@@ -26,7 +26,7 @@ namespace TheGrid.Model
         /// <summary>
         /// Facteur de vitesse, noire, croche, double croche, triple croche (pour l'écriture de la partition)
         /// </summary>
-        public float SpeedFactor { get; set; }
+        //public float SpeedFactor { get; set; }
 
         /// <summary>
         /// Index courant de la partition (Pour la lecture de la partition)

@@ -44,7 +44,7 @@ namespace TheGrid.Logic.GamePlay
             Context.Map = FileSystem.LoadLevel(this, Path.GetFileNameWithoutExtension(levelFileName));
 
             EvaluateMuscianGrid();
-            ribbon.Partition.Init();
+            //ribbon.Partition.Init();
             Stop();
 
             GameEngine.Sound.Init();
@@ -301,6 +301,7 @@ namespace TheGrid.Logic.GamePlay
                             if (musician.ElapsedTime < Context.Map.PartitionDuration && musician.NextCell != null)
                             {
                                 Cell cell = musician.NextCell;
+                                float speedFactor = 1f;
 
                                 if (cell != null && (cell.Channel == null || cell.Channel == channel) && cell.Clip != null)
                                 {
@@ -339,7 +340,7 @@ namespace TheGrid.Logic.GamePlay
                                         //---
 
                                         //--- Note duration
-                                        musician.SpeedFactor = cell.Clip.Duration;
+                                        speedFactor = cell.Clip.Duration;
                                         //---
 
                                         //--- Instrument
@@ -397,7 +398,8 @@ namespace TheGrid.Logic.GamePlay
                                 {
                                     //--- Met à jour la partition du musicien
                                     musician.Partition.Add(new TimeValue<Cell>(musician.ElapsedTime, cell));
-                                    musician.ElapsedTime = musician.ElapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(Context.Map.MusicianDuration * musician.SpeedFactor / channel.GetSpeedFromTime(musician.ElapsedTime))));
+                                    musician.ElapsedTime = musician.ElapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(Context.Map.TimeDuration * speedFactor / channel.GetSpeedFromTime(musician.ElapsedTime))));
+                                    //musician.SpeedFactor = 1f;
 
                                     if (musician.IsPlaying)
                                         musician.NextCell = cell.Neighbourghs[musician.CurrentDirection];
@@ -564,7 +566,7 @@ namespace TheGrid.Logic.GamePlay
         public void SpeedDown(GameTime gameTime)
         {
             float speedFactor = Context.Map.SpeedFactor;
-            speedFactor -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+            speedFactor -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 3000f;
 
             if (speedFactor < 0f)
                 speedFactor = 1f/119f;
@@ -576,7 +578,7 @@ namespace TheGrid.Logic.GamePlay
         public void SpeedUp(GameTime gameTime)
         {
             float speedFactor = Context.Map.SpeedFactor;
-            speedFactor += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;
+            speedFactor += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 3000f;
 
             if (speedFactor > 2f)
                 speedFactor = 2f;

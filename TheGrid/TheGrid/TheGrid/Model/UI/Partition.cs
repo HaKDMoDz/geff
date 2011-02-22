@@ -59,26 +59,58 @@ namespace TheGrid.Model.UI
         {
             if (prevPartitionRatio > -1f)
             {
-                //bool moveMouse = false;
-
                 if (UI.GameEngine.Controller.keyBoardState.IsKeyDown(Keys.LeftControl))
                 {
-                    Context.PartitionRatio = prevPartitionRatio + (float)distance.X / 100f;
+                    Context.PartitionRatio = prevPartitionRatio + (float)distance.X / 200f;
+
+                    Context.PartitionRatio = MathHelper.Clamp(Context.PartitionRatio, 0.05f, 10f);
+
                     this.InitSegment();
                 }
                 else
                 {
-                    Context.Time = prevTime.Add(new TimeSpan(0, 0, 0, 0, (int)((float)recPartition.Width / timelineDuration * (float)distance.X)));
+                    Context.Time = prevTime + TimeSpan.FromMilliseconds(timelineDuration / (float)recPartition.Width * (float)distance.X);
+
+                    if (Context.Time < TimeSpan.Zero)
+                        Context.Time = TimeSpan.Zero;
+                    if (Context.Time > Context.Map.PartitionDuration)
+                        Context.Time = Context.Map.PartitionDuration;
                 }
 
                 if (mouseState.X > recPartition.Right)
                 {
                     Mouse.SetPosition(recPartition.Left, mouseState.Y);
+
+                    if (UI.GameEngine.Controller.keyBoardState.IsKeyDown(Keys.LeftControl))
+                        prevPartitionRatio -= recPartition.Width/200f;
+                    else
+                        prevTime = prevTime.Subtract(TimeSpan.FromMilliseconds(timelineDuration));
                 }
                 else if (mouseState.X < recPartition.Left)
                 {
                     Mouse.SetPosition(recPartition.Right, mouseState.Y);
+
+                    if (UI.GameEngine.Controller.keyBoardState.IsKeyDown(Keys.LeftControl))
+                        prevPartitionRatio += recPartition.Width / 200f;
+                    else
+                        prevTime = prevTime.Add(TimeSpan.FromMilliseconds(timelineDuration));
                 }
+
+                if (mouseState.Y > recPartition.Bottom)
+                {
+                    Mouse.SetPosition(mouseState.X, recPartition.Bottom);
+                }
+                else if (mouseState.Y < recPartition.Top)
+                {
+                    Mouse.SetPosition(mouseState.X, recPartition.Top);
+                }
+
+                prevPartitionRatio = MathHelper.Clamp(prevPartitionRatio, 0.05f, 10f);
+
+                if (prevTime < TimeSpan.Zero - TimeSpan.FromMilliseconds(timelineDuration))
+                    prevTime = TimeSpan.Zero - TimeSpan.FromMilliseconds(timelineDuration);
+                if (prevTime > Context.Map.PartitionDuration + TimeSpan.FromMilliseconds(timelineDuration))
+                    prevTime = Context.Map.PartitionDuration + TimeSpan.FromMilliseconds(timelineDuration);
             }
         }
 
@@ -121,19 +153,16 @@ namespace TheGrid.Model.UI
 
         private void InitSegment()
         {
-            float channelX = Rec.X + Ribbon.MARGE + 100;
-            float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
-
             //--- Calcul des segments
-            timelineDuration = channelWidth / timeWidth * Context.Map.MusicianDuration * Context.PartitionRatio;
+            timelineDuration = (float)recPartition.Width / timeWidth * Context.Map.TimeDuration * Context.PartitionRatio;
 
             listTimeSegment = new List<float>();
 
-            int nbSeg = (int)(Context.Map.PartitionDuration.TotalMilliseconds / Context.Map.MusicianDuration);
+            int nbSeg = (int)(Context.Map.PartitionDuration.TotalMilliseconds / Context.Map.TimeDuration);
 
             for (int s = 0; s < nbSeg; s++)
             {
-                float x = channelX + (float)s * ((Context.Map.MusicianDuration * channelWidth) / timelineDuration);
+                float x = recPartition.Left + (float)s * ((Context.Map.TimeDuration * (float)recPartition.Width) / timelineDuration);
 
                 listTimeSegment.Add((int)x);
             }
@@ -253,7 +282,7 @@ namespace TheGrid.Model.UI
                                 Context.Map.Channels[i].ListMusician[j].Channel == part.Value.Channel)
                             {
                                 float totalMs = (float)part.Time.Subtract(Context.Time).TotalMilliseconds;
-                                float duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds;
+                                float duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds/2f;
 
                                 if (totalMs > -timePartBegin - duration && totalMs < timelineDuration)
                                 {

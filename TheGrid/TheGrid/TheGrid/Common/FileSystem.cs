@@ -56,8 +56,13 @@ namespace TheGrid.Common
             if (map.SpeedFactor == 0f)
                 map.SpeedFactor = 1f;
 
+            map.SpeedFactor = map.SpeedFactor;
+
             if(map.PartitionDuration == TimeSpan.Zero)
                 map.PartitionDuration = new TimeSpan(0, 1, 0);
+
+            if (map.TimeDuration == 0f)
+                map.TimeDuration = 500f;
 
             foreach (Channel channel in map.Channels)
             {

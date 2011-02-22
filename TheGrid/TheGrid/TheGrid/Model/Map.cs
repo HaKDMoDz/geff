@@ -28,12 +28,12 @@ namespace TheGrid.Model
             {
                 _speedFactor = value;
                 BPM = (int)(120f * _speedFactor);
-                MusicianDuration = 60000 / BPM / 4;
+                TimeDuration = 60000 / BPM / 4;
             } 
         }
         [XmlIgnore]
         public int BPM { get; set; }
-        public float MusicianDuration { get; set; }
+        public float TimeDuration { get; set; }
         [DefaultValue(typeof(TimeSpan), "60000")]
         public TimeSpan PartitionDuration { get; set; }
 
