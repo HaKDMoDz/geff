@@ -331,17 +331,17 @@ namespace TheGrid.Logic.Render
                     SpriteBatch.DrawString(FontMap, effectName, cellLocation + midCellSize - deltaEffectName, Color.White);
                     SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height), null, Color.White);
                 }
-                else
-                {
-                    SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2), null, Color.White);
-                }
-
-                if (cell.Clip.Instrument is InstrumentSample)
+                else if (cell.Clip.Instrument is InstrumentSample)
                 {
                     string sampleName = ((InstrumentSample)cell.Clip.Instrument).Sample.Name;
                     Vector2 deltaSampleName = new Vector2(FontMap.MeasureString(sampleName).X / 2, FontMap.MeasureString(sampleName).Y / 5);
 
+                    SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2)- new Vector2(0f,midCellSize.Y*0.3f), null, Color.White);
                     SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize - deltaSampleName, Color.White);
+                }
+                else
+                {
+                    SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2), null, Color.White);
                 }
             }
             //---

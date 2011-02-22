@@ -19,11 +19,15 @@ namespace TheGrid.Logic.UI
         public GameEngine GameEngine { get; set; }
 
         public List<UIComponent> ListUIComponent { get; set; }
+        public Ribbon Ribbon;
 
         public UILogic(GameEngine gameEngine)
         {
             this.GameEngine = gameEngine;
             this.ListUIComponent = new List<UIComponent>();
+
+            Ribbon = new Ribbon(this, TimeSpan.FromDays(1));
+            ListUIComponent.Add(Ribbon);
         }
 
         public void Update(GameTime gameTime)

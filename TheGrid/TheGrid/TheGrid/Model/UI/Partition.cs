@@ -17,7 +17,7 @@ namespace TheGrid.Model.UI
         private Ribbon ribbon;
         private List<float> listTimeSegment;
         private Color colorTimeSegment = new Color(0.3f, 0.3f, 0.3f, 0.4f);
-        private float prevPartitionRatio = 0f;
+        private float prevPartitionRatio = -1f;
         private TimeSpan prevTime = TimeSpan.Zero;
         private float measureBarWidth = 5f;
         private float timelineDuration = 1000f * 10;
@@ -33,7 +33,7 @@ namespace TheGrid.Model.UI
             Visible = true;
             Alive = true;
 
-            Rec = new Rectangle(Ribbon.MARGE, Ribbon.MARGE, (int)Render.ScreenWidth - Ribbon.MARGE*2, ribbon.Rec.Height - Ribbon.MARGE * 2);
+            Rec = new Rectangle(Ribbon.MARGE, ribbon.RecMenuBar.Top, (int)Render.ScreenWidth - Ribbon.MARGE*2, ribbon.Rec.Height - Ribbon.MARGE * 2);
 
             recBackground = new Rectangle(Rec.Left, ribbon.RecMenuBar.Bottom, Rec.Width, (int)((float)Rec.Height * 1.2f));
             recLeftPartition = new Rectangle(Rec.Left, Rec.Top, ribbon.RecMenuBar.Left- Rec.Left, Rec.Height);
@@ -47,7 +47,11 @@ namespace TheGrid.Model.UI
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            prevPartitionRatio = -1f;
+            if (prevPartitionRatio > -1f)
+            {
+                Context.IsNavigatingThroughTime = false;
+                prevPartitionRatio = -1f;
+            }
         }
 
         void mouseLeftButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
@@ -222,8 +226,8 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, recBackground, VisualStyle.BackColorLight2);
-            Render.SpriteBatch.Draw(Render.texEmpty, recLeftPartition, VisualStyle.BackColorLight2);
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, recBackground, VisualStyle.BackColorDark);
+            Render.SpriteBatch.Draw(Render.texEmpty, recLeftPartition, VisualStyle.BackColorDark); //BackColorLight2
             
             float channelHeight = (float)recPartition.Height / ((float)Context.Map.Channels.Count - 1);
             float channelWidth = (float)recPartition.Width;
@@ -232,6 +236,7 @@ namespace TheGrid.Model.UI
 
             float channelX = (float)recPartition.Left;
             int elapsedTimeWidth = (int)(((float)Context.Time.TotalMilliseconds * channelWidth) / timelineDuration);
+            float texInstrumentSize = Math.Min(channelHeight, 40f);
 
             for (int i = 1; i < Context.Map.Channels.Count; i++)
             {
@@ -249,6 +254,10 @@ namespace TheGrid.Model.UI
                 //Render.SpriteBatch.DrawString(Render.FontMenu, Context.Map.Channels[i].ListMusician.Count(m => m.IsPlaying).ToString(), new Vector2(Rec.X + Ribbon.MARGE, channelY + channelHeight / 2 - +Render.FontMenu.MeasureString("0").Y / 2), Color.White);
                 //---
 
+                //--- Icône du channel
+                Render.SpriteBatch.Draw(GetIcon("Instrument" + Context.Map.Channels[i].Name), new Rectangle((int)(recPartition.Left - Ribbon.MARGE - texInstrumentSize), (int)(channelY + channelHeight / 2 - texInstrumentSize/2), (int)texInstrumentSize, (int)texInstrumentSize), null, Context.Map.Channels[i].Color);
+                //---
+                
                 //--- Channel
                 Render.SpriteBatch.Draw(Render.texEmptyGradient, recChannel, Context.Map.Channels[i].Color);
                 //---
@@ -329,7 +338,7 @@ namespace TheGrid.Model.UI
                 #endregion
 
                 //--- Marqueur de channel
-                Render.SpriteBatch.Draw(GetIcon("ChannelMarker"), new Vector2(recPartition.X, channelY + channelHeight / 2 - GetIcon("ChannelMarker").Height / 2), VisualStyle.BackColorLight2);
+                Render.SpriteBatch.Draw(GetIcon("ChannelMarker"), new Vector2(recPartition.X, channelY + channelHeight / 2 - GetIcon("ChannelMarker").Height / 2), VisualStyle.BackColorDark);
                 //---
             }
 

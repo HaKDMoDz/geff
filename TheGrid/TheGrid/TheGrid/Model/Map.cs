@@ -28,6 +28,13 @@ namespace TheGrid.Model
             {
                 _speedFactor = value;
                 BPM = (int)(120f * _speedFactor);
+
+                if (BPM == 0)
+                {
+                    BPM = 1;
+                    _speedFactor = 1f / 120f;
+                }
+
                 TimeDuration = 60000 / BPM / 4;
             } 
         }

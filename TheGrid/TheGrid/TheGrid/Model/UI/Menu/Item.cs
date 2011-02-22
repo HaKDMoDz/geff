@@ -15,6 +15,9 @@ namespace TheGrid.Model.UI.Menu
         public Color Color { get; set; }
         public bool MouseOver { get; set; }
 
+        public delegate void SelectedHandler(Item item, GameTime gameTime);
+        public event SelectedHandler Selected; 
+        
         public Item(CircularMenu parentMenu, string name) : this(parentMenu, name, 0) { }
 
         public Item(CircularMenu parentMenu, string name, int value)
@@ -24,8 +27,6 @@ namespace TheGrid.Model.UI.Menu
             Value = value;
         }
 
-        public delegate void SelectedHandler(Item item, GameTime gameTime);
-        public event SelectedHandler Selected;
         public virtual void OnSelected(GameTime gameTime)
         {
             if(Selected != null)

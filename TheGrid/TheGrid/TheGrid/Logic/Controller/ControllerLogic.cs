@@ -27,9 +27,8 @@ namespace TheGrid.Logic.Controller
         public Vector2 mousePosition;
         public Point mousePositionPoint;
 
-
         //private float prevRightStickLength;
-        private Vector3 prevCameraPosition = Vector3.Zero;
+        private Vector3 prevCameraPosition = Vector3.Backward;
         #endregion
 
         private GameEngine GameEngine { get; set; }
@@ -236,6 +235,9 @@ namespace TheGrid.Logic.Controller
         #region Évènement souris
         void mouseMiddleButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
+            if (GameEngine.UI.Ribbon.Rec.Contains(mousePositionPoint))
+                return;
+
             Cell selectedCell = GetSelectedCell(mouseState);
 
             if (selectedCell != null && selectedCell.Clip != null && selectedCell.Clip.Instrument is InstrumentSample)
@@ -246,6 +248,9 @@ namespace TheGrid.Logic.Controller
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
+            if (GameEngine.UI.Ribbon.Rec.Contains(mousePositionPoint))
+                return;
+
             CircularMenu currentMenu = (CircularMenu)GameEngine.UI.ListUIComponent.Find(ui => ui is CircularMenu);
 
             Cell selectedCell = GetSelectedCell(mouseState);
@@ -337,12 +342,15 @@ namespace TheGrid.Logic.Controller
 
         void mouseRightButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
         {
+            if (GameEngine.UI.Ribbon.Rec.Contains(mousePositionPoint))
+                return;
+
             prevCameraPosition = GameEngine.Render.CameraPosition;
         }
 
         void mouseRightButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            if (Tools.Distance(Point.Zero, distance) > 5f)
+            if (prevCameraPosition != Vector3.Backward && Tools.Distance(Point.Zero, distance) > 5f)
             {
                 GameEngine.Render.CameraPosition = new Vector3(prevCameraPosition.X, prevCameraPosition.Y, GameEngine.Render.CameraPosition.Z) + new Vector3(distance.X, distance.Y, 0f) * GameEngine.Render.CameraPosition.Z * RenderLogic.ZOOM_OUT_MAX;
                 GameEngine.Render.CameraTarget = new Vector3(GameEngine.Render.CameraPosition.X, GameEngine.Render.CameraPosition.Y, 0f);
@@ -351,6 +359,8 @@ namespace TheGrid.Logic.Controller
 
         void mouseRightButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
+            prevCameraPosition = Vector3.Backward;
+
             CircularMenu currentMenu = (CircularMenu)GameEngine.UI.ListUIComponent.Find(ui => ui is CircularMenu);
 
             if (currentMenu != null &&

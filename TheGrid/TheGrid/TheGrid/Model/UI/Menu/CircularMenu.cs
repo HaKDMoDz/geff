@@ -41,9 +41,17 @@ namespace TheGrid.Model.UI.Menu
 
         #region Membres privés
         public int nbVertex = 24;
-
+        private int prevCountItemSelected = 0;
         private VertexBuffer vBuffer;
         private TimeSpan LastStateChanged { get; set; }
+        #endregion
+
+        #region Évènements
+        public delegate void EnterHandler(GameTime gameTime);
+        public event EnterHandler Enter;
+
+        public delegate void LeaveHandler(GameTime gameTime);
+        public event LeaveHandler Leave;
         #endregion
 
         public CircularMenu(UILogic uiLogic, TimeSpan creationTime, Cell parentCell, CircularMenu parentMenu, Item parentItem, bool showIcon)
@@ -132,7 +140,7 @@ namespace TheGrid.Model.UI.Menu
             float localSize = 0f;
             if (IsUI)
             {
-                localSize = 107f;
+                localSize = 110f;
                 midHexa = new Vector3(0f, 0f, 0f);
             }
             else
@@ -149,7 +157,8 @@ namespace TheGrid.Model.UI.Menu
                 int index = ((i / nbPointPerItem)) % Items.Count;
 
                 if (Items[index].MouseOver)
-                    color = new Color(0.05f, 0.4f, 0.05f, (float)percentOpened);
+                    color = new Color(VisualStyle.BackForeColorMouseOver.R, VisualStyle.BackForeColorMouseOver.G, VisualStyle.BackForeColorMouseOver.B, (byte)(percentOpened * 255f));
+                        //new Color(0.05f, 0.4f, 0.05f, (float)percentOpened);
                 else
                     color = new Color(0.05f, 0.05f, 0.05f, (float)percentOpened);
 
@@ -180,7 +189,7 @@ namespace TheGrid.Model.UI.Menu
             if (IsUI)
             {
                 mousePosition = new Vector3((float)Controller.mouseState.X, (float)Controller.mouseState.Y, 0f);
-                localSize = 100f;
+                localSize = 110f;
                 midHexa = new Vector3(0f, 0f, 0f);
             }
             else
@@ -223,6 +232,18 @@ namespace TheGrid.Model.UI.Menu
 
         public override void Update(GameTime gametime)
         {
+            if(Enter != null && Leave != null)
+            {
+                int countItemSelected = Items.Count(i=>i.MouseOver);
+
+                if (prevCountItemSelected == 0 && countItemSelected > 0)
+                    Enter(gametime);
+                if (prevCountItemSelected > 0 && countItemSelected == 0)
+                    Leave(gametime);
+
+                prevCountItemSelected = countItemSelected;
+            }
+
             double elapsedTimeMenu = gametime.TotalGameTime.Subtract(LastStateChanged).TotalMilliseconds;
 
             if (State == MenuState.Opening && elapsedTimeMenu > 0)
@@ -244,7 +265,9 @@ namespace TheGrid.Model.UI.Menu
             if (PercentVisibility == 0 && State == MenuState.Closing)
             {
                 State = MenuState.Closed;
-                Visible = false;
+                
+                if(!IsTurnMode)
+                    Visible = false;
             }
 
             if (Alive && Visible)
@@ -262,7 +285,7 @@ namespace TheGrid.Model.UI.Menu
 
             Render.SpriteBatch.End();
 
-            if(IsTurnMode)
+            if (IsTurnMode)
                 EffectVertex.Alpha = 1f;
             else
                 EffectVertex.Alpha = (float)PercentVisibility;
@@ -285,12 +308,12 @@ namespace TheGrid.Model.UI.Menu
                 if (IsUI)
                 {
                     nearPoint = Location;
-                    localSize = 107f;
+                    localSize = 110f;
                 }
                 else
                 {
                     nearPoint = (ParentCell.Location + new Vector2(0.5f, 0.5f)) * Render.HexaWidth;
-                    localSize= Context.MenuSize * Render.HexaWidth / 3f;
+                    localSize = Context.MenuSize * Render.HexaWidth / 3f;
                 }
 
                 double angleItem = MaxAngle / (double)Items.Count;
@@ -315,7 +338,7 @@ namespace TheGrid.Model.UI.Menu
                         Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), nearPoint + vec, null, color, 0f, new Vector2(64f), Context.MenuSize, SpriteEffects.None, 0f);
                     if (ShowName)
                     {
-                        if(IsUI)
+                        if (IsUI)
                             Render.SpriteBatch.DrawString(Render.FontTextSmall, Items[i].Name, nearPoint, color, (float)((double)i * angleItem + AngleDelta - MathHelper.PiOver2), new Vector2(-60, 0f), 1f, SpriteEffects.None, 0f);
                         else
                             Render.SpriteBatch.DrawString(Render.FontMapBig, Items[i].Name, nearPoint + vec - Render.FontMapBig.MeasureString(Items[i].Name) / 2, color);
