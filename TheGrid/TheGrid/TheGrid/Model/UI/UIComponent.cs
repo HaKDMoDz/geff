@@ -9,6 +9,7 @@ using System.ComponentModel;
 using TheGrid.Logic.Controller;
 using TheGrid.Logic.GamePlay;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TheGrid.Model.UI
 {
@@ -83,7 +84,7 @@ namespace TheGrid.Model.UI
         {
             if (Alive && Visible && ListUIChildren != null)
             {
-                ListUIChildren.Sort((x, y) => y.CreationTime.CompareTo(x.CreationTime));
+                ListUIChildren.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
 
                 foreach (UIComponent uiComponent in ListUIChildren)
                 {
@@ -147,6 +148,11 @@ namespace TheGrid.Model.UI
             }
 
             return isMouseHandled;
+        }
+
+        public Texture2D GetIcon(string iconName)
+        {
+            return UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + iconName);
         }
     }
 }

@@ -4,8 +4,8 @@
     http://colorschemedesigner.com/#3v22f1B6p6q6q0w0Ag1weCk2w0zc3--RR4w0UBpweTVqw0NKr--Vh
   </url>
   <colorset id="primary" title="Primary Color">
-    <color id="primary-1" nr="1" rgb="2A2A2A" r="42" g="42" b="42"/>
-    <color id="primary-2" nr="2" rgb="3A3A3A" r="58" g="58" b="58"/>
+    <color id="primary-1" nr="1" rgb="434343" r="67" g="67" b="70"/>
+    <color id="primary-2" nr="2" rgb="515252 " r="81" g="82" b="85"/>
     <color id="primary-3" nr="3" rgb="191919" r="25" g="25" b="25"/>
     <color id="primary-4" nr="4" rgb="006EB6" r="0" g="110" b="182"/>
     <color id="primary-5" nr="5" rgb="CCCCCC" r="204" g="204" b="204"/>

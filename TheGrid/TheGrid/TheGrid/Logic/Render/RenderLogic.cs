@@ -44,6 +44,7 @@ namespace TheGrid.Logic.Render
         public BasicEffect effect;
         public BasicEffect effectSprite;
         public BasicEffect effectUI;
+        public BasicEffect effectUISprite;
 
         public Matrix View;
         public Matrix Projection;
@@ -173,6 +174,20 @@ namespace TheGrid.Logic.Render
             effectUI.TextureEnabled = false;
             effectUI.VertexColorEnabled = true;
 
+            effectUISprite = new BasicEffect(GameEngine.GraphicsDevice);
+
+            effectUISprite.LightingEnabled = false;
+            effectUISprite.TextureEnabled = true;
+            effectUISprite.VertexColorEnabled = false;
+
+            effectUI.View = Matrix.CreateLookAt(new Vector3(ScreenWidth / 2, ScreenHeight / 2, -10f), new Vector3(ScreenWidth / 2, ScreenHeight / 2, 0f), CameraUp);
+            effectUI.Projection = Matrix.CreateOrthographic(GameEngine.GraphicsDevice.Viewport.Width, GameEngine.GraphicsDevice.Viewport.Height, 1f, 100f); ;
+            effectUI.World = World;
+
+            effectUISprite.View = Matrix.CreateLookAt(new Vector3(ScreenWidth / 2, ScreenHeight / 2, -10f), new Vector3(ScreenWidth / 2, ScreenHeight / 2, 0f), CameraUp);
+            effectUISprite.Projection = Matrix.CreateOrthographic(GameEngine.GraphicsDevice.Viewport.Width, GameEngine.GraphicsDevice.Viewport.Height, 1f, 100f); ;
+            effectUISprite.World = World;
+
             UpdateShader(new GameTime());
         }
 
@@ -188,13 +203,7 @@ namespace TheGrid.Logic.Render
             effectSprite.Projection = Projection;
             effectSprite.World = World;
 
-            effectUI.View = Matrix.CreateLookAt(new Vector3(ScreenWidth / 2, ScreenHeight / 2, -10f), new Vector3(ScreenWidth / 2, ScreenHeight / 2, 0f), CameraUp);
-            //effectUI.Projection = Projection;
-            //effectUI.World = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
 
-            //effectUI.View = View;
-            effectUI.Projection = Matrix.CreateOrthographic(GameEngine.GraphicsDevice.Viewport.Width, GameEngine.GraphicsDevice.Viewport.Height, 1f, 100f); ;
-            effectUI.World = World;
 
             //float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             //effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);

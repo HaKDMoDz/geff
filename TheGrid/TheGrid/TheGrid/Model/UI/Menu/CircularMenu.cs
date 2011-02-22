@@ -28,8 +28,15 @@ namespace TheGrid.Model.UI.Menu
         public bool ShowIcon { get; set; }
         public bool ShowName { get; set; }
         public Vector2 Location { get; set; }
-        public BasicEffect Effect { get; set; }
+        public BasicEffect EffectVertex { get; set; }
+        public BasicEffect EffectSprite { get; set; }
         public bool IsUI { get; set; }
+        public double MaxAngle { get; set; }
+
+        public bool IsTurnMode { get; set; }
+        public double MinAngleDelta { get; set; }
+        public double MaxAngleDelta { get; set; }
+
         #endregion
 
         #region Membres privés
@@ -52,7 +59,9 @@ namespace TheGrid.Model.UI.Menu
             ParentItem = parentItem;
             ShowIcon = showIcon;
             ShowName = showName;
-            Effect = Render.effect;
+            EffectVertex = Render.effect;
+            EffectSprite = Render.effectSprite;
+            MaxAngle = MathHelper.TwoPi;
 
             Items = new List<Item>();
             ListUIChildren = new List<UIComponent>();
@@ -91,13 +100,21 @@ namespace TheGrid.Model.UI.Menu
             LastStateChanged = gameTime.TotalGameTime;
         }
 
-        private void CreateVertex()
+        public void CreateVertex()
         {
+            double percentOpened = PercentVisibility;
+
+            if (IsTurnMode)
+            {
+                percentOpened = 1f;
+                AngleDelta = (float)MathHelper.Lerp((float)MinAngleDelta, (float)MaxAngleDelta, (float)PercentVisibility);
+            }
+
             List<VertexPositionColor> vertex = new List<VertexPositionColor>();
 
             Vector3 midHexa = new Vector3(Render.HexaWidth / 2f, Render.HexaWidth / 2f, 0f);
-            Color color = new Color(0.05f, 0.05f, 0.05f, (float)PercentVisibility);
-            Color color2 = new Color(0.1f, 0.1f, 0.1f, (float)PercentVisibility);
+            Color color = new Color(0.05f, 0.05f, 0.05f, (float)percentOpened);
+            Color color2 = new Color(0.1f, 0.1f, 0.1f, (float)percentOpened);
 
             if (color.A > 240)
                 color.A = 240;
@@ -107,15 +124,15 @@ namespace TheGrid.Model.UI.Menu
             nbVertex = Items.Count * 8;
 
             int nbPointPerItem = nbVertex / Items.Count;
-            double angleItem = AngleDelta - MathHelper.PiOver2 - ((MathHelper.TwoPi / (double)Items.Count) / 2);
-            double angleVertex = MathHelper.TwoPi / (double)nbVertex;
+            double angleItem = AngleDelta - MathHelper.PiOver2 - ((MaxAngle / (double)Items.Count) / 2);
+            double angleVertex = MaxAngle / (double)nbVertex;
 
             vBuffer = new VertexBuffer(Render.GraphicsDevice, typeof(VertexPositionColor), nbVertex * 3, BufferUsage.None);
 
             float localSize = 0f;
             if (IsUI)
             {
-                localSize = Context.MenuSize * 20f;
+                localSize = 107f;
                 midHexa = new Vector3(0f, 0f, 0f);
             }
             else
@@ -123,8 +140,8 @@ namespace TheGrid.Model.UI.Menu
 
             for (int i = 0; i < nbVertex; i++)
             {
-                double angle1 = angleItem + (double)i * angleVertex * PercentVisibility;
-                double angle2 = angleItem + (double)(i + 1) * angleVertex * PercentVisibility;
+                double angle1 = angleItem + (double)i * angleVertex * percentOpened;
+                double angle2 = angleItem + (double)(i + 1) * angleVertex * percentOpened;
 
                 Vector3 position1 = new Vector3(localSize * (float)Math.Cos(angle1), localSize * (float)Math.Sin(angle1), 0f);
                 Vector3 position2 = new Vector3(localSize * (float)Math.Cos(angle2), localSize * (float)Math.Sin(angle2), 0f);
@@ -132,9 +149,9 @@ namespace TheGrid.Model.UI.Menu
                 int index = ((i / nbPointPerItem)) % Items.Count;
 
                 if (Items[index].MouseOver)
-                    color = new Color(0.05f, 0.4f, 0.05f, (float)PercentVisibility);
+                    color = new Color(0.05f, 0.4f, 0.05f, (float)percentOpened);
                 else
-                    color = new Color(0.05f, 0.05f, 0.05f, (float)PercentVisibility);
+                    color = new Color(0.05f, 0.05f, 0.05f, (float)percentOpened);
 
                 if (Items[index].Checked)
                     color = new Color(color.R + 50, color.G + 50, color.B + 50, color.A);
@@ -163,7 +180,7 @@ namespace TheGrid.Model.UI.Menu
             if (IsUI)
             {
                 mousePosition = new Vector3((float)Controller.mouseState.X, (float)Controller.mouseState.Y, 0f);
-                localSize = Context.MenuSize * 20f;
+                localSize = 100f;
                 midHexa = new Vector3(0f, 0f, 0f);
             }
             else
@@ -174,8 +191,8 @@ namespace TheGrid.Model.UI.Menu
                 localSize = Context.MenuSize * Render.HexaWidth / 2f;// *(-gameEngine.Render.CameraPosition.Z / 4f) * 3f;
             }
 
-            double angleItem = AngleDelta - MathHelper.PiOver2 - ((MathHelper.TwoPi / (double)Items.Count) / 2);
-            double angleVertex = MathHelper.TwoPi / (double)nbVertex;
+            double angleItem = AngleDelta - MathHelper.PiOver2 - ((MaxAngle / (double)Items.Count) / 2);
+            double angleVertex = MaxAngle / (double)nbVertex;
 
             int currentIndex = -1;
             for (int i = 0; i < nbVertex; i++)
@@ -240,15 +257,19 @@ namespace TheGrid.Model.UI.Menu
 
         public override void Draw(GameTime gameTime)
         {
-            if (PercentVisibility == 0)
+            if (PercentVisibility == 0 && !IsTurnMode)
                 return;
 
             Render.SpriteBatch.End();
-            Effect.Alpha = (float)PercentVisibility;
+
+            if(IsTurnMode)
+                EffectVertex.Alpha = 1f;
+            else
+                EffectVertex.Alpha = (float)PercentVisibility;
 
             Render.GraphicsDevice.SetVertexBuffer(vBuffer);
 
-            foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+            foreach (EffectPass pass in EffectVertex.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 Render.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, nbVertex);
@@ -258,10 +279,21 @@ namespace TheGrid.Model.UI.Menu
 
             if (ShowIcon || ShowName)
             {
-                Vector2 nearPoint = (ParentCell.Location + new Vector2(0.5f, .5f)) * Render.HexaWidth;
+                Vector2 nearPoint = Vector2.Zero;
+                float localSize = 0f;
 
-                float localSize = Context.MenuSize * Render.HexaWidth / 3f;
-                double angleItem = MathHelper.TwoPi / (double)Items.Count;
+                if (IsUI)
+                {
+                    nearPoint = Location;
+                    localSize = 107f;
+                }
+                else
+                {
+                    nearPoint = (ParentCell.Location + new Vector2(0.5f, 0.5f)) * Render.HexaWidth;
+                    localSize= Context.MenuSize * Render.HexaWidth / 3f;
+                }
+
+                double angleItem = MaxAngle / (double)Items.Count;
 
                 double d = 1.5;
                 if (Items.Count == 9)
@@ -272,17 +304,22 @@ namespace TheGrid.Model.UI.Menu
                 Color color = new Color((float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility);
 
                 Render.SpriteBatch.End();
-                Render.SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.DepthRead, RasterizerState.CullNone, Render.effectSprite, Matrix.Identity);
+                Render.SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.DepthRead, RasterizerState.CullNone, EffectSprite, Matrix.Identity);
                 for (int i = 0; i < Items.Count; i++)
                 {
                     double angle = ((double)i - d) * angleItem - AngleDelta;
 
                     Vector2 vec = new Vector2(localSize * (float)Math.Cos(angle), localSize * (float)Math.Sin(angle));
 
-                    if(ShowIcon)
+                    if (ShowIcon)
                         Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), nearPoint + vec, null, color, 0f, new Vector2(64f), Context.MenuSize, SpriteEffects.None, 0f);
                     if (ShowName)
-                        Render.SpriteBatch.DrawString(Render.FontMapBig, Items[i].Name, nearPoint + vec - Render.FontMapBig.MeasureString(Items[i].Name)/2, color);
+                    {
+                        if(IsUI)
+                            Render.SpriteBatch.DrawString(Render.FontTextSmall, Items[i].Name, nearPoint, color, (float)((double)i * angleItem + AngleDelta - MathHelper.PiOver2), new Vector2(-60, 0f), 1f, SpriteEffects.None, 0f);
+                        else
+                            Render.SpriteBatch.DrawString(Render.FontMapBig, Items[i].Name, nearPoint + vec - Render.FontMapBig.MeasureString(Items[i].Name) / 2, color);
+                    }
                 }
                 Render.SpriteBatch.End();
                 Render.SpriteBatch.Begin();

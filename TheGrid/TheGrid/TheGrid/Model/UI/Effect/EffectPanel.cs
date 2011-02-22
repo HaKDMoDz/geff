@@ -125,7 +125,8 @@ namespace TheGrid.Model.UI.Effect
             menuChannel.Alive = true;
             menuChannel.PercentVisibility = 1f;
             menuChannel.State = MenuState.Opened;
-            menuChannel.Effect = Render.effectUI;
+            menuChannel.EffectVertex = Render.effectUI;
+            menuChannel.EffectSprite = Render.effectUISprite;
             menuChannel.IsUI = true;
 
             ListUIChildren.Add(menuChannel);

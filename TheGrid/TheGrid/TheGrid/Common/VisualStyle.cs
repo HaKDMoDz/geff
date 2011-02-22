@@ -11,7 +11,6 @@ namespace TheGrid.Common
     public static class VisualStyle
     {
         public static String CurrentVisualStyleName = String.Empty;
-        public static Color BackForeColor = Color.White;
         public static Color BackForeColorChecked = Color.White;
         public static Color BackForeColorMouseOver = Color.White;
         public static Color BackColorModalScreen = Color.White;
@@ -40,14 +39,14 @@ namespace TheGrid.Common
             XPathDocument doc = new XPathDocument(pathVisualStyleFile);
             XPathNavigator xPath = doc.CreateNavigator();
 
-            BackForeColor = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-2']");
             BackForeColorChecked = ReadColor(xPath, "palette/colorset[@id='complement']/color[@id='complement-4']");
             BackForeColorMouseOver = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-4']");
             BackColorModalScreen = new Color(0.1f, 0.1f, 0.1f, 0.85f);
             ForeColor = ReadColor(xPath, "palette/colorset[@id='complement']/color[@id='complement-2']");
-            BackColorDark = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-3']");
+
             BackColorLight = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-1']");
-            BackColorLight2 = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-1']");
+            BackColorLight2 = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-2']");
+            BackColorDark = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-3']");
 
             return true;
         }

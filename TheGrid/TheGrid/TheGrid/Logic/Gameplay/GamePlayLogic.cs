@@ -472,6 +472,8 @@ namespace TheGrid.Logic.GamePlay
 
         public void UpdateMusiciansToTime()
         {
+            Context.IsNavigatingThroughTime = true;
+
             foreach (Channel channel in Context.Map.Channels)
             {
                 foreach (Musician musician in channel.ListMusician)
@@ -538,7 +540,7 @@ namespace TheGrid.Logic.GamePlay
 
         public void Backward(GameTime gameTime)
         {
-            Context.IsNavigatingThroughTime = true;
+            //Context.IsNavigatingThroughTime = true;
 
             if (Context.Time >= TimeSpan.Zero)
             {
@@ -552,7 +554,8 @@ namespace TheGrid.Logic.GamePlay
 
         public void Forward(GameTime gameTime)
         {
-            Context.IsNavigatingThroughTime = true;
+            //Context.IsNavigatingThroughTime = true;
+
             if (Context.Time < Context.Map.PartitionDuration)
             {
                 float ratio = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000f;

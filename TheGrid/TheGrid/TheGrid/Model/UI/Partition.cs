@@ -23,6 +23,8 @@ namespace TheGrid.Model.UI
         private float timelineDuration = 1000f * 10;
         private float timeWidth = 20f;
         private Rectangle recPartition;
+        private Rectangle recBackground;
+        private Rectangle recLeftPartition;
 
         public Partition(Ribbon ribbon, UILogic uiLogic, TimeSpan creationTime)
             : base(uiLogic, creationTime)
@@ -31,9 +33,11 @@ namespace TheGrid.Model.UI
             Visible = true;
             Alive = true;
 
-            Rec = new Rectangle(Ribbon.MARGE * 2, Ribbon.MARGE * 2, (int)(0.7f * Render.ScreenWidth), ribbon.Rec.Height - Ribbon.MARGE * 3);
+            Rec = new Rectangle(Ribbon.MARGE, Ribbon.MARGE, (int)Render.ScreenWidth - Ribbon.MARGE*2, ribbon.Rec.Height - Ribbon.MARGE * 2);
 
-            recPartition = new Rectangle(Rec.X + Ribbon.MARGE + 100, Rec.Y, Rec.Width - 100 - Ribbon.MARGE, Rec.Height);
+            recBackground = new Rectangle(Rec.Left, ribbon.RecMenuBar.Bottom, Rec.Width, (int)((float)Rec.Height * 1.2f));
+            recLeftPartition = new Rectangle(Rec.Left, Rec.Top, ribbon.RecMenuBar.Left- Rec.Left, Rec.Height);
+            recPartition = new Rectangle(ribbon.RecMenuBar.Left, ribbon.RecMenuBar.Bottom, ribbon.RecMenuBar.Width, Rec.Height - ribbon.RecMenuBar.Height);
 
             MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
             mouseLeftButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseLeftButton_MouseFirstPressed);
@@ -75,6 +79,8 @@ namespace TheGrid.Model.UI
                         Context.Time = TimeSpan.Zero;
                     if (Context.Time > Context.Map.PartitionDuration)
                         Context.Time = Context.Map.PartitionDuration;
+
+                    GamePlay.UpdateMusiciansToTime();
                 }
 
                 if (mouseState.X > recPartition.Right)
@@ -82,7 +88,7 @@ namespace TheGrid.Model.UI
                     Mouse.SetPosition(recPartition.Left, mouseState.Y);
 
                     if (UI.GameEngine.Controller.keyBoardState.IsKeyDown(Keys.LeftControl))
-                        prevPartitionRatio -= recPartition.Width/200f;
+                        prevPartitionRatio -= recPartition.Width / 200f;
                     else
                         prevTime = prevTime.Subtract(TimeSpan.FromMilliseconds(timelineDuration));
                 }
@@ -116,6 +122,7 @@ namespace TheGrid.Model.UI
 
         public void Init()
         {
+            /*
             ListUIChildren = new List<UIComponent>();
             countChildren = 0;
 
@@ -147,7 +154,7 @@ namespace TheGrid.Model.UI
 
                 }
             }
-
+            */
             InitSegment();
         }
 
@@ -215,23 +222,22 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            Rectangle rec = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.2f));
-
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, VisualStyle.BackColorLight);
-
-            float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
-            float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
-            float posPartBegin = (Rec.Width - 100 - Ribbon.MARGE) * 0.1f;
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, recBackground, VisualStyle.BackColorLight2);
+            Render.SpriteBatch.Draw(Render.texEmpty, recLeftPartition, VisualStyle.BackColorLight2);
+            
+            float channelHeight = (float)recPartition.Height / ((float)Context.Map.Channels.Count - 1);
+            float channelWidth = (float)recPartition.Width;
+            float posPartBegin = channelWidth * 0.1f;
             float timePartBegin = (posPartBegin / channelWidth) * timelineDuration;
 
-            float channelX = Rec.X + Ribbon.MARGE + 100;
+            float channelX = (float)recPartition.Left;
             int elapsedTimeWidth = (int)(((float)Context.Time.TotalMilliseconds * channelWidth) / timelineDuration);
 
             for (int i = 1; i < Context.Map.Channels.Count; i++)
             {
                 float fi = (float)(i - 1);
 
-                float channelY = (float)Rec.Y + channelHeight * fi;
+                float channelY = (float)recPartition.Top + channelHeight * fi;
 
                 Rectangle recChannel = new Rectangle(
                     (int)channelX,
@@ -240,12 +246,11 @@ namespace TheGrid.Model.UI
                     (int)channelHeight);
 
                 //--- Nombre de musiciens en cours
-                Render.SpriteBatch.DrawString(Render.FontMenu, Context.Map.Channels[i].ListMusician.Count(m => m.IsPlaying).ToString(), new Vector2(Rec.X + Ribbon.MARGE, channelY + channelHeight / 2 - +Render.FontMenu.MeasureString("0").Y / 2), Color.White);
+                //Render.SpriteBatch.DrawString(Render.FontMenu, Context.Map.Channels[i].ListMusician.Count(m => m.IsPlaying).ToString(), new Vector2(Rec.X + Ribbon.MARGE, channelY + channelHeight / 2 - +Render.FontMenu.MeasureString("0").Y / 2), Color.White);
                 //---
 
                 //--- Channel
                 Render.SpriteBatch.Draw(Render.texEmptyGradient, recChannel, Context.Map.Channels[i].Color);
-                //Render.SpriteBatch.Draw(Render.texEmptyGradient, recChannel, new Color(0.1f,0.1f,0.1f));
                 //---
 
                 //--- Affichage des ségments de temps
@@ -265,6 +270,7 @@ namespace TheGrid.Model.UI
                 if (Context.Map.Channels[i].ListMusician == null || Context.Map.Channels[i].ListMusician.Count == 0)
                     continue;
 
+                #region Affichage des parts
                 float heightPerMusician = channelHeight / (float)Context.Map.Channels[i].ListMusician.Count;
                 for (int j = 0; j < Context.Map.Channels[i].ListMusician.Count; j++)
                 {
@@ -273,7 +279,6 @@ namespace TheGrid.Model.UI
                     for (int k = 0; k < Context.Map.Channels[i].ListMusician[j].Partition.Count; k++)
                     {
                         TimeValue<Cell> part = Context.Map.Channels[i].ListMusician[j].Partition[k];
-                        //if (Context.Map.Channels[i].ListMusician[j].Partition[k].Instrument != null)
 
                         if (part.Value.Clip != null)
                         {
@@ -282,7 +287,7 @@ namespace TheGrid.Model.UI
                                 Context.Map.Channels[i].ListMusician[j].Channel == part.Value.Channel)
                             {
                                 float totalMs = (float)part.Time.Subtract(Context.Time).TotalMilliseconds;
-                                float duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds/2f;
+                                float duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds / 2f;
 
                                 if (totalMs > -timePartBegin - duration && totalMs < timelineDuration)
                                 {
@@ -321,10 +326,16 @@ namespace TheGrid.Model.UI
                         }
                     }
                 }
+                #endregion
+
+                //--- Marqueur de channel
+                Render.SpriteBatch.Draw(GetIcon("ChannelMarker"), new Vector2(recPartition.X, channelY + channelHeight / 2 - GetIcon("ChannelMarker").Height / 2), VisualStyle.BackColorLight2);
+                //---
             }
 
-            Render.SpriteBatch.Draw(Render.texTimeMarker, new Vector2(Rec.X + Ribbon.MARGE + 100 - Render.texTimeMarker.Width / 2 + posPartBegin, Rec.Y), Color.White);
-
+            //--- Marqueur de temps
+            Render.SpriteBatch.Draw(Render.texTimeMarker, new Vector2(recPartition.Left - Render.texTimeMarker.Width / 2 + posPartBegin, recPartition.Top), VisualStyle.BackColorDark);
+            //---
 
             base.Draw(gameTime);
         }
