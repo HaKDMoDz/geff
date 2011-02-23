@@ -232,7 +232,7 @@ namespace TheGrid.Model.UI.Menu
 
         public override void Update(GameTime gametime)
         {
-            if(Enter != null && Leave != null)
+            if(Enter != null && Leave != null && !UI.GameEngine.Controller.IsMouseOffScreen())
             {
                 int countItemSelected = Items.Count(i=>i.MouseOver);
 

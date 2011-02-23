@@ -117,10 +117,10 @@ namespace TheGrid.Model.UI
 
                 prevPartitionRatio = MathHelper.Clamp(prevPartitionRatio, 0.05f, 10f);
 
-                if (prevTime < TimeSpan.Zero - TimeSpan.FromMilliseconds(timelineDuration))
-                    prevTime = TimeSpan.Zero - TimeSpan.FromMilliseconds(timelineDuration);
-                if (prevTime > Context.Map.PartitionDuration + TimeSpan.FromMilliseconds(timelineDuration))
-                    prevTime = Context.Map.PartitionDuration + TimeSpan.FromMilliseconds(timelineDuration);
+                //if (prevTime < TimeSpan.Zero - TimeSpan.FromMilliseconds(timelineDuration))
+                //    prevTime = TimeSpan.Zero - TimeSpan.FromMilliseconds(timelineDuration);
+                //if (prevTime > Context.Map.PartitionDuration + TimeSpan.FromMilliseconds(timelineDuration))
+                //    prevTime = Context.Map.PartitionDuration + TimeSpan.FromMilliseconds(timelineDuration);
             }
         }
 
@@ -162,7 +162,7 @@ namespace TheGrid.Model.UI
             InitSegment();
         }
 
-        private void InitSegment()
+        public void InitSegment()
         {
             //--- Calcul des segments
             timelineDuration = (float)recPartition.Width / timeWidth * Context.Map.TimeDuration * Context.PartitionRatio;
@@ -217,11 +217,6 @@ namespace TheGrid.Model.UI
         {
             GamePlay.SoloChannel((int)image.Tag);
             UpdateButtonState();
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
@@ -296,7 +291,7 @@ namespace TheGrid.Model.UI
                                 Context.Map.Channels[i].ListMusician[j].Channel == part.Value.Channel)
                             {
                                 float totalMs = (float)part.Time.Subtract(Context.Time).TotalMilliseconds;
-                                float duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds / 2f;
+                                float duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds;
 
                                 if (totalMs > -timePartBegin - duration && totalMs < timelineDuration)
                                 {

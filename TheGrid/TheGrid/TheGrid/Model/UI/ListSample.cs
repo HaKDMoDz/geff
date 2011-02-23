@@ -42,6 +42,7 @@ namespace TheGrid.Model.UI
                 txtSample.ClickText += new ClickableText.ClickTextHandler(txtSample_ClickText);
                 txtSample.MiddleButtonClickText += new ClickableText.MiddleButtonClickTextHandler(txtSample_MiddleButtonClickText);
                 txtSample.MouseEnter += new ClickableText.MouseEnterHandler(txtSample_MouseEnter);
+                txtSample.MouseLeave += new ClickableText.MouseLeaveHandler(txtSample_MouseLeave);
                 ListUIChildren.Add(txtSample);
             }
             //---
@@ -60,6 +61,11 @@ namespace TheGrid.Model.UI
         void txtSample_MouseEnter(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
         {
             UI.GameEngine.Sound.PlaySample((Sample)clickableText.Tag);
+        }
+
+        void txtSample_MouseLeave(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
+        {
+            UI.GameEngine.Sound.Stop(((Sample)clickableText.Tag).Name);
         }
 
         void keyClose_KeyReleased(Keys key, GameTime gameTime)

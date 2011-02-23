@@ -37,6 +37,9 @@ namespace TheGrid
         public GraphicsDeviceManager Graphics;
         public bool Mini = false;
 
+        private TimeSpan lastElaspedReset = TimeSpan.Zero;
+        private int count = 0;
+
         public GameEngine()
         {
             Mini = (Environment.MachineName == "P64L03BIB69");
@@ -56,8 +59,11 @@ namespace TheGrid
                 //Graphics.PreferredBackBufferWidth = 1680;
                 //Graphics.PreferredBackBufferHeight = 1050;
                 //Graphics.IsFullScreen = true;
-                Graphics.ApplyChanges();
             }
+
+            IsFixedTimeStep = false;
+            Graphics.SynchronizeWithVerticalRetrace = false;
+            Graphics.ApplyChanges();
 
             this.IsMouseVisible = true;
             this.Window.Title = "Analyse";
@@ -145,6 +151,14 @@ namespace TheGrid
             UI.Draw(gameTime);
 
             base.Draw(gameTime);
+
+            count++;
+            if (gameTime.TotalGameTime.Subtract(lastElaspedReset).TotalMilliseconds >= 1000)
+            {
+                lastElaspedReset = gameTime.TotalGameTime;
+                Window.Title = count.ToString();
+                count = 0;
+            }
         }
     }
 }

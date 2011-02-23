@@ -40,6 +40,9 @@ namespace TheGrid.Common
 
         public delegate void MouseEnterHandler(ClickableText clickableText, MouseState mouseState, GameTime gameTime);
         public event MouseEnterHandler MouseEnter;
+
+        public delegate void MouseLeaveHandler(ClickableText clickableText, MouseState mouseState, GameTime gameTime);
+        public event MouseLeaveHandler MouseLeave;
         #endregion
 
 
@@ -104,6 +107,10 @@ namespace TheGrid.Common
             }
             else
             {
+
+                if (Visible && isIn && MouseLeave != null)
+                    MouseLeave(this, Controller.mouseState, gameTime);
+
                 isIn = false;
             }
 

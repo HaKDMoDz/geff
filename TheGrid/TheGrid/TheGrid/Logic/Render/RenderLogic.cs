@@ -86,6 +86,7 @@ namespace TheGrid.Logic.Render
         Microsoft.Xna.Framework.Graphics.Model meshMusician;
 
         public float HexaWidth = 512f;
+        private Vector2 midCellSize;
 
         public RenderLogic(GameEngine gameEngine)
         {
@@ -94,6 +95,8 @@ namespace TheGrid.Logic.Render
 
         public void InitRender()
         {
+            midCellSize = new Vector2(HexaWidth / 2, HexaWidth / 2);
+
             CreateCamera();
             CreateShader();
 
@@ -203,8 +206,6 @@ namespace TheGrid.Logic.Render
             effectSprite.Projection = Projection;
             effectSprite.World = World;
 
-
-
             //float angle = (float)gameTime.TotalGameTime.TotalMilliseconds / 1000f;
             //effect.DirectionalLight0.Direction = new Vector3((float)Math.Cos(angle), (float)Math.Sin(angle), -1f);
         }
@@ -257,30 +258,38 @@ namespace TheGrid.Logic.Render
             //--- TODO : gérer le frustum
             //---
 
-            Vector2 midCellSize = new Vector2(HexaWidth / 2, HexaWidth / 2);
             Vector2 cellLocation = cell.Location * texHexa2D.Width;
+            Color colorChannel = new Color(0.35f, 0.35f, 0.35f);
+            Cell cellToDraw = cell;
 
-            Color colorChannel = new Color(0.35f, 0.35f, 0.35f); ;
+            if (Context.MovedDestinationCell == cell)
+                cellToDraw = Context.MovedSourceCell;
 
-            if (cell.Channel != null)
-                colorChannel = cell.Channel.Color;
-
-            //--- Calcul de la couleur de la cellule selon ses vies
-            float r = 0f, g = 0f, b = 0f, fj=0f;
-            int n = 0;
-
-            for (int i = 0; i < cell.Life.Length; i++)
+            if (Context.MovedSourceCell == cell && Context.MovedDestinationCell != null)
             {
-                if (cell.Clip == null && cell.Life[i] > 0f)
-                    fj += cell.Life[i];
+                cellToDraw = new Cell();
+                cellToDraw.Life = new float[Context.Map.Channels.Count];
             }
 
-            for (int i = 0; i < cell.Life.Length; i++)
+            if (cellToDraw.Channel != null)
+                colorChannel = cellToDraw.Channel.Color;
+
+            //--- Calcul de la couleur de la cellule selon ses vies
+            float r = 0f, g = 0f, b = 0f, fj = 0f;
+            int n = 0;
+
+            for (int i = 0; i < cellToDraw.Life.Length; i++)
             {
-                if (cell.Clip == null && cell.Life[i] > 0f)
+                if (cellToDraw.Clip == null && cellToDraw.Life[i] > 0f)
+                    fj += cellToDraw.Life[i];
+            }
+
+            for (int i = 0; i < cellToDraw.Life.Length; i++)
+            {
+                if (cellToDraw.Clip == null && cellToDraw.Life[i] > 0f)
                 {
                     n++;
-                    Color c = Color.Lerp(colorChannel, Context.Map.Channels[i].Color, cell.Life[i]);
+                    Color c = Color.Lerp(colorChannel, Context.Map.Channels[i].Color, cellToDraw.Life[i]);
 
                     r += (float)c.R / 255f * (cell.Life[i] / fj);
                     g += (float)c.G / 255f * (cell.Life[i] / fj);
@@ -292,125 +301,121 @@ namespace TheGrid.Logic.Render
                 colorChannel = new Color(r, g, b);
             //---
 
-            if (cell.Clip != null)
-            {
-                SpriteBatch.Draw(texHexa2DClip, cellLocation, colorChannel);
-            }
-            else
+            if (cellToDraw.Clip == null)
             {
                 SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
             }
-
-            //SpriteBatch.DrawString(FontMapBig, Math.Round(cell.Life, 2).ToString(), cellLocation+midCellSize, Color.White);
-
-            //--- Instrument
-            if (cell.Clip != null && cell.Clip.Instrument != null)
+            else
             {
-                Texture2D texInstrument = null;
+                SpriteBatch.Draw(texHexa2DClip, cellLocation, colorChannel);
 
-                if (cell.Clip.Instrument is InstrumentStart)
+                //--- Instrument
+                if (cellToDraw.Clip.Instrument != null)
                 {
-                    texInstrument = texMusicianStart;
-                }
-                else if (cell.Clip.Instrument is InstrumentStop)
-                {
-                    texInstrument = texMusicianStop;
-                }
-                else if (cell.Clip.Instrument is InstrumentSample)
-                {
-                    texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cell.Channel.Name);
-                }
+                    Texture2D texInstrument = null;
 
-                if (cell.Clip.Instrument is InstrumentEffect)
-                {
-                    texInstrument = texEffect;
+                    if (cellToDraw.Clip.Instrument is InstrumentStart)
+                    {
+                        texInstrument = texMusicianStart;
+                    }
+                    else if (cellToDraw.Clip.Instrument is InstrumentStop)
+                    {
+                        texInstrument = texMusicianStop;
+                    }
+                    else if (cellToDraw.Clip.Instrument is InstrumentSample)
+                    {
+                        texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cellToDraw.Channel.Name);
+                    }
 
-                    string effectName = ((InstrumentEffect)cell.Clip.Instrument).ChannelEffect.Name;
-                    Vector2 deltaEffectName = new Vector2(FontMap.MeasureString(effectName).X / 2, FontMap.MeasureString(effectName).Y / 5);
+                    if (cellToDraw.Clip.Instrument is InstrumentEffect)
+                    {
+                        texInstrument = texEffect;
 
-                    SpriteBatch.DrawString(FontMap, effectName, cellLocation + midCellSize - deltaEffectName, Color.White);
-                    SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height), null, Color.White);
-                }
-                else if (cell.Clip.Instrument is InstrumentSample)
-                {
-                    string sampleName = ((InstrumentSample)cell.Clip.Instrument).Sample.Name;
-                    Vector2 deltaSampleName = new Vector2(FontMap.MeasureString(sampleName).X / 2, FontMap.MeasureString(sampleName).Y / 5);
+                        string effectName = ((InstrumentEffect)cellToDraw.Clip.Instrument).ChannelEffect.Name;
+                        Vector2 deltaEffectName = new Vector2(FontMap.MeasureString(effectName).X / 2, FontMap.MeasureString(effectName).Y / 5);
 
-                    SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2)- new Vector2(0f,midCellSize.Y*0.3f), null, Color.White);
-                    SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize - deltaSampleName, Color.White);
+                        SpriteBatch.DrawString(FontMap, effectName, cellLocation + midCellSize - deltaEffectName, Color.White);
+                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height), null, Color.White);
+                    }
+                    else if (cellToDraw.Clip.Instrument is InstrumentSample)
+                    {
+                        string sampleName = ((InstrumentSample)cellToDraw.Clip.Instrument).Sample.Name;
+                        Vector2 deltaSampleName = new Vector2(FontMap.MeasureString(sampleName).X / 2, FontMap.MeasureString(sampleName).Y / 5);
+
+                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2) - new Vector2(0f, midCellSize.Y * 0.3f), null, Color.White);
+                        SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize - deltaSampleName, Color.White);
+                    }
+                    else
+                    {
+                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2), null, Color.White);
+                    }
                 }
-                else
+                //---
+
+                //--- Direction
+                for (int i = 0; i < 6; i++)
                 {
-                    SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2), null, Color.White);
+                    if (cellToDraw.Clip.Directions[i])
+                    {
+                        double angle = MathHelper.TwoPi / 6 * i;
+                        Vector2 center = new Vector2(0.5f * textDirection.Width, 0.5f * textDirection.Height + 0.34f * HexaWidth);
+                        SpriteBatch.Draw(textDirection, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
+                    }
                 }
+                //---
+
+                //--- Repeater
+                for (int i = 0; i < 6; i++)
+                {
+                    if (cellToDraw.Clip.Repeater.HasValue && i <= cellToDraw.Clip.Repeater.Value)
+                    {
+                        double angle = MathHelper.TwoPi / 6 * i - MathHelper.TwoPi / 12;
+                        Vector2 center = new Vector2(0.5f * texRepeater.Width, 0.5f * texRepeater.Height + 0.4f * HexaWidth);
+                        SpriteBatch.Draw(texRepeater, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
+                    }
+                }
+                //---
+
+                //--- Speed
+                //for (int i = 0; i < 4; i++)
+                //{
+                //    if (
+                //        cellToDraw.Clip.Speed.HasValue &&
+                //        cellToDraw.Clip.Speed.Value > 0 &&
+                //        i < cellToDraw.Clip.Speed.Value)
+                //    {
+                //        Vector2 center = new Vector2(0.5f * texSpeed.Width, 0.5f * texSpeed.Height);
+                //        Vector2 location = new Vector2(-2f * texSpeed.Width + Math.Abs(i) * texSpeed.Width, 0.34f * HexaWidth - texSpeed.Height);
+                //        SpriteBatch.Draw(texSpeed, cellLocation + midCellSize + location, null, Color.White, 0f, center, 1f, SpriteEffects.None, 0f);
+
+                //    }
+                //    else if (
+                //        cellToDraw.Clip.Speed.HasValue &&
+                //        cellToDraw.Clip.Speed.Value < 0 &&
+                //        i < Math.Abs(cellToDraw.Clip.Speed.Value))
+                //    {
+                //        Vector2 center = new Vector2(0.5f * texSpeed.Width, 0.5f * texSpeed.Height);
+                //        Vector2 location = new Vector2(-2f * texSpeed.Width + Math.Abs(i) * texSpeed.Width, 0.34f * HexaWidth - texSpeed.Height);
+                //        SpriteBatch.Draw(texSpeed, cellLocation + midCellSize + location, null, Color.White, 0f, center, 1f, SpriteEffects.FlipHorizontally, 0f);
+                //    }
+                //}
+                //---
+
+                //--- Note duration
+                if (cellToDraw.Clip.Duration < 1f)
+                {
+                    int duration = (int)Math.Log((int)(1f / cellToDraw.Clip.Duration), 2);
+                    Vector2 durationPosition = new Vector2(HexaWidth * 0.5f - (float)(duration) * (float)texDuration.Width * 0.5f, 0.76f * HexaWidth - texDuration.Height);
+                    Vector2 center = new Vector2(0.5f * texDuration.Width, 0.5f * texDuration.Height);
+
+                    for (int i = 0; i <= duration; i++)
+                    {
+                        Vector2 location = durationPosition + new Vector2(i * texDuration.Width, 0f);
+                        SpriteBatch.Draw(texDuration, cellLocation + location, null, Color.White, 0f, center, 1f, SpriteEffects.None, 0f);
+                    }
+                }
+                //---
             }
-            //---
-
-            //--- Direction
-            for (int i = 0; i < 6; i++)
-            {
-                if (cell.Clip != null && cell.Clip.Directions[i])
-                {
-                    double angle = MathHelper.TwoPi / 6 * i;
-                    Vector2 center = new Vector2(0.5f * textDirection.Width, 0.5f * textDirection.Height + 0.34f * HexaWidth);
-                    SpriteBatch.Draw(textDirection, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
-                }
-            }
-            //---
-
-            //--- Repeater
-            for (int i = 0; i < 6; i++)
-            {
-                if (cell.Clip != null && cell.Clip.Repeater.HasValue && i <= cell.Clip.Repeater.Value)
-                {
-                    double angle = MathHelper.TwoPi / 6 * i - MathHelper.TwoPi / 12;
-                    Vector2 center = new Vector2(0.5f * texRepeater.Width, 0.5f * texRepeater.Height + 0.4f * HexaWidth);
-                    SpriteBatch.Draw(texRepeater, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
-                }
-            }
-            //---
-
-            //--- Speed
-            for (int i = 0; i < 4; i++)
-            {
-                if (
-                    cell.Clip != null &&
-                    cell.Clip.Speed.HasValue &&
-                    cell.Clip.Speed.Value > 0 &&
-                    i < cell.Clip.Speed.Value)
-                {
-                    Vector2 center = new Vector2(0.5f * texSpeed.Width, 0.5f * texSpeed.Height);
-                    Vector2 location = new Vector2(-2f * texSpeed.Width + Math.Abs(i) * texSpeed.Width, 0.34f * HexaWidth - texSpeed.Height);
-                    SpriteBatch.Draw(texSpeed, cellLocation + midCellSize + location, null, Color.White, 0f, center, 1f, SpriteEffects.None, 0f);
-
-                }
-                else if (
-                    cell.Clip != null &&
-                    cell.Clip.Speed.HasValue &&
-                    cell.Clip.Speed.Value < 0 &&
-                    i < Math.Abs(cell.Clip.Speed.Value))
-                {
-                    Vector2 center = new Vector2(0.5f * texSpeed.Width, 0.5f * texSpeed.Height);
-                    Vector2 location = new Vector2(-2f * texSpeed.Width + Math.Abs(i) * texSpeed.Width, 0.34f * HexaWidth - texSpeed.Height);
-                    SpriteBatch.Draw(texSpeed, cellLocation + midCellSize + location, null, Color.White, 0f, center, 1f, SpriteEffects.FlipHorizontally, 0f);
-                }
-            }
-            //---
-
-            //--- Note duration
-            if (cell.Clip != null && cell.Clip.Duration < 1f)
-            {
-                int duration = (int)Math.Log((int)(1f / cell.Clip.Duration),2);
-                Vector2 durationPosition = new Vector2(HexaWidth * 0.5f - (float)(duration) * (float)texDuration.Width * 0.5f, 0.76f * HexaWidth - texDuration.Height);
-                Vector2 center = new Vector2(0.5f * texDuration.Width, 0.5f * texDuration.Height);
-
-                for (int i = 0; i <= duration; i++)
-                {
-                    Vector2 location = durationPosition + new Vector2(i*texDuration.Width, 0f);
-                    SpriteBatch.Draw(texDuration, cellLocation + location, null, Color.White, 0f, center, 1f, SpriteEffects.None, 0f);
-                }
-            }
-            //---
         }
 
         private void DrawMusician(Musician musician, GameTime gameTime)
@@ -422,7 +427,6 @@ namespace TheGrid.Logic.Render
             if (musician.CurrentCell == null || !musician.IsPlaying)
                 return;
 
-            Vector2 midCellSize = new Vector2(HexaWidth / 2, HexaWidth / 2);
             Vector2 cellLocation = Tools.GetVector2(musician.Position) * texHexa2D.Width + midCellSize - midCellSize / 2;
 
             SpriteBatch.Draw(texMusician, cellLocation, musician.Channel.Color);

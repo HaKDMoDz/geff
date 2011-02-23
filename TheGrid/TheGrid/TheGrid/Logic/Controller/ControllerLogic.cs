@@ -106,6 +106,8 @@ namespace TheGrid.Logic.Controller
             mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseRightButton_MousePressed);
             mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseRightButton_MouseReleased);
 
+            mouseLeftButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseLeftButton_MouseFirstPressed);
+            mouseLeftButton.MousePressed += new MouseManager.MousePressedHandler(mouseLeftButton_MousePressed);
             mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
 
             mouseMiddleButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseMiddleButton_MouseReleased);
@@ -233,16 +235,22 @@ namespace TheGrid.Logic.Controller
         #endregion
 
         #region Évènement souris
-        void mouseMiddleButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+
+        void mouseLeftButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
         {
-            if (GameEngine.UI.Ribbon.Rec.Contains(mousePositionPoint))
-                return;
+            Context.MovedSourceCell = GetSelectedCell(mouseState);
+        }
 
-            Cell selectedCell = GetSelectedCell(mouseState);
-
-            if (selectedCell != null && selectedCell.Clip != null && selectedCell.Clip.Instrument is InstrumentSample)
+        void mouseLeftButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            if (Context.MovedSourceCell != null && Tools.Distance(Point.Zero, distance) > 5f)
             {
-                GameEngine.Sound.PlaySample(((InstrumentSample)selectedCell.Clip.Instrument).Sample);
+                Cell selectedCell = GetSelectedCell(mouseState);
+
+                if (selectedCell == Context.MovedSourceCell)
+                    Context.MovedDestinationCell = null;
+                else
+                    Context.MovedDestinationCell = selectedCell;
             }
         }
 
@@ -256,23 +264,35 @@ namespace TheGrid.Logic.Controller
             Cell selectedCell = GetSelectedCell(mouseState);
             Context.SelectedCell = selectedCell;
 
-            if((keyBoardState.IsKeyDown(Keys.LeftShift) && selectedCell != null))
+            //---> Déplacement d'une cellule
+            if (Context.MovedDestinationCell != null)
             {
-                if(selectedCell.Clip != null && selectedCell.Clip.Instrument != null)
+                Context.MovedSourceCell.Clone(selectedCell);
+
+                Context.MovedSourceCell.Clip = null;
+                Context.MovedSourceCell.Channel = null;
+
+                GameEngine.GamePlay.EvaluateMuscianGrid();
+            }
+            //---> Accès direct à l'instrument (SHIFT+clique gauche)
+            else if ((keyBoardState.IsKeyDown(Keys.LeftShift) && selectedCell != null))
+            {
+                if (selectedCell.Clip != null && selectedCell.Clip.Instrument != null)
                 {
-                    if(selectedCell.Clip.Instrument is InstrumentSample)
+                    if (selectedCell.Clip.Instrument is InstrumentSample)
                     {
                         GameEngine.UI.OpenListSample(gameTime, selectedCell);
                     }
-                    else if(selectedCell.Clip.Instrument is InstrumentEffect)
+                    else if (selectedCell.Clip.Instrument is InstrumentEffect)
                     {
                         GameEngine.UI.OpenPannelEffect(gameTime, ((InstrumentEffect)selectedCell.Clip.Instrument).ChannelEffect, selectedCell);
                     }
-                    else if(selectedCell.Clip.Instrument is InstrumentNote)
+                    else if (selectedCell.Clip.Instrument is InstrumentNote)
                     {
                     }
                 }
             }
+            //---> Clonage d'une cellule
             else if (keyBoardState.IsKeyDown(Keys.LeftControl) && selectedCell != null)
             {
                 if (Context.CopiedCell == null)
@@ -281,33 +301,15 @@ namespace TheGrid.Logic.Controller
                 }
                 else
                 {
-                    selectedCell.Clip = null;
-                    selectedCell.Channel = Context.CopiedCell.Channel;
                     if (Context.CopiedCell.Clip != null)
                     {
-                        selectedCell.Clip = new Clip();
-                        for (int i = 0; i < 6; i++)
-                        {
-                            selectedCell.Clip.Directions[i] = Context.CopiedCell.Clip.Directions[i];
-                        }
-                        selectedCell.Clip.Repeater = Context.CopiedCell.Clip.Repeater;
-                        selectedCell.Clip.Speed = Context.CopiedCell.Clip.Speed;
-                        selectedCell.Clip.Duration = Context.CopiedCell.Clip.Duration;
-
-                        if (Context.CopiedCell.Clip.Instrument != null && !(Context.CopiedCell.Clip.Instrument is InstrumentStart))
-                        {
-                            if (Context.CopiedCell.Clip.Instrument is InstrumentSample)
-                            {
-                                selectedCell.Clip.Instrument = new InstrumentSample(((InstrumentSample)Context.CopiedCell.Clip.Instrument).Sample);
-                            }
-                            //TODO : cloner les effets
-                            //TODO : cloner les notes
-                        }
+                        Context.CopiedCell.Clone(selectedCell);
                     }
 
                     GameEngine.GamePlay.EvaluateMuscianGrid();
                 }
             }
+            //---> Ouverture du menu circulaire
             else if (Context.SelectedCell != null)
             {
                 //--- Ferme le précédent menu
@@ -338,6 +340,9 @@ namespace TheGrid.Logic.Controller
                 }
                 //---
             }
+
+            Context.MovedSourceCell = null;
+            Context.MovedDestinationCell = null;
         }
 
         void mouseRightButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
@@ -397,6 +402,19 @@ namespace TheGrid.Logic.Controller
 
             if (GameEngine.Render.CameraPosition.Z > RenderLogic.ZOOM_OUT_MAX)
                 GameEngine.Render.CameraPosition.Z = RenderLogic.ZOOM_OUT_MAX;
+        }
+
+        void mouseMiddleButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            if (GameEngine.UI.Ribbon.Rec.Contains(mousePositionPoint))
+                return;
+
+            Cell selectedCell = GetSelectedCell(mouseState);
+
+            if (selectedCell != null && selectedCell.Clip != null && selectedCell.Clip.Instrument is InstrumentSample)
+            {
+                GameEngine.Sound.PlaySample(((InstrumentSample)selectedCell.Clip.Instrument).Sample);
+            }
         }
         #endregion
 
@@ -515,6 +533,11 @@ namespace TheGrid.Logic.Controller
                 #endregion
             }
             //---
+        }
+
+        public bool IsMouseOffScreen()
+        {
+            return !GameEngine.GraphicsDevice.Viewport.Bounds.Contains(mousePositionPoint);
         }
 
         public Cell GetSelectedCell(MouseState mouseState)

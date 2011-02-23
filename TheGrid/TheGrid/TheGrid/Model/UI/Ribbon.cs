@@ -23,7 +23,8 @@ namespace TheGrid.Model.UI
         private ClickableImage imgPause;
         private ClickableImage imgStop;
         public Rectangle RecMenuBar;
-        private Rectangle recManualSpeedBackGround;
+        private Rectangle recBackground;
+        private Vector2 vecTime;
         private CircularMenu menu;
 
         public Ribbon(UILogic uiLogic, TimeSpan creationTime)
@@ -38,15 +39,19 @@ namespace TheGrid.Model.UI
             Ribbon.HEIGHT = (int)(0.2f * Render.ScreenHeight);
             Rec = new Rectangle(0, 0, (int)Render.ScreenWidth, Ribbon.HEIGHT);
             RecMenuBar = new Rectangle(Ribbon.MARGE + 100, 0, Rec.Width - 100 - Ribbon.MARGE * 2, 30);
-            recManualSpeedBackGround = new Rectangle(RecMenuBar.Left + 200, RecMenuBar.Top + MARGE, 100, RecMenuBar.Height - MARGE * 2);
+            recBackground = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.2f));
+            vecTime = new Vector2(RecMenuBar.Left + MARGE * 4, RecMenuBar.Top + RecMenuBar.Height / 2 - Render.FontTextSmall.MeasureString("0").Y / 2);
+
+            BPMMeter BPMMeter = new BPMMeter(this, uiLogic, GetNewTimeSpan());
+            this.ListUIChildren.Add(BPMMeter);
 
             Partition = new Partition(this, uiLogic, GetNewTimeSpan());
             this.ListUIChildren.Add(Partition);
 
-            imgPlay = new ClickableImage(this.UI, GetNewTimeSpan(), "Play", Render.texPlay, Render.texPlay, new Vector2(recManualSpeedBackGround.Right + MARGE * 2, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texPlay.Height / 2));
-            imgPause = new ClickableImage(this.UI, GetNewTimeSpan(), "Pause", Render.texPause, Render.texPause, new Vector2(recManualSpeedBackGround.Right + MARGE * 2, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texPause.Height / 2));
+            imgPlay = new ClickableImage(this.UI, GetNewTimeSpan(), "Play", Render.texPlay, Render.texPlay, new Vector2(BPMMeter.Rec.Right + MARGE * 2, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texPlay.Height / 2));
+            imgPause = new ClickableImage(this.UI, GetNewTimeSpan(), "Pause", Render.texPause, Render.texPause, new Vector2(BPMMeter.Rec.Right + MARGE * 2, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texPause.Height / 2));
             imgPause.Visible = false;
-            imgStop = new ClickableImage(this.UI, GetNewTimeSpan(), "Stop", Render.texStop, Render.texStop, new Vector2(recManualSpeedBackGround.Right + MARGE * 3 + Render.texPlay.Width, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texStop.Height / 2));
+            imgStop = new ClickableImage(this.UI, GetNewTimeSpan(), "Stop", Render.texStop, Render.texStop, new Vector2(BPMMeter.Rec.Right + MARGE * 3 + Render.texPlay.Width, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texStop.Height / 2));
 
             imgPlay.ClickImage += new ClickableImage.ClickImageHandler(imgPlay_ClickImage);
             imgPause.ClickImage += new ClickableImage.ClickImageHandler(imgPause_ClickImage);
@@ -160,17 +165,8 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            Rectangle recManualSpeed = new Rectangle(recManualSpeedBackGround.Left, recManualSpeedBackGround.Top, (int)((float)recManualSpeedBackGround.Width * Context.Map.SpeedFactor / 2f), recManualSpeedBackGround.Height);
-
-            Rectangle rec = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.2f));
-
-            Vector2 vecTime = new Vector2(RecMenuBar.Left + MARGE * 4, RecMenuBar.Top + RecMenuBar.Height / 2 - Render.FontTextSmall.MeasureString("0").Y / 2);
-
-            Render.SpriteBatch.Draw(Render.texEmptyGradient, rec, VisualStyle.BackColorDark);
+            Render.SpriteBatch.Draw(Render.texEmptyGradient, recBackground, VisualStyle.BackColorDark);
             Render.SpriteBatch.Draw(Render.texEmpty, RecMenuBar, VisualStyle.BackColorDark);
-
-            Render.SpriteBatch.Draw(Render.texEmpty, recManualSpeedBackGround, VisualStyle.BackColorLight);
-            Render.SpriteBatch.Draw(Render.texEmpty, recManualSpeed, VisualStyle.BackForeColorChecked);
 
             Render.SpriteBatch.DrawString(Render.FontTextSmall, Context.Map.BPM.ToString() + " BPM", new Vector2(vecTime.X + 100, vecTime.Y), Color.DarkGray);
             Render.SpriteBatch.DrawString(Render.FontTextSmall, string.Format("{0:00}:{1:00}:{2:00}", Context.Time.Hours, Context.Time.Minutes, Context.Time.Seconds), vecTime, Color.DarkGray);

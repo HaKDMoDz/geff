@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using System.Xml.Serialization;
+using TheGrid.Model.Instrument;
 
 namespace TheGrid.Model
 {
@@ -59,6 +60,51 @@ namespace TheGrid.Model
             }
 
             return cell;
+        }
+
+        public void Clone(Cell cellOrigin)
+        {
+            cellOrigin.Clip = null;
+            
+            cellOrigin.Channel = this.Channel;
+
+            if (this.Clip != null)
+            {
+                cellOrigin.Clip = new Clip();
+
+                for (int i = 0; i < 6; i++)
+                {
+                    cellOrigin.Clip.Directions[i] = this.Clip.Directions[i];
+                }
+
+                cellOrigin.Clip.Repeater = this.Clip.Repeater;
+                cellOrigin.Clip.Speed = this.Clip.Speed;
+                cellOrigin.Clip.Duration = this.Clip.Duration;
+
+                if (this.Clip.Instrument != null)
+                {
+                    if (this.Clip.Instrument is InstrumentSample)
+                    {
+                        cellOrigin.Clip.Instrument = new InstrumentSample(((InstrumentSample)this.Clip.Instrument).Sample);
+                    }
+                    else if (this.Clip.Instrument is InstrumentEffect)
+                    {
+                        cellOrigin.Clip.Instrument = new InstrumentEffect(((InstrumentEffect)this.Clip.Instrument).ChannelEffect);
+                    }
+                    else if (this.Clip.Instrument is InstrumentStart)
+                    {
+                        cellOrigin.Clip.Instrument = new InstrumentStart();
+                        
+                        this.Clip.Instrument = null;
+                        this.Channel.CellStart = cellOrigin;
+                    }
+                    else if (this.Clip.Instrument is InstrumentStop)
+                    {
+                        cellOrigin.Clip.Instrument = new InstrumentStop();
+                    }
+                    //TODO : cloner les notes
+                }
+            }
         }
     }
 }

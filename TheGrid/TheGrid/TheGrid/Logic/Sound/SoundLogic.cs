@@ -51,7 +51,7 @@ namespace TheGrid.Logic.Sound
 
             mixer = new WaveMixerStream32();
             mixer.AutoStop = true;
-            
+
             waveOutDevice = new NAudio.Wave.DirectSoundOut();
             //waveOutDevice = new NAudio.Wave.AsioOut();
 
@@ -223,6 +223,18 @@ namespace TheGrid.Logic.Sound
             for (int i = 0; i < channelSteam.Length; i++)
             {
                 channelSteam[i].Position = channelSteam[i].Length;
+            }
+        }
+
+        public void Stop(string sampleName)
+        {
+            if (channelSteam == null)
+                return;
+
+            for (int i = 0; i < CountInstancePerSample; i++)
+            {
+                WaveChannel32 channel = channelSteam[dicSample[sampleName][i]];
+                channel.Position = channel.Length;
             }
         }
     }

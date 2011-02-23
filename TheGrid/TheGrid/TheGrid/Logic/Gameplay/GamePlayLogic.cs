@@ -19,7 +19,6 @@ namespace TheGrid.Logic.GamePlay
     public class GamePlayLogic
     {
         private Random rnd = new Random();
-        //private float musicianSpeed = 500f;
         private TimeSpan lastEffectApplied = TimeSpan.Zero;
 
         public GameEngine GameEngine { get; set; }
@@ -29,8 +28,6 @@ namespace TheGrid.Logic.GamePlay
             this.GameEngine = gameEngine;
 
             InitializePlayers();
-
-
 
             //LoadMap("Test4");
             LoadMap("TestColor");
@@ -42,7 +39,7 @@ namespace TheGrid.Logic.GamePlay
             Context.Map = FileSystem.LoadLevel(this, Path.GetFileNameWithoutExtension(levelFileName));
 
             EvaluateMuscianGrid();
-            //ribbon.Partition.Init();
+            GameEngine.UI.Ribbon.Partition.Init();
             Stop();
 
             GameEngine.Sound.Init();
@@ -139,8 +136,6 @@ namespace TheGrid.Logic.GamePlay
                     }
                 }
             }
-
-            //GameEngine.Window.Title = Context.Time.ToString();
         }
 
         public void UpdateMusicians(GameTime gameTime)
@@ -148,8 +143,7 @@ namespace TheGrid.Logic.GamePlay
             //---> Met à jour le temps écoulé
             if (!Context.IsNavigatingThroughTime)
             {
-                TimeSpan time = new TimeSpan((long)((float)gameTime.ElapsedGameTime.Ticks * Context.Map.SpeedFactor));
-                Context.Time = Context.Time.Add(time);
+                Context.Time = Context.Time.Add(TimeSpan.FromTicks(gameTime.ElapsedGameTime.Ticks));
 
                 if (Context.Time >= Context.Map.PartitionDuration)
                     Context.IsPlaying = false;
@@ -447,10 +441,6 @@ namespace TheGrid.Logic.GamePlay
                     //---
                 }
             }
-
-            //--- Met à jour le visuel de la partition
-            GameEngine.UI.Ribbon.Partition.Init();
-            //---
         }
 
         public void UpdateMusiciansToTime()
@@ -552,8 +542,9 @@ namespace TheGrid.Logic.GamePlay
 
             if (speedFactor < 0f)
                 speedFactor = 1f / 119f;
-
+            
             Context.Map.SpeedFactor = speedFactor;
+            GameEngine.UI.Ribbon.Partition.InitSegment();
             EvaluateMuscianGrid();
         }
 
@@ -566,7 +557,7 @@ namespace TheGrid.Logic.GamePlay
                 speedFactor = 2f;
 
             Context.Map.SpeedFactor = speedFactor;
-
+            GameEngine.UI.Ribbon.Partition.InitSegment();
             EvaluateMuscianGrid();
         }
 
