@@ -75,6 +75,8 @@ namespace TheGrid.Model.UI
 
         void txtSample_ClickText(ClickableText clickableText, Microsoft.Xna.Framework.Input.MouseState mouseState, GameTime gameTime)
         {
+            UI.GameEngine.Sound.Stop(((Sample)clickableText.Tag).Name);
+
             _cell.InitClip();
             _cell.Clip.Instrument = new InstrumentSample((Sample)clickableText.Tag);
             

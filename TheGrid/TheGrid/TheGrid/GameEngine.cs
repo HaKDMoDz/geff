@@ -56,9 +56,9 @@ namespace TheGrid
                 Graphics.PreferredBackBufferWidth = 800;
                 Graphics.PreferredBackBufferHeight = 800;
                 
-                //Graphics.PreferredBackBufferWidth = 1680;
-                //Graphics.PreferredBackBufferHeight = 1050;
-                //Graphics.IsFullScreen = true;
+                Graphics.PreferredBackBufferWidth = 1680;
+                Graphics.PreferredBackBufferHeight = 1050;
+                Graphics.IsFullScreen = true;
             }
 
             IsFixedTimeStep = false;

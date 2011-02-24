@@ -99,6 +99,9 @@ namespace TheGrid.Model.UI
             itemSave.Selected += new Item.SelectedHandler(itemSave_Selected);
             menu.Items.Add(itemSave);
 
+            //Item itemExit = new Item(menu, "Exit");
+            //menu.Items.Add(itemExit);
+
             Item itemMenu = new Item(menu, "Menu");
             menu.Items.Add(itemMenu);
 
@@ -111,10 +114,10 @@ namespace TheGrid.Model.UI
             menu.EffectSprite = Render.effectUISprite;
             menu.IsUI = true;
             menu.IsTurnMode = true;
-            menu.MaxAngle = 2 * MathHelper.Pi / 3;
+            menu.MaxAngle = 2 * MathHelper.Pi / 3+0.03;
 
             menu.MinAngleDelta = MathHelper.Pi / 128;
-            menu.MaxAngleDelta = 7 * MathHelper.Pi / 12;
+            menu.MaxAngleDelta = 7 * MathHelper.Pi / 12-0.01;
             menu.CreateVertex();
 
             ListUIChildren.Add(menu);
