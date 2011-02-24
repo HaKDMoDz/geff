@@ -30,8 +30,8 @@ namespace TheGrid.Logic.UI
             Ribbon = new Ribbon(this, TimeSpan.FromDays(1));
             ListUIComponent.Add(Ribbon);
 
-            NotePanel notePanel = new NotePanel(this, TimeSpan.FromDays(2));
-            ListUIComponent.Add(notePanel);
+            //NotePanel notePanel = new NotePanel(this, TimeSpan.FromDays(2));
+            //ListUIComponent.Add(notePanel);
         }
 
         public void Update(GameTime gameTime)
@@ -111,6 +111,12 @@ namespace TheGrid.Logic.UI
         {
             ListSample listSample = new ListSample(this, gameTime.TotalGameTime, cell);
             this.ListUIComponent.Add(listSample);
+        }
+
+        public void OpenKeyboard(GameTime gameTime, Cell cell)
+        {
+            NotePanel notePanel = new NotePanel(this, gameTime.TotalGameTime);
+            this.ListUIComponent.Add(notePanel);
         }
 
         #region Menu
@@ -266,6 +272,11 @@ namespace TheGrid.Logic.UI
 
         void itemNote_Selected(Item item, GameTime gameTime)
         {
+            item.ParentMenu.Close(gameTime);
+
+            item.ParentMenu.Alive = false;
+
+            OpenKeyboard(gameTime, item.ParentMenu.ParentCell);
         }
 
         void itemEffect_Selected(Item item, GameTime gameTime)

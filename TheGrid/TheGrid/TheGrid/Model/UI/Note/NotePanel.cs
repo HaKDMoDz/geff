@@ -6,6 +6,8 @@ using TheGrid.Logic.UI;
 using TheGrid.Model.UI.Menu;
 using Microsoft.Xna.Framework;
 using TheGrid.Common;
+using TheGrid.Logic.Controller;
+using Microsoft.Xna.Framework.Input;
 
 namespace TheGrid.Model.UI.Note
 {
@@ -26,9 +28,17 @@ namespace TheGrid.Model.UI.Note
             Keyboard keyboard = new Keyboard(this, UI, GetNewTimeSpan());
             ListUIChildren = new List<UIComponent>();
             ListUIChildren.Add(keyboard);
+
+            //---
+            KeyManager keyClose = AddKey(Keys.Escape);
+            keyClose.KeyReleased += new KeyManager.KeyReleasedHandler(keyClose_KeyReleased);
+            //---
         }
 
-       
+        void keyClose_KeyReleased(Keys key, GameTime gameTime)
+        {
+            this.Alive = false;
+        }
 
         public override void Update(GameTime gametime)
         {

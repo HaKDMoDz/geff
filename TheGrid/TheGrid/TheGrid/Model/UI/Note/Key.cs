@@ -61,7 +61,7 @@ namespace TheGrid.Model.UI.Note
         {
             Rectangle rec = new Rectangle(Rec.X + _keyboard.Delta, Rec.Y, Rec.Width, Rec.Height);
 
-            Render.SpriteBatch.Draw(_texKey, Rec, null, Color.White, 0f,Vector2.Zero, SpriteEffects.None, White? 1f:0f);
+            Render.SpriteBatch.Draw(_texKey, Rec, Color.White);
         }
     }
 }
