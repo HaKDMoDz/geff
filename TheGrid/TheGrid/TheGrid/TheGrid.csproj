@@ -167,11 +167,14 @@
     <Compile Include="Model\UI\ListLibrary.cs" />
     <Compile Include="Model\UI\Menu\Item.cs" />
     <Compile Include="Model\UI\Menu\CircularMenu.cs" />
-    <Compile Include="Model\UI\Menu\MenuState.cs" />
+    <Compile Include="Model\UI\Menu\ComponentState.cs" />
     <Compile Include="Model\Musician.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Sample.cs" />
     <Compile Include="Model\TimeValue.cs" />
+    <Compile Include="Model\UI\Note\Key.cs" />
+    <Compile Include="Model\UI\Note\Keyboard.cs" />
+    <Compile Include="Model\UI\Note\NotePanel.cs" />
     <Compile Include="Model\UI\Partition.cs" />
     <Compile Include="Model\UI\Ribbon.cs" />
     <Compile Include="Model\UI\UIComponent.cs" />

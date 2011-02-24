@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TheGrid.Model.UI.Menu
 {
-    public enum MenuState
+    public enum ComponentState
     {
         Opened,
         Closed,

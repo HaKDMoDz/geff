@@ -324,12 +324,12 @@ namespace TheGrid.Logic.Controller
                     CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
                     newMenu.Alive = true;
                     newMenu.UIDependency = currentMenu;
-                    newMenu.State = MenuState.WaitDependency;
+                    newMenu.State = ComponentState.WaitDependency;
 
                     GameEngine.UI.ListUIComponent.Add(newMenu);
                     //---
                 }
-                else if (currentMenu == null || currentMenu.State == MenuState.Closing || currentMenu.State == MenuState.Closed)
+                else if (currentMenu == null || currentMenu.State == ComponentState.Closing || currentMenu.State == ComponentState.Closed)
                 {
                     //---> Ouvre le nouveau menu
                     CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
@@ -369,7 +369,7 @@ namespace TheGrid.Logic.Controller
             CircularMenu currentMenu = (CircularMenu)GameEngine.UI.ListUIComponent.Find(ui => ui is CircularMenu);
 
             if (currentMenu != null &&
-                (currentMenu.State == MenuState.Opened || currentMenu.State == MenuState.Opening) &&
+                (currentMenu.State == ComponentState.Opened || currentMenu.State == ComponentState.Opening) &&
                 Tools.Distance(Point.Zero, distance) < 5f)
             {
                 if (currentMenu.Items.Count(i => i.MouseOver) > 0 && currentMenu.ParentMenu != null)

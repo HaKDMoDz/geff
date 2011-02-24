@@ -154,5 +154,10 @@ namespace TheGrid.Model.UI
         {
             return UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + iconName);
         }
+
+        public Texture2D GetImage(string imagePath)
+        {
+            return UI.GameEngine.Content.Load<Texture2D>(@"Texture\" + imagePath);
+        }
     }
 }

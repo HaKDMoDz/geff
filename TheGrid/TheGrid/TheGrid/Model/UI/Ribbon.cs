@@ -99,25 +99,30 @@ namespace TheGrid.Model.UI
             itemSave.Selected += new Item.SelectedHandler(itemSave_Selected);
             menu.Items.Add(itemSave);
 
-            //Item itemExit = new Item(menu, "Exit");
-            //menu.Items.Add(itemExit);
+            Item itemExit = new Item(menu, "Exit");
+            itemExit.Selected += new Item.SelectedHandler(itemExit_Selected);
+            menu.Items.Add(itemExit);
 
             Item itemMenu = new Item(menu, "Menu");
             menu.Items.Add(itemMenu);
 
             menu.Location = new Vector2(0f, 0f);
             menu.nbVertex = menu.Items.Count * 4;
-            menu.AngleDelta = MathHelper.Pi / 12;
             menu.PercentVisibility = 0f;
-            menu.State = MenuState.Closed;
+            menu.State = ComponentState.Closed;
             menu.EffectVertex = Render.effectUI;
             menu.EffectSprite = Render.effectUISprite;
             menu.IsUI = true;
             menu.IsTurnMode = true;
-            menu.MaxAngle = 2 * MathHelper.Pi / 3+0.03;
 
-            menu.MinAngleDelta = MathHelper.Pi / 128;
-            menu.MaxAngleDelta = 7 * MathHelper.Pi / 12-0.01;
+            double angleItem = MathHelper.PiOver2 / ((double)menu.Items.Count - 1);
+
+            menu.MaxAngle = ((double)menu.Items.Count) * angleItem  + 0.03;
+            menu.MinAngleDelta = -MathHelper.PiOver2+ MathHelper.Pi/12;
+            menu.MaxAngleDelta = angleItem - 0.01;
+
+            menu.AngleDelta = menu.MinAngleDelta;
+
             menu.CreateVertex();
 
             ListUIChildren.Add(menu);
@@ -155,6 +160,11 @@ namespace TheGrid.Model.UI
             {
                 FileSystem.SaveLevel(Context.Map, Path.GetFileNameWithoutExtension(dlg.FileName));
             }
+        }
+
+        void itemExit_Selected(Item item, GameTime gameTime)
+        {
+            UI.GameEngine.Exit();
         }
         #endregion
 
