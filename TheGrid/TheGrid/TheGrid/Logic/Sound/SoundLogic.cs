@@ -10,6 +10,7 @@ using JSNet;
 using Microsoft.Xna.Framework;
 using TheGrid.Model.Effect;
 using System.Reflection;
+using VoiceRecorder.Audio;
 
 namespace TheGrid.Logic.Sound
 {
@@ -103,6 +104,23 @@ namespace TheGrid.Logic.Sound
                         for (int i = 0; i < CountInstancePerSample; i++)
                         {
                             WaveStream outStream = new WaveFileReader(sample.FileName);
+
+                            //--- Détection de la fréquence moyenne du son
+                            if (i == 0)
+                            {
+                                AutoCorrelator pitchDetector = new AutoCorrelator(outStream.WaveFormat.SampleRate);
+
+                                int count = 40960;
+                                WaveBuffer waveBuffer = new WaveBuffer(count);
+                                int bytesRead = outStream.Read(waveBuffer, 0, count);
+                                if (bytesRead > 0) bytesRead = count;
+                                int frames = bytesRead / sizeof(float); // MRH: was count
+                                float pitch = pitchDetector.DetectPitch(waveBuffer.FloatBuffer, frames);
+                                outStream.Position = 0;
+                                
+                                
+                            }
+                            //---
 
                             outStream = WaveFormatConversionStream.CreatePcmStream(outStream);
                             outStream = new BlockAlignReductionStream(outStream);

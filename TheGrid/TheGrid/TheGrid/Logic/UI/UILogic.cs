@@ -30,8 +30,8 @@ namespace TheGrid.Logic.UI
             Ribbon = new Ribbon(this, TimeSpan.FromDays(1));
             ListUIComponent.Add(Ribbon);
 
-            //NotePanel notePanel = new NotePanel(this, TimeSpan.FromDays(2));
-            //ListUIComponent.Add(notePanel);
+            NotePanel notePanel = new NotePanel(this, TimeSpan.FromDays(2));
+            ListUIComponent.Add(notePanel);
         }
 
         public void Update(GameTime gameTime)

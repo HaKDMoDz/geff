@@ -13,6 +13,7 @@ namespace TheGrid.Model
         public String FileName { get; set; }
         public String Name { get { return Path.GetFileNameWithoutExtension(FileName); } }
         public TimeSpan Duration { get; set; }
+        public float Frequency { get; set; }
 
         public Sample()
         {

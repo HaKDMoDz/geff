@@ -18,8 +18,9 @@ namespace TheGrid.Model.UI.Note
         private int _index;
         private Texture2D _texKey;
         public bool White = true;
-        private int[] typeKey = new int[] { 1, 0, 5, 0, 3, 0, 4, 1, 0, 5, 0, 4 };
-        private float[] deltaBlack = new float[] { 0, 0.25f, 0, 0.5f, 0, 0.75f, 0, 0, 0.25f, 0, 0.75f };
+        private int[] typeKey = new int[] { 1, 0, 2, 0, 3, 0, 4, 1, 0, 6, 0, 4 };
+        private float[] deltaBlack = new float[] { 0, 0.75f, 0, 0.5f, 0, 0.25f, 0, 0, 0.75f, 0, 0.25f };
+        public int Width = 0;
 
         public Key(Keyboard keyboard, UILogic uiLogic, TimeSpan creationTime, string noteName, int octave, int index, int countPreviousWhite, float frequency)
             : base(uiLogic, creationTime)
@@ -40,16 +41,16 @@ namespace TheGrid.Model.UI.Note
             _texKey = GetKeyImage(White, typeKey[indexImage]);
             int whiteWidth = GetKeyImage(true, 1).Width * keyboard.Rec.Height / GetKeyImage(true, 1).Height;
 
-            int height = (int)((float)keyboard.Rec.Height * (White ? 1f : 0.65f));
-            int width = _texKey.Width * height / _texKey.Height;
+            int height = (int)((float)keyboard.Rec.Height * (White ? 1f : 0.64f));
+            Width = _texKey.Width * height / _texKey.Height;
             int deltaLeft = 0;
 
-            if(!White)
+            if (!White)
             {
-                deltaLeft = -(int)((float)width * deltaBlack[indexImage]);
+                deltaLeft = -(int)((float)Width * (deltaBlack[indexImage]));
             }
 
-            Rec = new Rectangle(countPreviousWhite * whiteWidth + deltaLeft, keyboard.Rec.Top, width, height);
+            Rec = new Rectangle(keyboard.Rec.Left + countPreviousWhite * whiteWidth + deltaLeft, keyboard.Rec.Top, Width, height);
         }
 
         private Texture2D GetKeyImage(bool white, int index)
@@ -61,7 +62,25 @@ namespace TheGrid.Model.UI.Note
         {
             Rectangle rec = new Rectangle(Rec.X + _keyboard.Delta, Rec.Y, Rec.Width, Rec.Height);
 
-            Render.SpriteBatch.Draw(_texKey, Rec, Color.White);
+            if (_keyboard.Rec.Intersects(rec))
+            {
+                Rectangle recSource = _texKey.Bounds;
+
+                if (rec.Left < _keyboard.Rec.Left)
+                {
+                    int newWidth = rec.Width - (_keyboard.Rec.Left - rec.Left);
+                    int newSourceX = (int)((float)_texKey.Bounds.Width * (1f-(float)newWidth / (float)rec.Width));
+                    recSource = new Rectangle(newSourceX, _texKey.Bounds.Y, _texKey.Bounds.Width - newSourceX, _texKey.Bounds.Height);
+
+                    rec = new Rectangle(_keyboard.Rec.Left, rec.Y, newWidth, rec.Height);
+                }
+
+
+                Render.SpriteBatch.Draw(_texKey, rec, recSource, Color.White);
+
+                if(recSource == _texKey.Bounds)
+                    Render.SpriteBatch.DrawString(Render.FontTextSmall, _name, new Vector2(rec.X + rec.Width / 2 - Render.FontTextSmall.MeasureString(_name).X / 2, Rec.Bottom - 60), White ? Color.Black : Color.White);
+            }
         }
     }
 }

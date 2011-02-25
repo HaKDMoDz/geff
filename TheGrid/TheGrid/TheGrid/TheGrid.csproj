@@ -192,6 +192,10 @@
       <Project>{9A41CAC8-1D4F-44D6-B324-E0076D0AD590}</Project>
       <Name>JSNet</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Lib\VoiceRecorder.Audio\VoiceRecorder.Audio.csproj">
+      <Project>{91EDFCAD-2495-44D2-BD45-7CC389C6D838}</Project>
+      <Name>VoiceRecorder.Audio</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TheGridContent\TheGridContent.contentproj">
       <Name>TheGridContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
