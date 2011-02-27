@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using TheGrid.Model.Effect;
 using System.Reflection;
 using VoiceRecorder.Audio;
+using System.Diagnostics;
 
 namespace TheGrid.Logic.Sound
 {
@@ -89,8 +90,39 @@ namespace TheGrid.Logic.Sound
             }
         }
 
+
+        private void Test()
+        {
+
+            float[] buffer = new float[4096];
+            IPitchDetector pitchDetector = new AutoCorrelator(44100);
+
+            for (int midiNoteNumber = 45; midiNoteNumber < 63; midiNoteNumber++)
+            {
+                float freq = (float)(8.175 * Math.Pow(1.05946309, midiNoteNumber));
+                SetFrequency(buffer, freq);
+                float detectedPitch = pitchDetector.DetectPitch(buffer, buffer.Length);
+                // since the autocorrelator works with a lag, give it two shots at the same buffer
+                detectedPitch = pitchDetector.DetectPitch(buffer, buffer.Length);
+                Console.WriteLine("Testing for {0:F2}Hz, got {1:F2}Hz", freq, detectedPitch);
+                //Assert.AreEqual(detectedPitch, freq, 0.5);
+            }
+        }
+
+        private void SetFrequency(float[] buffer, float frequency)
+        {
+            float amplitude = 0.25f;
+            for (int n = 0; n < buffer.Length; n++)
+            {
+                buffer[n] = (float)(amplitude * Math.Sin((2 * Math.PI * n * frequency) / 44100));
+            }
+        }
+
         private void LoadSample()
         {
+            //Test();
+
+
             try
             {
                 int index = 0;
@@ -108,17 +140,41 @@ namespace TheGrid.Logic.Sound
                             //--- Détection de la fréquence moyenne du son
                             if (i == 0)
                             {
-                                AutoCorrelator pitchDetector = new AutoCorrelator(outStream.WaveFormat.SampleRate);
+                                /*
+                                //=======
+                                IWaveProvider waveFloat = null;
 
-                                int count = 40960;
-                                WaveBuffer waveBuffer = new WaveBuffer(count);
-                                int bytesRead = outStream.Read(waveBuffer, 0, count);
-                                if (bytesRead > 0) bytesRead = count;
-                                int frames = bytesRead / sizeof(float); // MRH: was count
-                                float pitch = pitchDetector.DetectPitch(waveBuffer.FloatBuffer, frames);
+                                if (outStream.WaveFormat.Channels > 1)
+                                {
+                                    StereoToMonoProvider16 stereo = new StereoToMonoProvider16(outStream);
+                                    stereo.LeftVolume = 1f;
+                                    stereo.RightVolume = 1f;
+
+                                    waveFloat = new Wave16ToFloatProvider(stereo);
+                                }
+                                else
+                                {
+                                    waveFloat = new Wave16ToFloatProvider(outStream);
+                                }
+
+                                IWaveProvider outStream2 = new AutoTuneWaveProvider(waveFloat);
+                                IWaveProvider wave16 = new WaveFloatTo16Provider(outStream2);
+
+                                byte[] buffer = new byte[8192];
+                                int _bytesRead;
+                                do
+                                {
+                                    _bytesRead =
+                                    wave16.Read(buffer, 0, buffer.Length);
+                                    //writer.WriteData(buffer, 0, _bytesRead);
+                                } while (_bytesRead != 0);//&& writer.Length < waveFileReader.Length);
+                                //writer.Close();
+                                //=======
                                 outStream.Position = 0;
-                                
-                                
+
+                                sample.Frequency = ((AutoTuneWaveProvider)outStream2).Frequency;
+                                //Debug.WriteLine(sample.Name + " == " + ((AutoTuneWaveProvider)outStream2).Frequency.ToString());
+                                */
                             }
                             //---
 
@@ -128,7 +184,7 @@ namespace TheGrid.Logic.Sound
                             reader[index] = outStream;
 
                             offsetStream[index] = new EffectStream(CreateEffectChain(sample), reader[index]);
-                            channelSteam[index] = new WaveChannel32(offsetStream[index]);
+                            channelSteam[index] = new WaveChannel32(reader[index]);
 
                             channelSteam[index].Position = channelSteam[index].Length;
                             mixer.AddInputStream(channelSteam[index]);

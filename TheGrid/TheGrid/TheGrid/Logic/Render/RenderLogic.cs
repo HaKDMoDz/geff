@@ -303,6 +303,7 @@ namespace TheGrid.Logic.Render
 
             if (cellToDraw.Clip == null)
             {
+                //texHexa2D
                 SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
             }
             else

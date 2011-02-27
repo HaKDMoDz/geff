@@ -14,8 +14,8 @@ namespace VoiceRecorder.Audio
         public AutoCorrelator(int sampleRate)
         {
             this.sampleRate = (float)sampleRate;
-            int minFreq = 85;
-            int maxFreq = 255;
+            int minFreq = 30;
+            int maxFreq = 400;
 
             this.maxOffset = sampleRate / minFreq;
             this.minOffset = sampleRate / maxFreq;

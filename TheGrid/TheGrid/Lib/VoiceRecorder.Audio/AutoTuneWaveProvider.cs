@@ -12,6 +12,8 @@ namespace VoiceRecorder.Audio
         private IPitchDetector pitchDetector;
         private WaveBuffer waveBuffer;
         private AutoTuneSettings autoTuneSettings;
+        public float Frequency = 0f;
+        private int iteration;
 
         public AutoTuneWaveProvider(IWaveProvider source) :
             this(source, new AutoTuneSettings())
@@ -60,7 +62,10 @@ namespace VoiceRecorder.Audio
             //pitchsource->getPitches();
             int frames = bytesRead / sizeof(float); // MRH: was count
             float pitch = pitchDetector.DetectPitch(waveBuffer.FloatBuffer, frames);
-                
+            
+            if(pitch != 0 && Frequency == 0)
+                Frequency = pitch;
+
             // MRH: an attempt to make it less "warbly" by holding onto the pitch for at least one more buffer
             if (pitch == 0f && release < maxHold)
             {
@@ -73,12 +78,19 @@ namespace VoiceRecorder.Audio
                 release = 0;
             }
 
-            int midiNoteNumber = 40;
-            float targetPitch = (float)(8.175 * Math.Pow(1.05946309, midiNoteNumber));
+            //int midiNoteNumber = 40;
+            //float targetPitch = (float)(8.175 * Math.Pow(1.05946309, midiNoteNumber));
 
-            WaveBuffer outBuffer = new WaveBuffer(buffer);
+            //WaveBuffer outBuffer = new WaveBuffer(buffer);
 
-            pitchShifter.ShiftPitch(waveBuffer.FloatBuffer, pitch, targetPitch, outBuffer.FloatBuffer, frames);
+            //pitchShifter.ShiftPitch(waveBuffer.FloatBuffer, pitch, targetPitch, outBuffer.FloatBuffer, frames);
+
+            //if (frames > 0)
+            //    iteration++;
+            //else
+            //{
+            //    Frequency /= (float)iteration;
+            //}
 
             return frames * 4;
         }
