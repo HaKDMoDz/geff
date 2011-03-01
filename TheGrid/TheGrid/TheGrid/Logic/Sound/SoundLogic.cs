@@ -217,7 +217,6 @@ namespace TheGrid.Logic.Sound
                                 sample.NoteKey = (12f * (float)Math.Log(sample.Frequency / 55f) + 13f * (float)Math.Log(2f)) / ((float)Math.Log(2f));
 
                                 Debug.WriteLine(sample.Name + " == " + sample.Frequency.ToString() + " == " + sample.NoteKey.ToString());
-                                
                             }
                             //---
 

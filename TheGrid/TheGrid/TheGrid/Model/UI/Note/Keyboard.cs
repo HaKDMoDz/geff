@@ -18,6 +18,7 @@ namespace TheGrid.Model.UI.Note
         private string[] _noteTable = new string[12];
         public int Delta = 0;
         private int prevDelta = 0;
+        int countWhite = 0;
 
         public Keyboard(NotePanel notePannel, UILogic uiLogic, TimeSpan creationTime)
             : base(uiLogic, creationTime)
@@ -47,7 +48,7 @@ namespace TheGrid.Model.UI.Note
         {
             _listKey = new List<Key>();
             ListUIChildren = new List<UIComponent>();
-            int countPreviousWhite = 0;
+            countWhite = 0;
 
             for (int octave = 0; octave < 8; octave++)
             {
@@ -56,14 +57,14 @@ namespace TheGrid.Model.UI.Note
                     if (octave * 12 + note < 88)
                     {
                         int realOctave = GetRealOctave(octave, note);
-                        Key key = new Key(this, UI, GetNewTimeSpan(), _noteTable[note], realOctave, octave * 12 + note, countPreviousWhite, GetFrequency(octave, note + 1));
+                        Key key = new Key(this, UI, GetNewTimeSpan(), _noteTable[note], realOctave, octave * 12 + note, countWhite, GetFrequency(octave, note + 1));
                         key.ClickKey += new Key.ClickKeyHandler(key_ClickKey);
 
                         _listKey.Add(key);
                         ListUIChildren.Add(key);
 
                         if (key.White)
-                            countPreviousWhite++;
+                            countWhite++;
                     }
                 }
             }
@@ -124,7 +125,7 @@ namespace TheGrid.Model.UI.Note
             {
                 Delta = prevDelta - distance.X;
 
-                Delta = (int)MathHelper.Clamp((float)Delta, -_listKey[0].Width*88+Rec.Width*2, 0f);
+                Delta = (int)MathHelper.Clamp((float)Delta, -_listKey[0].Width * countWhite + Rec.Width, 0f);
 
                 if (mouseState.X > Rec.Right)
                 {
@@ -148,7 +149,7 @@ namespace TheGrid.Model.UI.Note
                     Mouse.SetPosition(mouseState.X, Rec.Top);
                 }
 
-                //prevDelta = (int)MathHelper.Clamp((float)prevDelta, 0f, 2000f);
+                //prevDelta = (int)MathHelper.Clamp((float)prevDelta, -_listKey[0].Width * countWhite + Rec.Width, 0f);
             }
         }
     }
