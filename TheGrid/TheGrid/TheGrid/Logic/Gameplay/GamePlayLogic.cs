@@ -13,6 +13,7 @@ using TheGrid.Model.UI;
 using System.IO;
 using System.Windows.Forms;
 using TheGrid.Model.Effect;
+using TheGrid.Model.UI.Note;
 
 namespace TheGrid.Logic.GamePlay
 {
@@ -42,7 +43,7 @@ namespace TheGrid.Logic.GamePlay
             GameEngine.UI.Ribbon.Partition.Init();
             Stop();
 
-            GameEngine.Sound.Init();
+            ((NotePanel)GameEngine.UI.ListUIComponent.Find(ui => ui is NotePanel)).Sample = Context.Map.Channels[3].ListSample[1];
         }
 
         public void NewMap(string libraryName)
@@ -58,7 +59,7 @@ namespace TheGrid.Logic.GamePlay
 
             LoadLibrary(libraryName, Context.Map);
 
-            GameEngine.Sound.Init();
+            ((NotePanel)GameEngine.UI.ListUIComponent.Find(ui => ui is NotePanel)).Sample = Context.Map.Channels[1].ListSample[1];
         }
 
         public void LoadLibrary(string libraryName, Map map)
@@ -74,6 +75,7 @@ namespace TheGrid.Logic.GamePlay
 
                 if (channel != null)
                 {
+                    channel.ListSample = new List<Sample>();
                     foreach (string sampleFileName in Directory.GetFiles(channelDirectory))
                     {
                         Sample sample = new Sample(channel, sampleFileName);
@@ -81,6 +83,41 @@ namespace TheGrid.Logic.GamePlay
                     }
                 }
             }
+
+            //---
+            bool writeNewConfig = false;
+            Map mapConfig = FileSystem.LoadLevelConfig(this, map.LibraryName);
+
+            if (mapConfig != null)
+            {
+                foreach (Channel channel in map.Channels)
+                {
+                    Channel channelConfig = mapConfig.Channels.Find(c => c.Name == channel.Name);
+
+                    if (channelConfig != null)
+                    {
+                        foreach (Sample sample in channel.ListSample)
+                        {
+                            Sample sampleConfig = channelConfig.ListSample.Find(s => s.Name == sample.Name);
+
+                            if (sampleConfig != null)
+                            {
+                                sample.NoteKey = sampleConfig.NoteKey;
+                                sample.Frequency = sampleConfig.Frequency;
+                            }
+
+                            if (sample.Frequency == -1f)
+                                writeNewConfig = true;
+                        }
+                    }
+                }
+            }
+
+            GameEngine.Sound.Init(map);
+
+            if (writeNewConfig || mapConfig == null)
+                FileSystem.SaveLibraryConfig(map);
+            //---
 
             map.Channels.RemoveAll(c => c.ListSample.Count == 0 && c.Name != "Empty");
         }
@@ -542,7 +579,7 @@ namespace TheGrid.Logic.GamePlay
 
             if (speedFactor < 0f)
                 speedFactor = 1f / 119f;
-            
+
             Context.Map.SpeedFactor = speedFactor;
             GameEngine.UI.Ribbon.Partition.InitSegment();
             EvaluateMuscianGrid();

@@ -21,7 +21,7 @@ namespace TheGrid.Model
         public Cell CellStart { get; set; }
         [XmlIgnore]
         public List<Musician> ListMusician { get; set; }
-        [XmlIgnore]
+        
         public List<Sample> ListSample { get; set; }
         [XmlIgnore]
         public List<TimeValue<float>> ListSpeed { get; set; }

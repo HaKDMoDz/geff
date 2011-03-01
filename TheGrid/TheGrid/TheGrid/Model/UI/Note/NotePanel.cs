@@ -15,6 +15,7 @@ namespace TheGrid.Model.UI.Note
     {
         public ComponentState State { get; set; }
         public float leftPartWidth = 0f;
+        public Sample Sample { get; set; }
 
         public NotePanel(UILogic uiLogic, TimeSpan creationTime)
             : base(uiLogic, creationTime)

@@ -24,7 +24,8 @@ namespace TheGrid.Logic.Sound
         private WaveChannel32[] channelSteam;
         private Dictionary<String, List<int>> dicSample;
         private Dictionary<String, List<List<Effect>>> dicEffect;
-        private int CountInstancePerSample = 3;
+        private int CountInstancePerSample = 6;
+        private bool[] PlayingNote;
 
         public GameEngine GameEngine { get; set; }
 
@@ -40,7 +41,7 @@ namespace TheGrid.Logic.Sound
             mixer.Close();
         }
 
-        public void Init()
+        public void Init(Map map)
         {
             if (waveOutDevice != null)
             {
@@ -60,23 +61,63 @@ namespace TheGrid.Logic.Sound
             waveOutDevice.Init(mixer);
 
             int countSample = 0;
-            Context.Map.Channels.ForEach(c => c.ListSample.ForEach(s => countSample++));
+            map.Channels.ForEach(c => c.ListSample.ForEach(s => countSample++));
             countSample *= CountInstancePerSample;
 
             reader = new WaveStream[countSample];
             offsetStream = new EffectStream[countSample];
             channelSteam = new WaveChannel32[countSample];
+            PlayingNote = new bool[countSample];
             dicSample = new Dictionary<String, List<int>>();
             dicEffect = new Dictionary<String, List<List<Effect>>>();
 
-            LoadSample();
+            LoadSample(map);
 
             waveOutDevice.Play();
             mixer.Position = long.MaxValue;
             mixer.AutoStop = false;
         }
 
+        public void PlayNote(Sample sample, float noteKey)
+        {
+            int indexChannel = GetFreeSample(sample);
+
+            if (indexChannel != -1)
+            {
+                PlayingNote[dicSample[sample.Name][indexChannel]] = true;
+
+                Effect effect = dicEffect[sample.Name][indexChannel].Find(e => e.Name == "SuperPitch");
+
+                float octave = (int)((noteKey - sample.NoteKey) / 12f);
+                float semitonesF = noteKey - (sample.NoteKey + 12f * octave);
+                float semitones = (int)semitonesF;
+                float cents = (int)((semitonesF - semitones)*100f);
+
+                //AddSlider(0, -100, 100, 1, "Pitch adjust (cents)");
+                //AddSlider(0, -12, 12, 1, "Pitch adjust (semitones)");
+                //AddSlider(0, -12, 12, 1, "Pitch adjust (octaves)");
+                
+                effect.Enabled = true;
+                effect.Sliders[0].Value = cents;
+                effect.Sliders[1].Value = semitones;
+                effect.Sliders[2].Value = octave;
+                effect.Slider();
+
+                channelSteam[dicSample[sample.Name][indexChannel]].Position = 0;
+            }
+        }
+
         public void PlaySample(Sample sample)
+        {
+            int indexChannel = GetFreeSample(sample);
+
+            if (indexChannel != -1)
+            {
+                channelSteam[dicSample[sample.Name][indexChannel]].Position = 0;
+            }
+        }
+
+        private int GetFreeSample(Sample sample)
         {
             for (int i = 0; i < CountInstancePerSample; i++)
             {
@@ -84,10 +125,11 @@ namespace TheGrid.Logic.Sound
 
                 if (channel.CurrentTime == TimeSpan.Zero || channel.CurrentTime >= channel.TotalTime)
                 {
-                    channel.Position = 0;
-                    return;
+                    return i;
                 }
             }
+
+            return -1;
         }
 
 
@@ -118,15 +160,12 @@ namespace TheGrid.Logic.Sound
             }
         }
 
-        private void LoadSample()
+        private void LoadSample(Map map)
         {
-            //Test();
-
-
             try
             {
                 int index = 0;
-                foreach (Channel channel in Context.Map.Channels)
+                foreach (Channel channel in map.Channels)
                 {
                     foreach (Sample sample in channel.ListSample)
                     {
@@ -138,9 +177,9 @@ namespace TheGrid.Logic.Sound
                             WaveStream outStream = new WaveFileReader(sample.FileName);
 
                             //--- Détection de la fréquence moyenne du son
-                            if (i == 0)
+                            if (i == 0 && sample.Frequency == -1f)
                             {
-                                /*
+                                
                                 //=======
                                 IWaveProvider waveFloat = null;
 
@@ -172,9 +211,13 @@ namespace TheGrid.Logic.Sound
                                 //=======
                                 outStream.Position = 0;
 
+                                //---> Fréquence sonore du sample
                                 sample.Frequency = ((AutoTuneWaveProvider)outStream2).Frequency;
-                                //Debug.WriteLine(sample.Name + " == " + ((AutoTuneWaveProvider)outStream2).Frequency.ToString());
-                                */
+                                //---> Note sur un clavier de 88 touches pour la fréqence
+                                sample.NoteKey = (12f * (float)Math.Log(sample.Frequency / 55f) + 13f * (float)Math.Log(2f)) / ((float)Math.Log(2f));
+
+                                Debug.WriteLine(sample.Name + " == " + sample.Frequency.ToString() + " == " + sample.NoteKey.ToString());
+                                
                             }
                             //---
 
@@ -184,7 +227,7 @@ namespace TheGrid.Logic.Sound
                             reader[index] = outStream;
 
                             offsetStream[index] = new EffectStream(CreateEffectChain(sample), reader[index]);
-                            channelSteam[index] = new WaveChannel32(reader[index]);
+                            channelSteam[index] = new WaveChannel32(offsetStream[index]);
 
                             channelSteam[index].Position = channelSteam[index].Length;
                             mixer.AddInputStream(channelSteam[index]);

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using TheGrid.Logic.Controller;
 using Microsoft.Xna.Framework.Input;
 using TheGrid.Common;
+using TheGrid.Logic.Sound;
 
 namespace TheGrid.Model.UI.Note
 {
@@ -56,6 +57,8 @@ namespace TheGrid.Model.UI.Note
                     {
                         int realOctave = GetRealOctave(octave, note);
                         Key key = new Key(this, UI, GetNewTimeSpan(), _noteTable[note], realOctave, octave * 12 + note, countPreviousWhite, GetFrequency(octave, note + 1));
+                        key.ClickKey += new Key.ClickKeyHandler(key_ClickKey);
+
                         _listKey.Add(key);
                         ListUIChildren.Add(key);
 
@@ -71,6 +74,11 @@ namespace TheGrid.Model.UI.Note
             {
                 component.CreationTime = GetNewTimeSpan();
             }
+        }
+
+        void key_ClickKey(Key key, MouseState mouseState, GameTime gameTime)
+        {
+            UI.GameEngine.Sound.PlayNote(_notePannel.Sample, key.NoteKey);
         }
 
         private int GetRealOctave(int octave, int note)

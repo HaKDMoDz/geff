@@ -45,7 +45,6 @@ namespace TheGrid.Common
         public event MouseLeaveHandler MouseLeave;
         #endregion
 
-
         public ClickableText(UILogic uiLogic, TimeSpan creationTime, string spriteFont, string text, Vector2 position, Color colorOut, Color colorIn, Color backColorOut, Color backColorIn, bool isCheckable)
             : base(uiLogic, creationTime)
         {

@@ -57,7 +57,7 @@ namespace TheGrid.Model.UI
             Rectangle recManualSpeed = new Rectangle(Rec.Left, Rec.Top, (int)((float)Rec.Width * Context.Map.SpeedFactor / 2f), Rec.Height);
 
             Render.SpriteBatch.Draw(Render.texEmpty, Rec, VisualStyle.BackColorLight);
-            Render.SpriteBatch.Draw(Render.texEmpty, recManualSpeed, VisualStyle.BackForeColorChecked);
+            Render.SpriteBatch.Draw(Render.texEmpty, recManualSpeed, VisualStyle.BackForeColorMouseOver);
         }
     }
 }

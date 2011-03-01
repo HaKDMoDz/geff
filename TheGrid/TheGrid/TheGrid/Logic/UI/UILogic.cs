@@ -31,6 +31,7 @@ namespace TheGrid.Logic.UI
             ListUIComponent.Add(Ribbon);
 
             NotePanel notePanel = new NotePanel(this, TimeSpan.FromDays(2));
+
             ListUIComponent.Add(notePanel);
         }
 

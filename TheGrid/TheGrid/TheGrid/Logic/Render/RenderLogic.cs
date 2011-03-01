@@ -262,7 +262,7 @@ namespace TheGrid.Logic.Render
             Color colorChannel = new Color(0.35f, 0.35f, 0.35f);
             Cell cellToDraw = cell;
 
-            if (Context.MovedDestinationCell == cell)
+            if (Context.MovedDestinationCell == cell && Context.MovedSourceCell != null)
                 cellToDraw = Context.MovedSourceCell;
 
             if (Context.MovedSourceCell == cell && Context.MovedDestinationCell != null)
@@ -409,7 +409,7 @@ namespace TheGrid.Logic.Render
                     Vector2 durationPosition = new Vector2(HexaWidth * 0.5f - (float)(duration) * (float)texDuration.Width * 0.5f, 0.76f * HexaWidth - texDuration.Height);
                     Vector2 center = new Vector2(0.5f * texDuration.Width, 0.5f * texDuration.Height);
 
-                    for (int i = 0; i <= duration; i++)
+                    for (int i = 0; i < duration; i++)
                     {
                         Vector2 location = durationPosition + new Vector2(i * texDuration.Width, 0f);
                         SpriteBatch.Draw(texDuration, cellLocation + location, null, Color.White, 0f, center, 1f, SpriteEffects.None, 0f);

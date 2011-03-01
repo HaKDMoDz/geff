@@ -14,22 +14,54 @@ namespace TheGrid.Common
 {
     public static class FileSystem
     {
-        public static void SaveLevel(Map map, string fileName)
+        public static void SaveLibraryConfig(Map map)
         {
+            string libraryConfig = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Sound\Library", map.LibraryName, map.LibraryName + "_Config.xml");
+
             XmlSerializer serializer = new XmlSerializer(typeof(Map));
-            XmlWriter writer = new XmlTextWriter(Path.Combine(Path.GetFullPath(Application.ExecutablePath), @"..\Level", fileName + ".xml") , Encoding.UTF8);
+            XmlWriter writer = new XmlTextWriter(libraryConfig, Encoding.UTF8);
             serializer.Serialize(writer, map);
             writer.Close();
         }
 
-        public static Map LoadLevel(GamePlayLogic gamePlay, string fileName)
+        public static void SaveLevel(Map map, string fileName)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Map));
-            XmlReader reader = new XmlTextReader(Path.Combine(Path.GetFullPath(Application.ExecutablePath), @"..\Level", fileName + ".xml"));
+            XmlWriter writer = new XmlTextWriter(Path.Combine(Path.GetFullPath(Application.ExecutablePath), @"..\Level", fileName + ".xml"), Encoding.UTF8);
+            serializer.Serialize(writer, map);
+            writer.Close();
+        }
+
+        public static Map LoadLevelConfig(GamePlayLogic gamePlay, string libraryName)
+        {
+            string fileName = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Sound\Library", libraryName, libraryName + "_Config.xml");
+
+            return LoadLevelFile(gamePlay, fileName, true);
+        }
+
+        public static Map LoadLevel(GamePlayLogic gamePlay, string levelName)
+        {
+            string fileName = Path.Combine(Path.GetFullPath(Application.ExecutablePath), @"..\Level", levelName + ".xml");
+
+            return LoadLevelFile(gamePlay, fileName, false);
+        }
+
+        private static Map LoadLevelFile(GamePlayLogic gamePlay, string fileName, bool config)
+        {
+            if (!File.Exists(fileName))
+                return null;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(Map));
+            XmlReader reader = new XmlTextReader(fileName);
 
             Map map = (Map)serializer.Deserialize(reader);
 
-            gamePlay.LoadLibrary(map.LibraryName, map);
+            reader.Close();
+
+            if (!config)
+                gamePlay.LoadLibrary(map.LibraryName, map);
+            else
+                map.Cells.Clear();
 
             //---
             foreach (Cell cell in map.Cells)
@@ -58,7 +90,7 @@ namespace TheGrid.Common
 
             map.SpeedFactor = map.SpeedFactor;
 
-            if(map.PartitionDuration == TimeSpan.Zero)
+            if (map.PartitionDuration == TimeSpan.Zero)
                 map.PartitionDuration = new TimeSpan(0, 1, 0);
 
             if (map.TimeDuration == 0f)

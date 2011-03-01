@@ -7,7 +7,7 @@
     <color id="primary-1" nr="1" rgb="434343" r="67" g="67" b="70"/>
     <color id="primary-2" nr="2" rgb="515252 " r="81" g="82" b="85"/>
     <color id="primary-3" nr="3" rgb="191919" r="25" g="25" b="25"/>
-	<color id="primary-4" nr="4" rgb="15A615" r="21" g="166" b="21"/>
+	<color id="primary-4" nr="4" rgb="22C600" r="34" g="198" b="0"/>
     <color id="primary-5" nr="5" rgb="CCCCCC" r="204" g="204" b="204"/>
   </colorset>
   <colorset id="complement" title="Complementary Color">
