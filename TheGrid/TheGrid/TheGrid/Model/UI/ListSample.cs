@@ -9,32 +9,44 @@ using TheGrid.Common;
 using TheGrid.Model.Instrument;
 using TheGrid.Logic.Controller;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TheGrid.Model.UI
 {
     public class ListSample : UIComponent
     {
         private Cell _cell;
+        public SpriteFont Font { get; set; }
+        public int ScrollValue { get; set; }
 
-        public ListSample(UILogic uiLogic, TimeSpan creationTime, Cell cell)
+        public ListSample(UILogic uiLogic, TimeSpan creationTime, Cell cell, Channel channel, Rectangle rec, SpriteFont font)
             : base(uiLogic, creationTime)
         {
-            this.Modal = true;
             this.Alive = true;
             this.Visible = true;
             this.ListUIChildren = new List<UIComponent>();
             this._cell = cell;
+            this.Font = font;
 
-            Vector2 sizeLibraryName = Render.FontText.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE);
+            Vector2 sizeLibraryName = font.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE);
 
-            Rec = new Rectangle((int)(Render.ScreenWidth / 2 - sizeLibraryName.X / 2), (int)(0.3f * Render.ScreenHeight), (int)sizeLibraryName.X, (int)(0.6f * Render.ScreenHeight));
+            if(sizeLibraryName.X> rec.Width)
+                sizeLibraryName.X = rec.Width;
+
+            int countMaxItem = (rec.Height - 2 * MARGE) / (int)sizeLibraryName.Y;
+
+            Rec = new Rectangle(
+                rec.X, 
+                rec.Y, 
+                Math.Min((int)sizeLibraryName.X, rec.Width),
+                (int)(countMaxItem * sizeLibraryName.Y));
 
             //--- Charge la liste des samples
             Vector2 vec = new Vector2(Rec.X + Ribbon.MARGE, Rec.Y + Ribbon.MARGE);
 
-            foreach (Sample sample in _cell.Channel.ListSample)
+            foreach (Sample sample in channel.ListSample)
             {
-                ClickableText txtSample = new ClickableText(this.UI, creationTime, "FontText", sample.Name.Substring(0, Math.Min(20, sample.Name.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+                ClickableText txtSample = new ClickableText(this.UI, creationTime, font, sample.Name.Substring(0, Math.Min(20, sample.Name.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
                 txtSample.Rec = new Rectangle(txtSample.Rec.X, txtSample.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtSample.Rec.Height);
                 txtSample.Tag = sample;
                 vec.Y += sizeLibraryName.Y + Ribbon.MARGE;
@@ -44,6 +56,18 @@ namespace TheGrid.Model.UI
                 txtSample.MouseEnter += new ClickableText.MouseEnterHandler(txtSample_MouseEnter);
                 txtSample.MouseLeave += new ClickableText.MouseLeaveHandler(txtSample_MouseLeave);
                 ListUIChildren.Add(txtSample);
+            }
+            //---
+
+            //--- Charge les boutons
+            //TODO améliorer la scroll
+            if (countMaxItem > channel.ListSample.Count)
+            {
+                ClickableImage imgUp = new ClickableImage(UI, GetNewTimeSpan(), "ArrowUp", GetIcon("ArrowUp"), GetIcon("ArrowUp"), new Vector2(Rec.Right - GetIcon("ArrowUp").Width, Rec.Top));
+                ListUIChildren.Add(imgUp);
+
+                ClickableImage imgDown = new ClickableImage(UI, GetNewTimeSpan(), "ArrowDown", GetIcon("ArrowDown"), GetIcon("ArrowDown"), new Vector2(Rec.Right - GetIcon("ArrowUp").Width, Rec.Bottom - GetIcon("ArrowUp").Height));
+                ListUIChildren.Add(imgDown);
             }
             //---
 
@@ -77,17 +101,21 @@ namespace TheGrid.Model.UI
         {
             UI.GameEngine.Sound.Stop(((Sample)clickableText.Tag).Name);
 
-            _cell.InitClip();
-            _cell.Clip.Instrument = new InstrumentSample((Sample)clickableText.Tag);
-            
-            UI.GameEngine.GamePlay.EvaluateMuscianGrid();
+            if (_cell != null)
+            {
+                _cell.InitClip();
+                _cell.Clip.Instrument = new InstrumentSample((Sample)clickableText.Tag);
 
-            this.Alive = false;
+                UI.GameEngine.GamePlay.EvaluateMuscianGrid();
+
+                this.Alive = false;
+            }
         }
 
         public override void Draw(GameTime gameTime)
         {
-            Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, VisualStyle.BackColorModalScreen);
+            if(Modal)
+                Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, VisualStyle.BackColorModalScreen);
 
             Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, VisualStyle.BackColorLight);
 

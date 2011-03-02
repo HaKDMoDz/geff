@@ -30,13 +30,18 @@ namespace TheGrid.Logic.UI
             Ribbon = new Ribbon(this, TimeSpan.FromDays(1));
             ListUIComponent.Add(Ribbon);
 
-            NotePanel notePanel = new NotePanel(this, TimeSpan.FromDays(2));
 
-            ListUIComponent.Add(notePanel);
         }
 
         public void Update(GameTime gameTime)
         {
+            //if (gameTime.TotalGameTime == TimeSpan.Zero)
+            //{
+            //    NotePanel notePanel = new NotePanel(this, TimeSpan.FromDays(2));
+            //    notePanel.Sample = Context.Map.Channels[3].ListSample[1];
+            //    ListUIComponent.Add(notePanel);
+            //}
+
             ListUIComponent.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
 
             for (int i = 0; i < ListUIComponent.Count; i++)
@@ -110,7 +115,8 @@ namespace TheGrid.Logic.UI
 
         public void OpenListSample(GameTime gameTime, Cell cell)
         {
-            ListSample listSample = new ListSample(this, gameTime.TotalGameTime, cell);
+            ListSample listSample = new ListSample(this, gameTime.TotalGameTime, cell, cell.Channel, new Rectangle(GameEngine.GraphicsDevice.Viewport.Width / 2 - 125,(int)(GameEngine.GraphicsDevice.Viewport.Height * 0.25), 250, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.6)), GameEngine.Render.FontText);
+            listSample.Modal = true;
             this.ListUIComponent.Add(listSample);
         }
 

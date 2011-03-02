@@ -31,8 +31,8 @@ namespace TheGrid.Logic.GamePlay
             InitializePlayers();
 
             //LoadMap("Test4");
-            LoadMap("TestColor");
-            //NewMap("Bass");
+            //LoadMap("TestColor");
+            NewMap("Bass");
         }
 
         public void LoadMap(string levelFileName)
@@ -42,8 +42,6 @@ namespace TheGrid.Logic.GamePlay
             EvaluateMuscianGrid();
             GameEngine.UI.Ribbon.Partition.Init();
             Stop();
-
-            ((NotePanel)GameEngine.UI.ListUIComponent.Find(ui => ui is NotePanel)).Sample = Context.Map.Channels[3].ListSample[1];
         }
 
         public void NewMap(string libraryName)
@@ -58,8 +56,6 @@ namespace TheGrid.Logic.GamePlay
             GameEngine.UI.Ribbon.Partition.Init();
 
             LoadLibrary(libraryName, Context.Map);
-
-            ((NotePanel)GameEngine.UI.ListUIComponent.Find(ui => ui is NotePanel)).Sample = Context.Map.Channels[1].ListSample[1];
         }
 
         public void LoadLibrary(string libraryName, Map map)

@@ -45,10 +45,10 @@ namespace TheGrid.Common
         public event MouseLeaveHandler MouseLeave;
         #endregion
 
-        public ClickableText(UILogic uiLogic, TimeSpan creationTime, string spriteFont, string text, Vector2 position, Color colorOut, Color colorIn, Color backColorOut, Color backColorIn, bool isCheckable)
+        public ClickableText(UILogic uiLogic, TimeSpan creationTime, SpriteFont spriteFont, string text, Vector2 position, Color colorOut, Color colorIn, Color backColorOut, Color backColorIn, bool isCheckable)
             : base(uiLogic, creationTime)
         {
-            this._spriteFont = uiLogic.GameEngine.Content.Load<SpriteFont>(@"Font\" + spriteFont);
+            this._spriteFont = spriteFont;// uiLogic.GameEngine.Content.Load<SpriteFont>(@"Font\" + spriteFont);
             this.Text = text;
             this._position = position;
             this.Rec = new Rectangle((int)this.Position.X, (int)this.Position.Y, (int)this._spriteFont.MeasureString(text).X, (int)this._spriteFont.MeasureString(text).Y);

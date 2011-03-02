@@ -66,11 +66,11 @@ namespace TheGrid.Model.UI.Effect
             //CreateChannelMenu();
 
             //--- Bouton Valider
-            ClickableText txtOk = new ClickableText(UI, GetNewTimeSpan(), "FontText", "Ok", new Vector2(Rec.X + _widthChannelChooser * 0.3f, Rec.Y + Rec.Height * 0.8f), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+            ClickableText txtOk = new ClickableText(UI, GetNewTimeSpan(), Render.FontText, "Ok", new Vector2(Rec.X + _widthChannelChooser * 0.3f, Rec.Y + Rec.Height * 0.8f), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
             txtOk.ClickText += new ClickableText.ClickTextHandler(txtOk_ClickText);
             ListUIChildren.Add(txtOk);
 
-            ClickableText txtCancel = new ClickableText(UI, GetNewTimeSpan(), "FontText", "Cancel", new Vector2(Rec.X + _widthChannelChooser * 0.5f, Rec.Y + Rec.Height * 0.8f), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+            ClickableText txtCancel = new ClickableText(UI, GetNewTimeSpan(), Render.FontText, "Cancel", new Vector2(Rec.X + _widthChannelChooser * 0.5f, Rec.Y + Rec.Height * 0.8f), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
             txtCancel.ClickText += new ClickableText.ClickTextHandler(txtCancel_ClickText);
             ListUIChildren.Add(txtCancel);
             //---

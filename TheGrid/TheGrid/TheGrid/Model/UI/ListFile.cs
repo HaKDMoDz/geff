@@ -37,7 +37,7 @@ namespace TheGrid.Model.UI
                 string newFile = Path.GetFileNameWithoutExtension(file);
                 //ListFile.Add(newFile);
 
-                ClickableText txtFile = new ClickableText(this.UI, creationTime, "FontText", newFile.Substring(0, Math.Min(20, newFile.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+                ClickableText txtFile = new ClickableText(this.UI, creationTime,Render.FontText, newFile.Substring(0, Math.Min(20, newFile.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
                 txtFile.Rec = new Rectangle(txtFile.Rec.X, txtFile.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtFile.Rec.Height);
                 txtFile.Tag = file;
 

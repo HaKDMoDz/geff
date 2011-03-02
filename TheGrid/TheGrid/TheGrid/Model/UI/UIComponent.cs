@@ -15,6 +15,7 @@ namespace TheGrid.Model.UI
 {
     public abstract class UIComponent
     {
+        public const int MARGE = 5;
         public UILogic UI { get; set; }
         public RenderLogic Render { get { return UI.GameEngine.Render; } }
         public ControllerLogic Controller { get { return UI.GameEngine.Controller; } }

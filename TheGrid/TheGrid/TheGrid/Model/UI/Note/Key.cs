@@ -41,7 +41,7 @@ namespace TheGrid.Model.UI.Note
             : base(uiLogic, creationTime)
         {
             Alive = true;
-            Visible = true;
+            Visible = false;
 
             _keyboard = keyboard;
             _noteName = noteName;

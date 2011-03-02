@@ -15,7 +15,6 @@ namespace TheGrid.Model.UI
 {
     public class Ribbon : UIComponent
     {
-        public const int MARGE = 5;
         public static int HEIGHT = 0;
 
         public Partition Partition;

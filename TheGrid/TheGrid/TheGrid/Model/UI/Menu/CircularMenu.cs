@@ -32,6 +32,7 @@ namespace TheGrid.Model.UI.Menu
         public BasicEffect EffectSprite { get; set; }
         public bool IsUI { get; set; }
         public double MaxAngle { get; set; }
+        public int LocalSize { get; set; }
 
         public bool IsTurnMode { get; set; }
         public double MinAngleDelta { get; set; }
@@ -141,7 +142,7 @@ namespace TheGrid.Model.UI.Menu
             float localSize = 0f;
             if (IsUI)
             {
-                localSize = 110f;
+                localSize = LocalSize;
                 midHexa = new Vector3(0f, 0f, 0f);
                 angleItem = AngleDelta - ((MaxAngle / (double)Items.Count));
             }
@@ -195,7 +196,7 @@ namespace TheGrid.Model.UI.Menu
             if (IsUI)
             {
                 mousePosition = new Vector3((float)Controller.mouseState.X, (float)Controller.mouseState.Y, 0f);
-                localSize = 110f;
+                localSize = LocalSize;
                 midHexa = new Vector3(0f, 0f, 0f);
                 angleItem = AngleDelta - ((MaxAngle / (double)Items.Count));
             }
@@ -313,7 +314,7 @@ namespace TheGrid.Model.UI.Menu
                 if (IsUI)
                 {
                     nearPoint = Location;
-                    localSize = 110f;
+                    localSize = LocalSize;
                 }
                 else
                 {

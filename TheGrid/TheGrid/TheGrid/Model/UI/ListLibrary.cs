@@ -36,7 +36,7 @@ namespace TheGrid.Model.UI
                 if (libraryName == ".svn")
                     continue;
 
-                ClickableText txtLibrary = new ClickableText(this.UI, creationTime, "FontText", libraryName.Substring(0, Math.Min(20, libraryName.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+                ClickableText txtLibrary = new ClickableText(this.UI, creationTime,Render.FontText, libraryName.Substring(0, Math.Min(20, libraryName.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
                 txtLibrary.Rec = new Rectangle(txtLibrary.Rec.X, txtLibrary.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtLibrary.Rec.Height);
                 txtLibrary.Tag = libraryName;
 

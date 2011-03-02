@@ -152,5 +152,12 @@ namespace TheGrid.Model.UI.Note
                 //prevDelta = (int)MathHelper.Clamp((float)prevDelta, -_listKey[0].Width * countWhite + Rec.Width, 0f);
             }
         }
+
+        public override void Draw(GameTime gameTime)
+        {
+            Render.SpriteBatch.Draw(Render.texEmpty, Rec, VisualStyle.BackColorLight);
+
+            base.Draw(gameTime);
+        }
     }
 }
