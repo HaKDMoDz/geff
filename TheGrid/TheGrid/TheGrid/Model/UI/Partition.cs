@@ -286,12 +286,22 @@ namespace TheGrid.Model.UI
 
                         if (part.Value.Clip != null)
                         {
-                            if (part.Value.Clip.Instrument != null &&
-                                part.Value.Clip.Instrument is InstrumentSample &&
-                                Context.Map.Channels[i].ListMusician[j].Channel == part.Value.Channel)
+                            //if (part.Value.Clip.Instrument != null &&
+                            //    part.Value.Clip.Instrument is InstrumentSample &&
+                            //    Context.Map.Channels[i].ListMusician[j].Channel == part.Value.Channel
                             {
                                 float totalMs = (float)part.Time.Subtract(Context.Time).TotalMilliseconds;
-                                float duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds;
+                                float duration = 0f;
+
+                                Color color = new Color(0f, 0f, 0f, 0.5f);
+
+                                if (part.Value.Clip.Instrument is InstrumentSample)
+                                    duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds;
+                                else
+                                {
+                                    duration = Context.Map.TimeDuration;
+                                    color = new Color(0.2f, 0.2f, 0.2f, 0.5f);
+                                }
 
                                 if (totalMs > -timePartBegin - duration && totalMs < timelineDuration)
                                 {
@@ -324,7 +334,7 @@ namespace TheGrid.Model.UI
                                        (int)(musicianX + 1),
                                        (int)(channelY + heightPerMusician * fj),
                                        (int)(musicianWidth - 1),
-                                       (int)(heightPerMusician - 1)), new Color(0f, 0f, 0f, 0.5f));
+                                       (int)(heightPerMusician - 1)), color);
                                 }
                             }
                         }

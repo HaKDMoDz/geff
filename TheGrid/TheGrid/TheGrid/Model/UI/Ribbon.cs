@@ -85,6 +85,7 @@ namespace TheGrid.Model.UI
         {
             menu = new CircularMenu(UI, GetNewTimeSpan(), null, null, null, false, true);
             menu.Visible = true;
+            menu.LocalSize = 110;
 
             Item itemNew = new Item(menu, "New");
             itemNew.Selected += new Item.SelectedHandler(itemNew_Selected);
@@ -169,8 +170,8 @@ namespace TheGrid.Model.UI
 
         public override void Update(GameTime gameTime)
         {
-            imgPlay.Visible = !Context.IsPlaying;
-            imgPause.Visible = Context.IsPlaying;
+            imgPlay.Visible = Context.StatePlaying != StatePlaying.Playing;
+            imgPause.Visible = Context.StatePlaying == StatePlaying.Playing;
 
             base.Update(gameTime);
         }

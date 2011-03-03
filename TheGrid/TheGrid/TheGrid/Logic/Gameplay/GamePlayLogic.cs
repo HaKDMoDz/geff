@@ -152,7 +152,7 @@ namespace TheGrid.Logic.GamePlay
 
         public void Update(GameTime gameTime)
         {
-            if (Context.IsPlaying || Context.IsNavigatingThroughTime)
+            if (Context.StatePlaying == StatePlaying.Playing || Context.IsNavigatingThroughTime)
             {
                 UpdateMusicians(gameTime);
 
@@ -179,7 +179,7 @@ namespace TheGrid.Logic.GamePlay
                 Context.Time = Context.Time.Add(TimeSpan.FromTicks(gameTime.ElapsedGameTime.Ticks));
 
                 if (Context.Time >= Context.Map.PartitionDuration)
-                    Context.IsPlaying = false;
+                    Context.StatePlaying =  StatePlaying.Waiting;
             }
 
             //--- Met à jour les effets associés au channel
@@ -466,7 +466,8 @@ namespace TheGrid.Logic.GamePlay
                         if (musician != null)
                         {
                             musician.Partition.Add(new TimeValue<Cell>(newMusician.ElapsedTime, newMusician.CurrentCell));
-
+                            musician.ElapsedTime = newMusician.ElapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(Context.Map.TimeDuration * 1f / channel.GetSpeedFromTime(musician.ElapsedTime))));
+                            musician.CurrentCell = newMusician.CurrentCell;
                             musician.NextCell = newMusician.NextCell;
                             musician.CurrentDirection = newMusician.CurrentDirection;
                         }
@@ -513,18 +514,18 @@ namespace TheGrid.Logic.GamePlay
             if (Context.Time >= Context.Map.PartitionDuration)
                 Stop();
 
-            Context.IsPlaying = true;
+            Context.StatePlaying = StatePlaying.Playing;
         }
 
         public void Pause()
         {
-            Context.IsPlaying = false;
+            Context.StatePlaying = StatePlaying.Waiting;
         }
 
         public void Stop()
         {
             lastEffectApplied = TimeSpan.Zero;
-            Context.IsPlaying = false;
+            Context.StatePlaying = StatePlaying.Stoped;
 
             Context.Time = new TimeSpan(0, 0, 0);
 

@@ -115,7 +115,7 @@ namespace TheGrid.Logic.UI
 
         public void OpenListSample(GameTime gameTime, Cell cell)
         {
-            ListSample listSample = new ListSample(this, gameTime.TotalGameTime, cell, cell.Channel, new Rectangle(GameEngine.GraphicsDevice.Viewport.Width / 2 - 125,(int)(GameEngine.GraphicsDevice.Viewport.Height * 0.25), 250, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.6)), GameEngine.Render.FontText);
+            ListSample listSample = new ListSample(this, gameTime.TotalGameTime, cell, cell.Channel, new Rectangle(GameEngine.GraphicsDevice.Viewport.Width / 2 - 125, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.25), 250, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.6)), GameEngine.Render.FontText);
             listSample.Modal = true;
             this.ListUIComponent.Add(listSample);
         }
@@ -124,6 +124,90 @@ namespace TheGrid.Logic.UI
         {
             NotePanel notePanel = new NotePanel(this, gameTime.TotalGameTime);
             this.ListUIComponent.Add(notePanel);
+        }
+
+        public CircularMenu GetCurrentMenu()
+        {
+            List<UIComponent> menus = ListUIComponent.FindAll(ui => ui is CircularMenu);
+            menus.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
+
+            return GetCurrentMenu(menus);
+        }
+
+        public CircularMenu GetCurrentMenu(List<UIComponent> menus)
+        {
+            CircularMenu currentMenu = null;
+            if (menus != null && menus.Count > 0)
+                currentMenu = (CircularMenu)menus[0];
+
+            return currentMenu;
+        }
+
+        public void CloseMenu(GameTime gameTime)
+        {
+            List<UIComponent> menus = ListUIComponent.FindAll(ui => ui is CircularMenu);
+            menus.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
+
+            CircularMenu currentMenu = GetCurrentMenu(menus);
+
+            //--- Ferme le précédent menu
+            if (menus.Count > 0)
+            {
+                foreach (UIComponent menu in menus)
+                {
+                    CircularMenu m = (CircularMenu)menu;
+                    if (m.State == ComponentState.Opened || m.State == ComponentState.Opening || m.State == ComponentState.WaitDependency)
+                    {
+                        m.Close(gameTime);
+
+                        //---> Supprime le menu dépendant du menu courant
+                        GameEngine.UI.ListUIComponent.RemoveAll(ui => ui is CircularMenu && ui.UIDependency != null && ui.UIDependency == m);
+                    }
+                }
+            }
+        }
+
+        public void SwitchMenu(GameTime gameTime)
+        {
+            List<UIComponent> menus = ListUIComponent.FindAll(ui => ui is CircularMenu);
+            menus.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
+
+            CircularMenu currentMenu = GetCurrentMenu(menus);
+
+            //--- Ferme le précédent menu
+            if (menus.Count > 0)
+            {
+                foreach (UIComponent menu in menus)
+                {
+                    ((CircularMenu)menu).Close(gameTime);
+
+                    //---> Supprime le menu dépendant du menu courant
+                    GameEngine.UI.ListUIComponent.RemoveAll(ui => ui is CircularMenu && ui.UIDependency != null && ui.UIDependency == menu);
+                }
+
+                //--- Créé un nouveau menu ayant comme dépendance le menu courant
+                CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
+                newMenu.Alive = true;
+                newMenu.UIDependency = currentMenu;
+                newMenu.State = ComponentState.WaitDependency;
+
+                GameEngine.UI.ListUIComponent.Add(newMenu);
+                //---
+
+                //--- Met la lecture de la partition en pause
+                Context.StatePlaying = StatePlaying.Waiting;
+                //---
+            }
+            else if (currentMenu == null)// || currentMenu.State == ComponentState.Closing || currentMenu.State == ComponentState.Closed)
+            {
+                //---> Ouvre le nouveau menu
+                CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
+                newMenu.Alive = true;
+                GameEngine.UI.ListUIComponent.Add(newMenu);
+
+                newMenu.Open(gameTime);
+            }
+            //---
         }
 
         #region Menu

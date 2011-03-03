@@ -20,7 +20,7 @@ namespace TheGrid.Common
         public static Player CurrentPlayer { get; set; }
         public static List<Player> Players { get; set; }
         public static TimeSpan Time { get; set; }
-        public static Boolean IsPlaying { get; set; }
+        public static StatePlaying StatePlaying { get; set; }
         public static Boolean IsNavigatingThroughTime { get; set; }
         public static float MenuSize = 3f;
         public static float PartitionRatio = 1f;
@@ -30,5 +30,12 @@ namespace TheGrid.Common
     public enum ContextType
     {
         None
+    }
+
+    public enum StatePlaying
+    {
+        Playing,
+        Stoped,
+        Waiting
     }
 }

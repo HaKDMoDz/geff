@@ -9,6 +9,7 @@ using TheGrid.Model;
 using TheGrid.Model.UI.Menu;
 using TheGrid.Logic.Render;
 using TheGrid.Model.Instrument;
+using TheGrid.Model.UI;
 
 namespace TheGrid.Logic.Controller
 {
@@ -219,7 +220,7 @@ namespace TheGrid.Logic.Controller
 
         void keyStopMusician_KeyReleased(Keys key, GameTime gameTime)
         {
-            if (Context.IsPlaying)
+            if (Context.StatePlaying != StatePlaying.Stoped)
                 GameEngine.GamePlay.Stop();
             else
                 GameEngine.GamePlay.Play();
@@ -227,7 +228,7 @@ namespace TheGrid.Logic.Controller
 
         void keyPlayPauseMusician_KeyReleased(Keys key, GameTime gameTime)
         {
-            if (Context.IsPlaying)
+            if (Context.StatePlaying != StatePlaying.Stoped)
                 GameEngine.GamePlay.Pause();
             else
                 GameEngine.GamePlay.Play();
@@ -251,6 +252,8 @@ namespace TheGrid.Logic.Controller
                     Context.MovedDestinationCell = null;
                 else
                     Context.MovedDestinationCell = selectedCell;
+
+                GameEngine.UI.CloseMenu(gameTime);
             }
         }
 
@@ -258,8 +261,6 @@ namespace TheGrid.Logic.Controller
         {
             if (GameEngine.UI.Ribbon.Rec.Contains(mousePositionPoint))
                 return;
-
-            CircularMenu currentMenu = (CircularMenu)GameEngine.UI.ListUIComponent.Find(ui => ui is CircularMenu);
 
             Cell selectedCell = GetSelectedCell(mouseState);
             Context.SelectedCell = selectedCell;
@@ -312,33 +313,7 @@ namespace TheGrid.Logic.Controller
             //---> Ouverture du menu circulaire
             else if (Context.SelectedCell != null)
             {
-                //--- Ferme le précédent menu
-                if (currentMenu != null)
-                {
-                    currentMenu.Close(gameTime);
-
-                    //---> Supprime le menu dépendant du menu courant
-                    GameEngine.UI.ListUIComponent.RemoveAll(ui => ui is CircularMenu && ui.UIDependency != null && ui.UIDependency == currentMenu);
-
-                    //--- Créé un nouveau menu ayant comme dépendance le menu courant
-                    CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
-                    newMenu.Alive = true;
-                    newMenu.UIDependency = currentMenu;
-                    newMenu.State = ComponentState.WaitDependency;
-
-                    GameEngine.UI.ListUIComponent.Add(newMenu);
-                    //---
-                }
-                else if (currentMenu == null || currentMenu.State == ComponentState.Closing || currentMenu.State == ComponentState.Closed)
-                {
-                    //---> Ouvre le nouveau menu
-                    CircularMenu newMenu = GameEngine.UI.CreateMenu(Context.SelectedCell, gameTime.TotalGameTime);
-                    newMenu.Alive = true;
-                    GameEngine.UI.ListUIComponent.Add(newMenu);
-
-                    newMenu.Open(gameTime);
-                }
-                //---
+                GameEngine.UI.SwitchMenu(gameTime);
             }
 
             Context.MovedSourceCell = null;
@@ -366,11 +341,9 @@ namespace TheGrid.Logic.Controller
         {
             prevCameraPosition = Vector3.Backward;
 
-            CircularMenu currentMenu = (CircularMenu)GameEngine.UI.ListUIComponent.Find(ui => ui is CircularMenu);
+            CircularMenu currentMenu = GameEngine.UI.GetCurrentMenu();
 
-            if (currentMenu != null &&
-                (currentMenu.State == ComponentState.Opened || currentMenu.State == ComponentState.Opening) &&
-                Tools.Distance(Point.Zero, distance) < 5f)
+            if (currentMenu != null && Tools.Distance(Point.Zero, distance) < 5f)
             {
                 if (currentMenu.Items.Count(i => i.MouseOver) > 0 && currentMenu.ParentMenu != null)
                 {
