@@ -195,7 +195,8 @@ namespace TheGrid.Logic.UI
                 //---
 
                 //--- Met la lecture de la partition en pause
-                Context.StatePlaying = StatePlaying.Waiting;
+                if(Context.StatePlaying == StatePlaying.Playing)
+                    Context.StatePlaying = StatePlaying.Waiting;
                 //---
             }
             else if (currentMenu == null)// || currentMenu.State == ComponentState.Closing || currentMenu.State == ComponentState.Closed)

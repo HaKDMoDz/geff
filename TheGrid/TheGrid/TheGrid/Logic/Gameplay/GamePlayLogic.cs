@@ -30,7 +30,7 @@ namespace TheGrid.Logic.GamePlay
 
             InitializePlayers();
 
-            //LoadMap("Test4");
+            //LoadMap("Congas");
             //LoadMap("TestColor");
             NewMap("Bass");
         }
@@ -519,7 +519,7 @@ namespace TheGrid.Logic.GamePlay
 
         public void Pause()
         {
-            Context.StatePlaying = StatePlaying.Waiting;
+            Context.StatePlaying = StatePlaying.Stoped;
         }
 
         public void Stop()

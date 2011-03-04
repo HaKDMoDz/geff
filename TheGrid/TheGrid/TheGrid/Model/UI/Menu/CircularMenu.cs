@@ -88,7 +88,7 @@ namespace TheGrid.Model.UI.Menu
         {
             foreach (Item item in Items)
             {
-                if (item.MouseOver)
+                if (item.MouseOver && State == ComponentState.Opened)
                 {
                     MouseHandled = true;
                     item.OnSelected(gameTime);

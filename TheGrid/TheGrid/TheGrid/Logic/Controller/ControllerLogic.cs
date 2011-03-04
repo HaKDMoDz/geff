@@ -354,6 +354,9 @@ namespace TheGrid.Logic.Controller
                     GameEngine.UI.ListUIComponent.Add(currentMenu.ParentMenu);
                 }
                 currentMenu.Close(gameTime);
+                
+                if(Context.StatePlaying == StatePlaying.Waiting)
+                    Context.StatePlaying = StatePlaying.Playing;
             }
         }
 
