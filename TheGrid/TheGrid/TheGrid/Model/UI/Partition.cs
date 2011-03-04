@@ -84,7 +84,7 @@ namespace TheGrid.Model.UI
                     if (Context.Time > Context.Map.PartitionDuration)
                         Context.Time = Context.Map.PartitionDuration;
 
-                    GamePlay.UpdateMusiciansToTime();
+                    GamePlay.UpdateMusiciansToTime(true);
                 }
 
                 if (mouseState.X > recPartition.Right)

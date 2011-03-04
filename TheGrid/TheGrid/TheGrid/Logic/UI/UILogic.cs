@@ -115,7 +115,7 @@ namespace TheGrid.Logic.UI
 
         public void OpenListSample(GameTime gameTime, Cell cell)
         {
-            ListSample listSample = new ListSample(this, gameTime.TotalGameTime, cell, cell.Channel, new Rectangle(GameEngine.GraphicsDevice.Viewport.Width / 2 - 125, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.25), 250, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.6)), GameEngine.Render.FontText);
+            ListSample listSample = new ListSample(this, gameTime.TotalGameTime, cell, cell.Channel, new Rectangle(GameEngine.GraphicsDevice.Viewport.Width / 2 - 125, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.25), 250, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.6)), GameEngine.Render.FontText, false);
             listSample.Modal = true;
             this.ListUIComponent.Add(listSample);
         }
@@ -124,6 +124,10 @@ namespace TheGrid.Logic.UI
         {
             NotePanel notePanel = new NotePanel(this, gameTime.TotalGameTime);
             this.ListUIComponent.Add(notePanel);
+
+            //CircularMenu currentMenu = GetCurrentMenu();
+            //if (currentMenu != null)
+            //    currentMenu.Close(gameTime);
         }
 
         public CircularMenu GetCurrentMenu()
@@ -207,6 +211,11 @@ namespace TheGrid.Logic.UI
                 GameEngine.UI.ListUIComponent.Add(newMenu);
 
                 newMenu.Open(gameTime);
+
+                //--- Met la lecture de la partition en pause
+                if (Context.StatePlaying == StatePlaying.Playing)
+                    Context.StatePlaying = StatePlaying.Waiting;
+                //---
             }
             //---
         }
@@ -365,9 +374,6 @@ namespace TheGrid.Logic.UI
         void itemNote_Selected(Item item, GameTime gameTime)
         {
             item.ParentMenu.Close(gameTime);
-
-            item.ParentMenu.Alive = false;
-
             OpenKeyboard(gameTime, item.ParentMenu.ParentCell);
         }
 
@@ -633,6 +639,9 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.ParentCell.Channel = null;
 
             GameEngine.GamePlay.EvaluateMuscianGrid();
+
+            if (Context.StatePlaying == StatePlaying.Waiting)
+                Context.StatePlaying = StatePlaying.Playing;
         }
         #endregion
     }

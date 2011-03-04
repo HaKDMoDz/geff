@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using TheGrid.Logic.UI;
 using TheGrid.Model.UI;
 using TheGrid.Logic.Controller;
+using TheGrid.Model;
 
 namespace TheGrid.Common
 {

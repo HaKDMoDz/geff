@@ -8,6 +8,7 @@ using TheGrid.Logic.Controller;
 using Microsoft.Xna.Framework.Input;
 using TheGrid.Common;
 using TheGrid.Logic.Sound;
+using TheGrid.Model.Instrument;
 
 namespace TheGrid.Model.UI.Note
 {
@@ -79,7 +80,30 @@ namespace TheGrid.Model.UI.Note
 
         void key_ClickKey(Key key, MouseState mouseState, GameTime gameTime)
         {
-            UI.GameEngine.Sound.PlayNote(_notePannel.Sample, key.NoteKey);
+            if(_notePannel.Sample != null)
+                UI.GameEngine.Sound.PlayNote(_notePannel.Sample, key.NoteKey);
+
+            //--- Création de l'instrument note
+            if (_notePannel.CurrentCell != null)
+            {
+                _notePannel.CurrentCell.InitClip();
+                _notePannel.CurrentCell.Clip.Instrument = new InstrumentNote(key.Frequency, key.NoteName);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    if (_notePannel.CurrentCell.Clip.Directions[i])
+                    {
+                        _notePannel.CurrentDirection = i;
+                        break;
+                    }
+                }
+
+                if (_notePannel.CurrentDirection != -1)
+                {
+                    _notePannel.CurrentCell = _notePannel.CurrentCell.Neighbourghs[_notePannel.CurrentDirection];
+                }
+            }
+            //---
         }
 
         private int GetRealOctave(int octave, int note)

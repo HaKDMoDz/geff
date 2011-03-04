@@ -467,19 +467,22 @@ namespace TheGrid.Logic.GamePlay
                         {
                             musician.Partition.Add(new TimeValue<Cell>(newMusician.ElapsedTime, newMusician.CurrentCell));
                             musician.ElapsedTime = newMusician.ElapsedTime.Add(new TimeSpan(0, 0, 0, 0, (int)(Context.Map.TimeDuration * 1f / channel.GetSpeedFromTime(musician.ElapsedTime))));
-                            musician.CurrentCell = newMusician.CurrentCell;
+                            musician.CurrentCell = null;
                             musician.NextCell = newMusician.NextCell;
                             musician.CurrentDirection = newMusician.CurrentDirection;
+                            musician.IsPlaying = true;
                         }
                     }
                     //---
                 }
             }
+
+            GameEngine.GamePlay.UpdateMusiciansToTime(false);
         }
 
-        public void UpdateMusiciansToTime()
+        public void UpdateMusiciansToTime(bool isNavigatingThroughTime)
         {
-            Context.IsNavigatingThroughTime = true;
+            Context.IsNavigatingThroughTime = isNavigatingThroughTime;
 
             foreach (Channel channel in Context.Map.Channels)
             {
@@ -553,7 +556,7 @@ namespace TheGrid.Logic.GamePlay
                 TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.Map.SpeedFactor));
                 Context.Time = Context.Time.Subtract(time);
 
-                GameEngine.GamePlay.UpdateMusiciansToTime();
+                GameEngine.GamePlay.UpdateMusiciansToTime(true);
             }
         }
 
@@ -565,7 +568,7 @@ namespace TheGrid.Logic.GamePlay
                 TimeSpan time = new TimeSpan(0, 0, 0, 0, (int)(ratio * 2000 * Context.Map.SpeedFactor));
                 Context.Time = Context.Time.Add(time);
 
-                GameEngine.GamePlay.UpdateMusiciansToTime();
+                GameEngine.GamePlay.UpdateMusiciansToTime(true);
             }
         }
 

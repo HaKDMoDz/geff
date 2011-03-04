@@ -10,7 +10,22 @@ namespace TheGrid.Common
     public static class Context
     {
         public static ContextType ContextType { get; set; }
-        public static Cell SelectedCell { get; set; }
+        private static Cell _selectedCell;
+        public static Cell SelectedCell 
+        {
+            get
+            {
+                return _selectedCell;
+            }
+            set
+            {
+                Cell oldSelectedCell = _selectedCell;
+                _selectedCell = value;
+
+                if (SelectedCellChanged != null)
+                    SelectedCellChanged(oldSelectedCell, value);
+            }
+        }
         public static Cell CopiedCell { get; set; }
         public static Cell MovedSourceCell { get; set; }
         public static Cell MovedDestinationCell { get; set; }
@@ -25,6 +40,9 @@ namespace TheGrid.Common
         public static float MenuSize = 3f;
         public static float PartitionRatio = 1f;
         public static GameEngine GameEngine { get; set; }
+
+        public delegate void SelectedCellChangedHandler(Cell oldSelectedCell, Cell newSelectedCell);
+        public static event SelectedCellChangedHandler SelectedCellChanged;
     }
 
     public enum ContextType

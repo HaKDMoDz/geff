@@ -60,6 +60,7 @@ namespace TheGrid.Logic.Render
 
         public Texture2D texHexa2D = null;
         public Texture2D texHexa2DClip = null;
+        public Texture2D texHexa2DSelected = null;
         public Texture2D texMusician = null;
         public Texture2D texEmpty = null;
         public Texture2D texEmptyGradient = null;
@@ -80,6 +81,7 @@ namespace TheGrid.Logic.Render
         public Texture2D texSoloMusician = null;
         public Texture2D texMuteMusician = null;
         public Texture2D texTimeMarker = null;
+        public Texture2D texInstrumentNote = null;
 
         Dictionary<String, Microsoft.Xna.Framework.Graphics.Model> meshModels;
 
@@ -111,6 +113,7 @@ namespace TheGrid.Logic.Render
 
             texHexa2D = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D");
             texHexa2DClip = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D_Clip");
+            texHexa2DSelected = GameEngine.Content.Load<Texture2D>(@"Texture\Hexa_2D_Selected");
             texMusician = GameEngine.Content.Load<Texture2D>(@"Texture\Musician");
             textDirection = GameEngine.Content.Load<Texture2D>(@"Texture\Direction");
             texRepeater = GameEngine.Content.Load<Texture2D>(@"Texture\Repeater");
@@ -131,6 +134,7 @@ namespace TheGrid.Logic.Render
             texSoloMusician = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\SoloMusician");
             texMuteMusician = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\MuteMusician");
             texTimeMarker = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\TimeMarker");
+            texInstrumentNote = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Note");
         }
 
         private void Initilize3DModel()
@@ -237,8 +241,15 @@ namespace TheGrid.Logic.Render
 
             foreach (Cell cell in Context.Map.Cells)
             {
-                DrawCell(cell, gameTime);
+                if (!(cell == Context.CopiedCell || cell == Context.SelectedCell))
+                    DrawCell(cell, gameTime);
             }
+
+            if (Context.CopiedCell != null)
+                DrawCell(Context.CopiedCell, gameTime);
+
+            if (Context.SelectedCell != null)
+                DrawCell(Context.SelectedCell, gameTime);
             //---
 
             //--- Affiche les musiciens
@@ -301,9 +312,18 @@ namespace TheGrid.Logic.Render
                 colorChannel = new Color(r, g, b);
             //---
 
+            if (cell == Context.CopiedCell || cell == Context.SelectedCell)
+            {
+                Color colorSelection = Color.White;
+
+                if (cell == Context.CopiedCell)
+                    colorSelection = VisualStyle.BackForeColorMouseOver;
+
+                SpriteBatch.Draw(texHexa2DSelected, cellLocation - new Vector2(texHexa2DSelected.Width - texHexa2D.Width, texHexa2DSelected.Height - texHexa2D.Height) / 2, colorSelection);
+            }
+
             if (cellToDraw.Clip == null)
             {
-                //texHexa2D
                 SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
             }
             else
@@ -327,6 +347,10 @@ namespace TheGrid.Logic.Render
                     {
                         texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cellToDraw.Channel.Name);
                     }
+                    else if (cellToDraw.Clip.Instrument is InstrumentNote)
+                    {
+                        texInstrument = texInstrumentNote;
+                    }
 
                     if (cellToDraw.Clip.Instrument is InstrumentEffect)
                     {
@@ -345,6 +369,14 @@ namespace TheGrid.Logic.Render
 
                         SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2) - new Vector2(0f, midCellSize.Y * 0.3f), null, Color.White);
                         SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize - deltaSampleName, Color.White);
+                    }
+                    else if (cellToDraw.Clip.Instrument is InstrumentNote)
+                    {
+                        string noteName = ((InstrumentNote)cellToDraw.Clip.Instrument).NoteName;
+                        Vector2 deltaSampleName = new Vector2(FontMap.MeasureString(noteName).X / 2, FontMap.MeasureString(noteName).Y / 5);
+
+                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2) - new Vector2(0f, midCellSize.Y * 0.3f), null, Color.White);
+                        SpriteBatch.DrawString(FontMap, noteName, cellLocation + midCellSize - deltaSampleName, Color.White);
                     }
                     else
                     {

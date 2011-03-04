@@ -18,8 +18,12 @@ namespace TheGrid.Model.UI
         private Cell _cell;
         public SpriteFont Font { get; set; }
         public int ScrollValue { get; set; }
+        public bool IsCheckable { get; set; }
 
-        public ListSample(UILogic uiLogic, TimeSpan creationTime, Cell cell, Channel channel, Rectangle rec, SpriteFont font)
+        public delegate void SelectedSampleChangedHandler(Sample sample);
+        public event SelectedSampleChangedHandler SelectedSampleChanged;
+
+        public ListSample(UILogic uiLogic, TimeSpan creationTime, Cell cell, Channel channel, Rectangle rec, SpriteFont font, bool checkable)
             : base(uiLogic, creationTime)
         {
             this.Alive = true;
@@ -27,6 +31,7 @@ namespace TheGrid.Model.UI
             this.ListUIChildren = new List<UIComponent>();
             this._cell = cell;
             this.Font = font;
+            this.IsCheckable = checkable;
 
             Vector2 sizeLibraryName = font.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE);
 
@@ -46,7 +51,7 @@ namespace TheGrid.Model.UI
 
             foreach (Sample sample in channel.ListSample)
             {
-                ClickableText txtSample = new ClickableText(this.UI, creationTime, font, sample.Name.Substring(0, Math.Min(20, sample.Name.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+                ClickableText txtSample = new ClickableText(this.UI, creationTime, font, sample.Name.Substring(0, Math.Min(20, sample.Name.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, checkable);
                 txtSample.Rec = new Rectangle(txtSample.Rec.X, txtSample.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtSample.Rec.Height);
                 txtSample.Tag = sample;
                 vec.Y += sizeLibraryName.Y + Ribbon.MARGE;
@@ -100,6 +105,22 @@ namespace TheGrid.Model.UI
         void txtSample_ClickText(ClickableText clickableText, Microsoft.Xna.Framework.Input.MouseState mouseState, GameTime gameTime)
         {
             UI.GameEngine.Sound.Stop(((Sample)clickableText.Tag).Name);
+
+            if (IsCheckable)
+            {
+                bool checkItem = clickableText.IsChecked;
+
+                foreach (UIComponent component in ListUIChildren)
+                {
+                    if(component is ClickableText)
+                        ((ClickableText)component).IsChecked = false;
+                }
+
+                clickableText.IsChecked = checkItem;
+
+                if (SelectedSampleChanged != null)
+                    SelectedSampleChanged((Sample)clickableText.Tag);
+            }
 
             if (_cell != null)
             {

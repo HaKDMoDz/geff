@@ -14,9 +14,9 @@ namespace TheGrid.Model.UI.Note
     public class Key : UIComponent
     {
         private Keyboard _keyboard;
-        private float _frequency;
+        public float Frequency;
         private string _name;
-        private string _noteName;
+        public string NoteName;
         private int _octave;
         public int NoteKey;
         private Texture2D _texKey;
@@ -44,11 +44,11 @@ namespace TheGrid.Model.UI.Note
             Visible = true;
 
             _keyboard = keyboard;
-            _noteName = noteName;
+            NoteName = noteName;
             _name = noteName + octave.ToString();
             _octave = octave;
             NoteKey = index;
-            _frequency = frequency;
+            Frequency = frequency;
             if (noteName.EndsWith("#"))
                 White = false;
 

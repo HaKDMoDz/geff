@@ -17,11 +17,15 @@ namespace TheGrid.Model.UI.Note
         public float leftPartWidth = 0f;
         public Sample Sample { get; set; }
 
+        public Cell CurrentCell { get; set; }
+        public int CurrentDirection = -1;
+
         public NotePanel(UILogic uiLogic, TimeSpan creationTime)
             : base(uiLogic, creationTime)
         {
             Alive = true;
             Visible = true;
+            CurrentCell = Context.SelectedCell;
 
             leftPartWidth = 350f;// 0.3f * UI.GameEngine.Render.ScreenWidth;
             Rec = new Rectangle(0, (int)(0.4f * UI.GameEngine.Render.ScreenHeight), (int)UI.GameEngine.Render.ScreenWidth, (int)(0.6f * UI.GameEngine.Render.ScreenHeight));
@@ -57,8 +61,9 @@ namespace TheGrid.Model.UI.Note
             //---
 
             //--- Liste des samples
-            ListSample listSample = new ListSample(UI, GetNewTimeSpan(), null, Context.Map.Channels[1], new Rectangle(MARGE+(int)leftPartWidth/2, Rec.Top + Rec.Height/2, (int)leftPartWidth/2, Rec.Height/2), Render.FontTextSmall);
+            ListSample listSample = new ListSample(UI, GetNewTimeSpan(), null, Context.Map.Channels[1], new Rectangle(MARGE+(int)leftPartWidth/2, Rec.Top + Rec.Height/2, (int)leftPartWidth/2, Rec.Height/2), Render.FontTextSmall, true);
             listSample.Rec = new Rectangle();
+            listSample.SelectedSampleChanged += new ListSample.SelectedSampleChangedHandler(listSample_SelectedSampleChanged);
             ListUIChildren.Add(listSample);
             //---
 
@@ -66,6 +71,18 @@ namespace TheGrid.Model.UI.Note
             KeyManager keyClose = AddKey(Keys.Escape);
             keyClose.KeyReleased += new KeyManager.KeyReleasedHandler(keyClose_KeyReleased);
             //---
+
+            Context.SelectedCellChanged += new Context.SelectedCellChangedHandler(Context_SelectedCellChanged);
+        }
+
+        void listSample_SelectedSampleChanged(Sample sample)
+        {
+            Sample = sample;
+        }
+
+        void Context_SelectedCellChanged(Cell oldSelectedCell, Cell newSelectedCell)
+        {
+            CurrentCell = Context.SelectedCell;
         }
 
         void txtCapture_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
@@ -127,7 +144,6 @@ namespace TheGrid.Model.UI.Note
 
         void itemDuration_Selected(Item item, GameTime gameTime)
         {
-            throw new NotImplementedException();
         }
 
         private void CreateChannelMenu()

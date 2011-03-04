@@ -274,6 +274,7 @@ namespace TheGrid.Logic.Controller
                 Context.MovedSourceCell.Channel = null;
 
                 GameEngine.GamePlay.EvaluateMuscianGrid();
+                GameEngine.GamePlay.UpdateMusiciansToTime(false);
             }
             //---> Accès direct à l'instrument (SHIFT+clique gauche)
             else if ((keyBoardState.IsKeyDown(Keys.LeftShift) && selectedCell != null))
@@ -353,10 +354,13 @@ namespace TheGrid.Logic.Controller
                     currentMenu.ParentMenu.Visible = false;
                     GameEngine.UI.ListUIComponent.Add(currentMenu.ParentMenu);
                 }
+                else
+                {
+                    if (Context.StatePlaying == StatePlaying.Waiting)
+                        Context.StatePlaying = StatePlaying.Playing;
+                }
+
                 currentMenu.Close(gameTime);
-                
-                if(Context.StatePlaying == StatePlaying.Waiting)
-                    Context.StatePlaying = StatePlaying.Playing;
             }
         }
 
