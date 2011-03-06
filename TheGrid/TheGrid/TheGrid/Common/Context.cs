@@ -27,6 +27,7 @@ namespace TheGrid.Common
             }
         }
         public static Cell CopiedCell { get; set; }
+        public static Cell NextCellNote { get; set; }
         public static Cell MovedSourceCell { get; set; }
         public static Cell MovedDestinationCell { get; set; }
 

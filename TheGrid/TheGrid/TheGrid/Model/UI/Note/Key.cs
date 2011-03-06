@@ -149,13 +149,13 @@ namespace TheGrid.Model.UI.Note
             {
                 uint[] pixelData = new uint[1];
 
-                //Vector3 mousePosition = new Vector3((float)UI.GameEngine.Controller.mouseState.X - (float)UI.GameEngine.GraphicsDevice.Viewport.Width / 2f, (float)UI.GameEngine.Controller.mouseState.Y - (float)GameEngine.GraphicsDevice.Viewport.Height / 2f, 0f);
-                //Vector3 mousePosition = new Vector3((float)UI.GameEngine.Controller.mouseState.X - (float)UI.GameEngine.GraphicsDevice.Viewport.Width / 2f, (float)UI.GameEngine.Controller.mouseState.Y - (float)GameEngine.GraphicsDevice.Viewport.Height / 2f, 0f);
-                //Matrix mtx = Matrix.CreateScale(-GameEngine.Render.CameraPosition.Z) * Matrix.CreateTranslation(UI.GameEngine.Render.CameraPosition.X, UI.GameEngine.Render.CameraPosition.Y, UI.GameEngine.Render.CameraPosition.Z);
-                //mousePosition = Vector3.Transform(mousePosition, mtx);
+                float ratio = (float)_texKey.Height / (float)rec.Height;
 
-                Point mousePosition = new Point(Controller.mousePositionPoint.X - _keyboard.Delta-Rec.Left, Controller.mousePositionPoint.Y-Rec.Top);
-
+                Point mousePosition = new Point(
+                    (int)((float)(Controller.mousePositionPoint.X - _keyboard.Delta-Rec.Left) * ratio)
+                    
+                    , (int)((float)(Controller.mousePositionPoint.Y-Rec.Top) * ratio));
+                
                 if (_texKey.Bounds.Contains(mousePosition))
                 {
                     _texKey.GetData<uint>(0, new Rectangle(mousePosition.X, mousePosition.Y, 1, 1), pixelData, 0, 1);

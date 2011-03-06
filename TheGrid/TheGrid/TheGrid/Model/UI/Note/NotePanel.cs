@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using TheGrid.Common;
 using TheGrid.Logic.Controller;
 using Microsoft.Xna.Framework.Input;
+using TheGrid.Model.Instrument;
 
 namespace TheGrid.Model.UI.Note
 {
@@ -17,7 +18,7 @@ namespace TheGrid.Model.UI.Note
         public float leftPartWidth = 0f;
         public Sample Sample { get; set; }
 
-        public Cell CurrentCell { get; set; }
+        //public Cell CurrentCell { get; set; }
         public int CurrentDirection = -1;
 
         public NotePanel(UILogic uiLogic, TimeSpan creationTime)
@@ -25,10 +26,10 @@ namespace TheGrid.Model.UI.Note
         {
             Alive = true;
             Visible = true;
-            CurrentCell = Context.SelectedCell;
+            Context.NextCellNote = Context.SelectedCell;
 
             leftPartWidth = 350f;// 0.3f * UI.GameEngine.Render.ScreenWidth;
-            Rec = new Rectangle(0, (int)(0.4f * UI.GameEngine.Render.ScreenHeight), (int)UI.GameEngine.Render.ScreenWidth, (int)(0.6f * UI.GameEngine.Render.ScreenHeight));
+            Rec = new Rectangle(0, (int)(0.6f * UI.GameEngine.Render.ScreenHeight), (int)UI.GameEngine.Render.ScreenWidth, (int)(0.4f * UI.GameEngine.Render.ScreenHeight));
 
             Keyboard keyboard = new Keyboard(this, UI, GetNewTimeSpan());
             ListUIChildren = new List<UIComponent>();
@@ -82,15 +83,21 @@ namespace TheGrid.Model.UI.Note
 
         void Context_SelectedCellChanged(Cell oldSelectedCell, Cell newSelectedCell)
         {
-            CurrentCell = Context.SelectedCell;
+            if(this.Alive)
+                Context.NextCellNote = Context.SelectedCell;
         }
 
         void txtCapture_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
         {
+            AddCapture(Sample);
         }
 
         void txtSilence_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
         {
+            if (Context.NextCellNote != null)
+            {
+                GoToNextCell();
+            }
         }
 
         void txtStartCell_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
@@ -100,6 +107,50 @@ namespace TheGrid.Model.UI.Note
         void keyClose_KeyReleased(Keys key, GameTime gameTime)
         {
             this.Alive = false;
+            Context.NextCellNote = null;
+        }
+
+        public void AddNote(Key key)
+        {
+            if (Context.NextCellNote != null)
+            {
+                Context.NextCellNote.InitClip();
+                Context.NextCellNote.Clip.Instrument = new InstrumentNote(key.Frequency, key.NoteName);
+
+                GoToNextCell();
+            }
+        }
+
+        public void AddCapture(Sample sample)
+        {
+            if (Context.NextCellNote != null)
+            {
+                Context.NextCellNote.InitClip();
+                Context.NextCellNote.Clip.Instrument = new InstrumentCapture(sample);
+                Context.NextCellNote.Channel = sample.Channel;
+
+                GoToNextCell();
+            }
+        }
+
+        private void GoToNextCell()
+        {
+            if (Context.NextCellNote.Clip != null)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    if (Context.NextCellNote.Clip.Directions[i])
+                    {
+                        CurrentDirection = i;
+                        break;
+                    }
+                }
+            }
+
+            if (CurrentDirection != -1)
+            {
+                Context.NextCellNote = Context.NextCellNote.Neighbourghs[CurrentDirection];
+            }
         }
 
         private void CreateNoteDurationMenu()

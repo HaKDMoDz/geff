@@ -54,6 +54,14 @@ namespace TheGrid.Logic.UI
                 ListUIComponent[i].UpdateUIDependency(gameTime);
             }
 
+            //for (int i = 0; i < ListUIComponent.Count; i++)
+            //{
+            //    if (!ListUIComponent[i].Alive)
+            //    {
+            //        ListUIComponent[i]
+            //    }
+            //}
+
             ListUIComponent.RemoveAll(ui => !ui.Alive);
         }
 

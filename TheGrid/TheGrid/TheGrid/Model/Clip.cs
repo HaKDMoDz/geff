@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace TheGrid.Model
 {
-    [Serializable, XmlInclude(typeof(InstrumentStart)), XmlInclude(typeof(InstrumentStop)), XmlInclude(typeof(InstrumentEffect)), XmlInclude(typeof(InstrumentSample)), XmlInclude(typeof(InstrumentNote))]
+    [Serializable, XmlInclude(typeof(InstrumentStart)), XmlInclude(typeof(InstrumentStop)), XmlInclude(typeof(InstrumentEffect)), XmlInclude(typeof(InstrumentSample)), XmlInclude(typeof(InstrumentNote)), XmlInclude(typeof(InstrumentCapture))]
     public class Clip
     {
         public InstrumentBase Instrument { get; set; }

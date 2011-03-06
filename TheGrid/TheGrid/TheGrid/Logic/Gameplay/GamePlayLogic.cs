@@ -253,6 +253,15 @@ namespace TheGrid.Logic.GamePlay
                                         }
                                     }
 
+                                    //---> Si la prochaine cellule est une InstrumentCapture, le sample est le sample courant du musicien
+                                    if (musician.CurrentCell.Channel != null && musician.CurrentCell.Channel == musician.Channel)
+                                    {
+                                        if (musician.CurrentCell.Clip.Instrument is InstrumentCapture)
+                                        {
+                                            musician.CurrentSample = ((InstrumentCapture)musician.CurrentCell.Clip.Instrument).Sample;
+                                        }
+                                    }
+
                                     //---> Si la prochaine cellule est une InstrumentNote, la note est jouée selon le sample courant du musicien
                                     if (musician.CurrentCell.Clip.Instrument is InstrumentNote)
                                     {

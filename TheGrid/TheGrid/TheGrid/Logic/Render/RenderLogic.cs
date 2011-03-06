@@ -241,7 +241,7 @@ namespace TheGrid.Logic.Render
 
             foreach (Cell cell in Context.Map.Cells)
             {
-                if (!(cell == Context.CopiedCell || cell == Context.SelectedCell))
+                if (!(cell == Context.CopiedCell || cell == Context.SelectedCell || cell == Context.NextCellNote))
                     DrawCell(cell, gameTime);
             }
 
@@ -250,6 +250,9 @@ namespace TheGrid.Logic.Render
 
             if (Context.SelectedCell != null)
                 DrawCell(Context.SelectedCell, gameTime);
+
+            if (Context.NextCellNote != null)
+                DrawCell(Context.NextCellNote, gameTime);
             //---
 
             //--- Affiche les musiciens
@@ -312,12 +315,14 @@ namespace TheGrid.Logic.Render
                 colorChannel = new Color(r, g, b);
             //---
 
-            if (cell == Context.CopiedCell || cell == Context.SelectedCell)
+            if (cell == Context.CopiedCell || cell == Context.SelectedCell || cell == Context.NextCellNote)
             {
                 Color colorSelection = Color.White;
 
                 if (cell == Context.CopiedCell)
                     colorSelection = VisualStyle.BackForeColorMouseOver;
+                if (cell == Context.NextCellNote)
+                    colorSelection = VisualStyle.BackForeColorChecked;
 
                 SpriteBatch.Draw(texHexa2DSelected, cellLocation - new Vector2(texHexa2DSelected.Width - texHexa2D.Width, texHexa2DSelected.Height - texHexa2D.Height) / 2, colorSelection);
             }
@@ -344,6 +349,10 @@ namespace TheGrid.Logic.Render
                         texInstrument = texMusicianStop;
                     }
                     else if (cellToDraw.Clip.Instrument is InstrumentSample)
+                    {
+                        texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cellToDraw.Channel.Name);
+                    }
+                    else if (cellToDraw.Clip.Instrument is InstrumentCapture)
                     {
                         texInstrument = GameEngine.Content.Load<Texture2D>(@"Texture\Icon\Instrument" + cellToDraw.Channel.Name);
                     }

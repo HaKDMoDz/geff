@@ -84,25 +84,7 @@ namespace TheGrid.Model.UI.Note
                 UI.GameEngine.Sound.PlayNote(_notePannel.Sample, key.NoteKey);
 
             //--- Création de l'instrument note
-            if (_notePannel.CurrentCell != null)
-            {
-                _notePannel.CurrentCell.InitClip();
-                _notePannel.CurrentCell.Clip.Instrument = new InstrumentNote(key.Frequency, key.NoteName);
-
-                for (int i = 0; i < 6; i++)
-                {
-                    if (_notePannel.CurrentCell.Clip.Directions[i])
-                    {
-                        _notePannel.CurrentDirection = i;
-                        break;
-                    }
-                }
-
-                if (_notePannel.CurrentDirection != -1)
-                {
-                    _notePannel.CurrentCell = _notePannel.CurrentCell.Neighbourghs[_notePannel.CurrentDirection];
-                }
-            }
+            _notePannel.AddNote(key);
             //---
         }
 
@@ -123,54 +105,63 @@ namespace TheGrid.Model.UI.Note
 
         void mouseRightButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            MouseHandled = true;
-
-            if (prevDelta > int.MinValue)
+            if (Rec.Contains(Controller.mousePositionPoint))
             {
-                prevDelta = int.MinValue;
+                MouseHandled = true;
+
+                if (prevDelta > int.MinValue)
+                {
+                    prevDelta = int.MinValue;
+                }
             }
         }
 
         void mouseRightButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
         {
-            MouseHandled = true;
-
-            if (Rec.Contains(UI.GameEngine.Controller.mousePositionPoint))
+            if (Rec.Contains(Controller.mousePositionPoint))
             {
-                prevDelta = Delta;
+                MouseHandled = true;
+
+                if (Rec.Contains(UI.GameEngine.Controller.mousePositionPoint))
+                {
+                    prevDelta = Delta;
+                }
             }
         }
 
         void mouseRightButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            MouseHandled = true;
-
-            if (prevDelta > int.MinValue)
+            if(Rec.Contains(Controller.mousePositionPoint))
             {
-                Delta = prevDelta - distance.X;
+                MouseHandled = true;
 
-                Delta = (int)MathHelper.Clamp((float)Delta, -_listKey[0].Width * countWhite + Rec.Width, 0f);
-
-                if (mouseState.X > Rec.Right)
+                if (prevDelta > int.MinValue)
                 {
-                    Mouse.SetPosition(Rec.Left, mouseState.Y);
+                    Delta = prevDelta - distance.X;
 
-                    prevDelta += Rec.Width;
-                }
-                else if (mouseState.X < Rec.Left)
-                {
-                    Mouse.SetPosition(Rec.Right, mouseState.Y);
+                    Delta = (int)MathHelper.Clamp((float)Delta, -_listKey[0].Width * countWhite + Rec.Width, 0f);
 
-                    prevDelta -= Rec.Width;
-                }
+                    if (mouseState.X > Rec.Right)
+                    {
+                        Mouse.SetPosition(Rec.Left, mouseState.Y);
 
-                if (mouseState.Y > Rec.Bottom)
-                {
-                    Mouse.SetPosition(mouseState.X, Rec.Bottom);
-                }
-                else if (mouseState.Y < Rec.Top)
-                {
-                    Mouse.SetPosition(mouseState.X, Rec.Top);
+                        prevDelta += Rec.Width;
+                    }
+                    else if (mouseState.X < Rec.Left)
+                    {
+                        Mouse.SetPosition(Rec.Right, mouseState.Y);
+
+                        prevDelta -= Rec.Width;
+                    }
+
+                    if (mouseState.Y > Rec.Bottom)
+                    {
+                        Mouse.SetPosition(mouseState.X, Rec.Bottom);
+                    }
+                    else if (mouseState.Y < Rec.Top)
+                    {
+                        Mouse.SetPosition(mouseState.X, Rec.Top);
+                    }
                 }
 
                 //prevDelta = (int)MathHelper.Clamp((float)prevDelta, -_listKey[0].Width * countWhite + Rec.Width, 0f);

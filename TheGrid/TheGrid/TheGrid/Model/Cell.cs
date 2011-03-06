@@ -102,7 +102,14 @@ namespace TheGrid.Model
                     {
                         cellOrigin.Clip.Instrument = new InstrumentStop();
                     }
-                    //TODO : cloner les notes
+                    else if (this.Clip.Instrument is InstrumentNote)
+                    {
+                        cellOrigin.Clip.Instrument = new InstrumentNote(((InstrumentNote)this.Clip.Instrument).Frequency, ((InstrumentNote)this.Clip.Instrument).NoteName);
+                    }
+                    else if (this.Clip.Instrument is InstrumentCapture)
+                    {
+                        cellOrigin.Clip.Instrument = new InstrumentCapture(((InstrumentCapture)this.Clip.Instrument).Sample);
+                    }
                 }
             }
         }
