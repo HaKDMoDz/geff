@@ -20,19 +20,22 @@
     </ApplicationIcon>
     <Thumbnail>
     </Thumbnail>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>D:\Log\geff\TheGrid\Setup\</PublishUrl>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <PublishUrl>ftp://the.grid.free.fr/Log/TheGrid/</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
+    <InstallUrl>http://the.grid.free.fr/Log/TheGrid/</InstallUrl>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>4</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -184,6 +187,79 @@
     <Compile Include="Logic\Render\RenderLogic.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Files\Level\At.xml" />
+    <Content Include="Files\Level\AtViolin.xml" />
+    <Content Include="Files\Level\Congas.xml" />
+    <Content Include="Files\Level\DayOne.xml" />
+    <Content Include="Files\Level\Elise.xml" />
+    <Content Include="Files\Level\EmptyCongas.xml" />
+    <Content Include="Files\Level\Loop.xml" />
+    <Content Include="Files\Level\Loop2.xml" />
+    <Content Include="Files\Level\Note0.xml" />
+    <Content Include="Files\Level\Pow.xml" />
+    <Content Include="Files\Level\Test13.xml" />
+    <Content Include="Files\Level\Test2.xml" />
+    <Content Include="Files\Level\TestColor.xml" />
+    <Content Include="Files\Level\TestEffects.xml" />
+    <Content Include="Files\Level\TestNewInterface.xml" />
+    <Content Include="Files\Sound\Library\At the day\At the day_Config.xml" />
+    <Content Include="Files\Sound\Library\At the day\Bass\BASSE1.wav" />
+    <Content Include="Files\Sound\Library\At the day\Bass\BASSE2.wav" />
+    <Content Include="Files\Sound\Library\At the day\Drum\BATTE1.wav" />
+    <Content Include="Files\Sound\Library\At the day\Drum\BATTE2.wav" />
+    <Content Include="Files\Sound\Library\At the day\Drum\VIBRA1.wav" />
+    <Content Include="Files\Sound\Library\At the day\Drum\VIBRA2.wav" />
+    <Content Include="Files\Sound\Library\At the day\Drum\VIBRA3.wav" />
+    <Content Include="Files\Sound\Library\At the day\Drum\VIBRA4.wav" />
+    <Content Include="Files\Sound\Library\At the day\Guitar\GTR.wav" />
+    <Content Include="Files\Sound\Library\At the day\Key\PIANO1.wav" />
+    <Content Include="Files\Sound\Library\At the day\Key\PIANO2.wav" />
+    <Content Include="Files\Sound\Library\At the day\Key\PIANO3.wav" />
+    <Content Include="Files\Sound\Library\At the day\String\VIOLON.wav" />
+    <Content Include="Files\Sound\Library\At the day\String\ZWING.wav" />
+    <Content Include="Files\Sound\Library\Bass\Bass\C.wav" />
+    <Content Include="Files\Sound\Library\Bass\Bass\Sub Bass Kick.WAV" />
+    <Content Include="Files\Sound\Library\Bass\Bass\Urban Kick.WAV" />
+    <Content Include="Files\Sound\Library\Bass\Bass_Config.xml" />
+    <Content Include="Files\Sound\Library\Bass\Drum\aBas Kick.wav" />
+    <Content Include="Files\Sound\Library\Bass\Drum\Bas Kick.wav" />
+    <Content Include="Files\Sound\Library\Bass\Key\120.wav" />
+    <Content Include="Files\Sound\Library\Bass\Key\2 03.wav" />
+    <Content Include="Files\Sound\Library\Bass\Key\48.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Drum\hatldk24.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Drum\kickldk30.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Drum\kickldk32.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Drum\kickldk33.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Guitar\lick 37.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Guitar\lick 38.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Guitar\lick 39.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Guitar\lick 40.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Guitar\lick 41.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Guitar\lick 42.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Guitar\lick 43.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Guitar\lick 44.wav" />
+    <Content Include="Files\Sound\Library\Beatz\Guitar\lick 45.wav" />
+    <Content Include="Files\Sound\Library\Congas\Congas_Config.xml" />
+    <Content Include="Files\Sound\Library\Congas\Key\1.wav" />
+    <Content Include="Files\Sound\Library\Congas\Key\2.wav" />
+    <Content Include="Files\Sound\Library\Congas\Key\3.wav" />
+    <Content Include="Files\Sound\Library\Congas\Key\4.wav" />
+    <Content Include="Files\Sound\Library\Congas\Key\5.wav" />
+    <Content Include="Files\Sound\Library\Snare\Drum\Crash Snare.wav" />
+    <Content Include="Files\Sound\Library\Snare\Drum\DEEP SNARE.wav" />
+    <Content Include="Files\Sound\Library\Snare\Drum\Dutch snare.wav" />
+    <Content Include="Files\Sound\Library\Snare\Drum\high snare.wav" />
+    <Content Include="Files\Sound\Library\Surf\Drum\surfdrum_head_hotrod_2_09.wav" />
+    <Content Include="Files\Sound\Library\Surf\Drum\surfdrum_head_mallet_4_10.wav" />
+    <Content Include="Files\Sound\Library\Surf\Drum\surfdrum_rim_stick_3_10.wav" />
+    <Content Include="Files\Sound\Library\Surf\Drum\surfdrum_shake_3_10.wav" />
+    <Content Include="Files\Sound\Library\Surf\Drum\surfdrum_side_mallet_3_07.wav" />
+    <Content Include="Files\VisualStyle\AlmostDarkGrayBlue.xml" />
+    <Content Include="Files\VisualStyle\DarkBlue.xml" />
+    <Content Include="Files\VisualStyle\EloBlue.xml" />
+    <Content Include="Files\VisualStyle\Fillette.xml" />
+    <Content Include="Files\VisualStyle\GrayBlue.xml" />
+    <Content Include="Files\VisualStyle\LightGray.xml" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
@@ -229,6 +305,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Files\Sound\Library\Surf\Bass\" />
     <Folder Include="Logic\AI\" />
     <Folder Include="Logic\Network\" />
   </ItemGroup>

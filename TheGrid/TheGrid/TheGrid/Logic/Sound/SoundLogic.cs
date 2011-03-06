@@ -119,6 +119,9 @@ namespace TheGrid.Logic.Sound
 
         private int GetFreeSample(Sample sample)
         {
+            if (sample == null)
+                return -1;
+
             for (int i = 0; i < CountInstancePerSample; i++)
             {
                 WaveChannel32 channel = channelSteam[dicSample[sample.Name][i]];

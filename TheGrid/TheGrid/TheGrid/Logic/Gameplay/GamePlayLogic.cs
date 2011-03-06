@@ -179,7 +179,7 @@ namespace TheGrid.Logic.GamePlay
                 Context.Time = Context.Time.Add(TimeSpan.FromTicks(gameTime.ElapsedGameTime.Ticks));
 
                 if (Context.Time >= Context.Map.PartitionDuration)
-                    Context.StatePlaying =  StatePlaying.Waiting;
+                    Context.StatePlaying = StatePlaying.Waiting;
             }
 
             //--- Met à jour les effets associés au channel
@@ -244,11 +244,20 @@ namespace TheGrid.Logic.GamePlay
                                     musician.IsPlaying = true;
 
                                     //---> Si la prochaine cellule est une InstrumentSample, le sample est joué
-                                    if (musician.CurrentCell.Channel != null && musician.CurrentCell.Channel == musician.Channel && musician.CurrentCell.Clip.Instrument is InstrumentSample)
+                                    if (musician.CurrentCell.Channel != null && musician.CurrentCell.Channel == musician.Channel)
                                     {
-                                        NewBornCell(musician.CurrentCell);
+                                        if (musician.CurrentCell.Clip.Instrument is InstrumentSample)
+                                        {
+                                            NewBornCell(musician.CurrentCell, null);
+                                            GameEngine.Sound.PlaySample(((InstrumentSample)musician.CurrentCell.Clip.Instrument).Sample);
+                                        }
+                                    }
 
-                                        GameEngine.Sound.PlaySample(((InstrumentSample)musician.CurrentCell.Clip.Instrument).Sample);
+                                    //---> Si la prochaine cellule est une InstrumentNote, la note est jouée selon le sample courant du musicien
+                                    if (musician.CurrentCell.Clip.Instrument is InstrumentNote)
+                                    {
+                                        NewBornCell(musician.CurrentCell, musician.Channel);
+                                        GameEngine.Sound.PlayNote(musician.CurrentSample, ((InstrumentNote)musician.CurrentCell.Clip.Instrument).Frequency);
                                     }
                                 }
                             }
@@ -258,9 +267,9 @@ namespace TheGrid.Logic.GamePlay
             }
         }
 
-        private void NewBornCell(Cell cell)
+        private void NewBornCell(Cell cell, Channel channel)
         {
-            int indexChannel = Context.Map.Channels.IndexOf(cell.Channel);
+            int indexChannel = Context.Map.Channels.IndexOf(channel != null? channel: cell.Channel);
 
             cell.Life[indexChannel] = 1f;
 
@@ -301,6 +310,10 @@ namespace TheGrid.Logic.GamePlay
                 foreach (Musician musician in channel.ListMusician)
                 {
                     musician.ElapsedTime = TimeSpan.Zero;
+                    if (musician.Channel.ListSample.Count > 0)
+                        musician.CurrentSample = musician.Channel.ListSample[0];
+                    else
+                        musician.CurrentSample = null;
                 }
             }
             //---
@@ -471,6 +484,10 @@ namespace TheGrid.Logic.GamePlay
                             musician.NextCell = newMusician.NextCell;
                             musician.CurrentDirection = newMusician.CurrentDirection;
                             musician.IsPlaying = true;
+                            if (musician.Channel.ListSample.Count > 0)
+                                musician.CurrentSample = musician.Channel.ListSample[0];
+                            else
+                                musician.CurrentSample = null;
                         }
                     }
                     //---
@@ -541,6 +558,10 @@ namespace TheGrid.Logic.GamePlay
                         musician.CurrentCell = null;
                         musician.NextCell = null;
                         musician.IsPlaying = false;
+                        if (musician.Channel.ListSample.Count > 0)
+                            musician.CurrentSample = musician.Channel.ListSample[0];
+                        else
+                            musician.CurrentSample = null;
                     }
                 }
             }

@@ -17,6 +17,7 @@ namespace TheGrid.Model
         public TypePlaying TypePlaying { get; set; }
         public List<TimeValue<Cell>> Partition { get; set; }
         public TimeSpan ElapsedTime { get; set; }
+        public Sample CurrentSample { get; set; }
 
         /// <summary>
         /// Direction courante (pour l'écriture de la partition)
