@@ -8,16 +8,16 @@ namespace TheGrid.Model.Instrument
     [Serializable]
     public class InstrumentNote : InstrumentBase
     {
-        public float Frequency { get; set; }
+        public float NoteKey { get; set; }
         public string NoteName { get; set; }
 
         public InstrumentNote()
         {
         }
 
-        public InstrumentNote(float frequencey, string noteName)
+        public InstrumentNote(float noteKey, string noteName)
         {
-            Frequency = frequencey;
+            NoteKey = noteKey;
             NoteName = noteName;
         }
     }

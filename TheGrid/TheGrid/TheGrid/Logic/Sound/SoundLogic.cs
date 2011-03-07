@@ -254,22 +254,25 @@ namespace TheGrid.Logic.Sound
             {
                 for (int i = 0; i < CountInstancePerSample; i++)
                 {
-                    Effect effect = dicEffect[sample.Name][i].Find(e => e.Name == channelEffect.Name);
-
-                    if (values[0] == float.MinValue)
+                    if (!PlayingNote[dicSample[sample.Name][i]])
                     {
-                        effect.Enabled = false;
-                    }
-                    else
-                    {
-                        effect.Enabled = true;
+                        Effect effect = dicEffect[sample.Name][i].Find(e => e.Name == channelEffect.Name);
 
-                        for (int j = 0; j < values.Length; j++)
+                        if (values[0] == float.MinValue)
                         {
-                            effect.Sliders[j].Value = values[j];
+                            effect.Enabled = false;
                         }
+                        else
+                        {
+                            effect.Enabled = true;
 
-                        effect.Slider();
+                            for (int j = 0; j < values.Length; j++)
+                            {
+                                effect.Sliders[j].Value = values[j];
+                            }
+
+                            effect.Slider();
+                        }
                     }
                 }
             }

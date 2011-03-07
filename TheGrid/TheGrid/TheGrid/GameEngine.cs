@@ -53,17 +53,17 @@ namespace TheGrid
             }
             else
             {
-                Graphics.PreferredBackBufferWidth = 800;
-                Graphics.PreferredBackBufferHeight = 800;
+                //--- Plein écran PC
+                Graphics.PreferredBackBufferWidth = 1680;
+                Graphics.PreferredBackBufferHeight = 1050;
                 
-                //Graphics.PreferredBackBufferWidth = 1680;
-                //Graphics.PreferredBackBufferHeight = 1050;
-
+                //--- Plein écran TV
                 //Graphics.PreferredBackBufferWidth = 1360;
                 //Graphics.PreferredBackBufferHeight = 768;
 
-                Graphics.PreferredBackBufferWidth = 1600;
-                Graphics.PreferredBackBufferHeight = 900;
+                //--- Plein écran PC Portable parents élo
+                //Graphics.PreferredBackBufferWidth = 1600;
+                //Graphics.PreferredBackBufferHeight = 900;
                 
                 //Graphics.IsFullScreen = true;
             }

@@ -80,12 +80,17 @@ namespace TheGrid.Model.UI.Note
 
         void key_ClickKey(Key key, MouseState mouseState, GameTime gameTime)
         {
-            if(_notePannel.Sample != null)
-                UI.GameEngine.Sound.PlayNote(_notePannel.Sample, key.NoteKey);
+            PlayNote(key);
 
             //--- Création de l'instrument note
             _notePannel.AddNote(key);
             //---
+        }
+
+        public void PlayNote(Key key)
+        {
+            if (_notePannel.Sample != null)
+                UI.GameEngine.Sound.PlayNote(_notePannel.Sample, key.NoteKey);
         }
 
         private int GetRealOctave(int octave, int note)

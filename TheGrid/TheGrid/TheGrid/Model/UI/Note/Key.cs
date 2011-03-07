@@ -70,7 +70,20 @@ namespace TheGrid.Model.UI.Note
             //---
             MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
             mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(MouseLeftButton_MouseReleased);
+
+            MouseManager mouseMiddleButton = AddMouse(MouseButtons.MiddleButton);
+            mouseMiddleButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseMiddleButton_MouseFirstPressed);
             //---
+        }
+
+        void mouseMiddleButton_MouseFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
+        {
+            if (isIn)
+            {
+                MouseHandled = true;
+
+                _keyboard.PlayNote(this);
+            }
         }
 
         void MouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)

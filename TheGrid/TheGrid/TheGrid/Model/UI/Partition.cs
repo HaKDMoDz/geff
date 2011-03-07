@@ -33,10 +33,10 @@ namespace TheGrid.Model.UI
             Visible = true;
             Alive = true;
 
-            Rec = new Rectangle(Ribbon.MARGE, ribbon.RecMenuBar.Top, (int)Render.ScreenWidth - Ribbon.MARGE*2, ribbon.Rec.Height - Ribbon.MARGE * 2);
+            Rec = new Rectangle(Ribbon.MARGE, ribbon.RecMenuBar.Top, (int)Render.ScreenWidth - Ribbon.MARGE * 2, ribbon.Rec.Height - Ribbon.MARGE * 2);
 
             recBackground = new Rectangle(Rec.Left, ribbon.RecMenuBar.Bottom, Rec.Width, (int)((float)Rec.Height * 1.2f));
-            recLeftPartition = new Rectangle(Rec.Left, Rec.Top, ribbon.RecMenuBar.Left- Rec.Left, Rec.Height);
+            recLeftPartition = new Rectangle(Rec.Left, Rec.Top, ribbon.RecMenuBar.Left - Rec.Left, Rec.Height);
             recPartition = new Rectangle(ribbon.RecMenuBar.Left, ribbon.RecMenuBar.Bottom, ribbon.RecMenuBar.Width, Rec.Height - ribbon.RecMenuBar.Height);
 
             MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
@@ -223,7 +223,7 @@ namespace TheGrid.Model.UI
         {
             Render.SpriteBatch.Draw(Render.texEmptyGradient, recBackground, VisualStyle.BackColorDark);
             Render.SpriteBatch.Draw(Render.texEmpty, recLeftPartition, VisualStyle.BackColorDark); //BackColorLight2
-            
+
             float channelHeight = (float)recPartition.Height / ((float)Context.Map.Channels.Count - 1);
             float channelWidth = (float)recPartition.Width;
             float posPartBegin = channelWidth * 0.1f;
@@ -250,9 +250,9 @@ namespace TheGrid.Model.UI
                 //---
 
                 //--- Icône du channel
-                Render.SpriteBatch.Draw(GetIcon("Instrument" + Context.Map.Channels[i].Name), new Rectangle((int)(recPartition.Left - Ribbon.MARGE - texInstrumentSize), (int)(channelY + channelHeight / 2 - texInstrumentSize/2), (int)texInstrumentSize, (int)texInstrumentSize), null, Context.Map.Channels[i].Color);
+                Render.SpriteBatch.Draw(GetIcon("Instrument" + Context.Map.Channels[i].Name), new Rectangle((int)(recPartition.Left - Ribbon.MARGE - texInstrumentSize), (int)(channelY + channelHeight / 2 - texInstrumentSize / 2), (int)texInstrumentSize, (int)texInstrumentSize), null, Context.Map.Channels[i].Color);
                 //---
-                
+
                 //--- Channel
                 Render.SpriteBatch.Draw(Render.texEmptyGradient, recChannel, Context.Map.Channels[i].Color);
                 //---
@@ -284,59 +284,74 @@ namespace TheGrid.Model.UI
                     {
                         TimeValue<Cell> part = Context.Map.Channels[i].ListMusician[j].Partition[k];
 
-                        if (part.Value.Clip != null)
+                        if (part.Value.Clip == null)
+                            continue;
+
+                        if (part.Value.Clip.Instrument == null)
+                            continue;
+
+                        if (!(part.Value.Clip.Instrument is InstrumentSample ||
+                            part.Value.Clip.Instrument is InstrumentNote))
+                            continue;
+
+                        if (part.Value.Clip.Instrument is InstrumentSample &&
+                            Context.Map.Channels[i].ListMusician[j].Channel != part.Value.Channel)
+                            continue;
+
+                        float totalMs = (float)part.Time.Subtract(Context.Time).TotalMilliseconds;
+                        float duration = 0f;
+
+                        Color color = new Color(0f, 0f, 0f, 0.5f);
+
+                        if (part.Value.Clip.Instrument is InstrumentSample)
+                            duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds;
+                        else if (part.Value.Clip.Instrument is InstrumentNote)
                         {
-                            //if (part.Value.Clip.Instrument != null &&
-                            //    part.Value.Clip.Instrument is InstrumentSample &&
-                            //    Context.Map.Channels[i].ListMusician[j].Channel == part.Value.Channel
+                            TimeValue<Cell> cellSampleCapture = Context.Map.Channels[i].ListMusician[j].Partition.FindLast(p => p.Time <= part.Time && p.Value.Clip != null && p.Value.Clip.Instrument is InstrumentCapture);
+
+                            if (cellSampleCapture != null)
+                                duration = (float)((InstrumentCapture)cellSampleCapture.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds;
+                            else
+                                duration = (float)Context.Map.Channels[i].ListSample[0].Duration.TotalMilliseconds;
+                        }
+                        else
+                        {
+                            duration = Context.Map.TimeDuration;
+                            color = new Color(0.2f, 0.2f, 0.2f, 0.5f);
+                        }
+
+                        if (totalMs > -timePartBegin - duration && totalMs < timelineDuration)
+                        {
+                            float sizeClip = 1f;
+
+                            float partPos = (float)part.Time.TotalMilliseconds * channelWidth / timelineDuration;
+                            float timePos = (float)Context.Time.TotalMilliseconds * channelWidth / timelineDuration;
+
+                            float musicianX = (int)channelX + (int)partPos - (int)timePos + (int)posPartBegin;
+                            float musicianWidth = duration / timelineDuration * channelWidth;
+
+                            if (totalMs < -timePartBegin)
                             {
-                                float totalMs = (float)part.Time.Subtract(Context.Time).TotalMilliseconds;
-                                float duration = 0f;
-
-                                Color color = new Color(0f, 0f, 0f, 0.5f);
-
-                                if (part.Value.Clip.Instrument is InstrumentSample)
-                                    duration = (float)((InstrumentSample)part.Value.Clip.Instrument).Sample.Duration.TotalMilliseconds;
-                                else
-                                {
-                                    duration = Context.Map.TimeDuration;
-                                    color = new Color(0.2f, 0.2f, 0.2f, 0.5f);
-                                }
-
-                                if (totalMs > -timePartBegin - duration && totalMs < timelineDuration)
-                                {
-                                    float sizeClip = 1f;
-
-                                    float partPos = (float)part.Time.TotalMilliseconds * channelWidth / timelineDuration;
-                                    float timePos = (float)Context.Time.TotalMilliseconds * channelWidth / timelineDuration;
-
-                                    float musicianX = (int)channelX + (int)partPos - (int)timePos + (int)posPartBegin;
-                                    float musicianWidth = duration / timelineDuration * channelWidth;
-
-                                    if (totalMs < -timePartBegin)
-                                    {
-                                        sizeClip = 1f + (totalMs + timePartBegin) / duration;
-                                        musicianX = (int)channelX + (int)(((1f - sizeClip) * duration + totalMs) / timelineDuration * channelWidth) + (int)posPartBegin;
-                                        musicianWidth = sizeClip * duration / timelineDuration * channelWidth;
-                                    }
-                                    else if (totalMs + timePartBegin > timelineDuration - duration)
-                                    {
-                                        musicianWidth = channelWidth - musicianX + channelX;
-                                    }
-
-                                    if ((part.Time.TotalMilliseconds / duration) % 4 == 0)
-                                    {
-                                        musicianX += measureBarWidth;
-                                        musicianWidth -= measureBarWidth;
-                                    }
-
-                                    Render.SpriteBatch.Draw(Render.texEmpty, new Rectangle(
-                                       (int)(musicianX + 1),
-                                       (int)(channelY + heightPerMusician * fj),
-                                       (int)(musicianWidth - 1),
-                                       (int)(heightPerMusician - 1)), color);
-                                }
+                                sizeClip = 1f + (totalMs + timePartBegin) / duration;
+                                musicianX = (int)channelX + (int)(((1f - sizeClip) * duration + totalMs) / timelineDuration * channelWidth) + (int)posPartBegin;
+                                musicianWidth = sizeClip * duration / timelineDuration * channelWidth;
                             }
+                            else if (totalMs + timePartBegin > timelineDuration - duration)
+                            {
+                                musicianWidth = channelWidth - musicianX + channelX;
+                            }
+
+                            if ((part.Time.TotalMilliseconds / duration) % 4 == 0)
+                            {
+                                musicianX += measureBarWidth;
+                                musicianWidth -= measureBarWidth;
+                            }
+
+                            Render.SpriteBatch.Draw(Render.texEmpty, new Rectangle(
+                               (int)(musicianX + 1),
+                               (int)(channelY + heightPerMusician * fj),
+                               (int)(musicianWidth - 1),
+                               (int)(heightPerMusician - 1)), color);
                         }
                     }
                 }

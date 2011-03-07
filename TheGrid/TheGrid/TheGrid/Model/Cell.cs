@@ -104,7 +104,7 @@ namespace TheGrid.Model
                     }
                     else if (this.Clip.Instrument is InstrumentNote)
                     {
-                        cellOrigin.Clip.Instrument = new InstrumentNote(((InstrumentNote)this.Clip.Instrument).Frequency, ((InstrumentNote)this.Clip.Instrument).NoteName);
+                        cellOrigin.Clip.Instrument = new InstrumentNote(((InstrumentNote)this.Clip.Instrument).NoteKey, ((InstrumentNote)this.Clip.Instrument).NoteName);
                     }
                     else if (this.Clip.Instrument is InstrumentCapture)
                     {

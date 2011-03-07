@@ -266,7 +266,7 @@ namespace TheGrid.Logic.GamePlay
                                     if (musician.CurrentCell.Clip.Instrument is InstrumentNote)
                                     {
                                         NewBornCell(musician.CurrentCell, musician.Channel);
-                                        GameEngine.Sound.PlayNote(musician.CurrentSample, ((InstrumentNote)musician.CurrentCell.Clip.Instrument).Frequency);
+                                        GameEngine.Sound.PlayNote(musician.CurrentSample, ((InstrumentNote)musician.CurrentCell.Clip.Instrument).NoteKey);
                                     }
                                 }
                             }
@@ -357,7 +357,21 @@ namespace TheGrid.Logic.GamePlay
                                     if (part != null)
                                         timePart = part.Time;
 
-                                    ignoreCell = musician.Partition.Count(p => p.Time > timePart && p.Value == cell) >= (cell.Clip.Repeater.Value + 1);
+                                    ignoreCell = musician.Partition.Count(p => p.Time > timePart && p.Value == cell) >= (cell.Clip.Repeater.Value+1);
+
+                                    if(ignoreCell)
+                                    {
+                                        int a = 0;
+                                    }
+                                }
+                                //---
+
+                                //--- Note duration
+                                speedFactor = cell.Clip.Duration;
+
+                                if (speedFactor == 1 / 8f)
+                                {
+                                    int a = 0;
                                 }
                                 //---
 
@@ -379,9 +393,7 @@ namespace TheGrid.Logic.GamePlay
                                     }
                                     //---
 
-                                    //--- Note duration
-                                    speedFactor = cell.Clip.Duration;
-                                    //---
+
 
                                     //--- Instrument
                                     if (cell.Clip.Instrument is InstrumentStop)

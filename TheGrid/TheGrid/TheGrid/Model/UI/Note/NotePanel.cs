@@ -115,7 +115,7 @@ namespace TheGrid.Model.UI.Note
             if (Context.NextCellNote != null)
             {
                 Context.NextCellNote.InitClip();
-                Context.NextCellNote.Clip.Instrument = new InstrumentNote(key.Frequency, key.NoteName);
+                Context.NextCellNote.Clip.Instrument = new InstrumentNote(key.NoteKey, key.NoteName);
 
                 GoToNextCell();
             }
