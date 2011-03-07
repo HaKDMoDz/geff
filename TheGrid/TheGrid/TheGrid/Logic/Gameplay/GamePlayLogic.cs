@@ -61,7 +61,7 @@ namespace TheGrid.Logic.GamePlay
         public void LoadLibrary(string libraryName, Map map)
         {
             map.LibraryName = libraryName;
-            string libraryDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Sound\Library", libraryName);
+            string libraryDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Sound\Library", libraryName);
 
             InitializeChannel(map);
 

@@ -26,7 +26,7 @@ namespace TheGrid.Model.UI
             Rec = new Rectangle((int)(Render.ScreenWidth / 2 - sizeLibraryName.X / 2), (int)(0.3f * Render.ScreenHeight), (int)sizeLibraryName.X, (int)(0.6f * Render.ScreenHeight));
 
             //--- Charge la liste des librairies
-            String[] libraries = System.IO.Directory.GetDirectories(Path.Combine(Directory.GetParent(System.Windows.Forms.Application.ExecutablePath).FullName, @"Sound\Library"));
+            String[] libraries = System.IO.Directory.GetDirectories(Path.Combine(Directory.GetParent(System.Windows.Forms.Application.ExecutablePath).FullName, @"Files\Sound\Library"));
             Vector2 vec = new Vector2(Rec.X + Ribbon.MARGE, Rec.Y + Ribbon.MARGE);
 
             foreach (string library in libraries)

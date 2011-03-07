@@ -16,7 +16,7 @@ namespace TheGrid.Common
     {
         public static void SaveLibraryConfig(Map map)
         {
-            string libraryConfig = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Sound\Library", map.LibraryName, map.LibraryName + "_Config.xml");
+            string libraryConfig = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Sound\Library", map.LibraryName, map.LibraryName + "_Config.xml");
 
             XmlSerializer serializer = new XmlSerializer(typeof(Map));
             XmlWriter writer = new XmlTextWriter(libraryConfig, Encoding.UTF8);
@@ -27,21 +27,21 @@ namespace TheGrid.Common
         public static void SaveLevel(Map map, string fileName)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Map));
-            XmlWriter writer = new XmlTextWriter(Path.Combine(Path.GetFullPath(Application.ExecutablePath), @"..\Level", fileName + ".xml"), Encoding.UTF8);
+            XmlWriter writer = new XmlTextWriter(Path.Combine(Path.GetFullPath(Application.ExecutablePath), @"..\Files\Level", fileName + ".xml"), Encoding.UTF8);
             serializer.Serialize(writer, map);
             writer.Close();
         }
 
         public static Map LoadLevelConfig(GamePlayLogic gamePlay, string libraryName)
         {
-            string fileName = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Sound\Library", libraryName, libraryName + "_Config.xml");
+            string fileName = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Sound\Library", libraryName, libraryName + "_Config.xml");
 
             return LoadLevelFile(gamePlay, fileName, true);
         }
 
         public static Map LoadLevel(GamePlayLogic gamePlay, string levelName)
         {
-            string fileName = Path.Combine(Path.GetFullPath(Application.ExecutablePath), @"..\Level", levelName + ".xml");
+            string fileName = Path.Combine(Path.GetFullPath(Application.ExecutablePath), @"..\Files\Level", levelName + ".xml");
 
             return LoadLevelFile(gamePlay, fileName, false);
         }

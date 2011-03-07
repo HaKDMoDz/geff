@@ -27,7 +27,7 @@ namespace TheGrid.Common
             //NOTE : Utilisation du site http://colorschemedesigner.com/ pour la génération des styles   //
             //===========================================================================================//
 
-            string pathVisualStyleFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"VisualStyle\" + visualStyleName + ".xml");
+            string pathVisualStyleFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Files\VisualStyle\" + visualStyleName + ".xml");
 
             if (!File.Exists(pathVisualStyleFile))
             {

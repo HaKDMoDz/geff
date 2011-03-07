@@ -146,14 +146,14 @@ namespace TheGrid.Model.UI
 
         void itemLoad_Selected(Item item, GameTime gameTime)
         {
-            ListFile listFile = new ListFile(this.UI, gameTime.TotalGameTime, Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Level\"));
+            ListFile listFile = new ListFile(this.UI, gameTime.TotalGameTime, Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Level\"));
             this.ListUIChildren.Add(listFile);
         }
 
         void itemSave_Selected(Item item, GameTime gameTime)
         {
             SaveFileDialog dlg = new SaveFileDialog();
-            dlg.InitialDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Level\");
+            dlg.InitialDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Level\");
             dlg.Filter = "Niveau The Grid (*.xml)|*.xml";
 
             if (dlg.ShowDialog() == DialogResult.OK)
