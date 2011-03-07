@@ -8,15 +8,16 @@ using System.IO;
 using TheGrid.Common;
 using TheGrid.Logic.Controller;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TheGrid.Model.UI
 {
-    public class ListFile : UIComponent
+    public class ListFile : ListBase
     {
         public string Directory;
 
-        public ListFile(UILogic uiLogic, TimeSpan creationTime, string directory)
-            : base(uiLogic, creationTime)
+        public ListFile(UILogic uiLogic, TimeSpan creationTime, string directory, Rectangle rec, SpriteFont font)
+            : base(uiLogic, creationTime, rec, font, false)
         {
             this.Modal = true;
             this.Alive = true;
@@ -24,9 +25,9 @@ namespace TheGrid.Model.UI
             this.Directory = directory;
             this.ListUIChildren = new List<UIComponent>();
 
-            Vector2 sizeFileName = Render.FontText.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE);
+            //Vector2 sizeFileName = Render.FontText.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE);
 
-            Rec = new Rectangle((int)(Render.ScreenWidth / 2 - sizeFileName.X / 2), (int)(0.3f * Render.ScreenHeight), (int)sizeFileName.X, (int)(0.6f * Render.ScreenHeight));
+            //Rec = new Rectangle((int)(Render.ScreenWidth / 2 - sizeFileName.X / 2), (int)(0.3f * Render.ScreenHeight), (int)sizeFileName.X, (int)(0.6f * Render.ScreenHeight));
 
             //--- Charge la liste des fichiers
             String[] files = System.IO.Directory.GetFiles(directory);
@@ -41,7 +42,7 @@ namespace TheGrid.Model.UI
                 txtFile.Rec = new Rectangle(txtFile.Rec.X, txtFile.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtFile.Rec.Height);
                 txtFile.Tag = file;
 
-                vec.Y += sizeFileName.Y;
+                vec.Y += sizeText.Y;
 
                 txtFile.ClickText += new ClickableText.ClickTextHandler(txtFile_ClickText);
                 ListUIChildren.Add(txtFile);

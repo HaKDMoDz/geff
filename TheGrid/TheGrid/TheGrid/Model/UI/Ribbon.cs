@@ -146,7 +146,12 @@ namespace TheGrid.Model.UI
 
         void itemLoad_Selected(Item item, GameTime gameTime)
         {
-            ListFile listFile = new ListFile(this.UI, gameTime.TotalGameTime, Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Level\"));
+            ListFile listFile = new ListFile(
+                this.UI, 
+                gameTime.TotalGameTime, 
+                Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Level\"),
+                new Rectangle((int)(0.25f * Render.ScreenWidth), (int)(0.3f * Render.ScreenHeight), (int)(0.5f * Render.ScreenWidth), (int)(0.4f * Render.ScreenHeight)),
+                Render.FontMenu);
             this.ListUIChildren.Add(listFile);
         }
 

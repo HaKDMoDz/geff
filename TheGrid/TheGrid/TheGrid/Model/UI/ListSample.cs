@@ -13,73 +13,60 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TheGrid.Model.UI
 {
-    public class ListSample : UIComponent
+    public class ListSample : ListBase
     {
         private Cell _cell;
-        public SpriteFont Font { get; set; }
-        public int ScrollValue { get; set; }
-        public bool IsCheckable { get; set; }
-
-        public delegate void SelectedSampleChangedHandler(Sample sample);
-        public event SelectedSampleChangedHandler SelectedSampleChanged;
 
         public ListSample(UILogic uiLogic, TimeSpan creationTime, Cell cell, Channel channel, Rectangle rec, SpriteFont font, bool checkable)
-            : base(uiLogic, creationTime)
+            : base(uiLogic, creationTime, rec, font, checkable)
         {
             this.Alive = true;
             this.Visible = true;
             this.ListUIChildren = new List<UIComponent>();
             this._cell = cell;
-            this.Font = font;
-            this.IsCheckable = checkable;
 
-            Vector2 sizeLibraryName = font.MeasureString(new String(' ', 40)) + new Vector2(Ribbon.MARGE * 2, Ribbon.MARGE);
+            LoadSample(channel);
 
-            if(sizeLibraryName.X> rec.Width)
-                sizeLibraryName.X = rec.Width;
+            //---
+            KeyManager keyClose = AddKey(Keys.Escape);
+            keyClose.KeyReleased += new KeyManager.KeyReleasedHandler(keyClose_KeyReleased);
+            //---
+        }
 
-            int countMaxItem = (rec.Height - 2 * MARGE) / (int)sizeLibraryName.Y;
-
-            Rec = new Rectangle(
-                rec.X, 
-                rec.Y, 
-                Math.Min((int)sizeLibraryName.X, rec.Width),
-                (int)(countMaxItem * sizeLibraryName.Y));
-
+        public void LoadSample(Channel channel)
+        {
             //--- Charge la liste des samples
+            ListUIChildren.Clear();
+
             Vector2 vec = new Vector2(Rec.X + Ribbon.MARGE, Rec.Y + Ribbon.MARGE);
 
             foreach (Sample sample in channel.ListSample)
             {
-                ClickableText txtSample = new ClickableText(this.UI, creationTime, font, sample.Name.Substring(0, Math.Min(20, sample.Name.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, checkable);
+                ClickableText txtSample = new ClickableText(this.UI, GetNewTimeSpan(), this.Font, sample.Name.Substring(0, Math.Min(20, sample.Name.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, IsCheckable);
                 txtSample.Rec = new Rectangle(txtSample.Rec.X, txtSample.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtSample.Rec.Height);
                 txtSample.Tag = sample;
-                vec.Y += sizeLibraryName.Y + Ribbon.MARGE;
+                vec.Y += sizeText.Y + Ribbon.MARGE;
 
                 txtSample.ClickText += new ClickableText.ClickTextHandler(txtSample_ClickText);
                 txtSample.MiddleButtonClickText += new ClickableText.MiddleButtonClickTextHandler(txtSample_MiddleButtonClickText);
                 txtSample.MouseEnter += new ClickableText.MouseEnterHandler(txtSample_MouseEnter);
                 txtSample.MouseLeave += new ClickableText.MouseLeaveHandler(txtSample_MouseLeave);
                 ListUIChildren.Add(txtSample);
+
+                if (IsCheckable && ListUIChildren.Count == 1)
+                {
+                    txtSample.IsChecked = true;
+                    OnSelectedItemChanged(sample);
+                }
+
+                if (vec.Y >= Rec.Bottom)
+                    txtSample.Visible = false;
             }
             //---
 
-            //--- Charge les boutons
-            //TODO améliorer la scroll
-            if (countMaxItem > channel.ListSample.Count)
-            {
-                ClickableImage imgUp = new ClickableImage(UI, GetNewTimeSpan(), "ArrowUp", GetIcon("ArrowUp"), GetIcon("ArrowUp"), new Vector2(Rec.Right - GetIcon("ArrowUp").Width, Rec.Top));
-                ListUIChildren.Add(imgUp);
+            CountItem = ListUIChildren.Count;
 
-                ClickableImage imgDown = new ClickableImage(UI, GetNewTimeSpan(), "ArrowDown", GetIcon("ArrowDown"), GetIcon("ArrowDown"), new Vector2(Rec.Right - GetIcon("ArrowUp").Width, Rec.Bottom - GetIcon("ArrowUp").Height));
-                ListUIChildren.Add(imgDown);
-            }
-            //---
-
-            //---
-            KeyManager keyClose = AddKey(Keys.Escape);
-            keyClose.KeyReleased += new KeyManager.KeyReleasedHandler(keyClose_KeyReleased);
-            //---
+            UpdateScrollbar();
         }
 
         void txtSample_MiddleButtonClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
@@ -118,8 +105,7 @@ namespace TheGrid.Model.UI
 
                 clickableText.IsChecked = checkItem;
 
-                if (SelectedSampleChanged != null)
-                    SelectedSampleChanged((Sample)clickableText.Tag);
+                OnSelectedItemChanged(clickableText.Tag);
             }
 
             if (_cell != null)

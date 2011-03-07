@@ -14,11 +14,12 @@ namespace TheGrid.Model.UI.Note
 {
     public class NotePanel : UIComponent
     {
+        private ListSample listSample;
+
         public ComponentState State { get; set; }
         public float leftPartWidth = 0f;
         public Sample Sample { get; set; }
 
-        //public Cell CurrentCell { get; set; }
         public int CurrentDirection = -1;
 
         public NotePanel(UILogic uiLogic, TimeSpan creationTime)
@@ -37,10 +38,6 @@ namespace TheGrid.Model.UI.Note
 
             //--- Boutons
             Vector2 vec = new Vector2(0, Rec.Top + MARGE);
-            ClickableText txtStartCell = new ClickableText(UI, GetNewTimeSpan(), Render.FontTextSmall, "Céllule de départ", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
-            txtStartCell.ClickText += new ClickableText.ClickTextHandler(txtStartCell_ClickText);
-            ListUIChildren.Add(txtStartCell);
-            vec.Y += MARGE + txtStartCell.Rec.Height;
 
             ClickableText txtSilence = new ClickableText(UI, GetNewTimeSpan(), Render.FontTextSmall, "Silence", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
             txtSilence.ClickText += new ClickableText.ClickTextHandler(txtSilence_ClickText);
@@ -62,9 +59,9 @@ namespace TheGrid.Model.UI.Note
             //---
 
             //--- Liste des samples
-            ListSample listSample = new ListSample(UI, GetNewTimeSpan(), null, Context.Map.Channels[1], new Rectangle(MARGE+(int)leftPartWidth/2, Rec.Top + Rec.Height/2, (int)leftPartWidth/2, Rec.Height/2), Render.FontTextSmall, true);
-            listSample.Rec = new Rectangle();
-            listSample.SelectedSampleChanged += new ListSample.SelectedSampleChangedHandler(listSample_SelectedSampleChanged);
+            listSample = new ListSample(UI, GetNewTimeSpan(), null, Context.Map.Channels[1], new Rectangle(MARGE + (int)leftPartWidth / 2, Rec.Top + Rec.Height / 2, (int)leftPartWidth / 2, Rec.Height / 2), Render.FontTextSmall, true);
+            //listSample.Rec = new Rectangle();
+            listSample.SelectedItemChanged+=new ListBase.SelectedItemChangedHandler(listSample_SelectedItemChanged);
             ListUIChildren.Add(listSample);
             //---
 
@@ -73,12 +70,26 @@ namespace TheGrid.Model.UI.Note
             keyClose.KeyReleased += new KeyManager.KeyReleasedHandler(keyClose_KeyReleased);
             //---
 
+            //---
+            MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
+            mouseLeftButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseIgnoreActionFirstPressed);
+            //mouseLeftButton.MousePressed += new MouseManager.MousePressedHandler(mouseIgnoreAction);
+            mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseIgnoreAction);
+
+            MouseManager mouseRightButton = AddMouse(MouseButtons.RightButton);
+            mouseRightButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseIgnoreActionFirstPressed);
+            //mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseIgnoreAction);
+            mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseIgnoreAction);
+            //---
+
             Context.SelectedCellChanged += new Context.SelectedCellChangedHandler(Context_SelectedCellChanged);
         }
 
-        void listSample_SelectedSampleChanged(Sample sample)
+
+
+        void listSample_SelectedItemChanged(Object item)
         {
-            Sample = sample;
+            Sample = (Sample)item;
         }
 
         void Context_SelectedCellChanged(Cell oldSelectedCell, Cell newSelectedCell)
@@ -100,14 +111,22 @@ namespace TheGrid.Model.UI.Note
             }
         }
 
-        void txtStartCell_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
-        {
-        }
-
         void keyClose_KeyReleased(Keys key, GameTime gameTime)
         {
             this.Alive = false;
             Context.NextCellNote = null;
+        }
+
+        void mouseIgnoreActionFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
+        {
+            if (Alive && Visible && Rec.Contains(Controller.mousePositionPoint))
+                MouseHandled = true;
+        }
+
+        void mouseIgnoreAction(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
+        {
+            if (Alive && Visible && Rec.Contains(Controller.mousePositionPoint))
+                MouseHandled = true;
         }
 
         public void AddNote(Key key)
@@ -229,6 +248,7 @@ namespace TheGrid.Model.UI.Note
 
         void itemChannel_Selected(Item item, GameTime gameTime)
         {
+            listSample.LoadSample(Context.Map.Channels[item.Value]);
         }
 
         public override void Update(GameTime gametime)
