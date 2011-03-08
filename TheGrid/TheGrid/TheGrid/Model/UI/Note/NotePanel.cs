@@ -15,11 +15,11 @@ namespace TheGrid.Model.UI.Note
     public class NotePanel : UIComponent
     {
         private ListSample listSample;
-
+        private Keyboard keyboard;
         public ComponentState State { get; set; }
         public float leftPartWidth = 0f;
         public Sample Sample { get; set; }
-
+        public bool Training { get; set; }
         public int CurrentDirection = -1;
 
         public NotePanel(UILogic uiLogic, TimeSpan creationTime)
@@ -32,7 +32,7 @@ namespace TheGrid.Model.UI.Note
             leftPartWidth = 350f;// 0.3f * UI.GameEngine.Render.ScreenWidth;
             Rec = new Rectangle(0, (int)(0.6f * UI.GameEngine.Render.ScreenHeight), (int)UI.GameEngine.Render.ScreenWidth, (int)(0.4f * UI.GameEngine.Render.ScreenHeight));
 
-            Keyboard keyboard = new Keyboard(this, UI, GetNewTimeSpan());
+            keyboard = new Keyboard(this, UI, GetNewTimeSpan());
             ListUIChildren = new List<UIComponent>();
             ListUIChildren.Add(keyboard);
 
@@ -48,6 +48,11 @@ namespace TheGrid.Model.UI.Note
             txtCapture.ClickText += new ClickableText.ClickTextHandler(txtCapture_ClickText);
             ListUIChildren.Add(txtCapture);
             vec.Y += MARGE + txtCapture.Rec.Height;
+
+            ClickableText txtEntrainement = new ClickableText(UI, GetNewTimeSpan(), Render.FontTextSmall, "Entraînement", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, true);
+            txtEntrainement.ClickText += new ClickableText.ClickTextHandler(txtEntrainement_ClickText);
+            ListUIChildren.Add(txtEntrainement);
+            vec.Y += MARGE + txtEntrainement.Rec.Height;
             //---
 
             //--- Note duration
@@ -60,7 +65,6 @@ namespace TheGrid.Model.UI.Note
 
             //--- Liste des samples
             listSample = new ListSample(UI, GetNewTimeSpan(), null, Context.Map.Channels[1], new Rectangle(MARGE + (int)leftPartWidth / 2, Rec.Top + Rec.Height / 2, (int)leftPartWidth / 2, Rec.Height / 2), Render.FontTextSmall, true);
-            //listSample.Rec = new Rectangle();
             listSample.SelectedItemChanged+=new ListBase.SelectedItemChangedHandler(listSample_SelectedItemChanged);
             ListUIChildren.Add(listSample);
             //---
@@ -85,7 +89,10 @@ namespace TheGrid.Model.UI.Note
             Context.SelectedCellChanged += new Context.SelectedCellChangedHandler(Context_SelectedCellChanged);
         }
 
-
+        void txtEntrainement_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
+        {
+            Training = clickableText.IsChecked;
+        }
 
         void listSample_SelectedItemChanged(Object item)
         {
@@ -115,6 +122,7 @@ namespace TheGrid.Model.UI.Note
         {
             this.Alive = false;
             Context.NextCellNote = null;
+            keyboard.Dispose();
         }
 
         void mouseIgnoreActionFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)
@@ -131,10 +139,15 @@ namespace TheGrid.Model.UI.Note
 
         public void AddNote(Key key)
         {
+            AddNote(key.NoteKey, key.NoteName);
+        }
+
+        public void AddNote(int noteKey, string noteName)
+        {
             if (Context.NextCellNote != null)
             {
                 Context.NextCellNote.InitClip();
-                Context.NextCellNote.Clip.Instrument = new InstrumentNote(key.NoteKey, key.NoteName);
+                Context.NextCellNote.Clip.Instrument = new InstrumentNote(noteKey, noteName);
 
                 GoToNextCell();
             }

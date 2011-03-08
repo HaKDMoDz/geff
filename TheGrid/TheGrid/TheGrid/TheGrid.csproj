@@ -20,10 +20,10 @@
     </ApplicationIcon>
     <Thumbnail>
     </Thumbnail>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>D:\GDD\Deploy\TheGrid\</PublishUrl>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <PublishUrl>ftp://the.grid.free.fr/Log/TheGrid/</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Unc</InstallFrom>
+    <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
@@ -31,13 +31,14 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
-    <InstallUrl>\\P64l03bib69\Deploy\TheGrid\</InstallUrl>
+    <InstallUrl>http://the.grid.free.fr/Log/TheGrid/</InstallUrl>
     <SupportUrl>http://the.grid.free.fr</SupportUrl>
     <ProductName>TheGrid</ProductName>
     <PublisherName>Geff</PublisherName>
-    <CreateWebPageOnPublish>false</CreateWebPageOnPublish>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>9</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>

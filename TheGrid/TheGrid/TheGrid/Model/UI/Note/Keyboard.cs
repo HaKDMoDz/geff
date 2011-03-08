@@ -9,11 +9,13 @@ using Microsoft.Xna.Framework.Input;
 using TheGrid.Common;
 using TheGrid.Logic.Sound;
 using TheGrid.Model.Instrument;
+using NAudio.Midi;
 
 namespace TheGrid.Model.UI.Note
 {
-    public class Keyboard : UIComponent
+    public class Keyboard : UIComponent, IDisposable
     {
+        private MidiIn midiIn = null;
         private NotePanel _notePannel;
         private List<Key> _listKey;
         private string[] _noteTable = new string[12];
@@ -33,11 +35,38 @@ namespace TheGrid.Model.UI.Note
 
             CreateNoteTable();
             CreateKeys();
+            CreateMidi();
 
             MouseManager mouseRightButton = AddMouse(MouseButtons.RightButton);
             mouseRightButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseRightButton_MouseFirstPressed);
             mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseRightButton_MousePressed);
             mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseRightButton_MouseReleased);
+        }
+
+        private void CreateMidi()
+        {
+
+            if (NAudio.Midi.MidiIn.NumberOfDevices > 0)
+            {
+                MidiInCapabilities cap = MidiIn.DeviceInfo(0);
+                midiIn = new NAudio.Midi.MidiIn(0);
+            }
+
+            if (midiIn != null)
+            {
+                midiIn.Start();
+                midiIn.MessageReceived += new EventHandler<MidiInMessageEventArgs>(midiIn_MessageReceived);
+            }
+        }
+
+        void midiIn_MessageReceived(object sender, MidiInMessageEventArgs e)
+        {
+            NoteEvent noteEvent = e.MidiEvent as NoteEvent;
+
+            if (_notePannel.Sample != null && noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
+            {
+                PerformNote(noteEvent.NoteNumber, noteEvent.NoteName);
+            }
         }
 
         private void CreateNoteTable()
@@ -80,11 +109,24 @@ namespace TheGrid.Model.UI.Note
 
         void key_ClickKey(Key key, MouseState mouseState, GameTime gameTime)
         {
+            PerformNote(key);
+        }
+
+        public void PerformNote(Key key)
+        {
             PlayNote(key);
 
-            //--- Création de l'instrument note
-            _notePannel.AddNote(key);
-            //---
+            if (!_notePannel.Training)
+                _notePannel.AddNote(key);
+        }
+
+        public void PerformNote(int noteKey, string noteName)
+        {
+            if(_notePannel.Sample != null)
+                UI.GameEngine.Sound.PlayNote(_notePannel.Sample, noteKey);
+
+            if (!_notePannel.Training)
+                _notePannel.AddNote(noteKey, noteName);
         }
 
         public void PlayNote(Key key)
@@ -136,7 +178,7 @@ namespace TheGrid.Model.UI.Note
 
         void mouseRightButton_MousePressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)
         {
-            if(Rec.Contains(Controller.mousePositionPoint))
+            if (Rec.Contains(Controller.mousePositionPoint))
             {
                 MouseHandled = true;
 
@@ -178,6 +220,15 @@ namespace TheGrid.Model.UI.Note
             Render.SpriteBatch.Draw(Render.texEmpty, Rec, VisualStyle.BackColorLight);
 
             base.Draw(gameTime);
+        }
+
+        public void Dispose()
+        {
+            if (midiIn != null)
+            {
+                midiIn.Stop();
+                midiIn.Dispose();
+            }
         }
     }
 }

@@ -186,8 +186,8 @@ namespace TheGrid.Model.UI
             Render.SpriteBatch.Draw(Render.texEmptyGradient, recBackground, VisualStyle.BackColorDark);
             Render.SpriteBatch.Draw(Render.texEmpty, RecMenuBar, VisualStyle.BackColorDark);
 
-            Render.SpriteBatch.DrawString(Render.FontTextSmall, Context.Map.BPM.ToString() + " BPM", new Vector2(vecTime.X + 100, vecTime.Y), Color.DarkGray);
-            Render.SpriteBatch.DrawString(Render.FontTextSmall, string.Format("{0:00}:{1:00}:{2:00}", Context.Time.Hours, Context.Time.Minutes, Context.Time.Seconds), vecTime, Color.DarkGray);
+            Render.SpriteBatch.DrawString(Render.FontTextSmall, Context.Map.BPM.ToString() + " BPM", new Vector2(vecTime.X + 120, vecTime.Y), Color.DarkGray);
+            Render.SpriteBatch.DrawString(Render.FontTextSmall, string.Format("{0:00}:{1:00}:{2:00}.{3:000}", Context.Time.Hours, Context.Time.Minutes, Context.Time.Seconds, Context.Time.Milliseconds), vecTime, Color.DarkGray);
 
             base.Draw(gameTime);
         }

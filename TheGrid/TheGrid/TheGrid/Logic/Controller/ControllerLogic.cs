@@ -266,7 +266,7 @@ namespace TheGrid.Logic.Controller
             Context.SelectedCell = selectedCell;
 
             //---> Déplacement d'une cellule
-            if (Context.MovedDestinationCell != null)
+            if (Context.MovedDestinationCell != null && selectedCell != null)
             {
                 Context.MovedSourceCell.Clone(selectedCell);
 
