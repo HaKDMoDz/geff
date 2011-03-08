@@ -42,31 +42,23 @@ namespace TheGrid.Model.UI
 
             foreach (Sample sample in channel.ListSample)
             {
-                ClickableText txtSample = new ClickableText(this.UI, GetNewTimeSpan(), this.Font, sample.Name.Substring(0, Math.Min(20, sample.Name.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, IsCheckable);
-                txtSample.Rec = new Rectangle(txtSample.Rec.X, txtSample.Rec.Y, Rec.Width - 2 * Ribbon.MARGE, txtSample.Rec.Height);
-                txtSample.Tag = sample;
-                vec.Y += sizeText.Y + Ribbon.MARGE;
-
+                ClickableText txtSample = AddItem(sample.Name, sample);
+                    
                 txtSample.ClickText += new ClickableText.ClickTextHandler(txtSample_ClickText);
                 txtSample.MiddleButtonClickText += new ClickableText.MiddleButtonClickTextHandler(txtSample_MiddleButtonClickText);
                 txtSample.MouseEnter += new ClickableText.MouseEnterHandler(txtSample_MouseEnter);
                 txtSample.MouseLeave += new ClickableText.MouseLeaveHandler(txtSample_MouseLeave);
-                ListUIChildren.Add(txtSample);
 
                 if (IsCheckable && ListUIChildren.Count == 1)
                 {
                     txtSample.IsChecked = true;
                     OnSelectedItemChanged(sample);
                 }
-
-                if (vec.Y >= Rec.Bottom)
-                    txtSample.Visible = false;
             }
             //---
 
-            CountItem = ListUIChildren.Count;
-
             UpdateScrollbar();
+            UpdateScrollValue();
         }
 
         void txtSample_MiddleButtonClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)

@@ -20,6 +20,46 @@ using TheGrid.Logic.Sound;
 
 namespace TheGrid
 {
+    //string clipboard = String.Empty;
+
+    //        int max = 6;
+    //        int count = 0;
+    //        for (int n0 = 0; n0 <= max; n0++)
+    //        {
+    //            for (int b0 = 0; b0 <= max; b0++)
+    //            {
+    //                for (int n1 = 0; n1 <= max; n1++)
+    //                {
+    //                    for (int b1 = 0; b1 <= max; b1++)
+    //                    {
+    //                        if (n0 + b0 <= max && n1 + b1 <= max &&
+    //                            b0 != 1 && n1 != 1 && b1 != 1)
+    //                        {
+    //                            count++;
+
+    //                            Console.WriteLine("=== " + count + " ===");
+
+
+    //                            float val = n0;
+                                
+    //                            if (b0 != 0) 
+    //                                val += (float)Math.Pow(2, b0);
+    //                            if (n1 != 0)
+    //                                val += 1f / (float)n1;
+    //                            if (b1 != 0)
+    //                                val += 1f / (float)Math.Pow(2, b1);
+
+    //                            Console.WriteLine(n0.ToString() + " + 2^" + b0.ToString() + " + 1/" + n1.ToString() + " + 1/2^" + b1.ToString() + " = \t" + val.ToString());
+
+    //                            clipboard += val.ToString() + "\r\n";
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
+
+    //        Console.ReadKey(true);
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -39,6 +79,8 @@ namespace TheGrid
 
         private TimeSpan lastElaspedReset = TimeSpan.Zero;
         private int count = 0;
+        public Vector2 NativeResolution { get; set; }
+        public bool IsNativeResolution { get; set; }
 
         public GameEngine()
         {
@@ -48,26 +90,25 @@ namespace TheGrid
 
             if (Mini)
             {
-                Graphics.PreferredBackBufferWidth = 600;
-                Graphics.PreferredBackBufferHeight = 600;
+                NativeResolution = new Vector2(600, 600);
             }
             else
             {
                 //--- Plein écran PC
-                Graphics.PreferredBackBufferWidth = 1680;
-                Graphics.PreferredBackBufferHeight = 1050;
-                
+                NativeResolution = new Vector2(1680, 1050);
+
                 //--- Plein écran TV
-                //Graphics.PreferredBackBufferWidth = 1360;
-                //Graphics.PreferredBackBufferHeight = 768;
+                NativeResolution = new Vector2(1360, 768);
 
                 //--- Plein écran PC Portable parents élo
-                //Graphics.PreferredBackBufferWidth = 1600;
-                //Graphics.PreferredBackBufferHeight = 900;
-                
+                NativeResolution = new Vector2(1600, 900);
+
                 //Graphics.IsFullScreen = true;
             }
 
+            IsNativeResolution = true;
+            Graphics.PreferredBackBufferWidth = (int)NativeResolution.X;
+            Graphics.PreferredBackBufferHeight = (int)NativeResolution.Y;
             IsFixedTimeStep = false;
             Graphics.SynchronizeWithVerticalRetrace = false;
             Graphics.ApplyChanges();
@@ -90,9 +131,6 @@ namespace TheGrid
                 Control window = Control.FromHandle(this.Window.Handle);
                 window.Location = new System.Drawing.Point(1950, 350);
                 window.Location = new System.Drawing.Point(1950, 350);
-
-                //window.Location = new System.Drawing.Point(1950, 850);
-                //window.Location = new System.Drawing.Point(1950, 850);
             }
 
             base.Initialize();
@@ -100,7 +138,7 @@ namespace TheGrid
             Context.GameEngine = this;
             //VisualStyle.OpenVisualStyle("LightGray");
             VisualStyle.OpenVisualStyle("AlmostDarkGrayBlue");
-            
+
             Render = new RenderLogic(this);
             Render.InitRender();
             UI = new UILogic(this);
@@ -166,6 +204,33 @@ namespace TheGrid
                 Window.Title = count.ToString();
                 count = 0;
             }
+        }
+
+        public void ToggleScreen()
+        {
+            Graphics.IsFullScreen = !Graphics.IsFullScreen;
+
+            Graphics.ApplyChanges();
+            Render.InitRender();
+        }
+
+        public void ToogleResolution()
+        {
+            IsNativeResolution = !IsNativeResolution;
+
+            if (IsNativeResolution)
+            {
+                Graphics.PreferredBackBufferWidth = (int)NativeResolution.X;
+                Graphics.PreferredBackBufferHeight = (int)NativeResolution.Y;
+            }
+            else
+            {
+                Graphics.PreferredBackBufferWidth = Screen.GetBounds(new System.Drawing.Point(this.Window.ClientBounds.Location.X, this.Window.ClientBounds.Location.Y)).Width;
+                Graphics.PreferredBackBufferHeight = Screen.GetBounds(new System.Drawing.Point(this.Window.ClientBounds.Location.X, this.Window.ClientBounds.Location.Y)).Height;
+            }
+
+            Graphics.ApplyChanges();
+            Render.InitRender();
         }
     }
 }

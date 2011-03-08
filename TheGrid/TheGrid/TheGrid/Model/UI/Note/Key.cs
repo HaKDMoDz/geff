@@ -37,19 +37,19 @@ namespace TheGrid.Model.UI.Note
         public event MouseLeaveHandler MouseLeave;
         #endregion
 
-        public Key(Keyboard keyboard, UILogic uiLogic, TimeSpan creationTime, string noteName, int octave, int index, int countPreviousWhite, float frequency)
+        public Key(Keyboard keyboard, UILogic uiLogic, TimeSpan creationTime, string name, int octave, int index, int countPreviousWhite, float frequency)
             : base(uiLogic, creationTime)
         {
             Alive = true;
             Visible = true;
 
             _keyboard = keyboard;
-            NoteName = noteName;
-            _name = noteName + octave.ToString();
+            _name = name;
+            NoteName = name + octave.ToString();
             _octave = octave;
             NoteKey = index;
             Frequency = frequency;
-            if (noteName.EndsWith("#"))
+            if (name.EndsWith("#"))
                 White = false;
 
             int indexImage = (index + 4) % 12;
@@ -82,7 +82,7 @@ namespace TheGrid.Model.UI.Note
             {
                 MouseHandled = true;
 
-                _keyboard.PlayNote(this);
+                _keyboard.PlayNote(this.NoteKey);
             }
         }
 
@@ -165,8 +165,7 @@ namespace TheGrid.Model.UI.Note
                 float ratio = (float)_texKey.Height / (float)rec.Height;
 
                 Point mousePosition = new Point(
-                    (int)((float)(Controller.mousePositionPoint.X - _keyboard.Delta-Rec.Left) * ratio)
-                    
+                      (int)((float)(Controller.mousePositionPoint.X - _keyboard.Delta-Rec.Left) * ratio)
                     , (int)((float)(Controller.mousePositionPoint.Y-Rec.Top) * ratio));
                 
                 if (_texKey.Bounds.Contains(mousePosition))

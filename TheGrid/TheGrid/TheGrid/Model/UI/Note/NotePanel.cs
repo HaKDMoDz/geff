@@ -122,7 +122,6 @@ namespace TheGrid.Model.UI.Note
         {
             this.Alive = false;
             Context.NextCellNote = null;
-            keyboard.Dispose();
         }
 
         void mouseIgnoreActionFirstPressed(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime)

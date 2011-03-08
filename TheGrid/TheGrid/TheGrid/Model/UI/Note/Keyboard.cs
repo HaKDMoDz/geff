@@ -13,9 +13,8 @@ using NAudio.Midi;
 
 namespace TheGrid.Model.UI.Note
 {
-    public class Keyboard : UIComponent, IDisposable
+    public class Keyboard : UIComponent
     {
-        private MidiIn midiIn = null;
         private NotePanel _notePannel;
         private List<Key> _listKey;
         private string[] _noteTable = new string[12];
@@ -35,38 +34,18 @@ namespace TheGrid.Model.UI.Note
 
             CreateNoteTable();
             CreateKeys();
-            CreateMidi();
 
             MouseManager mouseRightButton = AddMouse(MouseButtons.RightButton);
             mouseRightButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseRightButton_MouseFirstPressed);
             mouseRightButton.MousePressed += new MouseManager.MousePressedHandler(mouseRightButton_MousePressed);
             mouseRightButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseRightButton_MouseReleased);
+
+            UI.GameEngine.Sound.MidiNoteEvent += new SoundLogic.MidiNoteEventHandler(Sound_MidiNoteEvent);
         }
 
-        private void CreateMidi()
+        void Sound_MidiNoteEvent(int noteKey, string noteName)
         {
-
-            if (NAudio.Midi.MidiIn.NumberOfDevices > 0)
-            {
-                MidiInCapabilities cap = MidiIn.DeviceInfo(0);
-                midiIn = new NAudio.Midi.MidiIn(0);
-            }
-
-            if (midiIn != null)
-            {
-                midiIn.Start();
-                midiIn.MessageReceived += new EventHandler<MidiInMessageEventArgs>(midiIn_MessageReceived);
-            }
-        }
-
-        void midiIn_MessageReceived(object sender, MidiInMessageEventArgs e)
-        {
-            NoteEvent noteEvent = e.MidiEvent as NoteEvent;
-
-            if (_notePannel.Sample != null && noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
-            {
-                PerformNote(noteEvent.NoteNumber, noteEvent.NoteName);
-            }
+            PerformNote(noteKey, noteName);
         }
 
         private void CreateNoteTable()
@@ -114,25 +93,21 @@ namespace TheGrid.Model.UI.Note
 
         public void PerformNote(Key key)
         {
-            PlayNote(key);
-
-            if (!_notePannel.Training)
-                _notePannel.AddNote(key);
+            PerformNote(key.NoteKey, key.NoteName);
         }
 
         public void PerformNote(int noteKey, string noteName)
         {
-            if(_notePannel.Sample != null)
-                UI.GameEngine.Sound.PlayNote(_notePannel.Sample, noteKey);
+            PlayNote(noteKey);
 
             if (!_notePannel.Training)
                 _notePannel.AddNote(noteKey, noteName);
         }
 
-        public void PlayNote(Key key)
+        public void PlayNote(int noteKey)
         {
             if (_notePannel.Sample != null)
-                UI.GameEngine.Sound.PlayNote(_notePannel.Sample, key.NoteKey);
+                UI.GameEngine.Sound.PlayNote(_notePannel.Sample, noteKey);
         }
 
         private int GetRealOctave(int octave, int note)
@@ -220,15 +195,6 @@ namespace TheGrid.Model.UI.Note
             Render.SpriteBatch.Draw(Render.texEmpty, Rec, VisualStyle.BackColorLight);
 
             base.Draw(gameTime);
-        }
-
-        public void Dispose()
-        {
-            if (midiIn != null)
-            {
-                midiIn.Stop();
-                midiIn.Dispose();
-            }
         }
     }
 }

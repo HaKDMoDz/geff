@@ -67,8 +67,9 @@ namespace TheGrid.Logic.Controller
             KeyManager keyMenuM = AddKey(Keys.Subtract);
             KeyManager keyCloneCell = AddKey(Keys.LeftControl);
             KeyManager keyStopSound = AddKey(Keys.Space);
+            KeyManager keyToggleScreen = AddKey(Keys.F11);
+            KeyManager keyMaxResolution = AddKey(Keys.F12);
 
-            //KeyManager keyExit = AddKey(Keys.);
             KeyManager keyPlayPauseMusician = AddKey(Keys.P);
             KeyManager keyStopMusician = AddKey(Keys.Enter);
 
@@ -87,9 +88,10 @@ namespace TheGrid.Logic.Controller
             keyMenuM.KeyPressed += new KeyManager.KeyPressedHandler(keyMenuM_KeyPressed);
             keyCloneCell.KeyReleased += new KeyManager.KeyReleasedHandler(keyCloneCell_KeyReleased);
             keyStopSound.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopSound_KeyReleased);
-            //keyExit.KeyReleased += new KeyManager.KeyReleasedHandler(keyExit_KeyReleased);
             keyPlayPauseMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyPlayPauseMusician_KeyReleased);
             keyStopMusician.KeyReleased += new KeyManager.KeyReleasedHandler(keyStopMusician_KeyReleased);
+            keyToggleScreen.KeyReleased += new KeyManager.KeyReleasedHandler(keyToggleScreen_KeyReleased);
+            keyMaxResolution.KeyReleased += new KeyManager.KeyReleasedHandler(keyMaxResolution_KeyReleased);
 
             keyForward.KeyPressed += new KeyManager.KeyPressedHandler(keyForward_KeyPressed);
             keyForward.KeyReleased += new KeyManager.KeyReleasedHandler(keyForward_KeyReleased);
@@ -116,7 +118,17 @@ namespace TheGrid.Logic.Controller
             mouseWheel.MouseWheelChanged += new MouseManager.MouseWheelChangedHandler(mouseWheel_MouseWheelChanged);
         }
 
+        void keyMaxResolution_KeyReleased(Keys key, GameTime gameTime)
+        {
+            GameEngine.ToogleResolution();
+        }
+
         #region Évènement clavier
+        void keyToggleScreen_KeyReleased(Keys key, GameTime gameTime)
+        {
+            GameEngine.ToggleScreen();
+        }
+
         void keyStopSound_KeyReleased(Keys key, GameTime gameTime)
         {
             GameEngine.Sound.Stop();

@@ -117,8 +117,8 @@ namespace TheGrid.Model.UI
 
             double angleItem = MathHelper.PiOver2 / ((double)menu.Items.Count - 1);
 
-            menu.MaxAngle = ((double)menu.Items.Count) * angleItem  + 0.03;
-            menu.MinAngleDelta = -MathHelper.PiOver2+ MathHelper.Pi/12;
+            menu.MaxAngle = ((double)menu.Items.Count) * angleItem + 0.03;
+            menu.MinAngleDelta = -MathHelper.PiOver2 + MathHelper.Pi / 12;
             menu.MaxAngleDelta = angleItem - 0.01;
 
             menu.AngleDelta = menu.MinAngleDelta;
@@ -140,18 +140,32 @@ namespace TheGrid.Model.UI
 
         void itemNew_Selected(Item item, GameTime gameTime)
         {
-            ListLibrary listLibrary = new ListLibrary(this.UI, gameTime.TotalGameTime);
+            ListLibrary listLibrary = new ListLibrary(
+                this.UI,
+                gameTime.TotalGameTime,
+                new Rectangle(
+                    (int)(0.25f * Render.ScreenWidth),
+                    (int)(0.25f * Render.ScreenHeight),
+                    (int)(0.5f * Render.ScreenWidth),
+                    (int)(0.73f * Render.ScreenHeight)),
+                Render.FontText, false);
+
             this.ListUIChildren.Add(listLibrary);
         }
 
         void itemLoad_Selected(Item item, GameTime gameTime)
         {
             ListFile listFile = new ListFile(
-                this.UI, 
-                gameTime.TotalGameTime, 
+                this.UI,
+                gameTime.TotalGameTime,
                 Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Level\"),
-                new Rectangle((int)(0.25f * Render.ScreenWidth), (int)(0.3f * Render.ScreenHeight), (int)(0.5f * Render.ScreenWidth), (int)(0.4f * Render.ScreenHeight)),
-                Render.FontMenu);
+                new Rectangle(
+                    (int)(0.25f * Render.ScreenWidth),
+                    (int)(0.25f * Render.ScreenHeight),
+                    (int)(0.5f * Render.ScreenWidth),
+                    (int)(0.73f * Render.ScreenHeight)),
+                Render.FontText);
+
             this.ListUIChildren.Add(listFile);
         }
 

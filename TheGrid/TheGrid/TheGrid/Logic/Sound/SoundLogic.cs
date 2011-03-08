@@ -12,11 +12,13 @@ using TheGrid.Model.Effect;
 using System.Reflection;
 using VoiceRecorder.Audio;
 using System.Diagnostics;
+using NAudio.Midi;
 
 namespace TheGrid.Logic.Sound
 {
     public class SoundLogic
     {
+        public MidiIn midiIn = null;
         private IWavePlayer waveOutDevice;
         private WaveMixerStream32 mixer;
         private WaveStream[] reader;
@@ -26,6 +28,9 @@ namespace TheGrid.Logic.Sound
         private Dictionary<String, List<List<Effect>>> dicEffect;
         private int CountInstancePerSample = 6;
         private bool[] PlayingNote;
+
+        public delegate void MidiNoteEventHandler(int noteKey, string noteName);
+        public event MidiNoteEventHandler MidiNoteEvent;
 
         public GameEngine GameEngine { get; set; }
 
@@ -39,6 +44,12 @@ namespace TheGrid.Logic.Sound
             //waveOutDevice.Stop();
             waveOutDevice.Dispose();
             mixer.Close();
+
+            if (midiIn != null)
+            {
+                midiIn.Stop();
+                midiIn.Dispose();
+            }
         }
 
         public void Init(Map map)
@@ -50,7 +61,6 @@ namespace TheGrid.Logic.Sound
 
                 mixer.Close();
             }
-
 
             mixer = new WaveMixerStream32();
             mixer.AutoStop = true;
@@ -76,6 +86,33 @@ namespace TheGrid.Logic.Sound
             waveOutDevice.Play();
             mixer.Position = long.MaxValue;
             mixer.AutoStop = false;
+
+            CreateMidi();
+        }
+
+        private void CreateMidi()
+        {
+            if (MidiIn.NumberOfDevices > 0)
+            {
+                MidiInCapabilities cap = MidiIn.DeviceInfo(0);
+                midiIn = new NAudio.Midi.MidiIn(0);
+            }
+
+            if (midiIn != null)
+            {
+                midiIn.Start();
+                midiIn.MessageReceived += new EventHandler<MidiInMessageEventArgs>(midiIn_MessageReceived);
+            }
+        }
+
+        void midiIn_MessageReceived(object sender, MidiInMessageEventArgs e)
+        {
+            NoteEvent noteEvent = e.MidiEvent as NoteEvent;
+             
+            if (MidiNoteEvent != null && noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
+            {
+                MidiNoteEvent(noteEvent.NoteNumber, noteEvent.NoteName);
+            }
         }
 
         public void PlayNote(Sample sample, float noteKey)
