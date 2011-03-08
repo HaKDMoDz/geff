@@ -185,14 +185,14 @@ namespace TheGrid.Logic.GamePlay
             //--- Met à jour les effets associés au channel
             bool applyEffect = false;
 
-            if (lastEffectApplied == TimeSpan.Zero)
-                lastEffectApplied = gameTime.TotalGameTime;
+            //if (lastEffectApplied == TimeSpan.Zero)
+            //    lastEffectApplied = gameTime.TotalGameTime;
 
-            if (gameTime.TotalGameTime.Subtract(lastEffectApplied).TotalMilliseconds > 300)
-            {
-                applyEffect = true;
-                lastEffectApplied = gameTime.TotalGameTime;
-            }
+            //if (gameTime.TotalGameTime.Subtract(lastEffectApplied).TotalMilliseconds > 300)
+            //{
+            //    applyEffect = true;
+            //    lastEffectApplied = gameTime.TotalGameTime;
+            //}
             //---
 
             foreach (Channel channel in Context.Map.Channels)

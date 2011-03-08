@@ -21,12 +21,15 @@ namespace TheGrid.Model.UI
             Visible = true;
             _ribbon = ribbon;
 
-            Rec = new Rectangle(ribbon.RecMenuBar.Left + 200, ribbon.RecMenuBar.Top + Ribbon.MARGE, 240, ribbon.RecMenuBar.Height - Ribbon.MARGE * 2);
-
             MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
             mouseLeftButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseLeftButton_MouseFirstPressed);
             mouseLeftButton.MousePressed += new MouseManager.MousePressedHandler(mouseLeftButton_MousePressed);
             mouseLeftButton.MouseReleased += new MouseManager.MouseReleasedHandler(mouseLeftButton_MouseReleased);
+        }
+
+        public void Init()
+        {
+            Rec = new Rectangle(_ribbon.RecMenuBar.Left + 200, _ribbon.RecMenuBar.Top + Ribbon.MARGE, 240, _ribbon.RecMenuBar.Height - Ribbon.MARGE * 2);
         }
 
         void mouseLeftButton_MouseReleased(MouseButtons mouseButton, MouseState mouseState, GameTime gameTime, Point distance)

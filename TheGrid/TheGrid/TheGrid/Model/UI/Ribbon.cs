@@ -33,6 +33,12 @@ namespace TheGrid.Model.UI
 
             Visible = true;
             Alive = true;
+
+            Init();
+        }
+
+        public void Init()
+        {
             this.ListUIChildren = new List<UIComponent>();
 
             Ribbon.HEIGHT = (int)(0.2f * Render.ScreenHeight);
@@ -41,10 +47,12 @@ namespace TheGrid.Model.UI
             recBackground = new Rectangle(Rec.X, Rec.Y, Rec.Width, (int)((float)Rec.Height * 1.2f));
             vecTime = new Vector2(RecMenuBar.Left + MARGE * 4, RecMenuBar.Top + RecMenuBar.Height / 2 - Render.FontTextSmall.MeasureString("0").Y / 2);
 
-            BPMMeter BPMMeter = new BPMMeter(this, uiLogic, GetNewTimeSpan());
+            BPMMeter BPMMeter = new BPMMeter(this, this.UI, GetNewTimeSpan());
+            BPMMeter.Init();
             this.ListUIChildren.Add(BPMMeter);
 
-            Partition = new Partition(this, uiLogic, GetNewTimeSpan());
+            Partition = new Partition(this, this.UI, GetNewTimeSpan());
+            Partition.Init();
             this.ListUIChildren.Add(Partition);
 
             imgPlay = new ClickableImage(this.UI, GetNewTimeSpan(), "Play", Render.texPlay, Render.texPlay, new Vector2(BPMMeter.Rec.Right + MARGE * 2, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texPlay.Height / 2));

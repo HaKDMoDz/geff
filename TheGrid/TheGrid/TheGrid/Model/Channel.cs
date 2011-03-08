@@ -62,11 +62,11 @@ namespace TheGrid.Model
         {
             ListEffect = new List<ChannelEffect>();
 
-            ListEffect.Add(new ChannelEffect(this, "Volume"));
-            ListEffect.Add(new ChannelEffect(this, "Chorus"));
-            ListEffect.Add(new ChannelEffect(this, "Delay"));
-            ListEffect.Add(new ChannelEffect(this, "Flanger"));
-            ListEffect.Add(new ChannelEffect(this, "Tremolo"));
+            //ListEffect.Add(new ChannelEffect(this, "Volume"));
+            //ListEffect.Add(new ChannelEffect(this, "Chorus"));
+            //ListEffect.Add(new ChannelEffect(this, "Delay"));
+            //ListEffect.Add(new ChannelEffect(this, "Flanger"));
+            //ListEffect.Add(new ChannelEffect(this, "Tremolo"));
             ListEffect.Add(new ChannelEffect(this, "SuperPitch"));
         }
 

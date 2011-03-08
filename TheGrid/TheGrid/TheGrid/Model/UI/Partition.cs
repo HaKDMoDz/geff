@@ -33,11 +33,7 @@ namespace TheGrid.Model.UI
             Visible = true;
             Alive = true;
 
-            Rec = new Rectangle(Ribbon.MARGE, ribbon.RecMenuBar.Top, (int)Render.ScreenWidth - Ribbon.MARGE * 2, ribbon.Rec.Height - Ribbon.MARGE * 2);
-
-            recBackground = new Rectangle(Rec.Left, ribbon.RecMenuBar.Bottom, Rec.Width, (int)((float)Rec.Height * 1.2f));
-            recLeftPartition = new Rectangle(Rec.Left, Rec.Top, ribbon.RecMenuBar.Left - Rec.Left, Rec.Height);
-            recPartition = new Rectangle(ribbon.RecMenuBar.Left, ribbon.RecMenuBar.Bottom, ribbon.RecMenuBar.Width, Rec.Height - ribbon.RecMenuBar.Height);
+            //Init();
 
             MouseManager mouseLeftButton = AddMouse(MouseButtons.LeftButton);
             mouseLeftButton.MouseFirstPressed += new MouseManager.MouseFirstPressedHandler(mouseLeftButton_MouseFirstPressed);
@@ -126,40 +122,14 @@ namespace TheGrid.Model.UI
 
         public void Init()
         {
-            /*
-            ListUIChildren = new List<UIComponent>();
-            countChildren = 0;
+            Rec = new Rectangle(Ribbon.MARGE, ribbon.RecMenuBar.Top, (int)Render.ScreenWidth - Ribbon.MARGE * 2, ribbon.Rec.Height - Ribbon.MARGE * 2);
 
-            float channelX = Rec.X + Ribbon.MARGE + 100;
-            float channelHeight = (float)Rec.Height / ((float)Context.Map.Channels.Count - 1);
-            float channelWidth = Rec.Width - 100 - Ribbon.MARGE;
+            recBackground = new Rectangle(Rec.Left, ribbon.RecMenuBar.Bottom, Rec.Width, (int)((float)Rec.Height * 1.2f));
+            recLeftPartition = new Rectangle(Rec.Left, Rec.Top, ribbon.RecMenuBar.Left - Rec.Left, Rec.Height);
+            recPartition = new Rectangle(ribbon.RecMenuBar.Left, ribbon.RecMenuBar.Bottom, ribbon.RecMenuBar.Width, Rec.Height - ribbon.RecMenuBar.Height);
 
-            for (int i = 1; i < Context.Map.Channels.Count; i++)
-            {
-                float fi = (float)(i - 1);
-
-                float channelY = (float)Rec.Y + channelHeight * fi;
-
-                ClickableImage imgMuteChannel = new ClickableImage(UI, GetNewTimeSpan(), "MuteChannel" + i.ToString(), Render.texMuteChannel, Render.texMuteChannel, new Vector2(Rec.X + Ribbon.MARGE * 2 + Render.FontMenu.MeasureString("0").X, channelY + channelHeight / 2 - Render.texSoloChannel.Height / 2));
-                ClickableImage imgSoloChannel = new ClickableImage(UI, GetNewTimeSpan(), "SoloChannel" + i.ToString(), Render.texSoloChannel, Render.texSoloChannel, new Vector2(Rec.X + Ribbon.MARGE * 3 + Render.FontMenu.MeasureString("0").X + Render.texSoloChannel.Width, channelY + channelHeight / 2 - Render.texMuteChannel.Height / 2));
-
-                imgMuteChannel.Tag = i;
-                imgSoloChannel.Tag = i;
-
-                imgMuteChannel.ClickImage += new ClickableImage.ClickImageHandler(imgMuteChannel_ClickImage);
-                imgSoloChannel.ClickImage += new ClickableImage.ClickImageHandler(imgSoloChannel_ClickImage);
-
-                ListUIChildren.Add(imgMuteChannel);
-                ListUIChildren.Add(imgSoloChannel);
-
-                for (int j = 0; j < Context.Map.Channels[i].ListMusician.Count; j++)
-                {
-                    float fj = (float)j;
-
-                }
-            }
-            */
-            InitSegment();
+            if(Context.Map != null)
+                InitSegment();
         }
 
         public void InitSegment()

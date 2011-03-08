@@ -26,7 +26,7 @@ namespace TheGrid.Logic.Sound
         private WaveChannel32[] channelSteam;
         private Dictionary<String, List<int>> dicSample;
         private Dictionary<String, List<List<Effect>>> dicEffect;
-        private int CountInstancePerSample = 6;
+        private int CountInstancePerSample = 12;
         private bool[] PlayingNote;
 
         public delegate void MidiNoteEventHandler(int noteKey, string noteName);
@@ -334,11 +334,11 @@ namespace TheGrid.Logic.Sound
 
             listListEffect.Add(listEffect);
 
-            AddEffect(effectChain, listEffect, typeof(Volume));
-            AddEffect(effectChain, listEffect, typeof(Chorus));
-            AddEffect(effectChain, listEffect, typeof(JSNet.Delay));
-            AddEffect(effectChain, listEffect, typeof(Flanger));
-            AddEffect(effectChain, listEffect, typeof(Tremolo));
+            //AddEffect(effectChain, listEffect, typeof(Volume));
+            //AddEffect(effectChain, listEffect, typeof(Chorus));
+            //AddEffect(effectChain, listEffect, typeof(JSNet.Delay));
+            //AddEffect(effectChain, listEffect, typeof(Flanger));
+            //AddEffect(effectChain, listEffect, typeof(Tremolo));
             AddEffect(effectChain, listEffect, typeof(SuperPitch));
 
             return effectChain;
