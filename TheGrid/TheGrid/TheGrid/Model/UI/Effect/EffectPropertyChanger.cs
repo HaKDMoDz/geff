@@ -29,8 +29,8 @@ namespace TheGrid.Model.UI.Effect
         public int nbVertex = 50;
         private VertexBuffer vBuffer;
 
-        public EffectPropertyChanger(UILogic uiLogic, TimeSpan creationTime, EffectProperty effectProperty)
-            : base(uiLogic, creationTime)
+        public EffectPropertyChanger(UILogic uiLogic, UIComponent parent, TimeSpan creationTime, EffectProperty effectProperty)
+            : base(uiLogic, parent, creationTime)
         {
             this.Modal = false;
             this.Alive = true;

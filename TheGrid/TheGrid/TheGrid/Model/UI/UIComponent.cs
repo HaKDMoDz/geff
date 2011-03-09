@@ -31,6 +31,7 @@ namespace TheGrid.Model.UI
         protected int countChildren;
         public virtual Rectangle Rec { get; set; }
         public bool MouseHandled { get; set; }
+        public UIComponent Parent { get; set; }
 
         public virtual void UpdateUIDependency(GameTime gameTime) { }
 
@@ -59,7 +60,7 @@ namespace TheGrid.Model.UI
 
             if (Alive && Visible && ListUIChildren != null)
             {
-                ListUIChildren.Sort((x, y) => y.CreationTime.CompareTo(x.CreationTime));
+                ListUIChildren.Sort(new ComparerUIComponent());
 
                 for (int i = 0; i < ListUIChildren.Count; i++)
                 {
@@ -74,6 +75,11 @@ namespace TheGrid.Model.UI
             {
                 keyManager.Update(Controller.keyBoardState, gameTime);
             }
+
+            //if (Parent == null && UI.IsMouseHandled())
+            //    return;
+            //else if (Parent != null && this.IsMouseHandled())
+            //    return;
 
             foreach (MouseManager mouseManager in ListMouseManager)
             {
@@ -95,12 +101,13 @@ namespace TheGrid.Model.UI
             }
         }
 
-        public UIComponent(UILogic uiLogic, TimeSpan creationTime)
+        public UIComponent(UILogic uiLogic, UIComponent parent, TimeSpan creationTime)
         {
             this.CreationTime = creationTime;
             this.Alive = true;
             this.Visible = false;
             this.UI = uiLogic;
+            this.Parent = parent;
         }
 
         protected TimeSpan GetNewTimeSpan()
@@ -130,6 +137,9 @@ namespace TheGrid.Model.UI
 
         public bool IsMouseHandled()
         {
+            if (Modal)
+                return true;
+
             bool isMouseHandled = false;
 
             if (Alive && Visible)
@@ -159,6 +169,21 @@ namespace TheGrid.Model.UI
         public Texture2D GetImage(string imagePath)
         {
             return UI.GameEngine.Content.Load<Texture2D>(@"Texture\" + imagePath);
+        }
+    }
+
+    public class ComparerUIComponent : IComparer<UIComponent>
+    {
+        public int Compare(UIComponent x, UIComponent y)
+        {
+            int val = y.Modal.CompareTo(x.Modal);
+
+            if (val != 0)
+                return val;
+
+            val = y.CreationTime.CompareTo(x.CreationTime);
+
+            return val;
         }
     }
 }

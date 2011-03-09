@@ -23,7 +23,7 @@ namespace TheGrid.Model.UI.Note
         int countWhite = 0;
 
         public Keyboard(NotePanel notePannel, UILogic uiLogic, TimeSpan creationTime)
-            : base(uiLogic, creationTime)
+            : base(uiLogic, notePannel, creationTime)
         {
             Alive = true;
             Visible = true;

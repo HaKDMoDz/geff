@@ -43,14 +43,14 @@ namespace TheGrid.Common
         public event ClickImageHandler ClickImage;
         #endregion
 
-        public ClickableImage(UILogic uiLogic, TimeSpan creationTime, string name, Texture2D textureMouseIn, Texture2D textureMouseOut, Vector2 position)
-            : base(uiLogic, creationTime)
+        public ClickableImage(UILogic uiLogic, UIComponent parent, TimeSpan creationTime, string name, Texture2D textureMouseIn, Texture2D textureMouseOut, Vector2 position)
+            : base(uiLogic, parent, creationTime)
         {
             this._textureMouseIn = textureMouseIn;
             this._textureMouseOut = textureMouseOut;
             this.Position = position;
             this.Color = Color.White;
-            this.Rec = new Rectangle((int)this.Position.X,(int) this.Position.Y, this._textureMouseIn.Width, this._textureMouseIn.Height);
+            this.Rec = new Rectangle((int)this.Position.X, (int)this.Position.Y, this._textureMouseIn.Width, this._textureMouseIn.Height);
 
             this.Alive = true;
             this.Visible = true;

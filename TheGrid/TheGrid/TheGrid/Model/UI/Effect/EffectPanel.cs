@@ -19,8 +19,8 @@ namespace TheGrid.Model.UI.Effect
         private Cell _cell { get; set; }
         private float _widthChannelChooser = 200f;
 
-        public EffectPanel(UILogic uiLogic, TimeSpan creationTime, ChannelEffect channelEffect, Cell cell)
-            : base(uiLogic, creationTime)
+        public EffectPanel(UILogic uiLogic, UIComponent parent, TimeSpan creationTime, ChannelEffect channelEffect, Cell cell)
+            : base(uiLogic, parent, creationTime)
         {
             this.Modal = true;
             this.Alive = true;
@@ -39,14 +39,14 @@ namespace TheGrid.Model.UI.Effect
 
             Vector2 sizeWindow = new Vector2(_widthChannelChooser + Math.Min(channelEffect.ListEffectProperty.Count, 3) * (EffectPropertyChanger.WIDTH + Ribbon.MARGE), (int)Math.Round((float)channelEffect.ListEffectProperty.Count / 3f, MidpointRounding.AwayFromZero) * EffectPropertyChanger.HEIGHT);
 
-            Rec = new Rectangle((int)(Render.ScreenWidth / 2 - sizeWindow.X / 2), Ribbon.HEIGHT+Ribbon.MARGE, (int)sizeWindow.X, (int)(sizeWindow.Y));
+            Rec = new Rectangle((int)(Render.ScreenWidth / 2 - sizeWindow.X / 2), Ribbon.HEIGHT + Ribbon.MARGE, (int)sizeWindow.X, (int)(sizeWindow.Y));
 
             Vector2 vec = new Vector2(Rec.X + _widthChannelChooser + Ribbon.MARGE, Rec.Y);
             int nb = 0;
 
             foreach (EffectProperty effectProperty in _channelEffect.ListEffectProperty)
             {
-                EffectPropertyChanger effectPropertyChanger = new EffectPropertyChanger(UI, GetNewTimeSpan(), effectProperty);
+                EffectPropertyChanger effectPropertyChanger = new EffectPropertyChanger(UI, this, GetNewTimeSpan(), effectProperty);
                 effectPropertyChanger.Rec = new Rectangle((int)vec.X, (int)vec.Y, EffectPropertyChanger.WIDTH, EffectPropertyChanger.HEIGHT);
                 effectPropertyChanger.Init();
 
@@ -66,11 +66,11 @@ namespace TheGrid.Model.UI.Effect
             //CreateChannelMenu();
 
             //--- Bouton Valider
-            ClickableText txtOk = new ClickableText(UI, GetNewTimeSpan(), Render.FontText, "Ok", new Vector2(Rec.X + _widthChannelChooser * 0.3f, Rec.Y + Rec.Height * 0.8f), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+            ClickableText txtOk = new ClickableText(UI, this, GetNewTimeSpan(), Render.FontText, "Ok", new Vector2(Rec.X + _widthChannelChooser * 0.3f, Rec.Y + Rec.Height * 0.8f), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
             txtOk.ClickText += new ClickableText.ClickTextHandler(txtOk_ClickText);
             ListUIChildren.Add(txtOk);
 
-            ClickableText txtCancel = new ClickableText(UI, GetNewTimeSpan(), Render.FontText, "Cancel", new Vector2(Rec.X + _widthChannelChooser * 0.5f, Rec.Y + Rec.Height * 0.8f), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+            ClickableText txtCancel = new ClickableText(UI, this, GetNewTimeSpan(), Render.FontText, "Cancel", new Vector2(Rec.X + _widthChannelChooser * 0.5f, Rec.Y + Rec.Height * 0.8f), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
             txtCancel.ClickText += new ClickableText.ClickTextHandler(txtCancel_ClickText);
             ListUIChildren.Add(txtCancel);
             //---
@@ -108,7 +108,7 @@ namespace TheGrid.Model.UI.Effect
         {
             ListUIChildren.RemoveAll(ui => ui is CircularMenu);
 
-            CircularMenu menuChannel = new CircularMenu(UI, GetNewTimeSpan(), null, null, null, false);
+            CircularMenu menuChannel = new CircularMenu(UI, this, GetNewTimeSpan(), null, null, null, false);
             menuChannel.Location = new Vector2(Rec.X + _widthChannelChooser / 2, Rec.Y + Rec.Height / 2);
 
             for (int i = 0; i < Context.Map.Channels.Count; i++)

@@ -27,7 +27,7 @@ namespace TheGrid.Model.UI
         private Rectangle recLeftPartition;
 
         public Partition(Ribbon ribbon, UILogic uiLogic, TimeSpan creationTime)
-            : base(uiLogic, creationTime)
+            : base(uiLogic, ribbon, creationTime)
         {
             this.ribbon = ribbon;
             Visible = true;

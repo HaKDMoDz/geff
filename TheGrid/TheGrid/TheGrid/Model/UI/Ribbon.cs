@@ -26,8 +26,8 @@ namespace TheGrid.Model.UI
         private Vector2 vecTime;
         private CircularMenu menu;
 
-        public Ribbon(UILogic uiLogic, TimeSpan creationTime)
-            : base(uiLogic, creationTime)
+        public Ribbon(UILogic uiLogic, UIComponent parent, TimeSpan creationTime)
+            : base(uiLogic, parent, creationTime)
         {
             CreationTime = creationTime;
 
@@ -55,10 +55,10 @@ namespace TheGrid.Model.UI
             Partition.Init();
             this.ListUIChildren.Add(Partition);
 
-            imgPlay = new ClickableImage(this.UI, GetNewTimeSpan(), "Play", Render.texPlay, Render.texPlay, new Vector2(BPMMeter.Rec.Right + MARGE * 2, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texPlay.Height / 2));
-            imgPause = new ClickableImage(this.UI, GetNewTimeSpan(), "Pause", Render.texPause, Render.texPause, new Vector2(BPMMeter.Rec.Right + MARGE * 2, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texPause.Height / 2));
+            imgPlay = new ClickableImage(UI, this, GetNewTimeSpan(), "Play", Render.texPlay, Render.texPlay, new Vector2(BPMMeter.Rec.Right + MARGE * 2, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texPlay.Height / 2));
+            imgPause = new ClickableImage(UI, this, GetNewTimeSpan(), "Pause", Render.texPause, Render.texPause, new Vector2(BPMMeter.Rec.Right + MARGE * 2, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texPause.Height / 2));
             imgPause.Visible = false;
-            imgStop = new ClickableImage(this.UI, GetNewTimeSpan(), "Stop", Render.texStop, Render.texStop, new Vector2(BPMMeter.Rec.Right + MARGE * 3 + Render.texPlay.Width, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texStop.Height / 2));
+            imgStop = new ClickableImage(UI, this, GetNewTimeSpan(), "Stop", Render.texStop, Render.texStop, new Vector2(BPMMeter.Rec.Right + MARGE * 3 + Render.texPlay.Width, Partition.Rec.Y + RecMenuBar.Height / 2 - Render.texStop.Height / 2));
 
             imgPlay.ClickImage += new ClickableImage.ClickImageHandler(imgPlay_ClickImage);
             imgPause.ClickImage += new ClickableImage.ClickImageHandler(imgPause_ClickImage);
@@ -67,10 +67,6 @@ namespace TheGrid.Model.UI
             this.ListUIChildren.Add(imgPlay);
             this.ListUIChildren.Add(imgPause);
             this.ListUIChildren.Add(imgStop);
-
-            CreateCircularMenu();
-            menu.Enter += new CircularMenu.EnterHandler(menu_Enter);
-            menu.Leave += new CircularMenu.LeaveHandler(menu_Leave);
         }
 
         void imgPlay_ClickImage(ClickableImage image, MouseState mouseState, GameTime gameTime)
@@ -87,113 +83,6 @@ namespace TheGrid.Model.UI
         {
             GamePlay.Stop();
         }
-
-        #region Menu
-        private void CreateCircularMenu()
-        {
-            menu = new CircularMenu(UI, GetNewTimeSpan(), null, null, null, false, true);
-            menu.Visible = true;
-            menu.LocalSize = 110;
-
-            Item itemNew = new Item(menu, "New");
-            itemNew.Selected += new Item.SelectedHandler(itemNew_Selected);
-            menu.Items.Add(itemNew);
-
-            Item itemLoad = new Item(menu, "Load");
-            itemLoad.Selected += new Item.SelectedHandler(itemLoad_Selected);
-            menu.Items.Add(itemLoad);
-
-            Item itemSave = new Item(menu, "Save");
-            itemSave.Selected += new Item.SelectedHandler(itemSave_Selected);
-            menu.Items.Add(itemSave);
-
-            Item itemExit = new Item(menu, "Exit");
-            itemExit.Selected += new Item.SelectedHandler(itemExit_Selected);
-            menu.Items.Add(itemExit);
-
-            Item itemMenu = new Item(menu, "Menu");
-            menu.Items.Add(itemMenu);
-
-            menu.Location = new Vector2(0f, 0f);
-            menu.nbVertex = menu.Items.Count * 4;
-            menu.PercentVisibility = 0f;
-            menu.State = ComponentState.Closed;
-            menu.EffectVertex = Render.effectUI;
-            menu.EffectSprite = Render.effectUISprite;
-            menu.IsUI = true;
-            menu.IsTurnMode = true;
-
-            double angleItem = MathHelper.PiOver2 / ((double)menu.Items.Count - 1);
-
-            menu.MaxAngle = ((double)menu.Items.Count) * angleItem + 0.03;
-            menu.MinAngleDelta = -MathHelper.PiOver2 + MathHelper.Pi / 12;
-            menu.MaxAngleDelta = angleItem - 0.01;
-
-            menu.AngleDelta = menu.MinAngleDelta;
-
-            menu.CreateVertex();
-
-            ListUIChildren.Add(menu);
-        }
-
-        void menu_Leave(GameTime gameTime)
-        {
-            menu.Close(gameTime);
-        }
-
-        void menu_Enter(GameTime gameTime)
-        {
-            menu.Open(gameTime);
-        }
-
-        void itemNew_Selected(Item item, GameTime gameTime)
-        {
-            ListLibrary listLibrary = new ListLibrary(
-                this.UI,
-                gameTime.TotalGameTime,
-                new Rectangle(
-                    (int)(0.25f * Render.ScreenWidth),
-                    (int)(0.25f * Render.ScreenHeight),
-                    (int)(0.5f * Render.ScreenWidth),
-                    (int)(0.73f * Render.ScreenHeight)),
-                Render.FontText, false);
-
-            this.ListUIChildren.Add(listLibrary);
-        }
-
-        void itemLoad_Selected(Item item, GameTime gameTime)
-        {
-            ListFile listFile = new ListFile(
-                this.UI,
-                gameTime.TotalGameTime,
-                Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Level\"),
-                new Rectangle(
-                    (int)(0.25f * Render.ScreenWidth),
-                    (int)(0.25f * Render.ScreenHeight),
-                    (int)(0.5f * Render.ScreenWidth),
-                    (int)(0.73f * Render.ScreenHeight)),
-                Render.FontText);
-
-            this.ListUIChildren.Add(listFile);
-        }
-
-        void itemSave_Selected(Item item, GameTime gameTime)
-        {
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.InitialDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Level\");
-            dlg.Filter = "Niveau The Grid (*.xml)|*.xml";
-
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                FileSystem.SaveLevel(Context.Map, Path.GetFileNameWithoutExtension(dlg.FileName));
-            }
-        }
-
-        void itemExit_Selected(Item item, GameTime gameTime)
-        {
-            UI.GameEngine.Exit();
-        }
-        #endregion
 
         public override void Update(GameTime gameTime)
         {

@@ -14,8 +14,8 @@ namespace TheGrid.Model.UI
 {
     public class ListLibrary : ListBase
     {
-        public ListLibrary(UILogic uiLogic, TimeSpan creationTime, Rectangle rec, SpriteFont font, bool checkable)
-            : base(uiLogic, creationTime, rec, font, checkable)
+        public ListLibrary(UILogic uiLogic, UIComponent parent, TimeSpan creationTime, Rectangle rec, SpriteFont font, bool checkable)
+            : base(uiLogic, parent, creationTime, rec, font, checkable)
         {
             this.Modal = true;
             this.Alive = true;

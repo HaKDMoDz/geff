@@ -38,7 +38,7 @@ namespace TheGrid.Model.UI.Note
         #endregion
 
         public Key(Keyboard keyboard, UILogic uiLogic, TimeSpan creationTime, string name, int octave, int index, int countPreviousWhite, float frequency)
-            : base(uiLogic, creationTime)
+            : base(uiLogic, keyboard, creationTime)
         {
             Alive = true;
             Visible = true;

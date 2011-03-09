@@ -9,6 +9,7 @@ using TheGrid.Common;
 using TheGrid.Logic.Controller;
 using Microsoft.Xna.Framework.Input;
 using TheGrid.Model.Instrument;
+using NAudio.Midi;
 
 namespace TheGrid.Model.UI.Note
 {
@@ -23,7 +24,7 @@ namespace TheGrid.Model.UI.Note
         public int CurrentDirection = -1;
 
         public NotePanel(UILogic uiLogic, TimeSpan creationTime)
-            : base(uiLogic, creationTime)
+            : base(uiLogic, null, creationTime)
         {
             Alive = true;
             Visible = true;
@@ -39,20 +40,25 @@ namespace TheGrid.Model.UI.Note
             //--- Boutons
             Vector2 vec = new Vector2(0, Rec.Top + MARGE);
 
-            ClickableText txtSilence = new ClickableText(UI, GetNewTimeSpan(), Render.FontTextSmall, "Silence", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+            ClickableText txtSilence = new ClickableText(UI, this, GetNewTimeSpan(), Render.FontTextSmall, "Silence", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
             txtSilence.ClickText += new ClickableText.ClickTextHandler(txtSilence_ClickText);
             ListUIChildren.Add(txtSilence);
             vec.Y += MARGE + txtSilence.Rec.Height;
 
-            ClickableText txtCapture = new ClickableText(UI, GetNewTimeSpan(), Render.FontTextSmall, "Capture", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+            ClickableText txtCapture = new ClickableText(UI, this, GetNewTimeSpan(), Render.FontTextSmall, "Capture", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
             txtCapture.ClickText += new ClickableText.ClickTextHandler(txtCapture_ClickText);
             ListUIChildren.Add(txtCapture);
             vec.Y += MARGE + txtCapture.Rec.Height;
 
-            ClickableText txtEntrainement = new ClickableText(UI, GetNewTimeSpan(), Render.FontTextSmall, "Entraînement", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, true);
+            ClickableText txtEntrainement = new ClickableText(UI, this, GetNewTimeSpan(), Render.FontTextSmall, "Entraînement", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, true);
             txtEntrainement.ClickText += new ClickableText.ClickTextHandler(txtEntrainement_ClickText);
             ListUIChildren.Add(txtEntrainement);
             vec.Y += MARGE + txtEntrainement.Rec.Height;
+
+            ClickableText txtOpenMidi = new ClickableText(UI, this, GetNewTimeSpan(), Render.FontTextSmall, "Midi", new Vector2(MARGE, vec.Y), VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, false);
+            txtOpenMidi.ClickText += new ClickableText.ClickTextHandler(txtOpenMidi_ClickText);
+            ListUIChildren.Add(txtOpenMidi);
+            vec.Y += MARGE + txtOpenMidi.Rec.Height;
             //---
 
             //--- Note duration
@@ -64,8 +70,10 @@ namespace TheGrid.Model.UI.Note
             //---
 
             //--- Liste des samples
-            listSample = new ListSample(UI, GetNewTimeSpan(), null, Context.Map.Channels[1], new Rectangle(MARGE + (int)leftPartWidth / 2, Rec.Top + Rec.Height / 2, (int)leftPartWidth / 2, Rec.Height / 2), Render.FontTextSmall, true);
-            listSample.SelectedItemChanged+=new ListBase.SelectedItemChangedHandler(listSample_SelectedItemChanged);
+            listSample = new ListSample(UI,this, GetNewTimeSpan(), null, Context.Map.Channels[1], 
+                new Rectangle(MARGE + (int)leftPartWidth / 2, Rec.Top + Rec.Height / 2 + MARGE, (int)leftPartWidth / 2-MARGE*2, Rec.Height / 2-MARGE*2)
+                , Render.FontTextSmall, true);
+            listSample.SelectedItemChanged += new ListBase.SelectedItemChangedHandler(listSample_SelectedItemChanged);
             ListUIChildren.Add(listSample);
             //---
 
@@ -89,6 +97,24 @@ namespace TheGrid.Model.UI.Note
             Context.SelectedCellChanged += new Context.SelectedCellChangedHandler(Context_SelectedCellChanged);
         }
 
+        void txtOpenMidi_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
+        {
+            NAudio.Midi.MidiFile midiFile = new MidiFile(@"C:\WINDOWS\Media\onestop.mid");
+
+            if (midiFile != null)
+            {
+                foreach (MidiEvent midiEvent in midiFile.Events[1])
+                {
+                    NoteEvent noteEvent = midiEvent as NoteEvent;
+
+                    if (noteEvent != null)
+                    {
+                        AddNote(noteEvent.NoteNumber - 20, noteEvent.NoteName);
+                    }
+                }
+            }
+        }
+
         void txtEntrainement_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
         {
             Training = clickableText.IsChecked;
@@ -101,7 +127,7 @@ namespace TheGrid.Model.UI.Note
 
         void Context_SelectedCellChanged(Cell oldSelectedCell, Cell newSelectedCell)
         {
-            if(this.Alive)
+            if (this.Alive)
                 Context.NextCellNote = Context.SelectedCell;
         }
 
@@ -189,9 +215,9 @@ namespace TheGrid.Model.UI.Note
             ListUIChildren.RemoveAll(ui => ui is CircularMenu);
 
             float sizeMenu = 75f;
-            CircularMenu menuDuration = new CircularMenu(UI, GetNewTimeSpan(), null, null, null, true);
+            CircularMenu menuDuration = new CircularMenu(UI,this, GetNewTimeSpan(), null, null, null, true);
             menuDuration.LocalSize = (int)sizeMenu;
-            menuDuration.Location = new Vector2(Rec.X + MARGE + leftPartWidth *3/4, Rec.Y + Rec.Height / 4);
+            menuDuration.Location = new Vector2(Rec.X + MARGE + leftPartWidth * 3 / 4, Rec.Y + Rec.Height / 4);
 
             //---
             Item itemDurationReset = new Item(menuDuration, "Reset", 1);
@@ -233,7 +259,7 @@ namespace TheGrid.Model.UI.Note
             ListUIChildren.RemoveAll(ui => ui is CircularMenu);
 
             float sizeMenu = 75f;
-            CircularMenu menuChannel = new CircularMenu(UI, GetNewTimeSpan(), null, null, null, false);
+            CircularMenu menuChannel = new CircularMenu(UI,this, GetNewTimeSpan(), null, null, null, false);
             menuChannel.LocalSize = (int)sizeMenu;
             menuChannel.Location = new Vector2(Rec.X + MARGE + leftPartWidth / 4, Rec.Y + Rec.Height * 3 / 4);
 
@@ -309,6 +335,12 @@ namespace TheGrid.Model.UI.Note
             //}
 
             base.Update(gametime);
+
+
+            if (!UI.IsMouseHandled() && Rec.Contains(Controller.mousePositionPoint))
+            {
+                MouseHandled = true;
+            }
         }
 
         public override void Draw(GameTime gameTime)

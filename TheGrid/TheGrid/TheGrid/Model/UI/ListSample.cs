@@ -17,8 +17,8 @@ namespace TheGrid.Model.UI
     {
         private Cell _cell;
 
-        public ListSample(UILogic uiLogic, TimeSpan creationTime, Cell cell, Channel channel, Rectangle rec, SpriteFont font, bool checkable)
-            : base(uiLogic, creationTime, rec, font, checkable)
+        public ListSample(UILogic uiLogic, UIComponent parent, TimeSpan creationTime, Cell cell, Channel channel, Rectangle rec, SpriteFont font, bool checkable)
+            : base(uiLogic, parent, creationTime, rec, font, checkable)
         {
             this.Alive = true;
             this.Visible = true;
@@ -43,7 +43,7 @@ namespace TheGrid.Model.UI
             foreach (Sample sample in channel.ListSample)
             {
                 ClickableText txtSample = AddItem(sample.Name, sample);
-                    
+
                 txtSample.ClickText += new ClickableText.ClickTextHandler(txtSample_ClickText);
                 txtSample.MiddleButtonClickText += new ClickableText.MiddleButtonClickTextHandler(txtSample_MiddleButtonClickText);
                 txtSample.MouseEnter += new ClickableText.MouseEnterHandler(txtSample_MouseEnter);
@@ -91,7 +91,7 @@ namespace TheGrid.Model.UI
 
                 foreach (UIComponent component in ListUIChildren)
                 {
-                    if(component is ClickableText)
+                    if (component is ClickableText)
                         ((ClickableText)component).IsChecked = false;
                 }
 
@@ -113,7 +113,7 @@ namespace TheGrid.Model.UI
 
         public override void Draw(GameTime gameTime)
         {
-            if(Modal)
+            if (Modal)
                 Render.SpriteBatch.Draw(Render.texEmpty, Render.GraphicsDevice.Viewport.Bounds, VisualStyle.BackColorModalScreen);
 
             Render.SpriteBatch.Draw(Render.texEmptyGradient, Rec, VisualStyle.BackColorLight);

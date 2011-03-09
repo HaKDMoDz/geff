@@ -111,7 +111,7 @@ namespace TheGrid.Logic.Sound
              
             if (MidiNoteEvent != null && noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
             {
-                MidiNoteEvent(noteEvent.NoteNumber, noteEvent.NoteName);
+                MidiNoteEvent(noteEvent.NoteNumber-20, noteEvent.NoteName);
             }
         }
 

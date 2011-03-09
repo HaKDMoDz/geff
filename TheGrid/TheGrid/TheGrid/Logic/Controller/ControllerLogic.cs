@@ -118,12 +118,12 @@ namespace TheGrid.Logic.Controller
             mouseWheel.MouseWheelChanged += new MouseManager.MouseWheelChangedHandler(mouseWheel_MouseWheelChanged);
         }
 
+        #region Évènement clavier
         void keyMaxResolution_KeyReleased(Keys key, GameTime gameTime)
         {
             GameEngine.ToogleResolution();
         }
 
-        #region Évènement clavier
         void keyToggleScreen_KeyReleased(Keys key, GameTime gameTime)
         {
             GameEngine.ToggleScreen();
@@ -154,7 +154,7 @@ namespace TheGrid.Logic.Controller
 
         void keyZoomOut_KeyPressed(Keys key, GameTime gameTime)
         {
-            GameEngine.Render.CameraPosition.Z += 0.5f;
+            GameEngine.Render.CameraPosition.Z += (float)gameTime.ElapsedGameTime.TotalMilliseconds / 30f;
             GameEngine.Render.updateViewScreen = true;
 
             if (GameEngine.Render.CameraPosition.Z > RenderLogic.ZOOM_OUT_MAX)
@@ -163,7 +163,7 @@ namespace TheGrid.Logic.Controller
 
         void keyZoomIn_KeyPressed(Keys key, GameTime gameTime)
         {
-            GameEngine.Render.CameraPosition.Z -= 0.5f;
+            GameEngine.Render.CameraPosition.Z -= (float)gameTime.ElapsedGameTime.TotalMilliseconds / 30f;
             GameEngine.Render.updateViewScreen = true;
 
             if (GameEngine.Render.CameraPosition.Z < RenderLogic.ZOOM_IN_MAX)
@@ -378,6 +378,9 @@ namespace TheGrid.Logic.Controller
 
         void mouseWheel_MouseWheelChanged(MouseState mouseState, GameTime gameTime, int prevMouseWheel)
         {
+            if (GameEngine.UI.IsMouseHandled())
+                return;
+
             int curMouseWheel = mouseState.ScrollWheelValue;
 
             float estimatedZoom = GameEngine.Render.CameraPosition.Z - (float)(prevMouseWheel - curMouseWheel) / 200f;

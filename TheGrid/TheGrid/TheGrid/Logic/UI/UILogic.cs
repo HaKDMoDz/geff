@@ -12,6 +12,8 @@ using Microsoft.Xna.Framework.Graphics;
 using TheGrid.Model.UI.Effect;
 using TheGrid.Model.Effect;
 using TheGrid.Model.UI.Note;
+using System.IO;
+using System.Windows.Forms;
 
 namespace TheGrid.Logic.UI
 {
@@ -21,28 +23,133 @@ namespace TheGrid.Logic.UI
 
         public List<UIComponent> ListUIComponent { get; set; }
         public Ribbon Ribbon;
+        public CircularMenu Menu;
 
         public UILogic(GameEngine gameEngine)
         {
             this.GameEngine = gameEngine;
             this.ListUIComponent = new List<UIComponent>();
 
-            Ribbon = new Ribbon(this, TimeSpan.FromDays(1));
+            Ribbon = new Ribbon(this, null, TimeSpan.FromDays(1));
             ListUIComponent.Add(Ribbon);
 
-
+            CreateCircularMenu();
+            Menu.Enter += new CircularMenu.EnterHandler(menu_Enter);
+            Menu.Leave += new CircularMenu.LeaveHandler(menu_Leave);
         }
+
+        #region Menu
+        private void CreateCircularMenu()
+        {
+            Menu = new CircularMenu(this, null, TimeSpan.FromDays(2), null, null, null, false, true);
+            Menu.Visible = true;
+            Menu.LocalSize = 110;
+
+            Item itemNew = new Item(Menu, "New");
+            itemNew.Selected += new Item.SelectedHandler(itemNew_Selected);
+            Menu.Items.Add(itemNew);
+
+            Item itemLoad = new Item(Menu, "Load");
+            itemLoad.Selected += new Item.SelectedHandler(itemLoad_Selected);
+            Menu.Items.Add(itemLoad);
+
+            Item itemSave = new Item(Menu, "Save");
+            itemSave.Selected += new Item.SelectedHandler(itemSave_Selected);
+            Menu.Items.Add(itemSave);
+
+            Item itemExit = new Item(Menu, "Exit");
+            itemExit.Selected += new Item.SelectedHandler(itemExit_Selected);
+            Menu.Items.Add(itemExit);
+
+            Item itemMenu = new Item(Menu, "Menu");
+            Menu.Items.Add(itemMenu);
+
+            Menu.Location = new Vector2(0f, 0f);
+            Menu.nbVertex = Menu.Items.Count * 4;
+            Menu.PercentVisibility = 0f;
+            Menu.State = ComponentState.Closed;
+            Menu.EffectVertex = GameEngine.Render.effectUI;
+            Menu.EffectSprite = GameEngine.Render.effectUISprite;
+            Menu.IsUI = true;
+            Menu.IsTurnMode = true;
+
+            double angleItem = MathHelper.PiOver2 / ((double)Menu.Items.Count - 1);
+
+            Menu.MaxAngle = ((double)Menu.Items.Count) * angleItem + 0.03;
+            Menu.MinAngleDelta = -MathHelper.PiOver2 + MathHelper.Pi / 12;
+            Menu.MaxAngleDelta = angleItem - 0.01;
+
+            Menu.AngleDelta = Menu.MinAngleDelta;
+
+            Menu.CreateVertex();
+
+            ListUIComponent.Add(Menu);
+        }
+
+        void menu_Leave(GameTime gameTime)
+        {
+            Menu.Close(gameTime);
+        }
+
+        void menu_Enter(GameTime gameTime)
+        {
+            Menu.Open(gameTime);
+        }
+
+        void itemNew_Selected(Item item, GameTime gameTime)
+        {
+            ListLibrary listLibrary = new ListLibrary(
+                this,
+                null,
+                gameTime.TotalGameTime,
+                new Rectangle(
+                    (int)(0.25f * GameEngine.Render.ScreenWidth),
+                    (int)(0.25f * GameEngine.Render.ScreenHeight),
+                    (int)(0.5f * GameEngine.Render.ScreenWidth),
+                    (int)(0.73f * GameEngine.Render.ScreenHeight)),
+                GameEngine.Render.FontText, false);
+
+            ListUIComponent.Add(listLibrary);
+        }
+
+        void itemLoad_Selected(Item item, GameTime gameTime)
+        {
+            ListFile listFile = new ListFile(
+                this,
+                null,
+                gameTime.TotalGameTime,
+                Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Level\"),
+                new Rectangle(
+                    (int)(0.25f * GameEngine.Render.ScreenWidth),
+                    (int)(0.25f * GameEngine.Render.ScreenHeight),
+                    (int)(0.5f * GameEngine.Render.ScreenWidth),
+                    (int)(0.73f * GameEngine.Render.ScreenHeight)),
+                GameEngine.Render.FontText);
+
+            ListUIComponent.Add(listFile);
+        }
+
+        void itemSave_Selected(Item item, GameTime gameTime)
+        {
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.InitialDirectory = Path.Combine(Directory.GetParent(Application.ExecutablePath).FullName, @"Files\Level\");
+            dlg.Filter = "Niveau The Grid (*.xml)|*.xml";
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                FileSystem.SaveLevel(Context.Map, Path.GetFileNameWithoutExtension(dlg.FileName));
+            }
+        }
+
+        void itemExit_Selected(Item item, GameTime gameTime)
+        {
+            GameEngine.Exit();
+        }
+        #endregion
 
         public void Update(GameTime gameTime)
         {
-            //if (gameTime.TotalGameTime == TimeSpan.Zero)
-            //{
-            //    NotePanel notePanel = new NotePanel(this, TimeSpan.FromDays(2));
-            //    notePanel.Sample = Context.Map.Channels[3].ListSample[1];
-            //    ListUIComponent.Add(notePanel);
-            //}
-
-            ListUIComponent.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
+            ListUIComponent.Sort(new ComparerUIComponent());
 
             for (int i = 0; i < ListUIComponent.Count; i++)
             {
@@ -54,14 +161,6 @@ namespace TheGrid.Logic.UI
                 ListUIComponent[i].UpdateUIDependency(gameTime);
             }
 
-            //for (int i = 0; i < ListUIComponent.Count; i++)
-            //{
-            //    if (!ListUIComponent[i].Alive)
-            //    {
-            //        ListUIComponent[i]
-            //    }
-            //}
-
             ListUIComponent.RemoveAll(ui => !ui.Alive);
         }
 
@@ -69,7 +168,8 @@ namespace TheGrid.Logic.UI
         {
             GameEngine.Render.SpriteBatch.Begin();
 
-            ListUIComponent.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
+            ListUIComponent.Sort(new ComparerUIComponent());
+            ListUIComponent.Reverse();
 
             foreach (UIComponent uiComponent in ListUIComponent)
             {
@@ -107,6 +207,11 @@ namespace TheGrid.Logic.UI
                 {
                     if (ui.Alive && ui.Visible)
                     {
+                        if (ui is NotePanel && ui.MouseHandled)
+                        {
+                            int a = 0;
+                        }
+
                         isMouseHandled |= ui.IsMouseHandled();
                     }
                 }
@@ -117,30 +222,26 @@ namespace TheGrid.Logic.UI
 
         public void OpenPannelEffect(GameTime gameTime, ChannelEffect channelEffect, Cell cell)
         {
-            EffectPanel effectPanel = new EffectPanel(this, gameTime.TotalGameTime, channelEffect, cell);
+            EffectPanel effectPanel = new EffectPanel(this, null, gameTime.TotalGameTime, channelEffect, cell);
             this.ListUIComponent.Add(effectPanel);
         }
 
         public void OpenListSample(GameTime gameTime, Cell cell)
         {
-            ListSample listSample = new ListSample(this, gameTime.TotalGameTime, cell, cell.Channel, new Rectangle(GameEngine.GraphicsDevice.Viewport.Width / 2 - 125, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.25), 250, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.6)), GameEngine.Render.FontText, false);
+            ListSample listSample = new ListSample(this, null, gameTime.TotalGameTime, cell, cell.Channel, new Rectangle(GameEngine.GraphicsDevice.Viewport.Width / 2 - 125, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.25), 250, (int)(GameEngine.GraphicsDevice.Viewport.Height * 0.6)), GameEngine.Render.FontText, false);
             listSample.Modal = true;
             this.ListUIComponent.Add(listSample);
         }
 
         public void OpenKeyboard(GameTime gameTime, Cell cell)
         {
-            NotePanel notePanel = new NotePanel(this, gameTime.TotalGameTime);
+            NotePanel notePanel = new NotePanel(this, TimeSpan.FromDays(1));
             this.ListUIComponent.Add(notePanel);
-
-            //CircularMenu currentMenu = GetCurrentMenu();
-            //if (currentMenu != null)
-            //    currentMenu.Close(gameTime);
         }
 
         public CircularMenu GetCurrentMenu()
         {
-            List<UIComponent> menus = ListUIComponent.FindAll(ui => ui is CircularMenu);
+            List<UIComponent> menus = ListUIComponent.FindAll(ui => ui is CircularMenu && !((CircularMenu)ui).IsUI);
             menus.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
 
             return GetCurrentMenu(menus);
@@ -157,7 +258,7 @@ namespace TheGrid.Logic.UI
 
         public void CloseMenu(GameTime gameTime)
         {
-            List<UIComponent> menus = ListUIComponent.FindAll(ui => ui is CircularMenu);
+            List<UIComponent> menus = ListUIComponent.FindAll(ui => ui is CircularMenu && !((CircularMenu)ui).IsUI);
             menus.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
 
             CircularMenu currentMenu = GetCurrentMenu(menus);
@@ -181,7 +282,7 @@ namespace TheGrid.Logic.UI
 
         public void SwitchMenu(GameTime gameTime)
         {
-            List<UIComponent> menus = ListUIComponent.FindAll(ui => ui is CircularMenu);
+            List<UIComponent> menus = ListUIComponent.FindAll(ui => ui is CircularMenu && !((CircularMenu)ui).IsUI);
             menus.Sort((x, y) => x.CreationTime.CompareTo(y.CreationTime));
 
             CircularMenu currentMenu = GetCurrentMenu(menus);
@@ -207,7 +308,7 @@ namespace TheGrid.Logic.UI
                 //---
 
                 //--- Met la lecture de la partition en pause
-                if(Context.StatePlaying == StatePlaying.Playing)
+                if (Context.StatePlaying == StatePlaying.Playing)
                     Context.StatePlaying = StatePlaying.Waiting;
                 //---
             }
@@ -241,7 +342,7 @@ namespace TheGrid.Logic.UI
         public CircularMenu CreateMenu(Cell cell, TimeSpan creationTime)
         {
             //---
-            CircularMenu menuRoot = new CircularMenu(this, creationTime, cell, null, null, true);
+            CircularMenu menuRoot = new CircularMenu(this, null, creationTime, cell, null, null, true);
 
             Item itemReset = new Item(menuRoot, "Reset");
             itemReset.Selected += new Item.SelectedHandler(itemReset_Selected);
@@ -280,7 +381,7 @@ namespace TheGrid.Logic.UI
         {
             item.ParentMenu.Close(gameTime);
 
-            CircularMenu menuChannel = new CircularMenu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, false);
+            CircularMenu menuChannel = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, false);
 
             for (int i = 0; i < Context.Map.Channels.Count; i++)
             {
@@ -323,7 +424,7 @@ namespace TheGrid.Logic.UI
         {
             item.ParentMenu.Close(gameTime);
 
-            CircularMenu menuInstrument = new CircularMenu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
+            CircularMenu menuInstrument = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
 
             Item itemReset = new Item(menuInstrument, "Reset");
             itemReset.Selected += new Item.SelectedHandler(itemInstrumentReset_Selected);
@@ -395,7 +496,7 @@ namespace TheGrid.Logic.UI
             }
             else
             {
-                CircularMenu menuChannelEffect = new CircularMenu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, false, true);
+                CircularMenu menuChannelEffect = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, false, true);
 
                 //--- Création des items liés aux effets du channel
                 for (int i = 0; i < item.ParentMenu.ParentCell.Channel.ListEffect.Count; i++)
@@ -462,7 +563,7 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.Close(gameTime);
 
             //---
-            CircularMenu menuSpeed = new CircularMenu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
+            CircularMenu menuSpeed = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
 
             for (int i = 0; i < 9; i++)
             {
@@ -511,7 +612,7 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.Close(gameTime);
 
             //---
-            CircularMenu menuDuration = new CircularMenu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
+            CircularMenu menuDuration = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
 
             Item itemDurationReset = new Item(menuDuration, "Reset", 1);
             itemDurationReset.Selected += new Item.SelectedHandler(itemDuration_Selected);
@@ -553,7 +654,7 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.Close(gameTime);
 
             //---
-            CircularMenu menuRepeater = new CircularMenu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
+            CircularMenu menuRepeater = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
             menuRepeater.AngleDelta = -MathHelper.TwoPi / 12;
 
             for (int i = 0; i < 6; i++)
@@ -602,7 +703,7 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.Close(gameTime);
 
             //---
-            CircularMenu menuDirection = new CircularMenu(this, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
+            CircularMenu menuDirection = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
 
             for (int i = 0; i < 6; i++)
             {

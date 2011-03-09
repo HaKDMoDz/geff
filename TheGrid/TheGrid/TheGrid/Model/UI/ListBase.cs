@@ -24,8 +24,8 @@ namespace TheGrid.Model.UI
         public delegate void SelectedItemChangedHandler(Object item);
         public event SelectedItemChangedHandler SelectedItemChanged;
 
-        public ListBase(UILogic uiLogic, TimeSpan creationTime, Rectangle rec, SpriteFont font, bool checkable)
-            : base(uiLogic, creationTime)
+        public ListBase(UILogic uiLogic, UIComponent parent, TimeSpan creationTime, Rectangle rec, SpriteFont font, bool checkable)
+            : base(uiLogic, parent, creationTime)
         {
             this.Font = font;
             this.IsCheckable = checkable;
@@ -39,7 +39,7 @@ namespace TheGrid.Model.UI
                 recInitial.X,
                 recInitial.Y,
                 Math.Min((int)sizeText.X, recInitial.Width),
-                (int)(countMaxItem * sizeText.Y));
+                (int)(countMaxItem * sizeText.Y + 2 * MARGE));
 
             if (sizeText.X > Rec.Width)
                 sizeText.X = Rec.Width - 2 * MARGE;
@@ -54,7 +54,7 @@ namespace TheGrid.Model.UI
         {
             ScrollValue += (mouseState.ScrollWheelValue - prevMousewheel) / 15;
 
-            int scrollMinValue = (int)Math.Min(0, -(CountItem + 1 - countMaxItem) * sizeText.Y);
+            int scrollMinValue = (int)Math.Min(0, -(CountItem - countMaxItem) * sizeText.Y);
 
             if (ScrollValue > 0)
                 ScrollValue = 0;
@@ -68,7 +68,7 @@ namespace TheGrid.Model.UI
         public ClickableText AddItem(string itemName, object value)
         {
             Vector2 vec = new Vector2(Rec.X + Ribbon.MARGE, Rec.Y + sizeText.Y * CountItem + MARGE);
-            ClickableText txtItem = new ClickableText(this.UI, GetNewTimeSpan(), Font, itemName.Substring(0, Math.Min(20, itemName.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, IsCheckable);
+            ClickableText txtItem = new ClickableText(UI, this, GetNewTimeSpan(), Font, itemName.Substring(0, Math.Min(20, itemName.Length)), vec, VisualStyle.ForeColor, VisualStyle.ForeColor, VisualStyle.BackColorLight, VisualStyle.BackForeColorMouseOver, IsCheckable);
             txtItem.Rec = new Rectangle((int)vec.X, (int)vec.Y, (int)sizeText.X, (int)sizeText.Y);
             txtItem.Tag = value;
 
@@ -89,11 +89,11 @@ namespace TheGrid.Model.UI
             //--- Charge les boutons
             if (countMaxItem < CountItem)
             {
-                ClickableImage imgUp = new ClickableImage(UI, GetNewTimeSpan(), "ArrowUp", GetIcon("ArrowUp"), GetIcon("ArrowUp"), new Vector2(Rec.Right - GetIcon("ArrowUp").Width, Rec.Top));
+                ClickableImage imgUp = new ClickableImage(UI, this, GetNewTimeSpan(), "ArrowUp", GetIcon("ArrowUp"), GetIcon("ArrowUp"), new Vector2(Rec.Right - GetIcon("ArrowUp").Width, Rec.Top));
                 imgUp.ClickImage += new ClickableImage.ClickImageHandler(imgUp_ClickImage);
                 ListUIChildren.Add(imgUp);
 
-                ClickableImage imgDown = new ClickableImage(UI, GetNewTimeSpan(), "ArrowDown", GetIcon("ArrowDown"), GetIcon("ArrowDown"), new Vector2(Rec.Right - GetIcon("ArrowUp").Width, Rec.Bottom - GetIcon("ArrowUp").Height));
+                ClickableImage imgDown = new ClickableImage(UI, this, GetNewTimeSpan(), "ArrowDown", GetIcon("ArrowDown"), GetIcon("ArrowDown"), new Vector2(Rec.Right - GetIcon("ArrowUp").Width, Rec.Bottom - GetIcon("ArrowUp").Height));
                 imgDown.ClickImage += new ClickableImage.ClickImageHandler(imgDown_ClickImage);
                 ListUIChildren.Add(imgDown);
 
@@ -150,7 +150,7 @@ namespace TheGrid.Model.UI
                     txt.Position = new Vector2(Rec.X + MARGE * 2, Rec.Top + count * sizeText.Y + ScrollValue + MARGE);
                     txt.Rec = new Rectangle(Rec.X + MARGE, (int)(Rec.Top + count * sizeText.Y + ScrollValue + MARGE), txt.Rec.Width, txt.Rec.Height);
 
-                    if (txt.Position.Y < Rec.Top || txt.Position.Y + sizeText.Y > Rec.Bottom)
+                    if (txt.Rec.Top < Rec.Top || txt.Rec.Bottom > Rec.Bottom)
                         txt.Visible = false;
                     else
                         txt.Visible = true;

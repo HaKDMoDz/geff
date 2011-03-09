@@ -55,13 +55,13 @@ namespace TheGrid.Model.UI.Menu
         public event LeaveHandler Leave;
         #endregion
 
-        public CircularMenu(UILogic uiLogic, TimeSpan creationTime, Cell parentCell, CircularMenu parentMenu, Item parentItem, bool showIcon)
-            : this(uiLogic, creationTime, parentCell, parentMenu, parentItem, showIcon, false)
+        public CircularMenu(UILogic uiLogic, UIComponent parent, TimeSpan creationTime, Cell parentCell, CircularMenu parentMenu, Item parentItem, bool showIcon)
+            : this(uiLogic, parent, creationTime, parentCell, parentMenu, parentItem, showIcon, false)
         {
         }
 
-        public CircularMenu(UILogic uiLogic, TimeSpan creationTime, Cell parentCell, CircularMenu parentMenu, Item parentItem, bool showIcon, bool showName)
-            : base(uiLogic, creationTime)
+        public CircularMenu(UILogic uiLogic, UIComponent parent, TimeSpan creationTime, Cell parentCell, CircularMenu parentMenu, Item parentItem, bool showIcon, bool showName)
+            : base(uiLogic, parent, creationTime)
         {
             ParentCell = parentCell;
             ParentMenu = parentMenu;
@@ -134,7 +134,7 @@ namespace TheGrid.Model.UI.Menu
 
             int nbPointPerItem = nbVertex / Items.Count;
             double angleItem = 0;
-            
+
             double angleVertex = MaxAngle / (double)nbVertex;
 
             vBuffer = new VertexBuffer(Render.GraphicsDevice, typeof(VertexPositionColor), nbVertex * 3, BufferUsage.None);
@@ -238,9 +238,9 @@ namespace TheGrid.Model.UI.Menu
 
         public override void Update(GameTime gametime)
         {
-            if(Enter != null && Leave != null && !UI.GameEngine.Controller.IsMouseOffScreen())
+            if (Enter != null && Leave != null && !UI.GameEngine.Controller.IsMouseOffScreen() && !UI.IsMouseHandled())
             {
-                int countItemSelected = Items.Count(i=>i.MouseOver);
+                int countItemSelected = Items.Count(i => i.MouseOver);
 
                 if (prevCountItemSelected == 0 && countItemSelected > 0)
                     Enter(gametime);
@@ -271,12 +271,12 @@ namespace TheGrid.Model.UI.Menu
             if (PercentVisibility == 0 && State == ComponentState.Closing)
             {
                 State = ComponentState.Closed;
-                
-                if(!IsTurnMode)
+
+                if (!IsTurnMode)
                     Visible = false;
             }
 
-            if (Alive && Visible)
+            if (Alive && Visible && !UI.IsMouseHandled())
             {
                 MouseOver(gametime);
             }
@@ -345,7 +345,7 @@ namespace TheGrid.Model.UI.Menu
                     if (ShowName)
                     {
                         if (IsUI)
-                            Render.SpriteBatch.DrawString(Render.FontTextSmall, Items[i].Name, nearPoint, color, (float)((double)(i-1) * angleItem + AngleDelta+ MathHelper.Pi/24), new Vector2(-60, 0f), 1f, SpriteEffects.None, 0f);
+                            Render.SpriteBatch.DrawString(Render.FontTextSmall, Items[i].Name, nearPoint, color, (float)((double)(i - 1) * angleItem + AngleDelta + MathHelper.Pi / 24), new Vector2(-60, 0f), 1f, SpriteEffects.None, 0f);
                         else
                             Render.SpriteBatch.DrawString(Render.FontMapBig, Items[i].Name, nearPoint + vec - Render.FontMapBig.MeasureString(Items[i].Name) / 2, color);
                     }

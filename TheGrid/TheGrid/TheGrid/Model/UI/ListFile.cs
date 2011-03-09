@@ -16,8 +16,8 @@ namespace TheGrid.Model.UI
     {
         public string Directory;
 
-        public ListFile(UILogic uiLogic, TimeSpan creationTime, string directory, Rectangle rec, SpriteFont font)
-            : base(uiLogic, creationTime, rec, font, false)
+        public ListFile(UILogic uiLogic, UIComponent parent, TimeSpan creationTime, string directory, Rectangle rec, SpriteFont font)
+            : base(uiLogic, parent, creationTime, rec, font, false)
         {
             this.Modal = true;
             this.Alive = true;

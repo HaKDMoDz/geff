@@ -15,7 +15,7 @@ namespace TheGrid.Model.UI
         private float _prevSpeedFactor = 0f;
         private Ribbon _ribbon;
 
-        public BPMMeter(Ribbon ribbon, UILogic uiLogic, TimeSpan creationTime) : base(uiLogic, creationTime)
+        public BPMMeter(Ribbon ribbon, UILogic uiLogic, TimeSpan creationTime) : base(uiLogic, ribbon, creationTime)
         {
             Alive = true;
             Visible = true;
