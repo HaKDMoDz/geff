@@ -151,7 +151,7 @@ namespace TheGrid.Model.UI.Note
                 Render.SpriteBatch.Draw(_texKey, rec, recSource, colorKey);
 
                 if(recSource == _texKey.Bounds)
-                    Render.SpriteBatch.DrawString(Render.FontTextSmall, _name, new Vector2(rec.X + rec.Width / 2 - Render.FontTextSmall.MeasureString(_name).X / 2, Rec.Bottom - 60), White ? Color.Black : Color.White);
+                    Render.SpriteBatch.DrawString(Render.FontTextSmall, NoteName, new Vector2(rec.X + rec.Width / 2 - Render.FontTextSmall.MeasureString(_name).X / 2, Rec.Bottom - 60), White ? Color.Black : Color.White);
             }
         }
 

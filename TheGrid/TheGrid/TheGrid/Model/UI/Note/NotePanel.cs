@@ -99,15 +99,15 @@ namespace TheGrid.Model.UI.Note
 
         void txtOpenMidi_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
         {
-            NAudio.Midi.MidiFile midiFile = new MidiFile(@"C:\WINDOWS\Media\onestop.mid");
+            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Libraries\Musics\Midi\beethoven-pour-elise.mid");
 
             if (midiFile != null)
             {
-                foreach (MidiEvent midiEvent in midiFile.Events[1])
+                foreach (MidiEvent midiEvent in midiFile.Events[2])
                 {
                     NoteEvent noteEvent = midiEvent as NoteEvent;
-
-                    if (noteEvent != null)
+                    
+                    if (noteEvent != null && noteEvent.CommandCode== MidiCommandCode.NoteOn)
                     {
                         AddNote(noteEvent.NoteNumber - 20, noteEvent.NoteName);
                     }

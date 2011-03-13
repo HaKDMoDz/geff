@@ -65,8 +65,8 @@ namespace TheGrid.Logic.Sound
             mixer = new WaveMixerStream32();
             mixer.AutoStop = true;
 
-            waveOutDevice = new NAudio.Wave.DirectSoundOut();
-            //waveOutDevice = new NAudio.Wave.AsioOut();
+            //waveOutDevice = new NAudio.Wave.DirectSoundOut();
+            waveOutDevice = new NAudio.Wave.AsioOut();
 
             waveOutDevice.Init(mixer);
 
@@ -92,6 +92,13 @@ namespace TheGrid.Logic.Sound
 
         private void CreateMidi()
         {
+            if (midiIn != null)
+            {
+                midiIn.Stop();
+                midiIn.Close();
+                midiIn.Dispose();
+            }
+
             if (MidiIn.NumberOfDevices > 0)
             {
                 MidiInCapabilities cap = MidiIn.DeviceInfo(0);
@@ -133,11 +140,15 @@ namespace TheGrid.Logic.Sound
                 //AddSlider(0, -100, 100, 1, "Pitch adjust (cents)");
                 //AddSlider(0, -12, 12, 1, "Pitch adjust (semitones)");
                 //AddSlider(0, -12, 12, 1, "Pitch adjust (octaves)");
-                
+                //AddSlider(50, 0, 200, 1, "Window size (ms)");
+                //AddSlider(20, 0.05f, 50, 0.5f, "Overlap size (ms)");
+
                 effect.Enabled = true;
                 effect.Sliders[0].Value = cents;
                 effect.Sliders[1].Value = semitones;
                 effect.Sliders[2].Value = octave;
+                //effect.Sliders[3].Value = 200;
+                //effect.Sliders[4].Value = 50f;
                 effect.Slider();
 
                 channelSteam[dicSample[sample.Name][indexChannel]].Position = 0;
@@ -163,7 +174,7 @@ namespace TheGrid.Logic.Sound
             {
                 WaveChannel32 channel = channelSteam[dicSample[sample.Name][i]];
 
-                if (channel.CurrentTime == TimeSpan.Zero || channel.CurrentTime >= channel.TotalTime)
+                if (!PlayingNote[dicSample[sample.Name][i]] && channel.CurrentTime == TimeSpan.Zero || channel.CurrentTime >= channel.TotalTime)
                 {
                     return i;
                 }
@@ -175,7 +186,6 @@ namespace TheGrid.Logic.Sound
 
         private void Test()
         {
-
             float[] buffer = new float[4096];
             IPitchDetector pitchDetector = new AutoCorrelator(44100);
 
