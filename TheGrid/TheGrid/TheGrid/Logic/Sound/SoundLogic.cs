@@ -62,11 +62,13 @@ namespace TheGrid.Logic.Sound
                 mixer.Close();
             }
 
+            OpenMidiFile();
+
             mixer = new WaveMixerStream32();
             mixer.AutoStop = true;
 
-            //waveOutDevice = new NAudio.Wave.DirectSoundOut();
-            waveOutDevice = new NAudio.Wave.AsioOut();
+            waveOutDevice = new NAudio.Wave.DirectSoundOut();
+            //waveOutDevice = new NAudio.Wave.AsioOut();
 
             waveOutDevice.Init(mixer);
 
@@ -115,10 +117,10 @@ namespace TheGrid.Logic.Sound
         void midiIn_MessageReceived(object sender, MidiInMessageEventArgs e)
         {
             NoteEvent noteEvent = e.MidiEvent as NoteEvent;
-             
+
             if (MidiNoteEvent != null && noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
             {
-                MidiNoteEvent(noteEvent.NoteNumber-20, noteEvent.NoteName);
+                MidiNoteEvent(noteEvent.NoteNumber - 20, noteEvent.NoteName);
             }
         }
 
@@ -135,7 +137,7 @@ namespace TheGrid.Logic.Sound
                 float octave = (int)((noteKey - sample.NoteKey) / 12f);
                 float semitonesF = noteKey - (sample.NoteKey + 12f * octave);
                 float semitones = (int)semitonesF;
-                float cents = (int)((semitonesF - semitones)*100f);
+                float cents = (int)((semitonesF - semitones) * 100f);
 
                 //AddSlider(0, -100, 100, 1, "Pitch adjust (cents)");
                 //AddSlider(0, -12, 12, 1, "Pitch adjust (semitones)");
@@ -229,7 +231,7 @@ namespace TheGrid.Logic.Sound
                             //--- Détection de la fréquence moyenne du son
                             if (i == 0 && sample.Frequency == -1f)
                             {
-                                
+
                                 //=======
                                 IWaveProvider waveFloat = null;
 
@@ -405,6 +407,38 @@ namespace TheGrid.Logic.Sound
                 WaveChannel32 channel = channelSteam[dicSample[sampleName][i]];
                 channel.Position = channel.Length;
             }
+        }
+
+        public void OpenMidiFile()
+        {
+            //NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Libraries\Musics\Midi\beethoven-pour-elise.mid");
+            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\GDD\Log\Geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\beethoven-pour-elise.mid");
+            string part = String.Empty;
+
+            if (midiFile != null)
+            {
+                for (int i = 0; i < midiFile.Tracks; i++)
+			    {
+                    part += "\r\n";
+                    foreach (MidiEvent midiEvent in midiFile.Events[i])
+                    {
+                        NoteEvent noteEvent = midiEvent as NoteEvent;
+
+                        part += "\r\n";
+                        if (noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
+                        {
+                            //AddNote(noteEvent.NoteNumber - 20, noteEvent.NoteName);
+                            part += String.Format(" [ AbsoluteTime {0} #  DeltaTime {1} # NoteName {2} # NoteNumber {3} # Velocity {4} ]  ", noteEvent.AbsoluteTime, noteEvent.DeltaTime, noteEvent.NoteName, noteEvent.NoteNumber, noteEvent.Velocity);
+                        }
+                        else
+                        {
+                            part += String.Format(" [ {0} ] ", midiEvent.ToString());
+                        }
+                    }
+                }
+            }
+
+            int a = 0;
         }
     }
 }
