@@ -412,23 +412,83 @@ namespace TheGrid.Logic.Sound
         public void OpenMidiFile()
         {
             //NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Libraries\Musics\Midi\beethoven-pour-elise.mid");
-            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\GDD\Log\Geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\beethoven-pour-elise.mid");
+            //flourish
+            //town
+            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\GDD\Log\Geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\town.mid");
             string part = String.Empty;
+            TimeSignatureEvent lastTimeSignature = null;// new TimeSignatureEvent(4,4,24,32,
+
+            List<NoteEvent> listNote = new List<NoteEvent>();
+
+            Dictionary<float, string> dicNoteType = new Dictionary<float, string>();
+
+            //dicNoteType.Add(1.75f * 4f, "Ronde double pointée");
+            //dicNoteType.Add(1.5f * 4f, "Ronde pointée");
+            dicNoteType.Add(4f, "Ronde");
+
+            dicNoteType.Add(1.75f * 2f, "Blanche double pointée");
+            dicNoteType.Add(1.5f * 2f, "Blanche pointée");
+            dicNoteType.Add(2f, "Blanche");
+
+            dicNoteType.Add(1.75f * 1f, "Noire double pointée");
+            dicNoteType.Add(1.5f * 1f, "Noire pointée");
+            dicNoteType.Add(1f, "Noire");
+
+            dicNoteType.Add(1.75f * 0.5f, "Croche double pointée");
+            dicNoteType.Add(1.5f * 0.5f, "Croche pointée");
+            dicNoteType.Add(0.5f, "Croche");
+
+            dicNoteType.Add(1.75f * 0.25f, "Double croche double pointée");
+            dicNoteType.Add(1.5f * 0.25f, "Double croche pointée");
+            dicNoteType.Add(0.25f, "Double croche");
+
+            dicNoteType.Add(1.75f * 0.125f, "Triple croche double pointée");
+            dicNoteType.Add(1.5f * 0.125f, "Triple croche pointée");
+            dicNoteType.Add(0.125f, "Triple croche");
+
+            dicNoteType.Add(1.75f * 0.0625f, "Quadruple croche double pointée");
+            dicNoteType.Add(1.5f * 0.0625f, "Quadruple croche pointée");
+            dicNoteType.Add(0.0625f, "Quadruple croche");
+
 
             if (midiFile != null)
             {
+                part += String.Format(" [ DeltaTicksPerQuarterNote : {0} ] ", midiFile.DeltaTicksPerQuarterNote);
+
                 for (int i = 0; i < midiFile.Tracks; i++)
-			    {
+                {
                     part += "\r\n";
                     foreach (MidiEvent midiEvent in midiFile.Events[i])
                     {
-                        NoteEvent noteEvent = midiEvent as NoteEvent;
+                        NoteOnEvent noteEvent = midiEvent as NoteOnEvent;
 
                         part += "\r\n";
-                        if (noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
+                        if (midiEvent is TimeSignatureEvent)
                         {
-                            //AddNote(noteEvent.NoteNumber - 20, noteEvent.NoteName);
-                            part += String.Format(" [ AbsoluteTime {0} #  DeltaTime {1} # NoteName {2} # NoteNumber {3} # Velocity {4} ]  ", noteEvent.AbsoluteTime, noteEvent.DeltaTime, noteEvent.NoteName, noteEvent.NoteNumber, noteEvent.Velocity);
+                            lastTimeSignature = midiEvent as TimeSignatureEvent;
+                            part += String.Format(" [ {0} ] ", midiEvent.ToString());
+                        }
+                        else if (noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
+                        {
+                            int noteLength = 1;
+                            try
+                            {
+                                noteLength = noteEvent.NoteLength;
+                            }
+                            catch { }
+
+                            part += String.Format(" [ AbsoluteTime {0} #  DeltaTime {1} # NoteName {2} # NoteNumber {3} # NoteLength {4} ]  ", noteEvent.AbsoluteTime, noteEvent.DeltaTime, noteEvent.NoteName, noteEvent.NoteNumber, noteLength);
+
+                            float typeNote = (float)noteLength / (float)midiFile.DeltaTicksPerQuarterNote;
+
+                            string typeNoteString = String.Empty;
+
+                            if (dicNoteType.ContainsKey(typeNote))
+                                typeNoteString = dicNoteType[typeNote];
+
+                            part += String.Format(" OFF :: {0} :: {1}", typeNote, typeNoteString);
+
+                            listNote.Add(noteEvent);
                         }
                         else
                         {
