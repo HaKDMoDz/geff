@@ -612,27 +612,104 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.Close(gameTime);
 
             //---
-            CircularMenu menuDuration = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, true);
+            CircularMenu menuDuration = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, false);
 
             Item itemDurationReset = new Item(menuDuration, "Reset", 1);
             itemDurationReset.Selected += new Item.SelectedHandler(itemDuration_Selected);
             menuDuration.Items.Add(itemDurationReset);
 
-            Item itemDuration2 = new Item(menuDuration, "Duration2", 2);
-            itemDuration2.Selected += new Item.SelectedHandler(itemDuration_Selected);
-            menuDuration.Items.Add(itemDuration2);
+            Item itemDurationQuarterNotePart = new Item(menuDuration, "QuarterNotePart");
+            itemDurationQuarterNotePart.Selected += new Item.SelectedHandler(itemDurationQuarterNotePart_Selected);
+            menuDuration.Items.Add(itemDurationQuarterNotePart);
 
-
-            Item itemDuration3 = new Item(menuDuration, "Duration3", 4);
-            itemDuration3.Selected += new Item.SelectedHandler(itemDuration_Selected);
-            menuDuration.Items.Add(itemDuration3);
-
-            Item itemDuration4 = new Item(menuDuration, "Duration4", 8);
-            itemDuration4.Selected += new Item.SelectedHandler(itemDuration_Selected);
-            menuDuration.Items.Add(itemDuration4);
+            Item itemDurationQuarterNoteSubPart = new Item(menuDuration, "QuarterNoteSubPart");
+            itemDurationQuarterNoteSubPart.Selected += new Item.SelectedHandler(itemDurationQuarterNoteSubPart_Selected);
+            menuDuration.Items.Add(itemDurationQuarterNoteSubPart);
             //---
 
             NextMenu(item.ParentMenu, menuDuration);
+        }
+
+        void itemDurationQuarterNoteSubPart_Selected(Item item, GameTime gameTime)
+        {
+            item.ParentMenu.Close(gameTime);
+
+            //---
+            item.ParentMenu.ParentCell.InitClip();
+            float prevDuration = item.ParentMenu.ParentCell.Clip.Duration;
+
+            CircularMenu menuDurationQuarterNoteSubPart = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, false, true);
+
+            for (int i = 0; i < 32; i++)
+            {
+                Item itemDurationQuarterNoteSubPartItem = new Item(menuDurationQuarterNoteSubPart, (i + 1).ToString(), i + 1);
+                itemDurationQuarterNoteSubPartItem.Selected += new Item.SelectedHandler(itemDurationQuarterNoteSubPartItem_Selected);
+                menuDurationQuarterNoteSubPart.Items.Add(itemDurationQuarterNoteSubPartItem);
+
+                if (prevDuration - (int)prevDuration >= 1f / (float)i)
+                    itemDurationQuarterNoteSubPartItem.Checked = true;
+            }
+            //---
+
+            NextMenu(item.ParentMenu, menuDurationQuarterNoteSubPart);
+        }
+
+        void itemDurationQuarterNoteSubPartItem_Selected(Item item, GameTime gameTime)
+        {
+            item.ParentMenu.Close(gameTime);
+
+            item.ParentMenu.ParentCell.InitClip();
+
+            float prevDuration = item.ParentMenu.ParentCell.Clip.Duration;
+
+            float newValue = 1f / (float)item.Value + (int)prevDuration;
+            if (prevDuration - (int)prevDuration == 1f / (float)item.Value)
+                newValue = 1f;
+
+            foreach (Item itemMenu in item.ParentMenu.Items)
+            {
+                if(newValue ==-1)
+                    itemMenu.Checked = false;
+                else
+                    itemMenu.Checked = itemMenu.Value <= item.Value;
+            }
+
+            item.ParentMenu.ParentCell.Clip.Duration = newValue;
+
+            GameEngine.GamePlay.EvaluateMuscianGrid();
+            NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
+        }
+
+        void itemDurationQuarterNotePart_Selected(Item item, GameTime gameTime)
+        {
+            item.ParentMenu.Close(gameTime);
+
+            //---
+            CircularMenu menuDurationQuarterNotePart = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, false, true);
+
+            for (int i = 0; i < 8; i++)
+            {
+                Item itemDurationQuarterNotePartItem = new Item(menuDurationQuarterNotePart, (i + 1).ToString(), i + 1);
+                itemDurationQuarterNotePartItem.Selected += new Item.SelectedHandler(itemDurationQuarterNotePartItem_Selected);
+                menuDurationQuarterNotePart.Items.Add(itemDurationQuarterNotePartItem);
+            }
+            //---
+
+            NextMenu(item.ParentMenu, menuDurationQuarterNotePart);
+        }
+
+        void itemDurationQuarterNotePartItem_Selected(Item item, GameTime gameTime)
+        {
+            item.ParentMenu.Close(gameTime);
+
+            item.ParentMenu.ParentCell.InitClip();
+
+            float prevDuration = item.ParentMenu.ParentCell.Clip.Duration;
+
+            item.ParentMenu.ParentCell.Clip.Duration = (float)item.Value + prevDuration - (int)prevDuration;
+
+            GameEngine.GamePlay.EvaluateMuscianGrid();
+            NextMenu(item.ParentMenu, item.ParentMenu.ParentMenu);
         }
 
         private void itemDuration_Selected(Item item, GameTime gameTime)

@@ -101,7 +101,7 @@ namespace TheGrid.Model.UI.Note
             PlayNote(noteKey);
 
             if (!_notePannel.Training)
-                _notePannel.AddNote(noteKey, noteName);
+                _notePannel.AddNote(noteKey, 1f, noteName);
         }
 
         public void PlayNote(int noteKey)

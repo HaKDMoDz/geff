@@ -99,20 +99,78 @@ namespace TheGrid.Model.UI.Note
 
         void txtOpenMidi_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
         {
-            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Libraries\Musics\Midi\beethoven-pour-elise.mid");
+            //NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Libraries\Musics\Midi\beethoven-pour-elise.mid");
+            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\GDD\Log\Geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\beethoven-pour-elise.mid");
+
+            //if (midiFile != null)
+            //{
+            //    foreach (MidiEvent midiEvent in midiFile.Events[2])
+            //    {
+            //        NoteEvent noteEvent = midiEvent as NoteEvent;
+                    
+            //        if (noteEvent != null && noteEvent.CommandCode== MidiCommandCode.NoteOn)
+            //        {
+            //            AddNote(noteEvent.NoteNumber - 20, noteEvent.NoteName);
+            //        }
+            //    }
+            //}
+
+            NoteOnEvent prevNoteEvent = null;
+
 
             if (midiFile != null)
             {
-                foreach (MidiEvent midiEvent in midiFile.Events[2])
+                for (int i = 0; i < midiFile.Tracks; i++)
                 {
-                    NoteEvent noteEvent = midiEvent as NoteEvent;
-                    
-                    if (noteEvent != null && noteEvent.CommandCode== MidiCommandCode.NoteOn)
+                    foreach (MidiEvent midiEvent in midiFile.Events[i])
                     {
-                        AddNote(noteEvent.NoteNumber - 20, noteEvent.NoteName);
+                        NoteOnEvent noteEvent = midiEvent as NoteOnEvent;
+
+                        if (noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
+                        {
+                            int noteLength = 1;
+                            try
+                            {
+                                noteLength = noteEvent.NoteLength;
+                            }
+                            catch { }
+
+                            float typeNote = (float)noteLength / (float)midiFile.DeltaTicksPerQuarterNote;
+
+                            //--- Ajout des silences
+                            if (prevNoteEvent != null)
+                            {
+                                float deltaTime = noteEvent.AbsoluteTime - (prevNoteEvent.AbsoluteTime+prevNoteEvent.NoteLength);
+                                int countQuarterNote = (int)(deltaTime / (float)midiFile.DeltaTicksPerQuarterNote);
+                                if (deltaTime > midiFile.DeltaTicksPerQuarterNote)
+                                {
+                                    for (int j = 1; j <= countQuarterNote ; j++)
+                                    {
+                                        AddSilence(1f, Sample.Channel);
+                                    }
+                                }
+
+                                if (deltaTime > countQuarterNote*midiFile.DeltaTicksPerQuarterNote)
+                                {
+                                    typeNote = (deltaTime - countQuarterNote * midiFile.DeltaTicksPerQuarterNote) / (float)midiFile.DeltaTicksPerQuarterNote;
+                                    AddSilence(typeNote, Sample.Channel);
+                                }
+                            }
+                            //---
+
+                            //--- Ajout de la note
+                            AddNote(noteEvent.NoteNumber - 20, typeNote, noteEvent.NoteName);
+                            //---
+                        }
+
+                        if (noteEvent != null)
+                        {
+                            prevNoteEvent = noteEvent;
+                        }
                     }
                 }
             }
+
         }
 
         void txtEntrainement_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
@@ -164,15 +222,28 @@ namespace TheGrid.Model.UI.Note
 
         public void AddNote(Key key)
         {
-            AddNote(key.NoteKey, key.NoteName);
+            AddNote(key.NoteKey, 1f, key.NoteName);
         }
 
-        public void AddNote(int noteKey, string noteName)
+        public void AddNote(int noteKey, float noteDuration, string noteName)
         {
             if (Context.NextCellNote != null)
             {
                 Context.NextCellNote.InitClip();
                 Context.NextCellNote.Clip.Instrument = new InstrumentNote(noteKey, noteName);
+                Context.NextCellNote.Clip.Duration = noteDuration;
+
+                GoToNextCell();
+            }
+        }
+
+        public void AddSilence(float silenceDuration, Channel channel)
+        {
+            if (Context.NextCellNote != null)
+            {
+                Context.NextCellNote.InitClip();
+                Context.NextCellNote.Channel = channel;
+                Context.NextCellNote.Clip.Duration = silenceDuration;
 
                 GoToNextCell();
             }

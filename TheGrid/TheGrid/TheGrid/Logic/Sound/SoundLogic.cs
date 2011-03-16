@@ -411,6 +411,8 @@ namespace TheGrid.Logic.Sound
 
         public void OpenMidiFile()
         {
+            return;
+
             //NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Libraries\Musics\Midi\beethoven-pour-elise.mid");
             //flourish
             //town
