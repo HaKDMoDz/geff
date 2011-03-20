@@ -67,8 +67,8 @@ namespace TheGrid.Logic.Sound
             mixer = new WaveMixerStream32();
             mixer.AutoStop = true;
 
-            waveOutDevice = new NAudio.Wave.DirectSoundOut();
-            //waveOutDevice = new NAudio.Wave.AsioOut();
+            //waveOutDevice = new NAudio.Wave.DirectSoundOut();
+            waveOutDevice = new NAudio.Wave.AsioOut();
 
             waveOutDevice.Init(mixer);
 

@@ -99,8 +99,11 @@ namespace TheGrid.Model.UI.Note
 
         void txtOpenMidi_ClickText(ClickableText clickableText, MouseState mouseState, GameTime gameTime)
         {
-            //NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Libraries\Musics\Midi\beethoven-pour-elise.mid");
-            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\GDD\Log\Geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\beethoven-pour-elise.mid");
+            //D:\Log\geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\MozartTurque.mid
+            //@"D:\Libraries\Musics\Midi\beethoven-pour-elise.mid"
+            //D:\Log\geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\Vivaldi4SeasWint.mid
+            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Log\geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\Vivaldi4SeasWint.mid");
+            //NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\GDD\Log\Geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\beethoven-pour-elise.mid");
 
             //if (midiFile != null)
             //{
@@ -116,7 +119,8 @@ namespace TheGrid.Model.UI.Note
             //}
 
             NoteOnEvent prevNoteEvent = null;
-
+            int prevNoteLength = 1;
+            int noteLength = 1;
 
             if (midiFile != null)
             {
@@ -128,7 +132,6 @@ namespace TheGrid.Model.UI.Note
 
                         if (noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn)
                         {
-                            int noteLength = 1;
                             try
                             {
                                 noteLength = noteEvent.NoteLength;
@@ -140,7 +143,7 @@ namespace TheGrid.Model.UI.Note
                             //--- Ajout des silences
                             if (prevNoteEvent != null)
                             {
-                                float deltaTime = noteEvent.AbsoluteTime - (prevNoteEvent.AbsoluteTime+prevNoteEvent.NoteLength);
+                                float deltaTime = noteEvent.AbsoluteTime - (prevNoteEvent.AbsoluteTime + prevNoteLength);
                                 int countQuarterNote = (int)(deltaTime / (float)midiFile.DeltaTicksPerQuarterNote);
                                 if (deltaTime > midiFile.DeltaTicksPerQuarterNote)
                                 {
@@ -166,6 +169,7 @@ namespace TheGrid.Model.UI.Note
                         if (noteEvent != null)
                         {
                             prevNoteEvent = noteEvent;
+                            prevNoteLength = noteLength;
                         }
                     }
                 }
