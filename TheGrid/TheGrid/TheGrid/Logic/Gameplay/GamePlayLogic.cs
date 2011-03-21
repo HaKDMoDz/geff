@@ -20,6 +20,8 @@ namespace TheGrid.Logic.GamePlay
     public class GamePlayLogic
     {
         private Random rnd = new Random();
+        private Curve curveDistance;
+        private Curve curveTime;
         private TimeSpan lastEffectApplied = TimeSpan.Zero;
 
         public GameEngine GameEngine { get; set; }
@@ -29,6 +31,7 @@ namespace TheGrid.Logic.GamePlay
             this.GameEngine = gameEngine;
 
             InitializePlayers();
+            InitializeCurves();
 
             //LoadMap("Congas");
             //LoadMap("TestColor");
@@ -150,24 +153,74 @@ namespace TheGrid.Logic.GamePlay
             Context.CurrentPlayer = Context.Players[0];
         }
 
+        float timeMax = 2000f;
+        float rayon = 4f;
+
+        private void InitializeCurves()
+        {
+            //---
+            float distanceMax = 4;
+
+            curveDistance = new Curve();
+            curveDistance.Keys.Add(new CurveKey(0 * distanceMax, 1f));
+            curveDistance.Keys.Add(new CurveKey(1f * distanceMax, 0f));
+            //---
+
+            //---
+
+            curveTime = new Curve();
+            curveTime.Keys.Add(new CurveKey(0 * timeMax, 1f));
+            curveTime.Keys.Add(new CurveKey(1f * timeMax, 0f));
+            curveTime.ComputeTangents(CurveTangent.Smooth);
+            //---
+        }
+
         public void Update(GameTime gameTime)
         {
             if (Context.StatePlaying == StatePlaying.Playing || Context.IsNavigatingThroughTime)
             {
                 UpdateMusicians(gameTime);
 
-                float lifeDec = (float)(gameTime.ElapsedGameTime.TotalMilliseconds / 10000f * Context.Map.SpeedFactor);
+                UpdateLifeCells(gameTime);
+            }
+        }
 
-                foreach (Cell cell in Context.Map.Cells)
+        public void UpdateLifeCells(GameTime gameTime)
+        {
+            float lifeDec = (float)(gameTime.ElapsedGameTime.TotalMilliseconds / 10000f * Context.Map.SpeedFactor);
+
+            foreach (Cell cell in Context.Map.Cells)
+            {
+                for (int i = 0; i < cell.Life.Length; i++)
                 {
-                    for (int i = 0; i < cell.Life.Length; i++)
-                    {
-                        cell.Life[i] -= lifeDec;
+                    cell.Life[i] -= lifeDec;
 
-                        if (cell.Life[i] < 0.01f)
-                            cell.Life[i] = 0f;
-                    }
+                    if (cell.Life[i] < 0.01f)
+                        cell.Life[i] = 0f;
                 }
+
+                if (cell.ListWave.Count > 0)
+                {
+                    Vector2 waveLocation = Vector2.Zero;
+
+                    foreach (TimeValue<Vector2> wave in cell.ListWave)
+                    {
+                        float d = curveDistance.Evaluate(wave.Value.Length());
+                        float ms = (float)gameTime.TotalGameTime.Subtract(wave.Time).TotalMilliseconds;
+                        float t = curveTime.Evaluate(ms);
+
+                        waveLocation += wave.Value/3f * d * t;
+                    }
+
+                    waveLocation /= (float)cell.ListWave.Count;
+                    cell.Location = cell.InitialLocation + waveLocation;
+                }
+                else
+                {
+                    cell.Location = cell.InitialLocation;
+                }
+
+                cell.ListWave.RemoveAll(w => gameTime.TotalGameTime.Subtract(w.Time).TotalMilliseconds > timeMax);
             }
         }
 
@@ -248,7 +301,7 @@ namespace TheGrid.Logic.GamePlay
                                     {
                                         if (musician.CurrentCell.Clip.Instrument is InstrumentSample)
                                         {
-                                            NewBornCell(musician.CurrentCell, null);
+                                            NewBornCell(gameTime, musician.CurrentCell, null);
                                             GameEngine.Sound.PlaySample(((InstrumentSample)musician.CurrentCell.Clip.Instrument).Sample);
                                         }
                                     }
@@ -265,7 +318,7 @@ namespace TheGrid.Logic.GamePlay
                                     //---> Si la prochaine cellule est une InstrumentNote, la note est jouée selon le sample courant du musicien
                                     if (musician.CurrentCell.Clip.Instrument is InstrumentNote)
                                     {
-                                        NewBornCell(musician.CurrentCell, musician.Channel);
+                                        NewBornCell(gameTime, musician.CurrentCell, musician.Channel);
                                         GameEngine.Sound.PlayNote(musician.CurrentSample, ((InstrumentNote)musician.CurrentCell.Clip.Instrument).NoteKey);
                                     }
                                 }
@@ -276,26 +329,34 @@ namespace TheGrid.Logic.GamePlay
             }
         }
 
-        private void NewBornCell(Cell cell, Channel channel)
+        private void NewBornCell(GameTime gameTime, Cell cell, Channel channel)
         {
-            int indexChannel = Context.Map.Channels.IndexOf(channel != null? channel: cell.Channel);
+            int indexChannel = Context.Map.Channels.IndexOf(channel != null ? channel : cell.Channel);
 
             cell.Life[indexChannel] = 1f;
 
-            float rayon = 4f;
             foreach (Cell otherCell in Context.Map.Cells)
             {
+                float distance = Tools.Distance(cell.Location, otherCell.Location);
+
                 if (otherCell != cell && otherCell.Clip == null)
                 {
-                    float distance = Tools.Distance(cell.Location, otherCell.Location);
-
+                    //--- Vie des cellules voisines
                     if (distance <= rayon)
                     {
                         float newLife = 1f - (distance / rayon);
                         if (otherCell.Life[indexChannel] < newLife)
                             otherCell.Life[indexChannel] = newLife;
                     }
+                    //---
                 }
+
+                //---
+                if (otherCell != cell && distance < rayon)
+                {
+                    otherCell.ListWave.Add(new TimeValue<Vector2>(gameTime.TotalGameTime, otherCell.Location - cell.Location));
+                }
+                //---
             }
         }
 
@@ -357,9 +418,9 @@ namespace TheGrid.Logic.GamePlay
                                     if (part != null)
                                         timePart = part.Time;
 
-                                    ignoreCell = musician.Partition.Count(p => p.Time > timePart && p.Value == cell) >= (cell.Clip.Repeater.Value+1);
+                                    ignoreCell = musician.Partition.Count(p => p.Time > timePart && p.Value == cell) >= (cell.Clip.Repeater.Value + 1);
 
-                                    if(ignoreCell)
+                                    if (ignoreCell)
                                     {
                                         int a = 0;
                                     }

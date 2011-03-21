@@ -15,19 +15,27 @@ namespace TheGrid.Model
         public Map Map { get; set; }
         public Point Coord { get; set; }
         public Vector2 Location { get; set; }
+        public Vector2 InitialLocation { get; set; }
         [XmlIgnore]
         public Cell[] Neighbourghs { get; set; }
         public Clip Clip { get; set; }
         public Channel Channel { get; set; }
         public float[] Life { get; set; }
+        [XmlIgnore]
+        public List<TimeValue<Vector2>> ListWave { get; set; }
 
-        public Cell() { }
+        public Cell() 
+        {
+            this.ListWave = new List<TimeValue<Vector2>>();
+        }
 
         public Cell(Map map, int x, int y, float left, float top)
         {
             this.Map = map;
             this.Coord = new Point(x, y);
             this.Location = new Vector2(left, top);
+            this.InitialLocation = new Vector2(left, top);
+            this.ListWave = new List<TimeValue<Vector2>>();
 
             this.Neighbourghs = new Cell[6];
         }

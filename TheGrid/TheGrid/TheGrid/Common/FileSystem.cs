@@ -67,6 +67,7 @@ namespace TheGrid.Common
             foreach (Cell cell in map.Cells)
             {
                 cell.Map = map;
+                cell.InitialLocation = cell.Location;
 
                 if (cell.Channel != null)
                 {
