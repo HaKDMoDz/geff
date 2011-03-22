@@ -34,7 +34,7 @@ namespace TheGrid.Logic.GamePlay
             InitializeCurves();
 
             //LoadMap("Congas");
-            //LoadMap("TestColor");
+            //LoadMap("Clap");
             NewMap("Bass");
         }
 
@@ -155,9 +155,12 @@ namespace TheGrid.Logic.GamePlay
 
         float timeMax = 2000f;
         float rayon = 4f;
+        float minCellSize = 0f;
 
         private void InitializeCurves()
         {
+            minCellSize = 0.5f * (float)Math.Sin(MathHelper.Pi / 3);
+
             //---
             float distanceMax = 4;
 
@@ -169,7 +172,7 @@ namespace TheGrid.Logic.GamePlay
             //---
 
             curveTime = new Curve();
-            curveTime.Keys.Add(new CurveKey(0 * timeMax, 1f));
+            curveTime.Keys.Add(new CurveKey(0 * timeMax, 0.5f));
             curveTime.Keys.Add(new CurveKey(1f * timeMax, 0f));
             curveTime.ComputeTangents(CurveTangent.Smooth);
             //---
@@ -209,7 +212,7 @@ namespace TheGrid.Logic.GamePlay
                         float ms = (float)gameTime.TotalGameTime.Subtract(wave.Time).TotalMilliseconds;
                         float t = curveTime.Evaluate(ms);
 
-                        waveLocation += wave.Value/3f * d * t;
+                        waveLocation += wave.Value * d * t;
                     }
 
                     waveLocation /= (float)cell.ListWave.Count;
@@ -222,6 +225,24 @@ namespace TheGrid.Logic.GamePlay
 
                 cell.ListWave.RemoveAll(w => gameTime.TotalGameTime.Subtract(w.Time).TotalMilliseconds > timeMax);
             }
+
+            //--- Calcule la taille de la cellule selon ses voisines
+            foreach (Cell cell in Context.Map.Cells)
+            {
+                float minDist = float.MaxValue;
+
+                for (int i = 0; i < 6; i++)
+                {
+                    if (cell.Neighbourghs[i] != null)
+                    {
+                        float dist = Tools.Distance(cell.Location, cell.Neighbourghs[i].Location);
+                        minDist = Math.Min(dist, minDist);
+                    }
+                }
+
+                cell.Size = minDist / minCellSize / 2f;
+            }
+            //---
         }
 
         public void UpdateMusicians(GameTime gameTime)

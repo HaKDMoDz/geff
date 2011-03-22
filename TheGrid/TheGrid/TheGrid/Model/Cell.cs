@@ -23,10 +23,13 @@ namespace TheGrid.Model
         public float[] Life { get; set; }
         [XmlIgnore]
         public List<TimeValue<Vector2>> ListWave { get; set; }
+        [XmlIgnore]
+        public float Size { get; set; }
 
         public Cell() 
         {
             this.ListWave = new List<TimeValue<Vector2>>();
+            this.Size = 1f;
         }
 
         public Cell(Map map, int x, int y, float left, float top)
@@ -36,6 +39,7 @@ namespace TheGrid.Model
             this.Location = new Vector2(left, top);
             this.InitialLocation = new Vector2(left, top);
             this.ListWave = new List<TimeValue<Vector2>>();
+            this.Size = 1f;
 
             this.Neighbourghs = new Cell[6];
         }

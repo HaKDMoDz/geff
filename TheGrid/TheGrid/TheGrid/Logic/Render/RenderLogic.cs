@@ -271,6 +271,7 @@ namespace TheGrid.Logic.Render
         {
             //--- TODO : gérer le frustum
             //---
+            Vector2 midTexSize = new Vector2(HexaWidth/2,HexaWidth/2);
 
             Vector2 cellLocation = cell.Location * texHexa2D.Width;
             Color colorChannel = new Color(0.35f, 0.35f, 0.35f);
@@ -329,11 +330,14 @@ namespace TheGrid.Logic.Render
 
             if (cellToDraw.Clip == null)
             {
-                SpriteBatch.Draw(texHexa2D, cellLocation, colorChannel);
+                SpriteBatch.Draw(texHexa2D, cellLocation, null, colorChannel,0f, Vector2.Zero, cell.Size, SpriteEffects.None, 0f);
             }
             else
             {
-                SpriteBatch.Draw(texHexa2DClip, cellLocation, colorChannel);
+                //SpriteBatch.Draw(texHexa2DClip, cellLocation, colorChannel);
+
+                SpriteBatch.Draw(texHexa2DClip, cellLocation, null, colorChannel, 0f, Vector2.Zero, cell.Size, SpriteEffects.None, 0f);
+
 
                 //--- Instrument
                 if (cellToDraw.Clip.Instrument != null)
@@ -368,28 +372,28 @@ namespace TheGrid.Logic.Render
                         string effectName = ((InstrumentEffect)cellToDraw.Clip.Instrument).ChannelEffect.Name;
                         Vector2 deltaEffectName = new Vector2(FontMap.MeasureString(effectName).X / 2, FontMap.MeasureString(effectName).Y / 5);
 
-                        SpriteBatch.DrawString(FontMap, effectName, cellLocation + midCellSize - deltaEffectName, Color.White);
-                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height), null, Color.White);
+                        SpriteBatch.DrawString(FontMap, effectName, cellLocation + midCellSize * cell.Size - deltaEffectName, Color.White);
+                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize * cell.Size - new Vector2(texInstrument.Width / 2, texInstrument.Height) * cell.Size, null, Color.White, 0f, Vector2.Zero, cell.Size, SpriteEffects.None, 0f);
                     }
                     else if (cellToDraw.Clip.Instrument is InstrumentSample)
                     {
                         string sampleName = ((InstrumentSample)cellToDraw.Clip.Instrument).Sample.Name;
                         Vector2 deltaSampleName = new Vector2(FontMap.MeasureString(sampleName).X / 2, FontMap.MeasureString(sampleName).Y / 5);
 
-                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2) - new Vector2(0f, midCellSize.Y * 0.3f), null, Color.White);
-                        SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize - deltaSampleName, Color.White);
+                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize * cell.Size - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2) * cell.Size - new Vector2(0f, midCellSize.Y * cell.Size * 0.3f), null, Color.White, 0f, Vector2.Zero, cell.Size, SpriteEffects.None, 0f);
+                        SpriteBatch.DrawString(FontMap, sampleName, cellLocation + midCellSize * cell.Size - deltaSampleName, Color.White);
                     }
                     else if (cellToDraw.Clip.Instrument is InstrumentNote)
                     {
                         string noteName = ((InstrumentNote)cellToDraw.Clip.Instrument).NoteName;
                         Vector2 deltaSampleName = new Vector2(FontMap.MeasureString(noteName).X / 2, FontMap.MeasureString(noteName).Y / 5);
 
-                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2) - new Vector2(0f, midCellSize.Y * 0.3f), null, Color.White);
-                        SpriteBatch.DrawString(FontMap, noteName, cellLocation + midCellSize - deltaSampleName, Color.White);
+                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize * cell.Size - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2) * cell.Size - new Vector2(0f, midCellSize.Y * cell.Size * 0.3f), null, Color.White, 0f, Vector2.Zero, cell.Size, SpriteEffects.None, 0f);
+                        SpriteBatch.DrawString(FontMap, noteName, cellLocation + midCellSize * cell.Size - deltaSampleName, Color.White);
                     }
                     else
                     {
-                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2), null, Color.White);
+                        SpriteBatch.Draw(texInstrument, cellLocation + midCellSize * cell.Size - new Vector2(texInstrument.Width / 2, texInstrument.Height / 2) * cell.Size, null, Color.White, 0f, Vector2.Zero, cell.Size, SpriteEffects.None, 0f);
                     }
                 }
                 //---
@@ -401,7 +405,7 @@ namespace TheGrid.Logic.Render
                     {
                         double angle = MathHelper.TwoPi / 6 * i;
                         Vector2 center = new Vector2(0.5f * textDirection.Width, 0.5f * textDirection.Height + 0.34f * HexaWidth);
-                        SpriteBatch.Draw(textDirection, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
+                        SpriteBatch.Draw(textDirection, cellLocation + midCellSize * cell.Size, null, Color.White, (float)angle, center, cell.Size, SpriteEffects.None, 0f);
                     }
                 }
                 //---
@@ -413,7 +417,7 @@ namespace TheGrid.Logic.Render
                     {
                         double angle = MathHelper.TwoPi / 6 * i - MathHelper.TwoPi / 12;
                         Vector2 center = new Vector2(0.5f * texRepeater.Width, 0.5f * texRepeater.Height + 0.4f * HexaWidth);
-                        SpriteBatch.Draw(texRepeater, cellLocation + midCellSize, null, Color.White, (float)angle, center, 1f, SpriteEffects.None, 0f);
+                        SpriteBatch.Draw(texRepeater, cellLocation + midCellSize * cell.Size, null, Color.White, (float)angle, center, cell.Size, SpriteEffects.None, 0f);
                     }
                 }
                 //---
@@ -453,7 +457,7 @@ namespace TheGrid.Logic.Render
                     for (int i = 0; i < duration; i++)
                     {
                         Vector2 location = durationPosition + new Vector2(i * texDuration.Width, 0f);
-                        SpriteBatch.Draw(texDuration, cellLocation + location, null, Color.White, 0f, center, 1f, SpriteEffects.None, 0f);
+                        SpriteBatch.Draw(texDuration, cellLocation + location *cell.Size, null, Color.White, 0f, center, cell.Size, SpriteEffects.None, 0f);
                     }
                 }
                 //---
