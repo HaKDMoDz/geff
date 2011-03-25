@@ -14,6 +14,7 @@ namespace TheGrid.Model.UI.Menu
         public String Name { get; set; }
         public Color Color { get; set; }
         public bool MouseOver { get; set; }
+        public bool ShowName { get; set; }
 
         public delegate void SelectedHandler(Item item, GameTime gameTime);
         public event SelectedHandler Selected; 

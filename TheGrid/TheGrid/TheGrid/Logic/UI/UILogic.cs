@@ -618,13 +618,13 @@ namespace TheGrid.Logic.UI
             itemDurationReset.Selected += new Item.SelectedHandler(itemDuration_Selected);
             menuDuration.Items.Add(itemDurationReset);
 
+            Item itemDurationQuarterNoteSubPart = new Item(menuDuration, "QuarterNoteSubPart");
+            itemDurationQuarterNoteSubPart.Selected += new Item.SelectedHandler(itemDurationQuarterNoteSubPart_Selected);
+            menuDuration.Items.Add(itemDurationQuarterNoteSubPart); 
+            
             Item itemDurationQuarterNotePart = new Item(menuDuration, "QuarterNotePart");
             itemDurationQuarterNotePart.Selected += new Item.SelectedHandler(itemDurationQuarterNotePart_Selected);
             menuDuration.Items.Add(itemDurationQuarterNotePart);
-
-            Item itemDurationQuarterNoteSubPart = new Item(menuDuration, "QuarterNoteSubPart");
-            itemDurationQuarterNoteSubPart.Selected += new Item.SelectedHandler(itemDurationQuarterNoteSubPart_Selected);
-            menuDuration.Items.Add(itemDurationQuarterNoteSubPart);
             //---
 
             NextMenu(item.ParentMenu, menuDuration);
@@ -638,7 +638,7 @@ namespace TheGrid.Logic.UI
             item.ParentMenu.ParentCell.InitClip();
             float prevDuration = item.ParentMenu.ParentCell.Clip.Duration;
 
-            CircularMenu menuDurationQuarterNoteSubPart = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, false, true);
+            CircularMenu menuDurationQuarterNoteSubPart = new CircularMenu(this, null, gameTime.TotalGameTime, item.ParentMenu.ParentCell, item.ParentMenu, item, false, false);
 
             for (int i = 0; i < 32; i++)
             {
@@ -646,7 +646,13 @@ namespace TheGrid.Logic.UI
                 itemDurationQuarterNoteSubPartItem.Selected += new Item.SelectedHandler(itemDurationQuarterNoteSubPartItem_Selected);
                 menuDurationQuarterNoteSubPart.Items.Add(itemDurationQuarterNoteSubPartItem);
 
-                if (prevDuration - (int)prevDuration >= 1f / (float)i)
+                if (i % 4 == 0)
+                {
+                    itemDurationQuarterNoteSubPartItem.Color = VisualStyle.BackForeColorChecked;
+                    itemDurationQuarterNoteSubPartItem.ShowName = true;
+                }
+
+                if (prevDuration - (int)prevDuration > (float)i / 32f  )
                     itemDurationQuarterNoteSubPartItem.Checked = true;
             }
             //---
@@ -662,8 +668,8 @@ namespace TheGrid.Logic.UI
 
             float prevDuration = item.ParentMenu.ParentCell.Clip.Duration;
 
-            float newValue = 1f / (float)item.Value + (int)prevDuration;
-            if (prevDuration - (int)prevDuration == 1f / (float)item.Value)
+            float newValue = (float)item.Value /32f + (int)prevDuration;
+            if (prevDuration - (int)prevDuration == (float)item.Value/32f)
                 newValue = 1f;
 
             foreach (Item itemMenu in item.ParentMenu.Items)

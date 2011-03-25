@@ -172,6 +172,8 @@ namespace TheGrid.Model.UI.Menu
 
                 if (Items[index].Color != Color.Transparent)
                     color2 = new Color(Items[index].Color.R, Items[index].Color.G, Items[index].Color.B, color2.A);
+                else
+                    color2 = new Color(0.1f, 0.1f, 0.1f, (float)percentOpened);
 
                 vertex.Add(new VertexPositionColor(position2 + Tools.GetVector3(Location) + midHexa, color));
                 vertex.Add(new VertexPositionColor(new Vector3(0, 0, 0f) + Tools.GetVector3(Location) + midHexa, color2));
@@ -284,6 +286,11 @@ namespace TheGrid.Model.UI.Menu
             base.Update(gametime);
         }
 
+        private int CountItemShowName()
+        {
+            return Items.Count(i => i.ShowName);
+        }
+
         public override void Draw(GameTime gameTime)
         {
             if (PercentVisibility == 0 && !IsTurnMode)
@@ -306,7 +313,7 @@ namespace TheGrid.Model.UI.Menu
 
             Render.SpriteBatch.Begin();
 
-            if (ShowIcon || ShowName)
+            if (ShowIcon || ShowName || CountItemShowName()>0)
             {
                 Vector2 nearPoint = Vector2.Zero;
                 float localSize = 0f;
@@ -327,8 +334,12 @@ namespace TheGrid.Model.UI.Menu
                 double d = 1.5;
                 if (Items.Count == 9)
                     d = 2.3;
+                if (Items.Count == 8)
+                    d = 2;
                 else if (Items.Count == 4)
                     d = 1;
+                else if (Items.Count == 32)
+                    d = 8;
 
                 Color color = new Color((float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility, (float)PercentVisibility);
 
@@ -342,7 +353,7 @@ namespace TheGrid.Model.UI.Menu
 
                     if (ShowIcon)
                         Render.SpriteBatch.Draw(UI.GameEngine.Content.Load<Texture2D>(@"Texture\Icon\" + Items[i].Name), nearPoint + vec, null, color, 0f, new Vector2(64f), Context.MenuSize, SpriteEffects.None, 0f);
-                    if (ShowName)
+                    if (ShowName || Items[i].ShowName)
                     {
                         if (IsUI)
                             Render.SpriteBatch.DrawString(Render.FontTextSmall, Items[i].Name, nearPoint, color, (float)((double)(i - 1) * angleItem + AngleDelta + MathHelper.Pi / 24), new Vector2(-60, 0f), 1f, SpriteEffects.None, 0f);
