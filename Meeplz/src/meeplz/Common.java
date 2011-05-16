@@ -1,5 +1,5 @@
 package meeplz;
 
-public class Common extends meepleengine.Common{
+public class Common extends meepleengine.Common {
 
 }

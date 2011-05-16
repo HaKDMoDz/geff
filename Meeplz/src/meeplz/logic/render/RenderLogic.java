@@ -1,5 +1,9 @@
 package meeplz.logic.render;
 
-public abstract class RenderLogic  extends meepleengine.logic.render.RenderLogic{
+import meeplz.GameEngine;
 
+public class RenderLogic extends meepleengine.logic.render.RenderLogic {
+	public RenderLogic(GameEngine gameEngine) {
+		super(gameEngine);
+	}
 }
