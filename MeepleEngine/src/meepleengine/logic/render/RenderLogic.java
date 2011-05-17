@@ -1,18 +1,24 @@
 package meepleengine.logic.render;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
+
 import meepleengine.GameEngine;
 
-public abstract class RenderLogic {
-
+public abstract class RenderLogic
+{
 	public GameEngine gameEngine;
 
-	public RenderLogic(GameEngine gameEngine) {
-		// TODO Auto-generated constructor stub
+	public RenderLogic(GameEngine gameEngine)
+	{
+		this.gameEngine = gameEngine;
 	}
 
 	public void Render(float deltaTime)
 	{
-		// TODO Auto-generated method stub
-	}
+		Gdx.gl.glClearColor(0f,0f,0f,0f);
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
+		gameEngine.CurrentScreen.render(deltaTime);
+	}
 }

@@ -4,6 +4,7 @@ import meepleengine.logic.controller.ControllerLogic;
 import meepleengine.logic.gameplay.GamePlayLogic;
 import meepleengine.logic.render.RenderLogic;
 import meepleengine.logic.sound.SoundLogic;
+import meepleengine.logic.ui.screens.ScreenBase;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -15,7 +16,9 @@ public class GameEngine implements ApplicationListener
 	public GamePlayLogic GamePlay;
 	public SoundLogic Sound;
 	public float DeltaTime;
-
+	public ScreenBase CurrentScreen;
+	public ScreenBase NextScreen;
+	
 	@Override
 	public void create()
 	{
@@ -36,7 +39,7 @@ public class GameEngine implements ApplicationListener
 		
 		if(Controller != null)
 			Controller.Update(this.DeltaTime);
-		
+
 		if(GamePlay != null)
 			GamePlay.Update(this.DeltaTime);
 		
