@@ -1,6 +1,8 @@
 package meeplz.logic.gameplay;
 
+import meeplz.Context;
 import meeplz.GameEngine;
+import meeplz.model.*;
 
 public class GamePlayLogic extends
 		meepleengine.logic.gameplay.GamePlayLogic
@@ -8,5 +10,13 @@ public class GamePlayLogic extends
 	public GamePlayLogic(GameEngine gameEngine)
 	{
 		super(gameEngine);
+		
+		NewMap();
+	}
+	
+	public void NewMap()
+	{
+		Context.Map = new Map(20,20);
+		
 	}
 }

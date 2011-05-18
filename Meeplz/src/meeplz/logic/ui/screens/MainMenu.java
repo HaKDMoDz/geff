@@ -5,6 +5,7 @@ import meepleengine.logic.ui.screens.ScreenBase;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Layout;
 import com.badlogic.gdx.scenes.scene2d.actors.Button;
 import com.badlogic.gdx.scenes.scene2d.actors.Button.ClickListener;
 
@@ -39,8 +40,8 @@ public class MainMenu extends ScreenBase
 		@Override
 		public void clicked(Button button)
 		{
-			MainMenu.this.gameEngine.CurrentScreen = new GameScreen(MainMenu.this.gameEngine);
-			MainMenu.this.gameEngine.CurrentScreen.show();
+			gameEngine.CurrentScreen = new GameScreen(gameEngine);
+			gameEngine.CurrentScreen.show();
 		}
 	};
 }
