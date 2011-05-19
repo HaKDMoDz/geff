@@ -1,5 +1,5 @@
 package meepleengine.logic.sound;
 
-public abstract class SoundLogic {
+public abstract class SoundLogicBase {
 
 }

@@ -1,9 +1,9 @@
 package meepleengine;
 
-import meepleengine.logic.controller.ControllerLogic;
-import meepleengine.logic.gameplay.GamePlayLogic;
-import meepleengine.logic.render.RenderLogic;
-import meepleengine.logic.sound.SoundLogic;
+import meepleengine.logic.controller.ControllerLogicBase;
+import meepleengine.logic.gameplay.GamePlayLogicBase;
+import meepleengine.logic.render.RenderLogicBase;
+import meepleengine.logic.sound.SoundLogicBase;
 import meepleengine.logic.ui.screens.ScreenBase;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -11,10 +11,10 @@ import com.badlogic.gdx.Gdx;
 
 public class GameEngine implements ApplicationListener
 {
-	public ControllerLogic Controller;
-	public RenderLogic Render;
-	public GamePlayLogic GamePlay;
-	public SoundLogic Sound;
+	public ControllerLogicBase Controller;
+	public RenderLogicBase Render;
+	public GamePlayLogicBase GamePlay;
+	public SoundLogicBase Sound;
 	public float DeltaTime;
 	public ScreenBase CurrentScreen;
 	public ScreenBase NextScreen;
@@ -37,8 +37,8 @@ public class GameEngine implements ApplicationListener
 	{
 		this.DeltaTime = Gdx.app.getGraphics().getDeltaTime();
 		
-		if(Controller != null)
-			Controller.Update(this.DeltaTime);
+//		if(Controller != null)
+//			Controller.Update(this.DeltaTime);
 
 		if(GamePlay != null)
 			GamePlay.Update(this.DeltaTime);

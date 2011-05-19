@@ -2,11 +2,11 @@ package meepleengine.logic.gameplay;
 
 import meepleengine.GameEngine;
 
-public abstract class GamePlayLogic
+public abstract class GamePlayLogicBase
 {
 	private GameEngine gameEngine;
 
-	public GamePlayLogic(GameEngine gameEngine)
+	public GamePlayLogicBase(GameEngine gameEngine)
 	{
 		this.gameEngine = gameEngine;
 	}
