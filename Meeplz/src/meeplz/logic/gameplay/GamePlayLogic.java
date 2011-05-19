@@ -5,7 +5,7 @@ import meeplz.GameEngine;
 import meeplz.model.*;
 
 public class GamePlayLogic extends
-		meepleengine.logic.gameplay.GamePlayLogic
+		meepleengine.logic.gameplay.GamePlayLogicBase
 {
 	public GamePlayLogic(GameEngine gameEngine)
 	{

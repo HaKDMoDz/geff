@@ -9,7 +9,7 @@ import meeplz.Context;
 import meeplz.GameEngine;
 import meeplz.model.Cell;
 
-public class RenderLogic extends meepleengine.logic.render.RenderLogic
+public class RenderLogic extends meepleengine.logic.render.RenderLogicBase
 {
 	Texture texCell;
 	
@@ -29,7 +29,7 @@ public class RenderLogic extends meepleengine.logic.render.RenderLogic
 	public void Render(float deltaTime)
 	{
 		super.Render(deltaTime);
-
+		
 		spriteBatch.begin();
 		
 		for (Cell cell : Context.Map.Cells)
@@ -42,7 +42,9 @@ public class RenderLogic extends meepleengine.logic.render.RenderLogic
 	
 	private void DrawCell(Cell cell)
 	{
-		Vector2 cellLocation = cell.Location;//.mul((float)texCell.getWidth());
+		Vector2 cellLocation = cell.Location.cpy();
+		
+		cellLocation.mul(512f);
 		
 		spriteBatch.draw(texCell, cellLocation.x, cellLocation.y);
 	}
