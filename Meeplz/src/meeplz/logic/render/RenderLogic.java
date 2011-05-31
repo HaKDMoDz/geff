@@ -2,7 +2,6 @@ package meeplz.logic.render;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import meeplz.Context;
@@ -23,6 +22,8 @@ public class RenderLogic extends meepleengine.logic.render.RenderLogicBase
 	private void LoadTextures()
 	{
 		texCell = new Texture(Gdx.files.internal("data/Hexa_2D.png"));
+		//badlogic.jpg
+		//Hexa_2D_mini.jpg
 	}
 
 	@Override

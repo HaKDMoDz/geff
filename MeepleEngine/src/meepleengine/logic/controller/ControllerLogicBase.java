@@ -1,6 +1,5 @@
 package meepleengine.logic.controller;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 
 import meepleengine.GameEngine;

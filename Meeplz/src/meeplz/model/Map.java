@@ -27,8 +27,8 @@ public class Map
 		{
 			for (int x = 1; x <= Math.round((double) Width / 2); x++)
 			{
-				float fx = (float) x;
-				float fy = (float) y;
+				float fx = x;
+				float fy = y;
 
 				fx = fx * width * 3f;
 				fy = fy * height * 2f;
@@ -40,8 +40,8 @@ public class Map
 
 			for (int x = 1; x <= Width / 2; x++)
 			{
-				float fx = (float) x;
-				float fy = (float) y;
+				float fx = x;
+				float fy = y;
 
 				fx = fx * width * 3f + width * 1.5f;
 				fy = fy * height * 2f - height;

@@ -1,9 +1,8 @@
 package meeplz.logic.controller;
 
-import java.awt.Point;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.math.Vector2;
 
 import meeplz.GameEngine;
 
@@ -52,7 +51,7 @@ public class ControllerLogic extends
 	@Override
 	public boolean scrolled(int amount)
 	{
-		gameEngine.Render.Camera.zoom += (float) amount;
+		gameEngine.Render.Camera.zoom += amount;
 
 		return false;
 	}
@@ -65,12 +64,12 @@ public class ControllerLogic extends
 	}
 
 	private boolean pressed = false;
-	Point pointerStart = new Point();
+	Vector2 pointerStart = new Vector2();
 
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button)
 	{
-		pointerStart = new Point((int)gameEngine.Render.Camera.position.x + x, (int)gameEngine.Render.Camera.position.y+ y);
+		pointerStart = new Vector2(gameEngine.Render.Camera.position.x + x, gameEngine.Render.Camera.position.y+ y);
 		pressed = true;
 
 		return false;
