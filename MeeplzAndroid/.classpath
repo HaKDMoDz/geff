@@ -5,7 +5,7 @@
 	<classpathentry excluding="**/.svn/*" kind="src" path="gen"/>
 	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gdx.jar"/>
-	<classpathentry exported="true" kind="src" path="/Meeplz"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/MeepleEngine"/>
+	<classpathentry exported="true" kind="src" path="/meePLZ"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/PLZengine"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
