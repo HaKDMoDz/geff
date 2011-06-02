@@ -1,16 +1,17 @@
 package meeplz.logic.ui.screens;
 
+import plz.engine.GameEngineBase;
+import plz.engine.logic.ui.screens.ScreenBase;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.actors.Button;
 import com.badlogic.gdx.scenes.scene2d.actors.Button.ClickListener;
 
-import meepleengine.GameEngine;
-import meepleengine.logic.ui.screens.ScreenBase;
 
 public class GameScreen extends ScreenBase
 {
-	public GameScreen(GameEngine gameEngine)
+	public GameScreen(GameEngineBase gameEngine)
 	{
 		super(gameEngine);
 	}

@@ -8,7 +8,7 @@ import meeplz.Context;
 import meeplz.GameEngine;
 import meeplz.model.Cell;
 
-public class RenderLogic extends meepleengine.logic.render.RenderLogicBase
+public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 {
 	Texture texCell;
 	

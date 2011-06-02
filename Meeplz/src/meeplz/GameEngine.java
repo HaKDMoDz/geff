@@ -5,7 +5,7 @@ import meeplz.logic.gameplay.GamePlayLogic;
 import meeplz.logic.render.RenderLogic;
 import meeplz.logic.ui.screens.MainMenu;
 
-public class GameEngine extends meepleengine.GameEngine
+public class GameEngine extends plz.engine.GameEngineBase
 {
 	public GameEngine()
 	{

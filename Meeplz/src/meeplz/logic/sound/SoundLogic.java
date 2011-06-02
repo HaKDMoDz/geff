@@ -1,5 +1,5 @@
 package meeplz.logic.sound;
 
-public abstract class SoundLogic  extends meepleengine.logic.sound.SoundLogicBase{
+public abstract class SoundLogic  extends plz.engine.logic.sound.SoundLogicBase{
 
 }

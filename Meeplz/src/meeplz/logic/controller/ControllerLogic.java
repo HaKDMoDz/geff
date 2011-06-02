@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import meeplz.GameEngine;
 
 public class ControllerLogic extends
-		meepleengine.logic.controller.ControllerLogicBase
+		plz.engine.logic.controller.ControllerLogicBase
 {
 	public ControllerLogic(GameEngine gameEngine)
 	{
