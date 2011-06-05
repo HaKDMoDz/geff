@@ -1,15 +1,28 @@
 package twiplz.android;
 
-import meeplz.GameEngine;
+import twiplz.GameEngine;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
+import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.backends.android.surfaceview.FillResolutionStrategy;
 
 public class GameStarterAndroid extends AndroidApplication {
-	@Override public void onCreate (Bundle savedInstanceState) {
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ApplicationListener app = (ApplicationListener) new GameEngine();
-		initialize(app, false);			
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+		config.useCompass = false;
+		config.useAccelerometer = false;
+		config.useWakelock = false;
+		config.resolutionStrategy = new FillResolutionStrategy();
+
+		ApplicationListener app = new GameEngine();
+
+		initialize(app, config);
 	}
 }

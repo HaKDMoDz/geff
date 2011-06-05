@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/.svn/*" kind="src" path="src"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry excluding="**/.svn/*" kind="src" path="gen"/>
-	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/gdx.jar"/>
-	<classpathentry exported="true" kind="src" path="/meePLZ"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/PLZengine"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/twiPLZ"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gdx-backend-android"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PLZengine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tablelayout"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tablelayout-libgdx"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
