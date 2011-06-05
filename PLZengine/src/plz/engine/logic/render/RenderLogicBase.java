@@ -20,8 +20,8 @@ public abstract class RenderLogicBase {
 
 		spriteBatch = new SpriteBatch();
 
-		Camera = new OrthographicCamera(Gdx.graphics.getWidth(),
-				Gdx.graphics.getHeight());
+		Camera = new OrthographicCamera(Gdx.app.getGraphics().getWidth(),
+				Gdx.app.getGraphics().getHeight());
 
 		Camera.position.set(256, 256, 0);
 		Camera.direction.set(0, 0, -1);
@@ -39,13 +39,16 @@ public abstract class RenderLogicBase {
 		setLighting(gl);
 
 		spriteBatch.setProjectionMatrix(Camera.combined);
-
-		gameEngine.CurrentScreen.render(deltaTime);
 	}
 
+	public void RenderUI(float deltaTime)
+	{
+		gameEngine.CurrentScreen.render(deltaTime);
+	}
+	
 	private void setProjectionAndCamera() {
 		Camera.update();
-		// Camera.apply(Gdx.gl10);
+		Camera.apply(Gdx.gl10);
 	}
 
 	private void setLighting(GL10 gl) {

@@ -9,7 +9,6 @@ import plz.engine.logic.ui.screens.ScreenBase;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 
-
 public class GameEngineBase implements ApplicationListener {
 	public ControllerLogicBase Controller;
 	public RenderLogicBase Render;
@@ -35,24 +34,27 @@ public class GameEngineBase implements ApplicationListener {
 		try {
 			this.DeltaTime = Gdx.app.getGraphics().getDeltaTime();
 
-			// if(Controller != null)
-			// Controller.Update(this.DeltaTime);
+			// ---> Pas besoin d'appeler la couche Controller car libgdx le fait
+			// avant
+			// d'appeler la méthode render de l'ApplicationListener grace à
+			// l'enregistrement de l'InputProcessor
 
 			if (GamePlay != null)
 				GamePlay.Update(this.DeltaTime);
 
-			if (Render != null)
+			if (Render != null) {
 				Render.Render(this.DeltaTime);
+				Render.RenderUI(this.DeltaTime);
+			}
 		} catch (Exception ex) {
-			int a = 0;
-			a = 1;
+
 		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-
+int a =0;
 	}
 
 	@Override
