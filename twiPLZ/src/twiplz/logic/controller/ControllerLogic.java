@@ -91,20 +91,13 @@ public class ControllerLogic extends
 	@Override
 	public boolean touchUp(int x, int y, int pointer, int button)
 	{
+		for (int i = 0; i < pointerStart.length; i++)
+		{
+			pointerStart[i] = pointerCurrent[i];
+		}
+
 		pointerStart[pointer] = null;
 
-		// TODO : calculer vecCamera pour le dernier pointeur
-//		Vector2 lastPointerOnScreen = null;
-//		for (int i = 0; i < pointerStart.length; i++)
-//		{
-//			if (pointerStart[i] != null)
-//			{
-//				lastPointerOnScreen = pointerStart[i];
-//			}
-//		}
-//		
-//		if(lastPointerOnScreen != null)
-			
 		vecCamera = new Vector2(gameEngine.Render.Camera.position.x,
 				gameEngine.Render.Camera.position.y);
 
