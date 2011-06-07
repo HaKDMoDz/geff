@@ -1,22 +1,35 @@
 package plz.engine.logic.render;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import plz.engine.GameEngineBase;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-
-public abstract class RenderLogicBase {
+public abstract class RenderLogicBase
+{
+	private final Map<String, Object> mapDebug = new HashMap<String, Object>();
+	private final BitmapFont fontDebug;
 	protected final SpriteBatch spriteBatch;
 	public OrthographicCamera Camera;
 	float[] direction = { 1, 0.5f, 0, 0 };
 
 	public GameEngineBase gameEngine;
 
-	public RenderLogicBase(GameEngineBase gameEngine) {
+	public RenderLogicBase(GameEngineBase gameEngine)
+	{
 		this.gameEngine = gameEngine;
+
+		fontDebug = new BitmapFont();
+		fontDebug.setColor(Color.WHITE);
+		fontDebug.scale(0.1f);
 
 		spriteBatch = new SpriteBatch();
 
@@ -28,10 +41,11 @@ public abstract class RenderLogicBase {
 		Camera.zoom = 10;
 	}
 
-	public void Render(float deltaTime) {
+	public void Render(float deltaTime)
+	{
 		GL10 gl = Gdx.app.getGraphics().getGL10();
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		gl.glClearColor(1, 0, 0, 0);
+		gl.glClearColor(0, 0, 0, 0);
 		gl.glViewport(0, 0, Gdx.app.getGraphics().getWidth(), Gdx.app
 				.getGraphics().getHeight());
 
@@ -45,16 +59,51 @@ public abstract class RenderLogicBase {
 	{
 		gameEngine.CurrentScreen.render(deltaTime);
 	}
-	
-	private void setProjectionAndCamera() {
+
+	public void RenderDebug(float deltaTime)
+	{
+		if (mapDebug.size() > 0)
+		{
+			spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.app.getGraphics().getWidth(), Gdx.app
+					.getGraphics().getHeight());
+			
+			spriteBatch.begin();
+			spriteBatch.setColor(Color.WHITE);
+			
+			float y = 30;
+			for (Entry<String, Object> entry : mapDebug.entrySet())
+			{
+				fontDebug.draw(spriteBatch, entry.getKey() + " : " + entry.getValue().toString(), 30, y);
+				y += fontDebug.getCapHeight()+5;
+			}
+			
+			spriteBatch.end();
+			
+			spriteBatch.setProjectionMatrix(Camera.combined);
+		}
+	}
+
+	private void setProjectionAndCamera()
+	{
 		Camera.update();
 		Camera.apply(Gdx.gl10);
 	}
 
-	private void setLighting(GL10 gl) {
+	private void setLighting(GL10 gl)
+	{
 		// gl.glEnable(GL10.GL_LIGHTING);
 		// gl.glEnable(GL10.GL_LIGHT0);
 		// gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, direction, 0);
 		// gl.glEnable(GL10.GL_COLOR_MATERIAL);
+	}
+
+	public void AddDebugRender(String objectName, Object obj)
+	{
+		mapDebug.put(objectName, obj);
+	}
+	
+	public void RemoveDebugRender(String objectName)
+	{
+		mapDebug.remove(objectName);
 	}
 }

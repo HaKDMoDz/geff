@@ -69,17 +69,23 @@ public class ControllerLogic extends
 		return false;
 	}
 
+	Vector2 vecCamera;
+
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button)
 	{
 		prevZoom = gameEngine.Render.Camera.zoom;
+		vecCamera = new Vector2(gameEngine.Render.Camera.position.x,
+				gameEngine.Render.Camera.position.y);
+
 		SetPointer(pointer, pointerStart, x, y);
 
-		// pointerStart = new
-		// Vector2(gameEngine.Render.Camera.position.x+x*gameEngine.Render.Camera.zoom,
-		// gameEngine.Render.Camera.position.y-y*gameEngine.Render.Camera.zoom);
+		gameEngine.Render.AddDebugRender("Zoom", prevZoom);
 
-		return false;
+		gameEngine.Render.AddDebugRender("PointerStart" + pointer,
+				pointerStart[pointer]);
+
+		return true;
 	}
 
 	@Override
@@ -87,13 +93,34 @@ public class ControllerLogic extends
 	{
 		pointerStart[pointer] = null;
 
-		return false;
+		// TODO : calculer vecCamera pour le dernier pointeur
+//		Vector2 lastPointerOnScreen = null;
+//		for (int i = 0; i < pointerStart.length; i++)
+//		{
+//			if (pointerStart[i] != null)
+//			{
+//				lastPointerOnScreen = pointerStart[i];
+//			}
+//		}
+//		
+//		if(lastPointerOnScreen != null)
+			
+		vecCamera = new Vector2(gameEngine.Render.Camera.position.x,
+				gameEngine.Render.Camera.position.y);
+
+		gameEngine.Render.RemoveDebugRender("PointerStart" + pointer);
+
+		gameEngine.Render.RemoveDebugRender("PointerCurrent" + pointer);
+
+		return true;
 	}
 
 	@Override
 	public boolean touchDragged(int x, int y, int pointer)
 	{
-		
+		gameEngine.Render.AddDebugRender("X", x);
+		gameEngine.Render.AddDebugRender("Y", y);
+
 		int countPointerOnScreen = 0;
 		Vector2 firstLastPointerOnScreen = null;
 		Vector2 secondLastPointerOnScreen = null;
@@ -104,6 +131,9 @@ public class ControllerLogic extends
 		// --- Mise à jour du pointeur actuel
 		SetPointer(pointer, pointerCurrent, x, y);
 		// ---
+
+		gameEngine.Render.AddDebugRender("PointerCurrent" + pointer,
+				pointerCurrent[pointer]);
 
 		for (int i = 0; i < pointerStart.length; i++)
 		{
@@ -118,37 +148,34 @@ public class ControllerLogic extends
 			}
 		}
 
-		// --- Translation de la caméra avec le seul et dernier pointeur
-		if (countPointerOnScreen == 1 && pointer == firstLastPointerIndex)
+		// --- Translation de la caméra avec dernier pointeur
+		if (countPointerOnScreen >= 1 && pointer == firstLastPointerIndex)
 		{
-			gameEngine.Render.Camera.position.set(firstLastPointerOnScreen.x
-					- x * gameEngine.Render.Camera.zoom,
-					firstLastPointerOnScreen.y + y
-							* gameEngine.Render.Camera.zoom, 0);
+			gameEngine.Render.Camera.position.set(vecCamera.x
+					+ (firstLastPointerOnScreen.x - x)
+					* gameEngine.Render.Camera.zoom, vecCamera.y
+					- (firstLastPointerOnScreen.y - y)
+					* gameEngine.Render.Camera.zoom, 0);
 		}
 		// ---
 
 		// --- Zoom de la caméra avec les deux derniers pointeurs
 		if (countPointerOnScreen >= 2
-				&& (pointer == firstLastPointerIndex || pointer == secondLastPointerIndex) &&
-				(pointerCurrent[firstLastPointerIndex] != null && pointerCurrent[secondLastPointerIndex] != null)
-		)
+				&& (pointer == firstLastPointerIndex || pointer == secondLastPointerIndex)
+				&& (pointerCurrent[firstLastPointerIndex] != null && pointerCurrent[secondLastPointerIndex] != null))
 		{
 			float distStart = firstLastPointerOnScreen
 					.dst(secondLastPointerOnScreen);
 			float distCur = pointerCurrent[firstLastPointerIndex]
 					.dst(pointerCurrent[secondLastPointerIndex]);
 
-			float diffZoom = (distStart - distCur)/1000f;
+			float diffZoom = (distStart - distCur) / 300f;
+
+			gameEngine.Render.AddDebugRender("DiffZoom", diffZoom);
+
 			gameEngine.Render.Camera.zoom = prevZoom + diffZoom;
 		}
 		// ---
-
-//		 gameEngine.Render.Camera.position.set(pointerStart[0].x-x*gameEngine.Render.Camera.zoom,
-//		 pointerStart[0].y+y*gameEngine.Render.Camera.zoom,0);
-		
-		// gameEngine.Render.Camera.position.set(pointerStart.x-x*gameEngine.Render.Camera.zoom,
-		// pointerStart.y+y*gameEngine.Render.Camera.zoom,0);
 
 		return false;
 	}
@@ -162,19 +189,15 @@ public class ControllerLogic extends
 
 	private void SetPointer(int pointer, Vector2[] pointerArray, int x, int y)
 	{
-		try
+		if (pointer < pointerArray.length)
 		{
-			if (pointer < pointerArray.length)
-			{
-				pointerArray[pointer] = new Vector2(
-						gameEngine.Render.Camera.position.x + x
-								* gameEngine.Render.Camera.zoom,
-						gameEngine.Render.Camera.position.y - y
-								* gameEngine.Render.Camera.zoom);
-			}
-		} catch (Exception ex)
-		{
-			int a = 0;
+			// pointerArray[pointer] = new Vector2(
+			// pointerArrayOrigin.x + x
+			// * gameEngine.Render.Camera.zoom,
+			// pointerArrayOrigin.y - y
+			// * gameEngine.Render.Camera.zoom);
+
+			pointerArray[pointer] = new Vector2(x, y);
 		}
 	}
 }
