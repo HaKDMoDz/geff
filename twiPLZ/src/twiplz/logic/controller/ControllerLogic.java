@@ -14,6 +14,7 @@ public class ControllerLogic extends
 	Vector2[] pointerStart = new Vector2[10];
 	Vector2[] pointerCurrent = new Vector2[10];
 	float prevZoom = 0;
+	Vector2 vecCamera;
 
 	public ControllerLogic(GameEngine gameEngine)
 	{
@@ -69,14 +70,18 @@ public class ControllerLogic extends
 		return false;
 	}
 
-	Vector2 vecCamera;
-
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button)
 	{
 		prevZoom = gameEngine.Render.Camera.zoom;
 		vecCamera = new Vector2(gameEngine.Render.Camera.position.x,
 				gameEngine.Render.Camera.position.y);
+
+		for (int i = 0; i < pointerStart.length; i++)
+		{
+			if (pointerStart[i] != null)
+				pointerStart[i] = pointerCurrent[i];
+		}
 
 		SetPointer(pointer, pointerStart, x, y);
 
@@ -91,12 +96,13 @@ public class ControllerLogic extends
 	@Override
 	public boolean touchUp(int x, int y, int pointer, int button)
 	{
+		pointerStart[pointer] = null;
+
 		for (int i = 0; i < pointerStart.length; i++)
 		{
-			pointerStart[i] = pointerCurrent[i];
+			if (pointerStart[i] != null)
+				pointerStart[i] = pointerCurrent[i];
 		}
-
-		pointerStart[pointer] = null;
 
 		vecCamera = new Vector2(gameEngine.Render.Camera.position.x,
 				gameEngine.Render.Camera.position.y);
@@ -142,7 +148,7 @@ public class ControllerLogic extends
 		}
 
 		// --- Translation de la caméra avec dernier pointeur
-		if (countPointerOnScreen >= 1 && pointer == firstLastPointerIndex)
+		if (countPointerOnScreen == 1 && pointer == firstLastPointerIndex)
 		{
 			gameEngine.Render.Camera.position.set(vecCamera.x
 					+ (firstLastPointerOnScreen.x - x)

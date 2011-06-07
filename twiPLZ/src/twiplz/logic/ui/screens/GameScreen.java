@@ -24,6 +24,7 @@ public class GameScreen extends ScreenBase {
 	public void show() {
 		super.show();
 
+		/*
 		Texture texture = new Texture(Gdx.files.internal("data/badlogic.jpg"));
 
 		Button btnStart = new Button("btnStart", texture);
@@ -34,16 +35,17 @@ public class GameScreen extends ScreenBase {
 
 		Stage.addActor(btnTurn);
 		Stage.addActor(btnStart);
-
+*/
 		TableLayout.defaultFont = new BitmapFont();
 		TableLayout layout = new Table().layout;
 		Stage.addActor(layout.getTable());
 		layout.getTable().width = Gdx.graphics.getWidth();
 		layout.getTable().height = Gdx.graphics.getHeight();
 
+		/*
 		layout.register(btnTurn);
 		layout.register(btnStart);
-
+*/
 		layout.parse(Gdx.files.internal("data/ui/GameScreen.ui").readString());
 	}
 
