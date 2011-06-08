@@ -3,6 +3,7 @@ package twiplz.logic.controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import twiplz.GameEngine;
 
@@ -87,9 +88,6 @@ public class ControllerLogic extends
 
 		gameEngine.Render.AddDebugRender("Zoom", prevZoom);
 
-		gameEngine.Render.AddDebugRender("PointerStart" + pointer,
-				pointerStart[pointer]);
-
 		return true;
 	}
 
@@ -131,6 +129,8 @@ public class ControllerLogic extends
 		SetPointer(pointer, pointerCurrent, x, y);
 		// ---
 
+		gameEngine.Render.AddDebugRender("PointerStart" + pointer,
+				pointerStart[pointer]);
 		gameEngine.Render.AddDebugRender("PointerCurrent" + pointer,
 				pointerCurrent[pointer]);
 
@@ -168,11 +168,29 @@ public class ControllerLogic extends
 			float distCur = pointerCurrent[firstLastPointerIndex]
 					.dst(pointerCurrent[secondLastPointerIndex]);
 
-			float diffZoom = (distStart - distCur) / 300f;
+			float diffZoom = distStart / distCur;
 
 			gameEngine.Render.AddDebugRender("DiffZoom", diffZoom);
 
 			gameEngine.Render.Camera.zoom = prevZoom + diffZoom;
+
+			Vector2 vecSecondToFirst = new Vector2(firstLastPointerOnScreen.x- secondLastPointerOnScreen.x, firstLastPointerOnScreen.y- secondLastPointerOnScreen.y);
+			
+			Vector2 vecMidPoint2D = new Vector2(secondLastPointerOnScreen.x
+					+ vecSecondToFirst.x / 2f, secondLastPointerOnScreen.y
+					+ vecSecondToFirst.y / 2f);
+
+			Vector2 vecMidScreen = new Vector2(Gdx.app.getGraphics().getWidth()/2, Gdx.app.getGraphics().getHeight()/2);
+
+			
+			gameEngine.Render.AddDebugRender("vecMidScreen", vecMidScreen);
+			gameEngine.Render.AddDebugRender("vecMidPoint2D", vecMidPoint2D);
+			
+			gameEngine.Render.Camera.position.set(vecCamera.x
+					+ (vecMidScreen.x-vecMidPoint2D.x)*diffZoom
+					, vecCamera.y
+					- (vecMidScreen.y-vecMidPoint2D.y)*diffZoom
+					, 0);
 		}
 		// ---
 
