@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import twiplz.GameEngine;
+import twiplz.logic.render.RenderLogic;
 
 public class ControllerLogic extends
 		plz.engine.logic.controller.ControllerLogicBase
@@ -26,7 +27,7 @@ public class ControllerLogic extends
 
 	float prevCameraZoom = 0;
 	Vector2 prevCameraPos;
-	float prevCameraAngle =0;
+	float prevCameraAngle = 0;
 
 	public ControllerLogic(GameEngine gameEngine)
 	{
@@ -165,11 +166,15 @@ public class ControllerLogic extends
 		// --- Translation de la caméra avec dernier pointeur
 		if (countPointerOnScreen == 1 && pointer == firstLastPointer.Index)
 		{
+			Vector2 vecTranslation = new Vector2(firstLastPointer.Start.x - x,
+					firstLastPointer.Start.y - y);
+
+			vecTranslation.rotate(prevCameraAngle);
+
 			gameEngine.Render.Camera.position.set(prevCameraPos.x
-					+ (firstLastPointer.Start.x - x)
-					* gameEngine.Render.Camera.zoom, prevCameraPos.y
-					- (firstLastPointer.Start.y - y)
-					* gameEngine.Render.Camera.zoom, 0);
+					+ vecTranslation.x * gameEngine.Render.Camera.zoom,
+					prevCameraPos.y - vecTranslation.y
+							* gameEngine.Render.Camera.zoom, 0);
 		}
 		// ---
 
@@ -184,21 +189,27 @@ public class ControllerLogic extends
 					.dst(secondLastPointer.Current);
 
 			// ---> Calcul du zoom
-			float diffZoom = distStart / distCur;
+			// float diffZoom = distStart / distCur;
+			float diffZoom = (distStart - distCur) / 70f;
 
 			gameEngine.Render.AddDebugRender("DiffZoom", diffZoom);
 
 			Vector2 vecSecondToFirstStart = new Vector2(
 					firstLastPointer.Start.x - secondLastPointer.Start.x,
-					firstLastPointer.Start.y - secondLastPointer.Current.y);
+					firstLastPointer.Start.y - secondLastPointer.Start.y);
 			Vector2 vecSecondToFirstCurrent = new Vector2(
 					firstLastPointer.Current.x - secondLastPointer.Current.x,
 					firstLastPointer.Current.y - secondLastPointer.Current.y);
 
 			// ---> Position du centre entre les points de départ A et B
-			Vector2 vecMidPoint2D = new Vector2(secondLastPointer.Start.x
-					+ vecSecondToFirstStart.x / 2f, secondLastPointer.Start.y
-					+ vecSecondToFirstStart.y / 2f);
+			Vector2 vecMidPointStart = new Vector2(
+					secondLastPointer.Start.x + vecSecondToFirstStart.x / 2f,
+					secondLastPointer.Start.y + vecSecondToFirstStart.y / 2f);
+
+			// ---> Position du centre entre les points de départ A et B
+			Vector2 vecMidPointCurrent = new Vector2(
+					secondLastPointer.Current.x + vecSecondToFirstCurrent.x	/ 2f,
+					secondLastPointer.Current.y	+ vecSecondToFirstCurrent.y / 2f);
 
 			// ---> Position du centre de l'écran
 			Vector2 vecMidScreen = new Vector2(
@@ -207,28 +218,38 @@ public class ControllerLogic extends
 
 			// ---> Calcul du vecteur de translation
 			Vector2 vecTranslation = new Vector2(
-					(vecMidScreen.x - vecMidPoint2D.x) * diffZoom,
-					-(vecMidScreen.y - vecMidPoint2D.y) * diffZoom);
+					(vecMidScreen.x	- vecMidPointStart.x) + vecMidPointCurrent.x - vecMidPointStart.x
+					,-(vecMidScreen.y - vecMidPointStart.y));// + vecMidPointCurrent.y - vecMidPointStart.y)  );
+
+			((RenderLogic)gameEngine.Render).PointToDraw[0] = new Vector2(firstLastPointer.Start.x/gameEngine.Render.Camera.zoom,firstLastPointer.Start.y/gameEngine.Render.Camera.zoom);
+			((RenderLogic)gameEngine.Render).PointToDraw[1] =  new Vector2(secondLastPointer.Start.x/gameEngine.Render.Camera.zoom,-secondLastPointer.Start.y/gameEngine.Render.Camera.zoom);
+			
+			gameEngine.Render.AddDebugRender("vecMidPointStart", vecMidPointStart);
+			gameEngine.Render.AddDebugRender("vecMidPointCurrent", vecMidPointCurrent);
+			
+			// Vector2 vecT = new Vector2(vecMidScreen.x - vecMidPoint2D.x,
+			// vecMidScreen.y - vecMidPoint2D.y);
+
+			// vecT.rotate(prevCameraAngle);
 
 			// ---> Calcul de la rotation
-			float angle = (Common.GetAngle(vecSecondToFirstCurrent, vecSecondToFirstStart
-					) / 6.28f) * 360f;
+			float angle = (Common.GetAngle(vecSecondToFirstCurrent,
+					vecSecondToFirstStart) / 6.28f) * 360f;
 
 			gameEngine.Render.Camera.zoom = prevCameraZoom + diffZoom;
 
-			float angleRot = prevCameraAngle-angle;
-			
-			prevCameraAngle = angle;
-			gameEngine.Render.Camera.rotate(angleRot, 0f, 0f, 1f);
+			// float angleRot = prevCameraAngle-angle;
+			//
+			// prevCameraAngle = angle;
+			// gameEngine.Render.Camera.rotate(angleRot, 0f, 0f, 1f);
 
-			gameEngine.Render.Camera.position
-					.set(prevCameraPos.x + (vecMidScreen.x - vecMidPoint2D.x)
-							* diffZoom, prevCameraPos.y
-							- (vecMidScreen.y - vecMidPoint2D.y) * diffZoom, 0);
+			gameEngine.Render.Camera.position.set(prevCameraPos.x
+					+ vecTranslation.x * diffZoom, prevCameraPos.y
+					+ vecTranslation.y * diffZoom, 0);
 
 			gameEngine.Render.Camera.update();
 
-			gameEngine.Render.AddDebugRender("Angle", angle);
+			// gameEngine.Render.AddDebugRender("Angle", angle);
 		}
 		// ---
 
@@ -243,6 +264,15 @@ public class ControllerLogic extends
 		return false;
 	}
 
+	private Vector2 Project(Vector2 vec)
+	{
+		Vector3 vec3 = new Vector3(vec.x,vec.y,0);
+		
+		gameEngine.Render.Camera.project(vec3);
+		
+		return new Vector2(vec3.x,vec3.y);
+	}
+	
 	@Override
 	public boolean touchMoved(int x, int y)
 	{
