@@ -163,6 +163,12 @@ public class ControllerLogic extends
 			}
 		}
 
+		
+		// ---> Position du centre de l'écran
+		Vector2 vecMidScreen = new Vector2(
+				Gdx.app.getGraphics().getWidth() / 2, Gdx.app.getGraphics()
+						.getHeight() / 2);
+
 		// --- Translation de la caméra avec dernier pointeur
 		if (countPointerOnScreen == 1 && pointer == firstLastPointer.Index)
 		{
@@ -175,9 +181,12 @@ public class ControllerLogic extends
 					+ vecTranslation.x * gameEngine.Render.Camera.zoom,
 					prevCameraPos.y - vecTranslation.y
 							* gameEngine.Render.Camera.zoom, 0);
+		
+			((RenderLogic)gameEngine.Render).PointToDraw[0] = new Vector2(gameEngine.Render.Camera.position.x+(-vecMidScreen.x+firstLastPointer.Current.x)*gameEngine.Render.Camera.zoom,gameEngine.Render.Camera.position.y-(-vecMidScreen.y+firstLastPointer.Current.y)*gameEngine.Render.Camera.zoom);
 		}
 		// ---
 
+		
 		// --- Zoom de la caméra avec les deux derniers pointeurs
 		if (countPointerOnScreen >= 2
 				&& (pointer == firstLastPointer.Index || pointer == secondLastPointer.Index)
@@ -211,18 +220,14 @@ public class ControllerLogic extends
 					secondLastPointer.Current.x + vecSecondToFirstCurrent.x	/ 2f,
 					secondLastPointer.Current.y	+ vecSecondToFirstCurrent.y / 2f);
 
-			// ---> Position du centre de l'écran
-			Vector2 vecMidScreen = new Vector2(
-					Gdx.app.getGraphics().getWidth() / 2, Gdx.app.getGraphics()
-							.getHeight() / 2);
 
 			// ---> Calcul du vecteur de translation
 			Vector2 vecTranslation = new Vector2(
 					(vecMidScreen.x	- vecMidPointStart.x) + vecMidPointCurrent.x - vecMidPointStart.x
 					,-(vecMidScreen.y - vecMidPointStart.y));// + vecMidPointCurrent.y - vecMidPointStart.y)  );
 
-			((RenderLogic)gameEngine.Render).PointToDraw[0] = new Vector2(firstLastPointer.Start.x/gameEngine.Render.Camera.zoom,firstLastPointer.Start.y/gameEngine.Render.Camera.zoom);
-			((RenderLogic)gameEngine.Render).PointToDraw[1] =  new Vector2(secondLastPointer.Start.x/gameEngine.Render.Camera.zoom,-secondLastPointer.Start.y/gameEngine.Render.Camera.zoom);
+			((RenderLogic)gameEngine.Render).PointToDraw[0] = new Vector2(gameEngine.Render.Camera.position.x+(-vecMidScreen.x+firstLastPointer.Current.x)*gameEngine.Render.Camera.zoom,gameEngine.Render.Camera.position.y-(-vecMidScreen.y+firstLastPointer.Current.y)*gameEngine.Render.Camera.zoom);
+			((RenderLogic)gameEngine.Render).PointToDraw[1] =  new Vector2(gameEngine.Render.Camera.position.x+(-vecMidScreen.x+secondLastPointer.Current.x)*gameEngine.Render.Camera.zoom,gameEngine.Render.Camera.position.y-(-vecMidScreen.y+secondLastPointer.Current.y)*gameEngine.Render.Camera.zoom);
 			
 			gameEngine.Render.AddDebugRender("vecMidPointStart", vecMidPointStart);
 			gameEngine.Render.AddDebugRender("vecMidPointCurrent", vecMidPointCurrent);
@@ -266,13 +271,13 @@ public class ControllerLogic extends
 
 	private Vector2 Project(Vector2 vec)
 	{
-		Vector3 vec3 = new Vector3(vec.x,vec.y,0);
-		
+		Vector3 vec3 = new Vector3(vec.x, vec.y, 0);
+
 		gameEngine.Render.Camera.project(vec3);
-		
-		return new Vector2(vec3.x,vec3.y);
+
+		return new Vector2(vec3.x, vec3.y);
 	}
-	
+
 	@Override
 	public boolean touchMoved(int x, int y)
 	{
