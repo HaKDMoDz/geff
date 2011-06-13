@@ -9,6 +9,8 @@ public class Cell
 	public Vector2 Location;
 	public Vector2 InitialLocation;
 	public Cell[] Neighbourghs;
+	public CellPartType[] Parts;
+	public byte ColorType;
 
 	public Cell(Map map, int x, int y, float left, float top)
 	{
@@ -16,8 +18,9 @@ public class Cell
 		this.Coord = new Vector2(x, y);
 		this.Location = new Vector2(left, top);
 		this.InitialLocation = new Vector2(left, top);
-
+		
 		this.Neighbourghs = new Cell[6];
+		this.Parts = new CellPartType[6];
 	}
 
 	public int IndexPosition()

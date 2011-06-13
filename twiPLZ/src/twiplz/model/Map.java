@@ -53,6 +53,8 @@ public class Map
 		}
 
 		CalcNeighborough();
+
+		CalcColorAndParts();
 	}
 
 	public void CalcNeighborough()
@@ -69,8 +71,7 @@ public class Map
 				cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
 				cell.Neighbourghs[4] = GetNeighborough(cell, 0, 1);
 				cell.Neighbourghs[5] = GetNeighborough(cell, 0, -1);
-			}
-			else
+			} else
 			{
 				cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
 				cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
@@ -79,6 +80,55 @@ public class Map
 				cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
 				cell.Neighbourghs[5] = GetNeighborough(cell, -1, -1);
 			}
+		}
+	}
+
+	public void CalcColorAndParts()
+	{
+		for (Cell cell : Cells)
+		{
+			//--- Calcul de la couleur
+			boolean colorFound = false;
+
+			while (!colorFound)
+			{
+				byte colorType = (byte) (1 + Math.random() * 7);
+
+				for (int i = 0; i < 6; i++)
+				{
+					if (cell.Neighbourghs[i] != null
+							&& cell.Neighbourghs[i].ColorType == colorType)
+					{
+						colorType = 0;
+						break;
+					}
+				}
+
+				if (colorType != 0)
+				{
+					colorFound = true;
+					cell.ColorType = colorType;
+				}
+			}
+			//---
+			
+			//--- Calcul des flèches
+			for (int i = 0; i < 6; i++)
+			{
+				double percentIn = 0.1;
+				double percentOut = 0.1;
+				
+				double rndPercent = Math.random();
+				
+				if(rndPercent<= percentIn)
+					cell.Parts[i] = CellPartType.In;
+				else if(rndPercent <= percentIn+ percentOut)
+					cell.Parts[i] = CellPartType.Out;
+				else
+					cell.Parts[i] = CellPartType.Simple;
+			}
+			
+			//---
 		}
 	}
 
@@ -95,4 +145,5 @@ public class Map
 
 		return null;
 	}
+
 }

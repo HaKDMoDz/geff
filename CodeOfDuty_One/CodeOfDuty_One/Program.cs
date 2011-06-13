@@ -51,7 +51,6 @@ namespace CodeOfDuty_One
 
                 Iteration iterationInitiale = new Iteration();
                 iterationInitiale.Elements = new byte[int.Parse(fileContent[i])];
-                vecteur.Iterations.Add(iterationInitiale);
 
                 string[] elements = fileContent[i + 1].Split(new String[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -69,9 +68,16 @@ namespace CodeOfDuty_One
                 //    Si la moyenne ne peut être atteindre pour tous les éléments
                 //    alors la propriété moyenne est fixée à 255 pour l'exclusion du calcul (la moyenne max théorique étant 99)
                 if (sommeElements % iterationInitiale.Elements.Length != 0)
+                {
                     vecteur.Moyenne = 255;
+                }
                 else
+                {
+                    //---> Optimisation : L'itération initiale est gardée en mémoire
+                    //                    uniquement si une solution est possible
+                    vecteur.Iterations.Add(iterationInitiale);
                     vecteur.Moyenne = (byte)(sommeElements / iterationInitiale.Elements.Length);
+                }
                 //---
 
                 Vecteurs.Add(vecteur);
@@ -84,16 +90,16 @@ namespace CodeOfDuty_One
         private static void Compute()
         {
             //--- Parallélisation du calcul
-            Parallel.ForEach<Vecteur>(Vecteurs, vecteur =>
-            //for (int m = 0; m < Vecteurs.Count; m++)
+            //Parallel.ForEach<Vecteur>(Vecteurs, vecteur =>
+            for (int m = 0; m < Vecteurs.Count; m++)
             {
-                //Vecteur vecteur = Vecteurs[m];
-
-                byte nbElement = (byte)vecteur.Iterations[0].Elements.Length;
+                Vecteur vecteur = Vecteurs[m];
 
                 //--- Exclusion du calcul si la moyenne déterminée est 255
-                if (vecteur.Moyenne < 255 && nbElement > 1)
+                if (vecteur.Moyenne < 255 && vecteur.Iterations[0].Elements.Length > 1)
                 {
+                    byte nbElement = (byte)vecteur.Iterations[0].Elements.Length;
+
                     bool ecart = true;
                     int i = 0;
                     short[] ecartMoyenneElements = new short[nbElement];
@@ -104,8 +110,26 @@ namespace CodeOfDuty_One
                         ecartMoyenneElements[j] = (Int16)(vecteur.Moyenne - vecteur.Iterations[0].Elements[j]);
                     }
 
+
+                    //---
+                    int delta = 0;
+                    int[] left = new int[nbElement];
+                    int[] right = new int[nbElement];
+                    int maxshifts = 0;
+
+                    for (int l = 0; l < nbElement; l++)
+                    {
+                        left[l] = delta < 0 ? -delta : 0;
+                        delta +=  vecteur.Iterations[0].Elements[l] - vecteur.Moyenne;
+                        right[l] = delta > 0 ? delta : 0;
+                        if (left[l] + right[l] > maxshifts)
+                            maxshifts = left[l] + right[l];
+                    }
+                    //----
+
                     //--- Tant que l'écart maximum pour un élement est différent de zéro, on fait une nouvelle itération
-                    while (ecart)
+                    //while (ecart)
+                    for (int o = 0; o < maxshifts; o++)
                     {
                         Iteration nouvelleIteration = new Iteration();
                         nouvelleIteration.Elements = new byte[nbElement];
@@ -120,7 +144,10 @@ namespace CodeOfDuty_One
                         membres[1, 0] = (short)(ecartMoyenneElements.Sum(ecartMoyenne => (short)ecartMoyenne) - ecartMoyenneElements[0]);
                         membres[1, 1] = membres[1, 0];
 
-                        for (byte j = 0; j < nbElement; j++)
+                        byte borneGauche = 0;
+                        byte borneDroite = nbElement;
+
+                        for (byte j = borneGauche; j < borneDroite; j++)
                         {
                             //---> Calcul la valeur du membre gauche de l'élément selon son voisin de gauche
                             if (j > 0)
@@ -161,14 +188,22 @@ namespace CodeOfDuty_One
 
                             membres[0, 0] = membres[0, 1];
                             membres[1, 0] = membres[1, 1];
+
+                            if (membres[0, 1] == 0)
+                                borneGauche = j;
+
+                            if (membres[1, 1] == 0)
+                                borneDroite = j;
+
                         }
 
-                        ecart = ecartMoyenneElements.Sum(ecartMoyenne => (short)Math.Abs(ecartMoyenne)) > 0;
+                        //ecart = ecartMoyenneElements.Sum(ecartMoyenne => (short)Math.Abs(ecartMoyenne)) > 0;
 
                         i++;
                     }
                 }
-            });
+            }
+            //);
         }
 
         /// <summary>
