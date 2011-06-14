@@ -12,7 +12,8 @@ import twiplz.model.CellPartType;
 
 public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 {
-	Texture texCell;
+	Texture texCellForeground;
+	Texture texCellBackground;
 	Texture[] texArrowsIn = new Texture[6];
 	Texture[] texArrowsOut = new Texture[6];
 	Color[] colors;
@@ -28,27 +29,27 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 	private void LoadTextures()
 	{
-		texCell = new Texture(Gdx.files.internal("data/Hexa_2D_Metal.png"));
+		texCellForeground = new Texture(
+				Gdx.files.internal("data/CellForeground.png"));
+		texCellBackground = new Texture(
+				Gdx.files.internal("data/CellBackground.png"));
 
 		for (int i = 1; i <= 6; i++)
 		{
-			// arrowsIn[i-1] = new Texture(Gdx.files.internal("data/ArrowIn" + i
-			// + ".png"));
+			texArrowsIn[i - 1] = new Texture(Gdx.files.internal("data/ArrowIn"
+					+ i + ".png"));
 			texArrowsOut[i - 1] = new Texture(
 					Gdx.files.internal("data/ArrowOut" + i + ".png"));
 		}
 
 		colors = new Color[7];
-		colors[0] = Color.BLUE;
-		colors[1] = new Color(1f, 0f, 1f, 1f); // VIOLET
-		colors[2] = Color.RED;
-		colors[3] = new Color(1f, 0.64f, 0f, 1f); // VIOLET
-		colors[4] = new Color(1f, 1f, 0f, 1f); // YELLOW
-		colors[5] = Color.GREEN;
+		colors[0] = new Color(1f, 0.7f, 0.84f, 1f);
+		colors[1] = new Color(0.78f, 0.7f, 1f, 1f);
+		colors[2] = new Color(0.68f, 0.90f, 1f, 1f);
+		colors[3] = new Color(0.68f, 1f, 0.7f, 1f);
+		colors[4] = new Color(0.95f, 1f, 0.66f, 1f);
+		colors[5] = new Color(1f, 0.79f, 0.68f, 1f);
 		colors[6] = Color.WHITE;
-
-		// badlogic.jpg
-		// Hexa_2D_mini.jpg
 	}
 
 	@Override
@@ -64,6 +65,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			DrawCell(cell);
 		}
 
+		/*
 		spriteBatch.setColor(Color.RED);
 		for (int i = 0; i < PointToDraw.length; i++)
 		{
@@ -74,7 +76,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 				spriteBatch.draw(texCell, cellLocation.x, cellLocation.y);
 			}
 		}
-
+		 */
 		spriteBatch.end();
 	}
 
@@ -83,8 +85,9 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		Vector2 cellLocation = cell.Location.cpy();
 
 		cellLocation.mul(256f);
+		spriteBatch.draw(texCellBackground, cellLocation.x, cellLocation.y);
 		spriteBatch.setColor(colors[cell.ColorType - 1]);
-		spriteBatch.draw(texCell, cellLocation.x, cellLocation.y);
+		spriteBatch.draw(texCellForeground, cellLocation.x, cellLocation.y);
 
 		spriteBatch.setColor(Color.WHITE);
 
@@ -95,19 +98,13 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			if (cell.Parts[i] == CellPartType.Out)
 			{
 				texturePart = texArrowsOut[i];
-			}
-			else if(cell.Parts[i] == CellPartType.In)
+			} else if (cell.Parts[i] == CellPartType.In)
 			{
 				texturePart = texArrowsIn[i];
 			}
 
 			if (texturePart != null)
 			{
-				//Vector2 partLocation = new Vector2(
-				//		0.7f * 512f * (float)Math.cos(30 * i),
-				//		0.7f * 512f * (float)Math.sin(30 * i));
-
-				//spriteBatch.draw(texturePart, cellLocation.x + partLocation.x, cellLocation.y + partLocation.y);
 				spriteBatch.draw(texturePart, cellLocation.x, cellLocation.y);
 			}
 		}
