@@ -71,7 +71,7 @@ public class ControllerLogic extends
 	@Override
 	public boolean scrolled(int amount)
 	{
-		gameEngine.Render.Camera.zoom += amount;
+		Zoom(gameEngine.Render.Camera.zoom+amount);
 
 		return false;
 	}
@@ -241,7 +241,9 @@ public class ControllerLogic extends
 			float angle = (Common.GetAngle(vecSecondToFirstCurrent,
 					vecSecondToFirstStart) / 6.28f) * 360f;
 
-			gameEngine.Render.Camera.zoom = prevCameraZoom + diffZoom;
+			//gameEngine.Render.Camera.zoom = prevCameraZoom + diffZoom;
+			
+			Zoom(prevCameraZoom + diffZoom);
 
 			// float angleRot = prevCameraAngle-angle;
 			//
@@ -297,5 +299,11 @@ public class ControllerLogic extends
 
 			pointerArray[pointer] = new Vector2(x, y);
 		}
+	}
+	
+	private void Zoom(float value)
+	{
+		if(value < 10 && value >= 2)
+			gameEngine.Render.Camera.zoom=value;
 	}
 }
