@@ -1,2 +1,16 @@
 debug * expand
-''
+'' size:10%,15%  '' width:75% [btnStart] size:15%,15%
+---
+'' size:10%,25%  '' width:75% '' width:15%
+---
+[imgTurn1] size:10%,10% '' width:75% '' width:15%
+---
+[imgTurn2] size:10%,10% '' width:75% '' width:15%
+---
+[imgTurn3] size:10%,10% '' width:75% '' width:15%
+---
+[imgTurn4] size:10%,10% '' width:75% '' width:15%
+---
+[imgTurn5] size:10%,10% '' width:75% '' width:15%
+---
+[imgTurn6] size:10%,10% '' width:75% '' width:15%

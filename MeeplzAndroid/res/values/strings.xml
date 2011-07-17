@@ -15,6 +15,5 @@
   limitations under the License.
 -->
 <resources>
-    <string name="hello">Hello World, GDXHelloWorld!</string>
-    <string name="app_name">GDX Hello World</string>
+    <string name="app_name">meePLZ</string>
 </resources>

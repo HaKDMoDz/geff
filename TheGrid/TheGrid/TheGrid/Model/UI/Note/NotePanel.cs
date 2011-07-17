@@ -102,7 +102,7 @@ namespace TheGrid.Model.UI.Note
             //D:\Log\geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\MozartTurque.mid
             //@"D:\Libraries\Musics\Midi\beethoven-pour-elise.mid"
             //D:\Log\geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\Vivaldi4SeasWint.mid
-            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Log\geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\Vivaldi4SeasWint.mid");
+            NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\Geff\Log\geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\beethoven-pour-elise.mid");
             //NAudio.Midi.MidiFile midiFile = new MidiFile(@"D:\GDD\Log\Geff\TheGrid\TheGrid\TheGrid\Files\Sound\Midi\beethoven-pour-elise.mid");
 
             //if (midiFile != null)

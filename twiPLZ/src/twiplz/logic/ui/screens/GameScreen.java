@@ -1,8 +1,5 @@
 package twiplz.logic.ui.screens;
 
-import java.io.FileReader;
-import java.util.Scanner;
-
 import plz.engine.GameEngineBase;
 import plz.engine.logic.ui.screens.ScreenBase;
 
@@ -10,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.actors.Button;
+import com.badlogic.gdx.scenes.scene2d.actors.Image;
 import com.badlogic.gdx.scenes.scene2d.actors.Label;
 import com.badlogic.gdx.scenes.scene2d.actors.Button.ClickListener;
 import com.esotericsoftware.tablelayout.libgdx.Table;
@@ -24,28 +22,40 @@ public class GameScreen extends ScreenBase {
 	public void show() {
 		super.show();
 
-		/*
-		Texture texture = new Texture(Gdx.files.internal("data/badlogic.jpg"));
 
-		Button btnStart = new Button("btnStart", texture);
+		Texture texture0 = new Texture(Gdx.files.internal("data/Turn1.png"));
+		
+		Button btnStart = new Button("btnStart", texture0);
 		btnStart.clickListener = btnStartClicked;
 
-		Button btnTurn = new Button("btnTurn", texture);
-		btnTurn.clickListener = btnStartClicked;
+		Image imgTurns[] = new Image[6];
+		
+		for (int i = 1; i < 7; i++)
+		{
+			Texture texture = new Texture(Gdx.files.internal("data/Turn" + i + ".png"));
 
-		Stage.addActor(btnTurn);
+			imgTurns[i-1] = new Image("imgTurn" + i, texture);
+			//btnTurns[i].clickListener = btnStartClicked;
+
+			Stage.addActor(imgTurns[i-1]);
+		}
+
 		Stage.addActor(btnStart);
-*/
+
 		TableLayout.defaultFont = new BitmapFont();
 		TableLayout layout = new Table().layout;
 		Stage.addActor(layout.getTable());
 		layout.getTable().width = Gdx.graphics.getWidth();
 		layout.getTable().height = Gdx.graphics.getHeight();
 
-		/*
-		layout.register(btnTurn);
+		
 		layout.register(btnStart);
-*/
+
+		for (int i = 1; i < 7; i++)
+		{
+			layout.register(imgTurns[i-1]);
+		}
+		
 		layout.parse(Gdx.files.internal("data/ui/GameScreen.ui").readString());
 	}
 
