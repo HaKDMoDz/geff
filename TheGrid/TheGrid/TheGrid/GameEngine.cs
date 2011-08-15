@@ -97,8 +97,11 @@ namespace TheGrid
                 //--- Plein écran PC
                 //NativeResolution = new Vector2(1680, 1050);
 
-                //--- Plein écran TV
-                NativeResolution = new Vector2(1360, 768);
+                ////--- Plein écran TV
+                //NativeResolution = new Vector2(1360, 768);
+
+                //--- Plein écran tablette
+                NativeResolution = new Vector2(1280,720);
 
                 //--- Plein écran PC Portable parents élo
                 //NativeResolution = new Vector2(1600, 900);

@@ -55,7 +55,6 @@ public class GameEngineBase implements ApplicationListener {
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-int a =0;
 	}
 
 	@Override

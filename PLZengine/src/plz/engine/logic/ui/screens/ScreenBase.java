@@ -34,7 +34,7 @@ public class ScreenBase implements Screen
 	public void show()
 	{
 		Stage = new com.badlogic.gdx.scenes.scene2d.Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),false);
-		
+		 Gdx.input.setInputProcessor(Stage);
 	}
 
 	@Override

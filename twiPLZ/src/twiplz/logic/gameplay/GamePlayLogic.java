@@ -7,6 +7,8 @@ import twiplz.model.*;
 public class GamePlayLogic extends
 		plz.engine.logic.gameplay.GamePlayLogicBase
 {
+	public Cell NewCell;
+	
 	public GamePlayLogic(GameEngine gameEngine)
 	{
 		super(gameEngine);
@@ -18,5 +20,15 @@ public class GamePlayLogic extends
 	{
 		Context.Map = new Map(20,20);
 		
+	}
+	
+	public void CreateNewCell()
+	{
+	
+	}
+	
+	public void TurnNewCell()
+	{
+	
 	}
 }
