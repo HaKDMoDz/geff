@@ -35,6 +35,7 @@ public class ControllerLogic extends
 		Gdx.input.setInputProcessor(this);
 	}
 
+	
 	@Override
 	public boolean keyDown(int keycode)
 	{
@@ -162,7 +163,6 @@ public class ControllerLogic extends
 				firstLastPointer = pointers[i];
 			}
 		}
-
 		
 		// ---> Position du centre de l'écran
 		Vector2 vecMidScreen = new Vector2(

@@ -106,7 +106,11 @@ namespace TheGrid
                 //--- Plein écran PC Portable parents élo
                 //NativeResolution = new Vector2(1600, 900);
 
-                //Graphics.IsFullScreen = true;
+
+                Graphics.PreferredBackBufferWidth = 1440;
+                Graphics.PreferredBackBufferHeight = 900;
+
+                Graphics.IsFullScreen = false;
             }
 
             IsNativeResolution = true;

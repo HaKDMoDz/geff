@@ -1,16 +1,33 @@
-debug * expand
-'' size:10%,15%  '' width:75% [btnStart] size:15%,15%
----
-'' size:10%,25%  '' width:75% '' width:15%
----
-[imgTurn1] size:10%,10% '' width:75% '' width:15%
----
-[imgTurn2] size:10%,10% '' width:75% '' width:15%
----
-[imgTurn3] size:10%,10% '' width:75% '' width:15%
----
-[imgTurn4] size:10%,10% '' width:75% '' width:15%
----
-[imgTurn5] size:10%,10% '' width:75% '' width:15%
----
-[imgTurn6] size:10%,10% '' width:75% '' width:15%
+debug *  size:100%,100%
+{
+	* height:100%
+	|width:20% |width:60%|width:20%
+	
+	{	
+		* width:100% expand:y
+		'' height:20%
+		---
+		[imgTurn1] fill:y
+		---
+		[imgTurn2] fill:y
+		---
+		[imgTurn3] fill:y
+		---
+		[imgTurn4] fill:y
+		---
+		[imgTurn5] fill:y
+		---
+		[imgTurn6] fill:y
+	}
+	
+	{
+		* align:left
+		[imgCenter] size:100%,100%
+	}
+	
+	{
+		[btnStart] size:100%,20%
+		---
+		'' height:80%
+	}
+}

@@ -7,11 +7,13 @@ import twiplz.logic.gameplay.GamePlayLogic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.actors.Button;
 import com.badlogic.gdx.scenes.scene2d.actors.Image;
 import com.badlogic.gdx.scenes.scene2d.actors.Label;
 import com.badlogic.gdx.scenes.scene2d.actors.Button.ClickListener;
+import com.esotericsoftware.tablelayout.libgdx.LibgdxToolkit;
 import com.esotericsoftware.tablelayout.libgdx.Table;
 import com.esotericsoftware.tablelayout.libgdx.TableLayout;
 
@@ -22,23 +24,24 @@ public class GameScreen extends ScreenBase
 		return (GamePlayLogic)gameEngine.GamePlay;
 	}
 	
-	
-	
 	public GameScreen(GameEngineBase gameEngine)
 	{
 		super(gameEngine);
 	}
 
 	@Override
-	public void show()
+	public void InitScreen()
 	{
-		super.show();
-
+		this.screenName = "GameScreen";
+		
 		Texture texture0 = new Texture(Gdx.files.internal("data/Turn1.png"));
 
-		SensitiveZone imgNewCell = new SensitiveZone("btnStart", texture0);
+		//--- Create SensitiveZone
+		SensitiveZone imgNewCell = AddSensitiveZone("btnStart", texture0);
 		imgNewCell.pressListener = NewCell_Selected;
 
+		SensitiveZone imgCenter = AddSensitiveZone("imgCenter");
+		
 		SensitiveZone imgTurns[] = new SensitiveZone[6];
 
 		for (int i = 1; i < 7; i++)
@@ -46,29 +49,11 @@ public class GameScreen extends ScreenBase
 			Texture texture = new Texture(Gdx.files.internal("data/Turn" + i
 					+ ".png"));
 
-			imgTurns[i - 1] = new SensitiveZone("imgTurn" + i, texture);
+			imgTurns[i - 1] = AddSensitiveZone("imgTurn" + i, texture);
 			imgTurns[i - 1].Tag = i - 1;
 			imgTurns[i - 1].enterListener = TurnNewCell_Enter;
-
-			Stage.addActor(imgTurns[i - 1]);
 		}
-
-		Stage.addActor(imgNewCell);
-
-		TableLayout.defaultFont = new BitmapFont();
-		TableLayout layout = new Table().layout;
-		Stage.addActor(layout.getTable());
-		layout.getTable().width = Gdx.graphics.getWidth();
-		layout.getTable().height = Gdx.graphics.getHeight();
-
-		layout.register(imgNewCell);
-
-		for (int i = 1; i < 7; i++)
-		{
-			layout.register(imgTurns[i - 1]);
-		}
-
-		layout.parse(Gdx.files.internal("data/ui/GameScreen.ui").readString());
+		//---
 	}
 
 	SensitiveZone.EnterListener TurnNewCell_Enter = new SensitiveZone.EnterListener()
@@ -76,7 +61,7 @@ public class GameScreen extends ScreenBase
 		@Override
 		public void onEnter(SensitiveZone button)
 		{
-			GamePlay().TurnNewCell((int)button.Tag);
+			GamePlay().TurnNewCell((Integer)button.Tag);
 		}
 	};
 

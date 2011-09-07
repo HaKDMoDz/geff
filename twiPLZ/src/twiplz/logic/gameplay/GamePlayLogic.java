@@ -27,7 +27,7 @@ public class GamePlayLogic extends
 	
 	}
 	
-	public void TurnNewCell()
+	public void TurnNewCell(int orientation)
 	{
 	
 	}
