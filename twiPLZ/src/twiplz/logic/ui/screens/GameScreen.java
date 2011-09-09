@@ -9,12 +9,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.actors.Button;
-import com.badlogic.gdx.scenes.scene2d.actors.Image;
 import com.badlogic.gdx.scenes.scene2d.actors.Label;
-import com.badlogic.gdx.scenes.scene2d.actors.Button.ClickListener;
 import com.esotericsoftware.tablelayout.libgdx.LibgdxToolkit;
-import com.esotericsoftware.tablelayout.libgdx.Table;
 import com.esotericsoftware.tablelayout.libgdx.TableLayout;
 
 public class GameScreen extends ScreenBase

@@ -1,29 +1,30 @@
 package plz.engine.logic.ui.components;
 
-import plz.engine.logic.controller.ControllerLogicBase;
-
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.actors.Button;
 
-public class SensitiveZone extends Actor {
-
-	public interface PressListener {
+public class SensitiveZone extends Actor
+{
+	public interface PressListener
+	{
 		public void pressed(SensitiveZone button);
 	}
 
-	public interface ReleaseListener {
+	public interface ReleaseListener
+	{
 		public void released(SensitiveZone button);
 	}
 
-	public interface EnterListener {
+	public interface EnterListener
+	{
 		public void onEnter(SensitiveZone button);
 	}
 
-	public interface LeaveListener {
+	public interface LeaveListener
+	{
 		public void onLeave(SensitiveZone button);
 	}
 
@@ -45,7 +46,8 @@ public class SensitiveZone extends Actor {
 	 * @param name
 	 *            the name
 	 */
-	public SensitiveZone(String name, InputProcessor controller) {
+	public SensitiveZone(String name, InputProcessor controller)
+	{
 		super(name);
 		this.pressedRegion = new TextureRegion();
 		this.unpressedRegion = new TextureRegion();
@@ -62,7 +64,8 @@ public class SensitiveZone extends Actor {
 	 * @param texture
 	 *            the {@link Texture}
 	 */
-	public SensitiveZone(String name, Texture texture, InputProcessor controller) {
+	public SensitiveZone(String name, Texture texture, InputProcessor controller)
+	{
 		super(name);
 		originX = texture.getWidth() / 2.0f;
 		originY = texture.getHeight() / 2.0f;
@@ -73,12 +76,14 @@ public class SensitiveZone extends Actor {
 		Controller = controller;
 	}
 
-	public SensitiveZone(String name, TextureRegion region) {
+	public SensitiveZone(String name, TextureRegion region)
+	{
 		this(name, region, region);
 	}
 
 	public SensitiveZone(String name, TextureRegion unpressedRegion,
-			TextureRegion pressedRegion) {
+			TextureRegion pressedRegion)
+	{
 		super(name);
 		width = Math.abs(unpressedRegion.getRegionWidth());
 		height = Math.abs(unpressedRegion.getRegionHeight());
@@ -89,10 +94,12 @@ public class SensitiveZone extends Actor {
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
+	public void draw(SpriteBatch batch, float parentAlpha)
+	{
 		TextureRegion region = isPressed ? pressedRegion : unpressedRegion;
 		batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-		if (region.getTexture() != null) {
+		if (region.getTexture() != null)
+		{
 			if (scaleX == 1 && scaleY == 1 && rotation == 0)
 				batch.draw(region, x, y, width, height);
 			else
@@ -102,14 +109,16 @@ public class SensitiveZone extends Actor {
 	}
 
 	@Override
-	public boolean touchDown(float x, float y, int pointer) {
+	public boolean touchDown(float x, float y, int pointer)
+	{
 		if (isPressed)
 			return false;
 
 		boolean result = x > 0 && y > 0 && x < width && y < height;
 		isPressed = result;
 
-		if (isPressed) {
+		if (isPressed)
+		{
 			parent.focus(this, pointer);
 			this.pointer = pointer;
 
@@ -123,11 +132,10 @@ public class SensitiveZone extends Actor {
 	}
 
 	@Override
-	public boolean touchUp(float x, float y, int pointer) {
-		if (!isPressed)
-			return false;
-
-		if (pointer == this.pointer) {
+	public void touchUp(float x, float y, int pointer)
+	{
+		if (pointer == this.pointer)
+		{
 			parent.focus(null, pointer);
 		}
 		isPressed = false;
@@ -136,17 +144,14 @@ public class SensitiveZone extends Actor {
 
 		if (Controller != null)
 			Controller.touchUp((int) x, (int) y, (int) pointer, 0);
-
-		return true;
 	}
 
 	@Override
-	public boolean touchDragged(float x, float y, int pointer) {
+	public void touchDragged(float x, float y, int pointer)
+	{
 
 		if (Controller != null)
 			Controller.touchDragged((int) x, (int) y, (int) pointer);
-
-		return isPressed;
 	}
 
 	@Override
@@ -154,25 +159,30 @@ public class SensitiveZone extends Actor {
 	{
 		if (Controller != null)
 			Controller.scrolled(amount);
-		
+
 		return false;
 	}
-	
-	public Actor hit(float x, float y) {
+
+	public Actor hit(float x, float y)
+	{
 		return x > 0 && y > 0 && x < width && y < height ? this : null;
 	}
 
-	public void layout() {
+	public void layout()
+	{
 	}
 
-	public void invalidate() {
+	public void invalidate()
+	{
 	}
 
-	public float getPrefWidth() {
+	public float getPrefWidth()
+	{
 		return unpressedRegion.getRegionWidth() * scaleX;
 	}
 
-	public float getPrefHeight() {
+	public float getPrefHeight()
+	{
 		return unpressedRegion.getRegionHeight() * scaleY;
 	}
 }

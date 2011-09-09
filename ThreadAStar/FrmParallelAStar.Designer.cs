@@ -429,6 +429,7 @@
             this.progressBar.Location = new System.Drawing.Point(12, 369);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(548, 10);
+            this.progressBar.Step = 1;
             this.progressBar.TabIndex = 15;
             // 
             // txtLog
@@ -512,8 +513,8 @@
             this.Name = "FrmParallelAStar";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Parallélisation et algorithme A*";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmParallelAStar_FormClosing);
             this.Load += new System.EventHandler(this.FrmParallelAStar_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmParallelAStar_FormClosing);
             this.pnlMethode.ResumeLayout(false);
             this.pnlMethode.PerformLayout();
             this.pnlParametrage.ResumeLayout(false);

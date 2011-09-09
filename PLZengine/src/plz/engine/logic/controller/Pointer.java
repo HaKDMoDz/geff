@@ -6,22 +6,21 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Pointer
 {
-	public int Index = 0;
-	public Vector2 Current;
-	public Vector2 Start;
-	private Date CreationDate;
-
-	public Pointer(int x, int y, int pointer)
+	public Vector2 Start = null;
+	public Vector2 Current = null;
+	public Date CreationDate = null;
+	public int Index = -1;
+	
+	public Pointer(int x, int y, int index)
 	{
-		this.Start = new Vector2(x,y);
-		this.Index = pointer;
+		this.Start = new Vector2(x, y);
+		this.Index = index;
 		this.CreationDate = new Date();
 	}
-
+	
 	public void SwapStartToCurrent()
 	{
-		if(this.Start != null)
-			this.Start = this.Current;
+		if (Start != null)
+			Start = Current;
 	}
-
 }

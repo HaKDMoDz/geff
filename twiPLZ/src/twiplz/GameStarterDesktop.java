@@ -9,6 +9,6 @@ public class GameStarterDesktop
 	public static void main(String[] argv)
 	{
 		ApplicationListener app = (ApplicationListener) new GameEngine();
-		new LwjglApplication(app, "twiPLZ", 800, 600, false);
+		new JoglApplication(app, "twiPLZ", 800, 600, false);
 	}
 }

@@ -10,7 +10,7 @@ using ThreadAStar.Model;
 using System.Threading;
 using ThreadAStar.ThreadManager;
 using ThreadAStar.AStar;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 using System.Diagnostics;
 
 namespace ThreadAStar
@@ -80,12 +80,12 @@ namespace ThreadAStar
 
                 _listMap = new List<IComputable>();
 
-                Parallel.For(0, (int)this.numCountMap.Value,
-                    i =>
-                    {
-                        _listMap.Add(new AStarMap(picMap.Width, picMap.Height, rnd.Next(), (int)numCountNode.Value, (int)numDistanceMax.Value));
-                    }
-                );
+                //Parallel.For(0, (int)this.numCountMap.Value,
+                //    i =>
+                //    {
+                //        _listMap.Add(new AStarMap(picMap.Width, picMap.Height, rnd.Next(), (int)numCountNode.Value, (int)numDistanceMax.Value));
+                //    }
+                //);
                 //---
 
                 AddLog("Démarrage du monitoring");
@@ -134,8 +134,8 @@ namespace ThreadAStar
             //--- Création du threadManager pour le type TPL
             if (chkMethodeTaskParallelLibrary.Checked && _methodToStart == TypeThreading.TaskParallelLibrary)
             {
-                AddLog("Parallélisation mode Task Parallel Library - Début");
-                _currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, _listMap);
+                //AddLog("Parallélisation mode Task Parallel Library - Début");
+                //_currentThreadManager = new ThreadManagerTPL((int)this.numNmbThread.Value, _listMap);
             }
             else if (!chkMethodeTaskParallelLibrary.Checked && _methodToStart == TypeThreading.TaskParallelLibrary)
             {
@@ -238,7 +238,7 @@ namespace ThreadAStar
         {
             progressBar.Value = count;
 
-            if (btnShowMapResolving.Text == BUTTON_MAP_OFF)
+            //if (btnShowMapResolving.Text == BUTTON_MAP_OFF)
                 computable.Draw(_gMap);
         }
 

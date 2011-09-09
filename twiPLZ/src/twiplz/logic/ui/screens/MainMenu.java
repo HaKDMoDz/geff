@@ -5,9 +5,9 @@ import plz.engine.logic.ui.screens.ScreenBase;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.actors.Button;
-import com.badlogic.gdx.scenes.scene2d.actors.Button.ClickListener;
-
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ClickListener;
 
 public class MainMenu extends ScreenBase
 {
@@ -23,14 +23,14 @@ public class MainMenu extends ScreenBase
 		
 		Texture texture = new Texture(Gdx.files.internal("data/badlogic.jpg"));
 
-		Button btnStart = new Button("Start", texture);
-		btnStart.x = 120;
-		btnStart.y = 0;
-		btnStart.height = 50;
-		btnStart.width = 150;
-		btnStart.clickListener = btnStartClicked;
-
-		Stage.addActor(btnStart);
+//		Button btnStart = new Button("Start", );
+//		btnStart.x = 120;
+//		btnStart.y = 0;
+//		btnStart.height = 50;
+//		btnStart.width = 150;
+//		btnStart.setClickListener(btnStartClicked);
+//
+//		Stage.addActor(btnStart);
 
 		//Stage.getRoot().action(Forever.$(Sequence.$(FadeOut.$(3), FadeIn.$(3))));
 	}
@@ -38,7 +38,7 @@ public class MainMenu extends ScreenBase
 	Button.ClickListener btnStartClicked = new ClickListener()
 	{
 		@Override
-		public void clicked(Button button)
+		public void click(Button button)
 		{
 			gameEngine.CurrentScreen = new GameScreen(gameEngine);
 			gameEngine.CurrentScreen.show();
