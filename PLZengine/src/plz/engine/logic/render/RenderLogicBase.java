@@ -17,7 +17,7 @@ public abstract class RenderLogicBase
 {
 	private final Map<String, Object> mapDebug = new HashMap<String, Object>();
 	private final BitmapFont fontDebug;
-	protected final SpriteBatch spriteBatch;
+	public final SpriteBatch spriteBatch;
 	public OrthographicCamera Camera;
 	float[] direction = { 1, 0.5f, 0, 0 };
 
@@ -36,7 +36,8 @@ public abstract class RenderLogicBase
 		Camera = new OrthographicCamera(Gdx.app.getGraphics().getWidth(),
 				Gdx.app.getGraphics().getHeight());
 
-		Camera.position.set(256, 256, 0);
+//		Camera.position.set(256, 256, 0);
+		Camera.position.set(0, 0, 0);
 		Camera.direction.set(0, 0, -1);
 		Camera.zoom = 10;
 	}
@@ -52,7 +53,7 @@ public abstract class RenderLogicBase
 		setProjectionAndCamera();
 		setLighting(gl);
 
-		spriteBatch.setProjectionMatrix(Camera.combined);
+		ProjectGame();
 	}
 
 	public void RenderUI(float deltaTime)
@@ -64,8 +65,7 @@ public abstract class RenderLogicBase
 	{
 		if (mapDebug.size() > 0)
 		{
-			spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.app.getGraphics().getWidth(), Gdx.app
-					.getGraphics().getHeight());
+			ProjectUI();
 			
 			spriteBatch.begin();
 			spriteBatch.setColor(Color.WHITE);
@@ -79,8 +79,19 @@ public abstract class RenderLogicBase
 			
 			spriteBatch.end();
 			
-			spriteBatch.setProjectionMatrix(Camera.combined);
+			ProjectGame();
 		}
+	}
+	
+	public void ProjectGame()
+	{
+		spriteBatch.setProjectionMatrix(Camera.combined);
+	}
+	
+	public void ProjectUI()
+	{
+		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.app.getGraphics().getWidth(), Gdx.app
+				.getGraphics().getHeight());
 	}
 
 	private void setProjectionAndCamera()

@@ -2,7 +2,7 @@ package twiplz.model;
 
 import com.badlogic.gdx.math.Vector2;
 
-public class Cell
+public class Cell implements Cloneable
 {
 	public Map Map;
 	public Vector2 Coord;
@@ -11,7 +11,17 @@ public class Cell
 	public Cell[] Neighbourghs;
 	public CellPartType[] Parts;
 	public byte ColorType;
-
+	public boolean Selected;
+	public boolean IsEmpty = true;
+	
+	public Cell()
+	{
+		this.Parts = new CellPartType[6];
+		
+		ColorType = (byte) (1 + Math.random() * 7);
+		this.CalcArrows();
+	}
+	
 	public Cell(Map map, int x, int y, float left, float top)
 	{
 		this.Map = map;
@@ -36,6 +46,47 @@ public class Cell
 			cell = cell.Neighbourghs[direction];
 		}
 
+		return cell;
+	}
+
+	public void CalcArrows()
+	{
+		//--- Calcul des flèches
+		for (int i = 0; i < 6; i++)
+		{
+			double percentIn = 0.1;
+			double percentOut = 0.1;
+			
+			double rndPercent = Math.random();
+			
+			if(rndPercent<= percentIn)
+				this.Parts[i] = CellPartType.In;
+			else if(rndPercent <= percentIn+ percentOut)
+				this.Parts[i] = CellPartType.Out;
+			else
+				this.Parts[i] = CellPartType.Simple;
+		}
+		
+		//---
+	}
+	
+	@Override
+	public Object clone()
+	{
+		Cell cell = new Cell();
+		
+		cell.ColorType = this.ColorType;
+		//cell.Coord = new Vector2(this.Coord.x, this.Coord.y);
+		//cell.InitialLocation = new Vector2(this.InitialLocation.x, this.InitialLocation.y);
+		cell.Location = new Vector2(this.Location.x, this.Location.y);
+		cell.Map = this.Map;
+		cell.Parts = new CellPartType[6];
+		
+		for (int i = 0; i < 6; i++)
+		{
+			cell.Parts[i] = this.Parts[i];
+		}
+		
 		return cell;
 	}
 }

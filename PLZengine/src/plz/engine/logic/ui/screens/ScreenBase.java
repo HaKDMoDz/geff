@@ -8,6 +8,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.tablelayout.libgdx.LibgdxToolkit;
 import com.esotericsoftware.tablelayout.libgdx.Table;
 import com.esotericsoftware.tablelayout.libgdx.TableLayout;
@@ -15,7 +16,7 @@ import com.esotericsoftware.tablelayout.libgdx.TableLayout;
 public class ScreenBase implements Screen {
 	public com.badlogic.gdx.scenes.scene2d.Stage Stage;
 	protected GameEngineBase gameEngine;
-	protected TableLayout layout;
+	public TableLayout layout;
 	protected String screenName;
 
 	public ScreenBase(GameEngineBase gameEngine) {
@@ -26,6 +27,7 @@ public class ScreenBase implements Screen {
 	public void render(float delta) {
 		Stage.act(delta);
 		Stage.draw();
+		layout.drawDebug(gameEngine.Render.spriteBatch);
 	}
 
 	@Override
@@ -39,7 +41,7 @@ public class ScreenBase implements Screen {
 		Stage = new com.badlogic.gdx.scenes.scene2d.Stage(
 				Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 
-		Gdx.input.setInputProcessor(Stage);
+		//Gdx.input.setInputProcessor(Stage);
 
 		// ---
 		LibgdxToolkit.defaultFont = new BitmapFont();
@@ -59,12 +61,19 @@ public class ScreenBase implements Screen {
 		InitScreen();
 
 		LoadScreenFile();
+		
+		LoadScreen();
 	}
 
 	public void InitScreen() {
 
 	}
 
+	public void LoadScreen()
+	{
+		
+	}
+	
 	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
@@ -93,11 +102,9 @@ public class ScreenBase implements Screen {
 		SensitiveZone sensitiveZone;
 
 		if (texture != null) {
-			sensitiveZone = new SensitiveZone(name, texture,
-					gameEngine.Controller);
+			sensitiveZone = new SensitiveZone(name, texture);
 		} else {
-			sensitiveZone = new SensitiveZone(name,
-					gameEngine.Controller);
+			sensitiveZone = new SensitiveZone(name);
 		}
 
 		Stage.addActor(sensitiveZone);

@@ -4,7 +4,7 @@ import plz.engine.GameEngineBase;
 
 public abstract class GamePlayLogicBase
 {
-	private GameEngineBase gameEngine;
+	protected GameEngineBase gameEngine;
 
 	public GamePlayLogicBase(GameEngineBase gameEngine)
 	{

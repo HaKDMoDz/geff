@@ -1,34 +1,257 @@
 package twiplz.logic.gameplay;
 
+import java.awt.Point;
+import java.util.Iterator;
+
+import plz.engine.Common;
+import plz.engine.logic.ui.components.SensitiveZone;
+
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+
 import twiplz.Context;
 import twiplz.GameEngine;
+import twiplz.logic.ui.screens.GameScreen;
 import twiplz.model.*;
 
-public class GamePlayLogic extends
-		plz.engine.logic.gameplay.GamePlayLogicBase
+public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 {
-	public Cell NewCell;
-	
+	public Tile Tile;
+	public Tile SelectedTile;
+	public int CurrentOrientation = 0;
+	public Vector2[][] CellDisposition;
+
 	public GamePlayLogic(GameEngine gameEngine)
 	{
 		super(gameEngine);
-		
+
 		NewMap();
+
+		CellDisposition = new Vector2[2][6];
+		float fh = (float) Math.sin(Math.PI / 3);
+
+		CellDisposition[0][0] = new Vector2(0, 0.5f * fh);
+		CellDisposition[0][1] = new Vector2(-3f / 8f, 1f / 4f * fh);
+		CellDisposition[0][2] = new Vector2(-3f / 8f, -1f / 4f * fh);
+		CellDisposition[0][3] = new Vector2(0, -0.5f * fh);
+		CellDisposition[0][4] = new Vector2(3f / 8f, -1f / 4f * fh);
+		CellDisposition[0][5] = new Vector2(3f / 8f, 1f / 4f * fh);
+
+		CellDisposition[1][0] = new Vector2(0, -0.5f * fh);
+		CellDisposition[1][1] = new Vector2(3f / 8f, -1f / 4f * fh);
+		CellDisposition[1][2] = new Vector2(3f / 8f, 1f / 4f * fh);
+		CellDisposition[1][3] = new Vector2(0, 0.5f * fh);
+		CellDisposition[1][4] = new Vector2(-3f / 8f, 1 / 4f * fh);
+		CellDisposition[1][5] = new Vector2(-3f / 8f, -1f / 4f * fh);
 	}
-	
+
 	public void NewMap()
 	{
-		Context.Map = new Map(20,20);
+		Context.Map = new Map(20, 20);
+	}
+
+	public void SelectTile()
+	{
+		SelectedTile = new Tile();
+
+		SelectedTile.Cells[0] = (Cell) Tile.Cells[0].clone();
+		SelectedTile.Cells[1] = (Cell) Tile.Cells[1].clone();
+	}
+
+	public void CreateNewTile()
+	{
+		Tile = new Tile();
+		SelectedTile = null;
+
+		UpdateTileOrientation();
+	}
+
+	public void TurnTileOffset(int delta)
+	{
+		TurnTile(CurrentOrientation - delta);
+	}
+
+	public void TurnTile(int orientation)
+	{
+		int offset = orientation - CurrentOrientation;
 		
+		CurrentOrientation = orientation;
+
+		if (CurrentOrientation < 0)
+			CurrentOrientation = 5;
+		else if (CurrentOrientation > 5)
+			CurrentOrientation = 0;
+
+		TurnTileCellPart(Tile, offset);
+		if (SelectedTile != null)
+			TurnTileCellPart(SelectedTile, offset);
+
+		UpdateTileOrientation();
 	}
-	
-	public void CreateNewCell()
+
+	private void TurnTileCellPart(Tile tile, int offset)
 	{
-	
+		TurnCellPart(tile.Cells[0], offset);
+		TurnCellPart(tile.Cells[1], offset);
 	}
-	
-	public void TurnNewCell(int orientation)
+
+	private void TurnCellPart(Cell cell, int offset)
 	{
-	
+		CellPartType[] parts = new CellPartType[6];
+		
+		for (int i = 0; i < 6; i++)
+		{
+			parts[i] = cell.Parts[i];
+		}
+		
+		for (int i = 0; i < 6; i++)
+		{
+			int newDirection = i+offset;
+			
+			if (newDirection < 0)
+				newDirection = 5;
+			else if (newDirection > 5)
+				newDirection = 0;
+			
+			cell.Parts[i] = parts[newDirection];
+		}
+	}
+
+	private void UpdateTileOrientation()
+	{
+		SensitiveZone imgNewTile = ((GameScreen) this.gameEngine.CurrentScreen).imgNewTile;
+
+		//int h = (int) (imgNewTile.height / (4f * (1 + (2 / Math.sqrt(3f)))));
+		int h = (int) (imgNewTile.height / 4f);// * (1 + (2 / Math.sqrt(3f)))));
+		int width = (int) ((2 * h) / Math.sqrt(3f));
+
+		Tile.Cells[0].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[0][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[0][CurrentOrientation].y * h * 2);
+		Tile.Cells[1].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[1][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[1][CurrentOrientation].y * h * 2);
+
+		if (SelectedTile != null)
+		{
+			UpdateTileLocation(SelectedTile.Location);
+		}
+	}
+
+	public void UpdateTileLocation(Vector2 location)
+	{
+		SelectedTile.Location = location;
+
+		Cell selectedCell = GetSelectedCell();
+
+		if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
+		{
+			SelectedTile.Cells[0].Location = selectedCell.Location;
+			SelectedTile.Cells[1].Location = selectedCell.Neighbourghs[CurrentOrientation].Location;
+		}
+	}
+
+	private Cell GetSelectedCell()
+	{
+		Cell selectedCell = null;
+
+		for (Cell cell : Context.Map.Cells)
+		{
+			cell.Selected = false;
+
+			if (PointInCell(cell, SelectedTile.Location))
+			{
+				cell.Selected = true;
+				selectedCell = cell;
+			}
+		}
+
+		return selectedCell;
+	}
+
+	private boolean PointInCell(Cell cell, Vector2 location)
+	{
+		int w = 256 / 2;
+		int dw = w / 2;
+		int h = (int) (w * (Math.sqrt(3f) / 2));
+		float k = (int) ((1f - (Math.sqrt(3f) / 2f)) * (float) w);
+		int Lx = (int) (cell.Location.x * 256f);
+		int Ly = (int) (cell.Location.y * 256f + k);
+		Point point = new Point((int) location.x, (int) location.y);
+
+		// 1 : Test du rectangle englobant
+		Rectangle rec = new Rectangle(Lx, Ly, w * 2, 2 * h);
+		if (!rec.contains(location.x, location.y))
+			return false;
+
+		// 2 : Test du rectangle principale
+		rec = new Rectangle(Lx + dw, Ly, w, 2 * h);
+
+		if (rec.contains(location.x, location.y))
+			return true;
+
+		// 3 : Test du triangle 2a
+		Point[] triangle = new Point[3];
+		triangle[0] = new Point(Lx + dw, Ly);
+		triangle[1] = new Point(Lx + dw, Ly + h);
+		triangle[2] = new Point(Lx, Ly + h);
+
+		if (Common.IsPointInsideTriangle(triangle, point))
+			return true;
+
+		// 4 : Test du triangle 2b
+		triangle[0] = new Point(Lx, Ly + h);
+		triangle[1] = new Point(Lx + dw, Ly + h);
+		triangle[2] = new Point(Lx + dw, Ly + 2 * h);
+
+		if (Common.IsPointInsideTriangle(triangle, point))
+			return true;
+
+		// 5 : Test du triangle 3a
+		triangle[0] = new Point(Lx + 3 * dw, Ly);
+		triangle[1] = new Point(Lx + 2 * w, Ly + h);
+		triangle[2] = new Point(Lx + 3 * dw, Ly + h);
+
+		if (Common.IsPointInsideTriangle(triangle, point))
+			return true;
+
+		// 6 : Test du triangle 3b
+		triangle[0] = new Point(Lx + 3 * dw, Ly + h);
+		triangle[1] = new Point(Lx + 2 * w, Ly + h);
+		triangle[2] = new Point(Lx + 3 * dw, Ly + 2 * h);
+
+		if (Common.IsPointInsideTriangle(triangle, point))
+			return true;
+
+		return false;
+	}
+
+	public void ReleaseTile()
+	{
+		if (!((GameScreen) this.gameEngine.CurrentScreen).NewTileSelected)
+		{
+			Cell selectedCell = GetSelectedCell();
+
+			if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
+			{
+				SwapCell(selectedCell, SelectedTile.Cells[0]);
+				SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
+				
+				CreateNewTile();
+			}
+		}
+
+		SelectedTile = null;
+	}
+
+	private void SwapCell(Cell cellDest, Cell cellOrig)
+	{
+		cellOrig.Map = cellDest.Map;
+		cellOrig.Coord = cellDest.Coord;
+		cellOrig.InitialLocation = cellDest.InitialLocation;
+		cellOrig.Neighbourghs = cellDest.Neighbourghs;
+
+		int index = cellDest.Map.Cells.indexOf(cellDest);
+
+		cellDest.Map.Cells.remove(index);
+		cellDest.Map.Cells.add(index, cellOrig);
+
+		// cellDest = cellOrig;
 	}
 }

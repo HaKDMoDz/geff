@@ -88,15 +88,17 @@ public class Map
 		for (Cell cell : Cells)
 		{
 			//--- Calcul de la couleur
+			cell.IsEmpty = Math.random()*10 >6;
+			
 			boolean colorFound = false;
 
-			while (!colorFound)
+			while (!cell.IsEmpty && !colorFound)
 			{
 				byte colorType = (byte) (1 + Math.random() * 7);
 
 				for (int i = 0; i < 6; i++)
 				{
-					if (cell.Neighbourghs[i] != null
+					if (cell.Neighbourghs[i] != null && !cell.Neighbourghs[i].IsEmpty
 							&& cell.Neighbourghs[i].ColorType == colorType)
 					{
 						colorType = 0;
@@ -112,23 +114,8 @@ public class Map
 			}
 			//---
 			
-			//--- Calcul des flèches
-			for (int i = 0; i < 6; i++)
-			{
-				double percentIn = 0.1;
-				double percentOut = 0.1;
-				
-				double rndPercent = Math.random();
-				
-				if(rndPercent<= percentIn)
-					cell.Parts[i] = CellPartType.In;
-				else if(rndPercent <= percentIn+ percentOut)
-					cell.Parts[i] = CellPartType.Out;
-				else
-					cell.Parts[i] = CellPartType.Simple;
-			}
-			
-			//---
+			if(!cell.IsEmpty)
+				cell.CalcArrows();
 		}
 	}
 

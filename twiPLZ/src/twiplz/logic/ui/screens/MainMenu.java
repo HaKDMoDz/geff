@@ -7,7 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ClickListener;
 
 public class MainMenu extends ScreenBase
 {
@@ -34,14 +33,4 @@ public class MainMenu extends ScreenBase
 
 		//Stage.getRoot().action(Forever.$(Sequence.$(FadeOut.$(3), FadeIn.$(3))));
 	}
-
-	Button.ClickListener btnStartClicked = new ClickListener()
-	{
-		@Override
-		public void click(Button button)
-		{
-			gameEngine.CurrentScreen = new GameScreen(gameEngine);
-			gameEngine.CurrentScreen.show();
-		}
-	};
 }

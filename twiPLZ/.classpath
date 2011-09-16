@@ -6,10 +6,10 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/PLZengine"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/tablelayout"/>
 	<classpathentry kind="lib" path="libs/gdx-backend-jogl-natives.jar"/>
-	<classpathentry kind="lib" path="libs/gdx-backend-jogl.jar"/>
+	<classpathentry kind="lib" path="libs/gdx-backend-jogl.jar" sourcepath="D:/GDD/Log/Geff/ExternalLibs/libgdx/backends/gdx-backend-jogl"/>
 	<classpathentry kind="lib" path="libs/gdx-natives.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-sources.jar"/>
-	<classpathentry kind="lib" path="libs/gdx.jar"/>
+	<classpathentry kind="lib" path="libs/gdx.jar" sourcepath="D:/GDD/Log/Geff/twiPLZ/libs/gdx-sources.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-backend-lwjgl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

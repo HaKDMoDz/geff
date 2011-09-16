@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import twiplz.GameEngine;
+import twiplz.logic.gameplay.GamePlayLogic;
 import twiplz.logic.render.RenderLogic;
 
 public class ControllerLogic extends
@@ -23,6 +24,11 @@ public class ControllerLogic extends
 	// Vector2[] pointerStart = new Vector2[10];
 	// Vector2[] pointerCurrent = new Vector2[10];
 
+	private GamePlayLogic GamePlay()
+	{
+		return (GamePlayLogic) gameEngine.GamePlay;
+	}
+	
 	Pointer[] pointers = new Pointer[10];
 
 	float prevCameraZoom = 0;
@@ -35,10 +41,11 @@ public class ControllerLogic extends
 		Gdx.input.setInputProcessor(this);
 	}
 
-	
 	@Override
 	public boolean keyDown(int keycode)
 	{
+		gameEngine.CurrentScreen.Stage.keyDown(keycode);
+		
 		if (keycode == Keys.LEFT)
 		{
 			gameEngine.Render.Camera.position.add(1, 0, 0);
@@ -65,6 +72,8 @@ public class ControllerLogic extends
 	@Override
 	public boolean keyUp(int keycode)
 	{
+		gameEngine.CurrentScreen.Stage.keyUp(keycode);
+		
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -72,14 +81,25 @@ public class ControllerLogic extends
 	@Override
 	public boolean scrolled(int amount)
 	{
-		Zoom(gameEngine.Render.Camera.zoom+amount);
+		gameEngine.CurrentScreen.Stage.scrolled(amount);
 
+		if(GamePlay().SelectedTile != null)
+		{
+			GamePlay().TurnTileOffset(amount/Math.abs(amount));
+		}
+		else
+		{
+			Zoom(gameEngine.Render.Camera.zoom+amount);
+		}
+		
 		return false;
 	}
 
 	@Override
 	public boolean keyTyped(char character)
 	{
+		gameEngine.CurrentScreen.Stage.keyTyped(character);
+		
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -87,6 +107,8 @@ public class ControllerLogic extends
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button)
 	{
+		gameEngine.CurrentScreen.Stage.touchDown(x, y, pointer, button);
+		
 		if (pointer > pointers.length)
 			return false;
 
@@ -115,6 +137,8 @@ public class ControllerLogic extends
 	@Override
 	public boolean touchUp(int x, int y, int pointer, int button)
 	{
+		gameEngine.CurrentScreen.Stage.touchUp(x, y, pointer, button);		
+		
 		if (pointer > pointers.length)
 			return false;
 
@@ -131,9 +155,16 @@ public class ControllerLogic extends
 			if (pointers[i] != null)
 				pointers[i].SwapStartToCurrent();
 		}
+		
+		if(GamePlay().SelectedTile!= null)
+		{
+			GamePlay().ReleaseTile();
+		}
 
 		gameEngine.Render.RemoveDebugRender("PointerStart" + pointer);
 		gameEngine.Render.RemoveDebugRender("PointerCurrent" + pointer);
+		gameEngine.Render.RemoveDebugRender("Cell0");
+		gameEngine.Render.RemoveDebugRender("Cell1");
 
 		return true;
 	}
@@ -141,6 +172,8 @@ public class ControllerLogic extends
 	@Override
 	public boolean touchDragged(int x, int y, int pointer)
 	{
+		gameEngine.CurrentScreen.Stage.touchDragged(x, y, pointer);
+		
 		if (pointer > pointers.length)
 			return false;
 
@@ -170,7 +203,7 @@ public class ControllerLogic extends
 						.getHeight() / 2);
 
 		// --- Translation de la caméra avec dernier pointeur
-		if (countPointerOnScreen == 1 && pointer == firstLastPointer.Index)
+		if (countPointerOnScreen == 1 && pointer == firstLastPointer.Index && GamePlay().SelectedTile == null)
 		{
 			Vector2 vecTranslation = new Vector2(firstLastPointer.Start.x - x,
 					firstLastPointer.Start.y - y);
@@ -186,11 +219,53 @@ public class ControllerLogic extends
 		}
 		// ---
 
+		// --- Déplacement de la tuile sélectionée
+		if (countPointerOnScreen == 1 && pointer == firstLastPointer.Index && GamePlay().SelectedTile != null)
+		{
+			Vector2 vecTranslation = new Vector2(firstLastPointer.Start.x - x,
+					firstLastPointer.Start.y - y);
+
+			
+			vecTranslation.rotate(prevCameraAngle);
+
+			//gameEngine.Render.Camera.position.set(prevCameraPos.x
+			//		+ vecTranslation.x * gameEngine.Render.Camera.zoom,
+			//		prevCameraPos.y + vecTranslation.y
+			//				* gameEngine.Render.Camera.zoom, 0);
+		
+			Vector2 vec = new Vector2(gameEngine.Render.Camera.position.x+(-vecMidScreen.x+firstLastPointer.Current.x)*gameEngine.Render.Camera.zoom,gameEngine.Render.Camera.position.y-(-vecMidScreen.y+firstLastPointer.Current.y)*gameEngine.Render.Camera.zoom);
+			
+			
+//			Vector3 vec = new Vector3(-vecMidScreen.x+firstLastPointer.Current.x,-vecMidScreen.y+firstLastPointer.Current.y,0f);
+//			Vector3 vec = new Vector3(vecMidScreen.x + x, vecMidScreen.y -y,0f);
+			
+			
+//			gameEngine.Render.Camera.unproject(vec);
+			
+//			GamePlay().SelectedTile.Cells[0].Location = new Vector2(
+//					vec.x + GamePlay().CellDisposition[0][GamePlay().CurrentOrientation].x,
+//					vec.y + GamePlay().CellDisposition[0][GamePlay().CurrentOrientation].y);
+					
+			
+//			GamePlay().SelectedTile.Cells[0].Location = new Vector2(x/25,-y/25);
+
+			
+			
+			GamePlay().UpdateTileLocation(new Vector2(vec.x, vec.y));
+			
+			
+		
+			gameEngine.Render.AddDebugRender("Cell0", GamePlay().SelectedTile.Cells[0].Location);
+			gameEngine.Render.AddDebugRender("Cell1", GamePlay().SelectedTile.Cells[1].Location);
+		}
+		// ---
 		
 		// --- Zoom de la caméra avec les deux derniers pointeurs
 		if (countPointerOnScreen >= 2
 				&& (pointer == firstLastPointer.Index || pointer == secondLastPointer.Index)
-				&& (pointers[firstLastPointer.Index].Current != null && pointers[secondLastPointer.Index].Current != null))
+				&& (pointers[firstLastPointer.Index].Current != null && pointers[secondLastPointer.Index].Current != null)
+				&& GamePlay().SelectedTile == null
+			)
 		{
 			float distStart = firstLastPointer.Start
 					.dst(secondLastPointer.Start);
@@ -259,9 +334,6 @@ public class ControllerLogic extends
 			// gameEngine.Render.AddDebugRender("Angle", angle);
 		}
 		// ---
-
-		// gameEngine.Render.AddDebugRender("X", x);
-		// gameEngine.Render.AddDebugRender("Y", y);
 
 		gameEngine.Render.AddDebugRender("PointerStart" + pointer,
 				pointers[pointer].Start);

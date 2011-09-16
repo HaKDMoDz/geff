@@ -1,33 +1,33 @@
-debug *  size:100%,100%
-{
+debug
 	* height:100%
-	|width:20% |width:60%|width:20%
+	|width:50 |expand:x|width:100
 	
 	{	
-		* width:100% expand:y
-		'' height:20%
+	debug
+		* height:50 fill
+		'' expand
 		---
-		[imgTurn1] fill:y
+		[imgTurn1]
 		---
-		[imgTurn2] fill:y
+		[imgTurn2]
 		---
-		[imgTurn3] fill:y
+		[imgTurn3]
 		---
-		[imgTurn4] fill:y
+		[imgTurn4]
 		---
-		[imgTurn5] fill:y
+		[imgTurn5]
 		---
-		[imgTurn6] fill:y
+		[imgTurn6]
 	}
 	
 	{
-		* align:left
-		[imgCenter] size:100%,100%
+		[imgCenter] expand fill
 	}
+	fill
 	
 	{
-		[btnStart] size:100%,20%
+	debug
+		[btnNewTile] fill:x height:100
 		---
-		'' height:80%
+		'' expand
 	}
-}
