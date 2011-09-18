@@ -9,9 +9,9 @@ public class GameStarterDesktop
 	public static void main(String[] argv)
 	{
 		ApplicationListener app = (ApplicationListener) new GameEngine();
-		JoglApplication window = new JoglApplication(app, "twiPLZ", 400, 400,
+		JoglApplication window = new JoglApplication(app, "twiPLZ", 800, 600,
 				false);
 
-		window.getJFrame().setLocation(2100, 550);
+		//window.getJFrame().setLocation(2100, 550);
 	}
 }

@@ -47,7 +47,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	public void NewMap()
 	{
-		Context.Map = new Map(20, 20);
+		Context.Map = new Map(8, 8);
 	}
 
 	public void SelectTile()

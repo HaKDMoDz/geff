@@ -46,13 +46,17 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 	private void LoadTextures()
 	{
-		texCellForeground = new Texture(Gdx.files.internal("data/CellForeground.png"));
-		texCellBackground = new Texture(Gdx.files.internal("data/CellBackground.png"));
+		texCellForeground = new Texture(
+				Gdx.files.internal("data/CellForeground.png"));
+		texCellBackground = new Texture(
+				Gdx.files.internal("data/CellBackground.png"));
 
 		for (int i = 1; i <= 6; i++)
 		{
-			texArrowsIn[i - 1] = new Texture(Gdx.files.internal("data/ArrowIn" + i + ".png"));
-			texArrowsOut[i - 1] = new Texture(Gdx.files.internal("data/ArrowOut" + i + ".png"));
+			texArrowsIn[i - 1] = new Texture(Gdx.files.internal("data/ArrowIn"
+					+ i + ".png"));
+			texArrowsOut[i - 1] = new Texture(
+					Gdx.files.internal("data/ArrowOut" + i + ".png"));
 		}
 
 		colors = new Color[7];
@@ -99,7 +103,8 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		if (PointToDraw.length > 0 && PointToDraw[0] != null && showCursor)
 		{
 			spriteBatch.setColor(Color.WHITE);
-			spriteBatch.draw(texCellForeground, PointToDraw[0].x, PointToDraw[0].y, 256, 256);
+			spriteBatch.draw(texCellForeground, PointToDraw[0].x,
+					PointToDraw[0].y, 256, 256);
 		}
 
 		// --- Tuile sélectionnée
@@ -113,16 +118,15 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		spriteBatch.end();
 	}
-	
+
 	@Override
 	public void RenderUI(float deltaTime)
 	{
 		ProjectUI();
-		
-		gameEngine.CurrentScreen.render(deltaTime);
-		
-		// --- Bouton 'Nouvelle tuile'
 
+		gameEngine.CurrentScreen.render(deltaTime);
+
+		// --- Bouton 'Nouvelle tuile'
 		spriteBatch.begin();
 
 		DrawCell(GamePlay().Tile.Cells[0], true, false);
@@ -130,7 +134,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		spriteBatch.end();
 		// ---
-		
+
 	}
 
 	private void DrawCell(Cell cell, boolean isUI, boolean isSelectedCell)
@@ -152,8 +156,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			// (4f*(1+(2/Math.sqrt(3f)))))*4;
 
 			width = (int) ((2 * height) / Math.sqrt(3f));
-		}
-		else
+		} else
 		{
 			cellLocation.mul(256f);
 		}
@@ -163,9 +166,15 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		else
 			spriteBatch.setColor(Color.WHITE);
 
-		spriteBatch.draw(texCellBackground, cellLocation.x, cellLocation.y, width, height);
-		spriteBatch.setColor(colors[cell.ColorType - 1]);
-		spriteBatch.draw(texCellForeground, cellLocation.x, cellLocation.y, width, height);
+		spriteBatch.draw(texCellBackground, cellLocation.x, cellLocation.y,
+				width, height);
+
+		if (!cell.IsEmpty)
+		{
+			spriteBatch.setColor(colors[cell.ColorType - 1]);
+			spriteBatch.draw(texCellForeground, cellLocation.x, cellLocation.y,
+					width, height);
+		}
 
 		if (mini)
 			spriteBatch.setColor(Color.BLACK);
@@ -179,15 +188,15 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			if (cell.Parts[i] == CellPartType.Out)
 			{
 				texturePart = texArrowsOut[i];
-			}
-			else if (cell.Parts[i] == CellPartType.In)
+			} else if (cell.Parts[i] == CellPartType.In)
 			{
 				texturePart = texArrowsIn[i];
 			}
 
 			if (texturePart != null)
 			{
-				spriteBatch.draw(texturePart, cellLocation.x, cellLocation.y, width, height);
+				spriteBatch.draw(texturePart, cellLocation.x, cellLocation.y,
+						width, height);
 			}
 		}
 	}

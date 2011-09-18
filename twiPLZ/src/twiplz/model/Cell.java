@@ -12,7 +12,7 @@ public class Cell implements Cloneable
 	public CellPartType[] Parts;
 	public byte ColorType;
 	public boolean Selected;
-	public boolean IsEmpty = true;
+	public boolean IsEmpty = false;
 	
 	public Cell()
 	{
@@ -59,9 +59,9 @@ public class Cell implements Cloneable
 			
 			double rndPercent = Math.random();
 			
-			if(rndPercent<= percentIn)
+			if(rndPercent<= percentIn && !this.IsEmpty)
 				this.Parts[i] = CellPartType.In;
-			else if(rndPercent <= percentIn+ percentOut)
+			else if(rndPercent <= percentIn+ percentOut && !this.IsEmpty)
 				this.Parts[i] = CellPartType.Out;
 			else
 				this.Parts[i] = CellPartType.Simple;

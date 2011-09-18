@@ -114,7 +114,6 @@ public class Map
 			}
 			//---
 			
-			if(!cell.IsEmpty)
 				cell.CalcArrows();
 		}
 	}
