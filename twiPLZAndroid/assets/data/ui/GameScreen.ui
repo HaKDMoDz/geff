@@ -1,10 +1,10 @@
 debug
 	* height:100%
-	|width:50 |expand:x|width:100
+	|width:60 |expand:x|width:100
 	
 	{	
 	debug
-		* height:50 fill
+		* height:60 fill
 		'' expand
 		---
 		[imgTurn1]

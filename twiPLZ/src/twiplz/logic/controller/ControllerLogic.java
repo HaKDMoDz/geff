@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import plz.engine.Common;
 import plz.engine.logic.controller.Pointer;
+import plz.engine.logic.controller.PointerUsage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import twiplz.Context;
 import twiplz.GameEngine;
 import twiplz.logic.gameplay.GamePlayLogic;
 import twiplz.logic.render.RenderLogic;
@@ -19,9 +21,9 @@ import twiplz.logic.render.RenderLogic;
 public class ControllerLogic extends
 		plz.engine.logic.controller.ControllerLogicBase
 {
-	// Vector2 pointerStart = new Vector2();
+	// Vector2 Context.pointerstart = new Vector2();
 
-	// Vector2[] pointerStart = new Vector2[10];
+	// Vector2[] Context.pointerstart = new Vector2[10];
 	// Vector2[] pointerCurrent = new Vector2[10];
 
 	private GamePlayLogic GamePlay()
@@ -29,8 +31,6 @@ public class ControllerLogic extends
 		return (GamePlayLogic) gameEngine.GamePlay;
 	}
 	
-	Pointer[] pointers = new Pointer[10];
-
 	float prevCameraZoom = 0;
 	Vector2 prevCameraPos;
 	float prevCameraAngle = 0;
@@ -38,13 +38,19 @@ public class ControllerLogic extends
 	public ControllerLogic(GameEngine gameEngine)
 	{
 		super(gameEngine);
-		Gdx.input.setInputProcessor(this);
+		
+		for (int i = 0; i < 10; i++)
+		{
+			Context.pointers[i] = new Pointer(0,0, i);
+		}
+		
+		//Gdx.input.setInputProcessor(this);
 	}
 
 	@Override
 	public boolean keyDown(int keycode)
 	{
-		gameEngine.CurrentScreen.Stage.keyDown(keycode);
+		//gameEngine.CurrentScreen.Stage.keyDown(keycode);
 		
 		if (keycode == Keys.LEFT)
 		{
@@ -72,7 +78,7 @@ public class ControllerLogic extends
 	@Override
 	public boolean keyUp(int keycode)
 	{
-		gameEngine.CurrentScreen.Stage.keyUp(keycode);
+		//gameEngine.CurrentScreen.Stage.keyUp(keycode);
 		
 		// TODO Auto-generated method stub
 		return false;
@@ -81,7 +87,7 @@ public class ControllerLogic extends
 	@Override
 	public boolean scrolled(int amount)
 	{
-		gameEngine.CurrentScreen.Stage.scrolled(amount);
+		//gameEngine.CurrentScreen.Stage.scrolled(amount);
 
 		if(GamePlay().SelectedTile != null)
 		{
@@ -98,7 +104,7 @@ public class ControllerLogic extends
 	@Override
 	public boolean keyTyped(char character)
 	{
-		gameEngine.CurrentScreen.Stage.keyTyped(character);
+		//gameEngine.CurrentScreen.Stage.keyTyped(character);
 		
 		// TODO Auto-generated method stub
 		return false;
@@ -107,9 +113,9 @@ public class ControllerLogic extends
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button)
 	{
-		gameEngine.CurrentScreen.Stage.touchDown(x, y, pointer, button);
+		//gameEngine.CurrentScreen.Stage.touchDown(x, y, pointer, button);
 		
-		if (pointer > pointers.length)
+		if (pointer > Context.pointers.length)
 			return false;
 
 		// --- Stock le zoom et la position précédente de la caméra
@@ -120,15 +126,15 @@ public class ControllerLogic extends
 		// ---
 
 		// ---> Met à jour les pointeurs Start
-		for (int i = 0; i < pointers.length; i++)
+		for (int i = 0; i < Context.pointers.length; i++)
 		{
-			if (pointers[i] != null)
-				pointers[i].SwapStartToCurrent();
+			if (Context.pointers[i] != null)
+				Context.pointers[i].SwapStartToCurrent();
 		}
 
 		// ---> Met le pointeur de départ sur la valeur
-		pointers[pointer] = new Pointer(x, y, pointer);
-
+		Context.pointers[pointer].Init(x, y);
+		
 		gameEngine.Render.AddDebugRender("Zoom", prevCameraZoom);
 
 		return true;
@@ -137,9 +143,9 @@ public class ControllerLogic extends
 	@Override
 	public boolean touchUp(int x, int y, int pointer, int button)
 	{
-		gameEngine.CurrentScreen.Stage.touchUp(x, y, pointer, button);		
+		//gameEngine.CurrentScreen.Stage.touchUp(x, y, pointer, button);		
 		
-		if (pointer > pointers.length)
+		if (pointer > Context.pointers.length)
 			return false;
 
 		// --- Stock la position précédente de la caméra
@@ -147,21 +153,21 @@ public class ControllerLogic extends
 				gameEngine.Render.Camera.position.y);
 
 		// ---> Met le pointeur de départ sur null
-		pointers[pointer].Start = null;
+		Context.pointers[pointer].Start = null;
 
 		// ---> Met à jour les pointeurs Start
-		for (int i = 0; i < pointers.length; i++)
+		for (int i = 0; i < Context.pointers.length; i++)
 		{
-			if (pointers[i] != null)
-				pointers[i].SwapStartToCurrent();
+			if (Context.pointers[i] != null)
+				Context.pointers[i].SwapStartToCurrent();
 		}
 		
-		if(GamePlay().SelectedTile!= null)
-		{
-			GamePlay().ReleaseTile();
-		}
+//		if(GamePlay().SelectedTile!= null)
+//		{
+//			GamePlay().ReleaseTile();
+//		}
 
-		gameEngine.Render.RemoveDebugRender("PointerStart" + pointer);
+		gameEngine.Render.RemoveDebugRender("Context.pointerstart" + pointer);
 		gameEngine.Render.RemoveDebugRender("PointerCurrent" + pointer);
 		gameEngine.Render.RemoveDebugRender("Cell0");
 		gameEngine.Render.RemoveDebugRender("Cell1");
@@ -172,9 +178,9 @@ public class ControllerLogic extends
 	@Override
 	public boolean touchDragged(int x, int y, int pointer)
 	{
-		gameEngine.CurrentScreen.Stage.touchDragged(x, y, pointer);
+		//gameEngine.CurrentScreen.Stage.touchDragged(x, y, pointer);
 		
-		if (pointer > pointers.length)
+		if (pointer > Context.pointers.length || pointer < 0)
 			return false;
 
 		int countPointerOnScreen = 0;
@@ -183,17 +189,17 @@ public class ControllerLogic extends
 		Pointer secondLastPointer = null;
 
 		// --- Mise à jour du pointeur actuel
-		pointers[pointer].Current = new Vector2(x, y);
+		Context.pointers[pointer].Current = new Vector2(x, y);
 		// ---
 
-		for (int i = 0; i < pointers.length; i++)
+		for (int i = 0; i < Context.pointers.length; i++)
 		{
-			if (pointers[i] != null && pointers[i].Start != null)
+			if (Context.pointers[i] != null && Context.pointers[i].Start != null)
 			{
 				countPointerOnScreen++;
 
 				secondLastPointer = firstLastPointer;
-				firstLastPointer = pointers[i];
+				firstLastPointer = Context.pointers[i];
 			}
 		}
 		
@@ -203,7 +209,7 @@ public class ControllerLogic extends
 						.getHeight() / 2);
 
 		// --- Translation de la caméra avec dernier pointeur
-		if (countPointerOnScreen == 1 && pointer == firstLastPointer.Index && GamePlay().SelectedTile == null)
+		if (countPointerOnScreen == 1 && pointer == firstLastPointer.Index && firstLastPointer.Usage == PointerUsage.None)
 		{
 			Vector2 vecTranslation = new Vector2(firstLastPointer.Start.x - x,
 					firstLastPointer.Start.y - y);
@@ -220,7 +226,7 @@ public class ControllerLogic extends
 		// ---
 
 		// --- Déplacement de la tuile sélectionée
-		if (countPointerOnScreen == 1 && pointer == firstLastPointer.Index && GamePlay().SelectedTile != null)
+		if (countPointerOnScreen == 1 && pointer == firstLastPointer.Index && firstLastPointer.Usage == PointerUsage.SelectTile)
 		{
 			Vector2 vecTranslation = new Vector2(firstLastPointer.Start.x - x,
 					firstLastPointer.Start.y - y);
@@ -263,7 +269,7 @@ public class ControllerLogic extends
 		// --- Zoom de la caméra avec les deux derniers pointeurs
 		if (countPointerOnScreen >= 2
 				&& (pointer == firstLastPointer.Index || pointer == secondLastPointer.Index)
-				&& (pointers[firstLastPointer.Index].Current != null && pointers[secondLastPointer.Index].Current != null)
+				&& (Context.pointers[firstLastPointer.Index].Current != null && Context.pointers[secondLastPointer.Index].Current != null)
 				&& GamePlay().SelectedTile == null
 			)
 		{
@@ -335,10 +341,10 @@ public class ControllerLogic extends
 		}
 		// ---
 
-		gameEngine.Render.AddDebugRender("PointerStart" + pointer,
-				pointers[pointer].Start);
+		gameEngine.Render.AddDebugRender("Context.pointerstart" + pointer,
+				Context.pointers[pointer].Start);
 		gameEngine.Render.AddDebugRender("PointerCurrent" + pointer,
-				pointers[pointer].Current);
+				Context.pointers[pointer].Current);
 
 		return false;
 	}

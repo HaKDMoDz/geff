@@ -21,6 +21,8 @@ public class GameStarterAndroid extends AndroidApplication {
 		config.useWakelock = false;
 		config.resolutionStrategy = new FillResolutionStrategy();
 
+		String z = System.getProperty("java.class.path");
+		
 		ApplicationListener app = new GameEngine();
 
 		initialize(app, config);

@@ -173,8 +173,10 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		float k = (int) ((1f - (Math.sqrt(3f) / 2f)) * (float) w);
 		int Lx = (int) (cell.Location.x * 256f);
 		int Ly = (int) (cell.Location.y * 256f + k);
-		Point point = new Point((int) location.x, (int) location.y);
+		//Point point = new Point((int) location.x, (int) location.y);
 
+		Vector2 point =	new Vector2(location.x,location.y);
+		
 		// 1 : Test du rectangle englobant
 		Rectangle rec = new Rectangle(Lx, Ly, w * 2, 2 * h);
 		if (!rec.contains(location.x, location.y))
@@ -187,34 +189,34 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			return true;
 
 		// 3 : Test du triangle 2a
-		Point[] triangle = new Point[3];
-		triangle[0] = new Point(Lx + dw, Ly);
-		triangle[1] = new Point(Lx + dw, Ly + h);
-		triangle[2] = new Point(Lx, Ly + h);
+		Vector2[] triangle = new Vector2[3];
+		triangle[0] = new Vector2(Lx + dw, Ly);
+		triangle[1] = new Vector2(Lx + dw, Ly + h);
+		triangle[2] = new Vector2(Lx, Ly + h);
 
 		if (Common.IsPointInsideTriangle(triangle, point))
 			return true;
 
 		// 4 : Test du triangle 2b
-		triangle[0] = new Point(Lx, Ly + h);
-		triangle[1] = new Point(Lx + dw, Ly + h);
-		triangle[2] = new Point(Lx + dw, Ly + 2 * h);
+		triangle[0] = new Vector2(Lx, Ly + h);
+		triangle[1] = new Vector2(Lx + dw, Ly + h);
+		triangle[2] = new Vector2(Lx + dw, Ly + 2 * h);
 
 		if (Common.IsPointInsideTriangle(triangle, point))
 			return true;
 
 		// 5 : Test du triangle 3a
-		triangle[0] = new Point(Lx + 3 * dw, Ly);
-		triangle[1] = new Point(Lx + 2 * w, Ly + h);
-		triangle[2] = new Point(Lx + 3 * dw, Ly + h);
+		triangle[0] = new Vector2(Lx + 3 * dw, Ly);
+		triangle[1] = new Vector2(Lx + 2 * w, Ly + h);
+		triangle[2] = new Vector2(Lx + 3 * dw, Ly + h);
 
 		if (Common.IsPointInsideTriangle(triangle, point))
 			return true;
 
 		// 6 : Test du triangle 3b
-		triangle[0] = new Point(Lx + 3 * dw, Ly + h);
-		triangle[1] = new Point(Lx + 2 * w, Ly + h);
-		triangle[2] = new Point(Lx + 3 * dw, Ly + 2 * h);
+		triangle[0] = new Vector2(Lx + 3 * dw, Ly + h);
+		triangle[1] = new Vector2(Lx + 2 * w, Ly + h);
+		triangle[2] = new Vector2(Lx + 3 * dw, Ly + 2 * h);
 
 		if (Common.IsPointInsideTriangle(triangle, point))
 			return true;
@@ -224,7 +226,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	public void ReleaseTile()
 	{
-		if (!((GameScreen) this.gameEngine.CurrentScreen).NewTileSelected)
+		//if (!((GameScreen) this.gameEngine.CurrentScreen).NewTileSelected)
 		{
 			Cell selectedCell = GetSelectedCell();
 
@@ -240,6 +242,11 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		SelectedTile = null;
 	}
 
+	public void UnselectTile()
+	{
+		SelectedTile = null;
+	}
+	
 	private void SwapCell(Cell cellDest, Cell cellOrig)
 	{
 		cellOrig.Map = cellDest.Map;
@@ -254,4 +261,6 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		// cellDest = cellOrig;
 	}
+
+
 }

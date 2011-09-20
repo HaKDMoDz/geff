@@ -1,8 +1,10 @@
 package twiplz.logic.ui.screens;
 
 import plz.engine.GameEngineBase;
+import plz.engine.logic.controller.PointerUsage;
 import plz.engine.logic.ui.components.SensitiveZone;
 import plz.engine.logic.ui.screens.ScreenBase;
+import twiplz.Context;
 import twiplz.logic.gameplay.GamePlayLogic;
 
 import com.badlogic.gdx.Gdx;
@@ -49,11 +51,13 @@ public class GameScreen extends ScreenBase
 		// --- Create SensitiveZone
 		imgNewTile = AddSensitiveZone("btnNewTile");
 		imgNewTile.visible=false;
-		imgNewTile.pressListener = NewCell_Selected;
-		imgNewTile.enterListener = NewCell_Enter;
-		imgNewTile.leaveListener = NewCell_Leave;
+		imgNewTile.pressListener = NewCell_Pressed;
+		imgNewTile.releaseListener = NewCell_Released;
+		//imgNewTile.enterListener = NewCell_Enter;
+		//imgNewTile.leaveListener = NewCell_Leave;
 
 		imgCenter = AddSensitiveZone("imgCenter");
+		//imgCenter.Controller = gameEngine.Controller;
 
 		imgTurns = new SensitiveZone[6];
 
@@ -63,8 +67,11 @@ public class GameScreen extends ScreenBase
 
 			imgTurns[i - 1] = AddSensitiveZone("imgTurn" + i, texture);
 			imgTurns[i - 1].Tag = i - 1;
-			imgTurns[i - 1].visible=false;
-			imgTurns[i - 1].enterListener = TurnNewCell_Enter;
+			imgTurns[i - 1].visible=true;
+			//imgTurns[i - 1].enterListener = TurnNewCell_Enter;
+			imgTurns[i - 1].pressListener = TurnNewCell_Pressed;
+			imgTurns[i - 1].releaseListener = TurnNewCell_Released;
+			imgTurns[i - 1].dragListener = TrunNewCell_Dragged;
 		}
 		// ---
 	}
@@ -72,7 +79,7 @@ public class GameScreen extends ScreenBase
 	@Override
 	public void LoadScreen()
 	{
-		GameScreen.this.Stage.getRoot().scrollFocus(imgCenter);
+		//GameScreen.this.Stage.getRoot().scrollFocus(imgCenter);
 		layout.layout();
 			
 		rightBar.x = imgNewTile.AbsoluteLocation().x;
@@ -96,39 +103,89 @@ public class GameScreen extends ScreenBase
 		gameEngine.Render.spriteBatch.end();
 	}
 	
-	SensitiveZone.EnterListener TurnNewCell_Enter = new SensitiveZone.EnterListener()
+	SensitiveZone.PressListener TurnNewCell_Pressed = new SensitiveZone.PressListener()
 	{
 		@Override
-		public void onEnter(SensitiveZone button)
+		public void pressed(SensitiveZone button, float x, float y, int pointer)
 		{
-			GamePlay().TurnTile((Integer) button.Tag);
-		}
-	};
-
-	SensitiveZone.EnterListener NewCell_Enter = new SensitiveZone.EnterListener()
-	{
-		@Override
-		public void onEnter(SensitiveZone button)
-		{
-			GameScreen.this.NewTileSelected = true;
+			Context.pointers[pointer].Usage = PointerUsage.TurnTile;
+			
 		}
 	};
 	
-	SensitiveZone.LeaveListener NewCell_Leave = new SensitiveZone.LeaveListener()
+	SensitiveZone.ReleaseListener TurnNewCell_Released = new SensitiveZone.ReleaseListener()
 	{
 		@Override
-		public void onLeave(SensitiveZone button)
+		public void released(SensitiveZone button, int pointer, boolean isOnButton)
 		{
-			GameScreen.this.NewTileSelected = false;
+			Context.pointers[pointer].Usage = PointerUsage.None;
+			
 		}
 	};
 	
-	SensitiveZone.PressListener NewCell_Selected = new SensitiveZone.PressListener()
+	SensitiveZone.DragListener TrunNewCell_Dragged = new SensitiveZone.DragListener()
 	{
 		@Override
-		public void pressed(SensitiveZone button)
+		public void dragged(SensitiveZone button, float x, float y, int pointer)
 		{
+			Context.pointers[pointer].Usage = PointerUsage.TurnTile;
+			
+			GamePlay().TurnTile((int)(y/button.height*7));
+		}
+	};
+	
+	SensitiveZone.PressListener NewCell_Pressed = new SensitiveZone.PressListener()
+	{
+		@Override
+		public void pressed(SensitiveZone button, float x, float y, int pointer)
+		{
+			Context.pointers[pointer].Usage = PointerUsage.SelectTile;
+			
 			GamePlay().SelectTile();
 		}
 	};
+	
+	SensitiveZone.ReleaseListener NewCell_Released = new SensitiveZone.ReleaseListener()
+	{
+		@Override
+		public void released(SensitiveZone button, int pointer, boolean isOnButton)
+		{
+			if(isOnButton)
+			{
+				Context.pointers[pointer].Usage = PointerUsage.None;
+				GamePlay().UnselectTile();
+			}
+			else
+				GamePlay().ReleaseTile();
+		}
+	};
+	
+//	SensitiveZone.EnterListener TurnNewCell_Enter = new SensitiveZone.EnterListener()
+//	{
+//		@Override
+//		public void onEnter(SensitiveZone button)
+//		{
+//			GamePlay().TurnTile((Integer) button.Tag);
+//		}
+//	};
+//
+//	SensitiveZone.EnterListener NewCell_Enter = new SensitiveZone.EnterListener()
+//	{
+//		@Override
+//		public void onEnter(SensitiveZone button)
+//		{
+//			GameScreen.this.NewTileSelected = true;
+//		}
+//	};
+//	
+//	SensitiveZone.LeaveListener NewCell_Leave = new SensitiveZone.LeaveListener()
+//	{
+//		@Override
+//		public void onLeave(SensitiveZone button)
+//		{
+//			GameScreen.this.NewTileSelected = false;
+//		}
+//	};
+	
+
 }

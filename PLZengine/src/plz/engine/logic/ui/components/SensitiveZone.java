@@ -1,8 +1,5 @@
 package plz.engine.logic.ui.components;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,7 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class SensitiveZone extends Actor
 {
 	public Color color = new Color(1, 1, 1, 1);
-
+	//public InputProcessor Controller;
+	
 	public Vector2 AbsoluteLocation()
 	{
 		return new Vector2(this.x + this.parent.x, this.y + this.parent.y);
@@ -21,23 +19,28 @@ public class SensitiveZone extends Actor
 
 	public interface PressListener
 	{
-		public void pressed(SensitiveZone button);
+		public void pressed(SensitiveZone button, float x, float y, int pointer);
 	}
 
 	public interface ReleaseListener
 	{
-		public void released(SensitiveZone button);
+		public void released(SensitiveZone button, int pointer, boolean isOnButton);
+	}
+	
+	public interface DragListener
+	{
+		public void dragged(SensitiveZone button, float x, float y, int pointer);
 	}
 
-	public interface EnterListener
-	{
-		public void onEnter(SensitiveZone button);
-	}
-
-	public interface LeaveListener
-	{
-		public void onLeave(SensitiveZone button);
-	}
+//	public interface EnterListener
+//	{
+//		public void onEnter(SensitiveZone button, float x, float y, int pointer);
+//	}
+//
+//	public interface LeaveListener
+//	{
+//		public void onLeave(SensitiveZone button, int pointer);
+//	}
 
 	public TextureRegion pressedRegion;
 	public TextureRegion unpressedRegion;
@@ -47,8 +50,9 @@ public class SensitiveZone extends Actor
 
 	public PressListener pressListener;
 	public ReleaseListener releaseListener;
-	public EnterListener enterListener;
-	public LeaveListener leaveListener;
+	public DragListener dragListener;
+	//public EnterListener enterListener;
+	//public LeaveListener leaveListener;
 	public Object Tag;
 
 	/**
@@ -130,9 +134,13 @@ public class SensitiveZone extends Actor
 			this.pointer = pointer;
 
 			if (pressListener != null)
-				pressListener.pressed(this);
+				pressListener.pressed(this, x, y, pointer);
 		}
-		return result;
+		
+//		if(Controller != null)
+//			Controller.touchDown((int)x, (int)y, pointer, 0);
+		
+		return false;
 	}
 
 	@Override
@@ -143,27 +151,46 @@ public class SensitiveZone extends Actor
 			parent.focus(null, pointer);
 		}
 		isPressed = false;
+		
 		if (releaseListener != null)
-			releaseListener.released(this);
+			releaseListener.released(this, pointer, hit(x,y) != null);
+		
+//		if(Controller != null)
+//			Controller.touchUp((int)x, (int)y, pointer, 0);
 	}
 
 	@Override
 	public void touchDragged(float x, float y, int pointer)
 	{
+		if(hit(x,y) == null)
+			return;
+		
+		if (dragListener != null)
+			dragListener.dragged(this, x, y, pointer);
+	}
+	
+	@Override
+	public boolean touchMoved(float x, float y)
+	{
 		boolean result = x > 0 && y > 0 && x < width && y < height;
 		
-		if(result && !isInside)
-		{
-			isInside = true;
-			if(enterListener != null)
-				enterListener.onEnter(this);
-		}
-		else if(!result && isInside)
-		{
-			isInside = false;
-			if(leaveListener != null)
-				leaveListener.onLeave(this);
-		}
+//		if(result && !isInside)
+//		{
+//			isInside = true;
+//			if(enterListener != null)
+//				enterListener.onEnter(this);
+//		}
+//		else if(!result && isInside)
+//		{
+//			isInside = false;
+//			if(leaveListener != null)
+//				leaveListener.onLeave(this);
+//		}
+		
+//		if(Controller != null)
+//			Controller.touchDragged((int)x, (int)y, pointer);
+		
+		return result;
 	}
 
 	@Override
@@ -174,7 +201,22 @@ public class SensitiveZone extends Actor
 
 	public Actor hit(float x, float y)
 	{
-		return x > 0 && y > 0 && x < width && y < height ? this : null;
+		Actor ret = x > 0 && y > 0 && x < width && y < height ? this : null;
+		
+//		if(ret!=null && !isInside)
+//		{
+//			isInside = true;
+//			if(enterListener != null)
+//				enterListener.onEnter(this);
+//		}
+//		else if(ret == null && isInside)
+//		{
+//			isInside = false;
+//			if(leaveListener != null)
+//				leaveListener.onLeave(this);
+//		}
+		
+		return ret;
 	}
 
 	public void layout()

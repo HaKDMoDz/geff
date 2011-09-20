@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public abstract class RenderLogicBase
 {
 	private final Map<String, Object> mapDebug = new HashMap<String, Object>();
-	private final BitmapFont fontDebug;
+	//private final BitmapFont fontDebug;
 	public final SpriteBatch spriteBatch;
 	public OrthographicCamera Camera;
 	float[] direction = { 1, 0.5f, 0, 0 };
@@ -27,9 +27,9 @@ public abstract class RenderLogicBase
 	{
 		this.gameEngine = gameEngine;
 
-		fontDebug = new BitmapFont();
-		fontDebug.setColor(Color.WHITE);
-		fontDebug.scale(0.1f);
+//		fontDebug = new BitmapFont();
+//		fontDebug.setColor(Color.WHITE);
+//		fontDebug.scale(0.1f);
 
 		spriteBatch = new SpriteBatch();
 
@@ -63,24 +63,25 @@ public abstract class RenderLogicBase
 
 	public void RenderDebug(float deltaTime)
 	{
-		if (mapDebug.size() > 0)
-		{
-			ProjectUI();
-			
-			spriteBatch.begin();
-			spriteBatch.setColor(Color.WHITE);
-			
-			float y = 30;
-			for (Entry<String, Object> entry : mapDebug.entrySet())
-			{
-				fontDebug.draw(spriteBatch, entry.getKey() + " : " + entry.getValue().toString(), 30, y);
-				y += fontDebug.getCapHeight()+5;
-			}
-			
-			spriteBatch.end();
-			
-			ProjectGame();
-		}
+		
+//		if (mapDebug.size() > 0)
+//		{
+//			ProjectUI();
+//			
+//			spriteBatch.begin();
+//			spriteBatch.setColor(Color.WHITE);
+//			
+//			float y = 30;
+//			for (Entry<String, Object> entry : mapDebug.entrySet())
+//			{
+//				fontDebug.draw(spriteBatch, entry.getKey() + " : " + entry.getValue().toString(), 30, y);
+//				y += fontDebug.getCapHeight()+5;
+//			}
+//			
+//			spriteBatch.end();
+//			
+//			ProjectGame();
+//		}
 	}
 	
 	public void ProjectGame()

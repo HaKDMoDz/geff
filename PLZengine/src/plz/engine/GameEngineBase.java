@@ -8,7 +8,6 @@ import plz.engine.logic.ui.screens.ScreenBase;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.sun.opengl.impl.Debug;
 
 public class GameEngineBase implements ApplicationListener {
 	public ControllerLogicBase Controller;
