@@ -5,8 +5,6 @@ import plz.engine.logic.ui.screens.ScreenBase;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 
 public class MainMenu extends ScreenBase
 {

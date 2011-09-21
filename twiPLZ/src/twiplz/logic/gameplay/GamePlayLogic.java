@@ -1,8 +1,5 @@
 package twiplz.logic.gameplay;
 
-import java.awt.Point;
-import java.util.Iterator;
-
 import plz.engine.Common;
 import plz.engine.logic.ui.components.SensitiveZone;
 
@@ -106,12 +103,12 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		
 		for (int i = 0; i < 6; i++)
 		{
-			int newDirection = i+offset;
+			int newDirection =i+offset;
 			
 			if (newDirection < 0)
-				newDirection = 5;
+				newDirection += 6;
 			else if (newDirection > 5)
-				newDirection = 0;
+				newDirection -= 6;
 			
 			cell.Parts[i] = parts[newDirection];
 		}
@@ -136,7 +133,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	public void UpdateTileLocation(Vector2 location)
 	{
-		SelectedTile.Location = location;
+		SelectedTile.Location = new Vector2(location.x, location.y+Context.selectionOffsetY);
 
 		Cell selectedCell = GetSelectedCell();
 
@@ -170,7 +167,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		int w = 256 / 2;
 		int dw = w / 2;
 		int h = (int) (w * (Math.sqrt(3f) / 2));
-		float k = (int) ((1f - (Math.sqrt(3f) / 2f)) * (float) w);
+		float k = (int) ((1f - (Math.sqrt(3f) / 2f)) * w);
 		int Lx = (int) (cell.Location.x * 256f);
 		int Ly = (int) (cell.Location.y * 256f + k);
 		//Point point = new Point((int) location.x, (int) location.y);
@@ -235,6 +232,9 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				SwapCell(selectedCell, SelectedTile.Cells[0]);
 				SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
 				
+				Context.Map.CalcNeighborough(SelectedTile.Cells[0]);
+				Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
+				
 				CreateNewTile();
 			}
 		}
@@ -254,10 +254,11 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		cellOrig.InitialLocation = cellDest.InitialLocation;
 		cellOrig.Neighbourghs = cellDest.Neighbourghs;
 
-		int index = cellDest.Map.Cells.indexOf(cellDest);
+		//int index = cellDest.Map.Cells.indexOf(cellDest);
 
-		cellDest.Map.Cells.remove(index);
-		cellDest.Map.Cells.add(index, cellOrig);
+		cellDest.Map.Cells.remove(cellDest);
+		cellDest.Map.Cells.add(cellOrig);
+		//cellDest.Map.Cells.add(index, cellOrig);
 
 		// cellDest = cellOrig;
 	}

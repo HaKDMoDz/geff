@@ -1,5 +1,6 @@
 package twiplz.android;
 
+import twiplz.Context;
 import twiplz.GameEngine;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -15,14 +16,15 @@ public class GameStarterAndroid extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+		Context.Mini = false;
+		Context.selectionOffsetY = 512;
+		
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.useCompass = false;
 		config.useAccelerometer = false;
 		config.useWakelock = false;
 		config.resolutionStrategy = new FillResolutionStrategy();
 
-		String z = System.getProperty("java.class.path");
-		
 		ApplicationListener app = new GameEngine();
 
 		initialize(app, config);

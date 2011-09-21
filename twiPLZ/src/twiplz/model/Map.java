@@ -61,25 +61,31 @@ public class Map
 	{
 		for (Cell cell : Cells)
 		{
-			cell.Neighbourghs = new Cell[6];
+			CalcNeighborough(cell);
+		}
+	}
 
-			if (cell.Coord.y % 2 == 1)
-			{
-				cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
-				cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
-				cell.Neighbourghs[2] = GetNeighborough(cell, 1, 1);
-				cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
-				cell.Neighbourghs[4] = GetNeighborough(cell, 0, 1);
-				cell.Neighbourghs[5] = GetNeighborough(cell, 0, -1);
-			} else
-			{
-				cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
-				cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
-				cell.Neighbourghs[2] = GetNeighborough(cell, 0, 1);
-				cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
-				cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
-				cell.Neighbourghs[5] = GetNeighborough(cell, -1, -1);
-			}
+	public void CalcNeighborough(Cell cell)
+	{
+		cell.Neighbourghs = new Cell[6];
+
+		if (cell.Coord.y % 2 == 1)
+		{
+			cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
+			cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
+			cell.Neighbourghs[2] = GetNeighborough(cell, 1, 1);
+			cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
+			cell.Neighbourghs[4] = GetNeighborough(cell, 0, 1);
+			cell.Neighbourghs[5] = GetNeighborough(cell, 0, -1);
+		}
+		else
+		{
+			cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
+			cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
+			cell.Neighbourghs[2] = GetNeighborough(cell, 0, 1);
+			cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
+			cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
+			cell.Neighbourghs[5] = GetNeighborough(cell, -1, -1);
 		}
 	}
 
@@ -87,9 +93,9 @@ public class Map
 	{
 		for (Cell cell : Cells)
 		{
-			//--- Calcul de la couleur
-			cell.IsEmpty = Math.random()*10 >6;
-			
+			// --- Calcul de la couleur
+			cell.IsEmpty = Math.random() * 10 > 6;
+
 			boolean colorFound = false;
 
 			while (!cell.IsEmpty && !colorFound)
@@ -98,8 +104,7 @@ public class Map
 
 				for (int i = 0; i < 6; i++)
 				{
-					if (cell.Neighbourghs[i] != null && !cell.Neighbourghs[i].IsEmpty
-							&& cell.Neighbourghs[i].ColorType == colorType)
+					if (cell.Neighbourghs[i] != null && !cell.Neighbourghs[i].IsEmpty && cell.Neighbourghs[i].ColorType == colorType)
 					{
 						colorType = 0;
 						break;
@@ -112,9 +117,9 @@ public class Map
 					cell.ColorType = colorType;
 				}
 			}
-			//---
-			
-				cell.CalcArrows();
+			// ---
+
+			cell.CalcArrows();
 		}
 	}
 
@@ -122,8 +127,7 @@ public class Map
 	{
 		for (Cell cellNeighbor : Cells)
 		{
-			if (cellNeighbor.Coord.x == cell.Coord.x + offsetX
-					&& cellNeighbor.Coord.y == cell.Coord.y + offsetY)
+			if (cellNeighbor.Coord.x == cell.Coord.x + offsetX && cellNeighbor.Coord.y == cell.Coord.y + offsetY)
 			{
 				return cellNeighbor;
 			}

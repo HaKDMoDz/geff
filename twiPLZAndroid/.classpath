@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/twiPLZ"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/gdx-backend-android"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tablelayout-libgdx"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

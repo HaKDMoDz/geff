@@ -3,8 +3,6 @@ package twiplz;
 import plz.engine.logic.controller.PLZInputMultiplexer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-
 import twiplz.logic.controller.ControllerLogic;
 import twiplz.logic.gameplay.GamePlayLogic;
 import twiplz.logic.render.RenderLogic;

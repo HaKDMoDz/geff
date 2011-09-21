@@ -7,10 +7,21 @@ public class GameStarterDesktop
 {
 	public static void main(String[] argv)
 	{
-		ApplicationListener app = (ApplicationListener) new GameEngine();
-		JoglApplication window = new JoglApplication(app, "twiPLZ", 400, 400,
-				false);
-
-		window.getJFrame().setLocation(2100, 550);
+		Context.Mini = false;
+		boolean miniWindow = true;
+		
+		ApplicationListener app = new GameEngine();
+		JoglApplication window;
+		
+		if(miniWindow)
+		{
+			window = new JoglApplication(app, "twiPLZ", 400, 400, false);
+			window.getJFrame().setLocation(2100, 550);
+		}
+		else
+		{
+			window = new JoglApplication(app, "twiPLZ", 800, 600, false);
+		}
+			
 	}
 }
