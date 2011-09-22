@@ -150,14 +150,10 @@ public class GameScreen extends ScreenBase
 		@Override
 		public void released(SensitiveZone button, int pointer, boolean isOnButton)
 		{
-			Context.pointers[pointer].Usage = PointerUsage.None;
-			
 			if(isOnButton)
 			{
-				GamePlay().UnselectTile();
+				Context.pointers[pointer].Usage = PointerUsage.UnselectTile;
 			}
-			else
-				GamePlay().ReleaseTile();
 		}
 	};
 	

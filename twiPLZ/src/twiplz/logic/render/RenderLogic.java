@@ -19,13 +19,14 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 {
 	Texture texCellForeground;
 	Texture texCellBackground;
+	Texture texCircle;
 	Texture[] texArrowsIn = new Texture[6];
 	Texture[] texArrowsOut = new Texture[6];
 	Color[] colors;
 
 	public Vector2[] PointToDraw = new Vector2[5];
 
-	private boolean showCursor = true;
+	private boolean showCursor = false;
 	private boolean showColor = true;
 
 	private GamePlayLogic GamePlay()
@@ -49,6 +50,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 	{
 		texCellForeground = new Texture(Gdx.files.internal("data/CellForeground.png"));
 		texCellBackground = new Texture(Gdx.files.internal("data/CellBackground.png"));
+		texCircle = new Texture(Gdx.files.internal("data/Circle.png"));
 
 		for (int i = 1; i <= 6; i++)
 		{
@@ -100,9 +102,14 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		// --- Tuile sélectionnée
 		if (GamePlay().SelectedTile != null)
 		{
-
 			DrawCell(GamePlay().SelectedTile.Cells[0], false, true);
 			DrawCell(GamePlay().SelectedTile.Cells[1], false, true);
+
+			// spriteBatch.setColor(Color.RED);
+
+			// spriteBatch.draw(texCellForeground,
+			// GamePlay().SelectedTile.Location.x - 32,
+			// -(GamePlay().SelectedTile.Location.y - 32), 64, 64);
 		}
 		// ---
 
@@ -127,25 +134,23 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 			for (Pointer pointer : Context.pointers)
 			{
-				
-				
+
 				if (pointer.Current != null)
 				{
-					if(pointer.Usage == PointerUsage.SelectTile)
+					if (pointer.Usage == PointerUsage.SelectTile)
 						spriteBatch.setColor(Color.GREEN);
-					else if(pointer.Usage == PointerUsage.TurnTile)
+					else if (pointer.Usage == PointerUsage.TurnTile)
 						spriteBatch.setColor(Color.RED);
 					else
 						spriteBatch.setColor(Color.BLUE);
-					
-					spriteBatch.draw(texCellForeground, pointer.Current.x - 20, Gdx.graphics.getHeight() -( pointer.Current.y - 20), 40, 40);
+
+					spriteBatch.draw(texCellForeground, pointer.Current.x - 20, Gdx.graphics.getHeight() - (pointer.Current.y - 20), 40, 40);
 				}
 			}
 		}
-		
+
 		spriteBatch.end();
 		// ---
-
 
 	}
 
@@ -160,13 +165,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		{
 			SensitiveZone imgNewTile = ((GameScreen) this.gameEngine.CurrentScreen).imgNewTile;
 
-			// height = (int) imgNewTile.height;
-			// width = (int) imgNewTile.width;
-
 			height = (int) (imgNewTile.height / 2);
-			// height = (int) (imgNewTile.height /
-			// (4f*(1+(2/Math.sqrt(3f)))))*4;
-
 			width = (int) ((2 * height) / Math.sqrt(3f));
 		}
 		else
@@ -175,7 +174,9 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		}
 
 		if (isSelectedCell)
+		{
 			spriteBatch.setColor(Color.GREEN);
+		}
 		else
 			spriteBatch.setColor(Color.WHITE);
 
@@ -185,6 +186,15 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		{
 			spriteBatch.setColor(colors[cell.ColorType - 1]);
 			spriteBatch.draw(texCellForeground, cellLocation.x, cellLocation.y, width, height);
+		}
+
+		if (isSelectedCell)
+		{
+			if (GamePlay().SelectedTile.ActiveCell == cell)
+			{
+				spriteBatch.setColor(Color.BLACK);
+				spriteBatch.draw(texCircle, cellLocation.x - width/4, cellLocation.y - height/4, (int)((float)width*1.5f), (int)((float)height*1.5));
+			}
 		}
 
 		if (Context.Mini)

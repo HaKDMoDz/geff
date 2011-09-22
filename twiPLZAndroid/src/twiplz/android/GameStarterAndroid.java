@@ -2,6 +2,7 @@ package twiplz.android;
 
 import twiplz.Context;
 import twiplz.GameEngine;
+import twiplz.logic.controller.SelectionMode;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
@@ -18,6 +19,7 @@ public class GameStarterAndroid extends AndroidApplication {
 
 		Context.Mini = false;
 		Context.selectionOffsetY = 512;
+		Context.selectionMode = SelectionMode.Screentouch;
 		
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.useCompass = false;

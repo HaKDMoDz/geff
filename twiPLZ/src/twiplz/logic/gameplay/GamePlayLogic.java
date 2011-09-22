@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import twiplz.Context;
 import twiplz.GameEngine;
+import twiplz.logic.controller.SelectionMode;
 import twiplz.logic.ui.screens.GameScreen;
 import twiplz.model.*;
 
@@ -53,6 +54,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		SelectedTile.Cells[0] = (Cell) Tile.Cells[0].clone();
 		SelectedTile.Cells[1] = (Cell) Tile.Cells[1].clone();
+		SelectedTile.ActiveCell = SelectedTile.Cells[0];
+		SelectedTile.InactiveCell = SelectedTile.Cells[1];
 	}
 
 	public void CreateNewTile()
@@ -71,7 +74,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	public void TurnTile(int orientation)
 	{
 		int offset = orientation - CurrentOrientation;
-		
+
 		CurrentOrientation = orientation;
 
 		if (CurrentOrientation < 0)
@@ -95,21 +98,21 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	private void TurnCellPart(Cell cell, int offset)
 	{
 		CellPartType[] parts = new CellPartType[6];
-		
+
 		for (int i = 0; i < 6; i++)
 		{
 			parts[i] = cell.Parts[i];
 		}
-		
+
 		for (int i = 0; i < 6; i++)
 		{
-			int newDirection =i+offset;
-			
+			int newDirection = i + offset;
+
 			if (newDirection < 0)
 				newDirection += 6;
 			else if (newDirection > 5)
 				newDirection -= 6;
-			
+
 			cell.Parts[i] = parts[newDirection];
 		}
 	}
@@ -118,7 +121,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		SensitiveZone imgNewTile = ((GameScreen) this.gameEngine.CurrentScreen).imgNewTile;
 
-		//int h = (int) (imgNewTile.height / (4f * (1 + (2 / Math.sqrt(3f)))));
+		// int h = (int) (imgNewTile.height / (4f * (1 + (2 / Math.sqrt(3f)))));
 		int h = (int) (imgNewTile.height / 4f);// * (1 + (2 / Math.sqrt(3f)))));
 		int width = (int) ((2 * h) / Math.sqrt(3f));
 
@@ -133,7 +136,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	public void UpdateTileLocation(Vector2 location)
 	{
-		SelectedTile.Location = new Vector2(location.x, location.y+Context.selectionOffsetY);
+		SelectedTile.Location = new Vector2(location.x, location.y);
 
 		Cell selectedCell = GetSelectedCell();
 
@@ -170,10 +173,10 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		float k = (int) ((1f - (Math.sqrt(3f) / 2f)) * w);
 		int Lx = (int) (cell.Location.x * 256f);
 		int Ly = (int) (cell.Location.y * 256f + k);
-		//Point point = new Point((int) location.x, (int) location.y);
+		// Point point = new Point((int) location.x, (int) location.y);
 
-		Vector2 point =	new Vector2(location.x,location.y);
-		
+		Vector2 point = new Vector2(location.x, location.y);
+
 		// 1 : Test du rectangle englobant
 		Rectangle rec = new Rectangle(Lx, Ly, w * 2, 2 * h);
 		if (!rec.contains(location.x, location.y))
@@ -223,30 +226,26 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	public void ReleaseTile()
 	{
-		//if (!((GameScreen) this.gameEngine.CurrentScreen).NewTileSelected)
+		Cell selectedCell = GetSelectedCell();
+
+		if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
 		{
-			Cell selectedCell = GetSelectedCell();
+			SwapCell(selectedCell, SelectedTile.Cells[0]);
+			SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
 
-			if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
-			{
-				SwapCell(selectedCell, SelectedTile.Cells[0]);
-				SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
-				
-				Context.Map.CalcNeighborough(SelectedTile.Cells[0]);
-				Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
-				
-				CreateNewTile();
-			}
+			Context.Map.CalcNeighborough(SelectedTile.Cells[0]);
+			Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
+
+			CreateNewTile();
+			SelectedTile = null;
 		}
-
-		SelectedTile = null;
 	}
 
 	public void UnselectTile()
 	{
 		SelectedTile = null;
 	}
-	
+
 	private void SwapCell(Cell cellDest, Cell cellOrig)
 	{
 		cellOrig.Map = cellDest.Map;
@@ -254,14 +253,23 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		cellOrig.InitialLocation = cellDest.InitialLocation;
 		cellOrig.Neighbourghs = cellDest.Neighbourghs;
 
-		//int index = cellDest.Map.Cells.indexOf(cellDest);
+		// int index = cellDest.Map.Cells.indexOf(cellDest);
 
 		cellDest.Map.Cells.remove(cellDest);
 		cellDest.Map.Cells.add(cellOrig);
-		//cellDest.Map.Cells.add(index, cellOrig);
+		// cellDest.Map.Cells.add(index, cellOrig);
 
 		// cellDest = cellOrig;
 	}
 
+	public boolean PickTile(Vector2 location)
+	{
+		if (PointInCell(SelectedTile.ActiveCell, location))
+		{
+			SelectedTile.State = TileState.Move;
+			return true;
+		}
 
+		return false;
+	}
 }

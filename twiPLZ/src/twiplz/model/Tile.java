@@ -6,9 +6,13 @@ public class Tile
 {
 	public Cell[] Cells;
 	public Vector2 Location;
+	public Cell ActiveCell;
+	public Cell InactiveCell;
+	public TileState State;
 	
 	public Tile()
 	{
+		State = State.Move;
 		Location = new Vector2();
 		
 		Cells = new Cell[2];
@@ -16,6 +20,7 @@ public class Tile
 		Cells[0] = new Cell();
 		Cells[1] = new Cell();
 		
-
+		ActiveCell = Cells[0];
+		InactiveCell = Cells[1];
 	}
 }

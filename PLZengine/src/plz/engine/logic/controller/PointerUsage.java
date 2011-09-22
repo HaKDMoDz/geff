@@ -4,5 +4,5 @@ public enum PointerUsage
 {
 	None,
 	SelectTile,
-	TurnTile
+	TurnTile, UnselectTile
 }
