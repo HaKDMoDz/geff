@@ -18,7 +18,7 @@ public class GameStarterAndroid extends AndroidApplication {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 		Context.Mini = false;
-		Context.selectionOffsetY = 512;
+		Context.selectionOffsetY = 256;
 		Context.selectionMode = SelectionMode.Screentouch;
 		
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();

@@ -272,4 +272,15 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		return false;
 	}
+
+	public boolean PickInactiveCellTile(Vector2 location)
+	{
+		if (PointInCell(SelectedTile.InactiveCell, location))
+		{
+			SelectedTile.State = TileState.Turn;
+			return true;
+		}
+		
+		return false;
+	}
 }

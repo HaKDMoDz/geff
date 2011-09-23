@@ -1,5 +1,7 @@
 package twiplz.logic.controller;
 
+import java.text.DateFormat;
+
 import plz.engine.Common;
 import plz.engine.logic.controller.Pointer;
 import plz.engine.logic.controller.PointerUsage;
@@ -133,10 +135,22 @@ public class ControllerLogic extends
 
 			if (GamePlay().PickTile(vec))
 				Context.pointers[pointer].Usage = PointerUsage.SelectTile;
+			else if(GamePlay().PickInactiveCellTile(vec))
+				Context.pointers[pointer].Usage = PointerUsage.ManualTurnTile;
 		}
 		// ---
+		
+//		if(Context.pointers[pointer].PreviousCreationDate== null)
+//			gameEngine.Render.RemoveDebugRender("PreviouCreationDate");
+//		else
+//		{
+//			gameEngine.Render.AddDebugRender("PreviouCreationDate", Context.pointers[pointer].PreviousCreationDate);
+//			gameEngine.Render.AddDebugRender("DiffTime", Context.pointers[pointer].CreationDate.getTime() - Context.pointers[pointer].PreviousCreationDate.getTime());
+//		}
+//		
+//		gameEngine.Render.AddDebugRender("CurrentCreationDate", Context.pointers[pointer].CreationDate);
 
-		gameEngine.Render.AddDebugRender("Zoom", prevCameraZoom);
+		//gameEngine.Render.AddDebugRender("Zoom", prevCameraZoom);
 
 		return true;
 	}
@@ -153,31 +167,34 @@ public class ControllerLogic extends
 		// ---> Met le pointeur de départ sur null
 		Context.pointers[pointer].Start = null;
 
+		
 		if (Context.selectionMode == SelectionMode.Desktop && GamePlay().SelectedTile != null && Context.pointers[pointer].Usage == PointerUsage.SelectTile)
 		{
-			Context.pointers[pointer].Usage = PointerUsage.None;
 			GamePlay().ReleaseTile();
 		}
 		
 		if (Context.selectionMode == SelectionMode.Screentouch && GamePlay().SelectedTile != null && Context.pointers[pointer].Usage == PointerUsage.SelectTile)
 		{
-			Context.pointers[pointer].Usage = PointerUsage.None;
 			GamePlay().SelectedTile.State = TileState.Sleep;
 		}
 
 		if (GamePlay().SelectedTile != null && Context.pointers[pointer].Usage == PointerUsage.UnselectTile)
 		{
-			Context.pointers[pointer].Usage = PointerUsage.None;
 			GamePlay().UnselectTile();
 		}
 	
 		if (Context.selectionMode == SelectionMode.Screentouch && Context.pointers[pointer].Usage == PointerUsage.None && GamePlay().SelectedTile != null && GamePlay().SelectedTile.State == TileState.Sleep && Context.pointers[pointer].IsDoubleTap())
 		{
-			Context.pointers[pointer].Usage = PointerUsage.None;
 			Context.pointers[pointer].PreviousCreationDate = null;
 			GamePlay().ReleaseTile();
 		}
 		
+		if (GamePlay().SelectedTile != null && Context.pointers[pointer].Usage == PointerUsage.ManualTurnTile)
+		{
+			GamePlay().SelectedTile.State = TileState.Sleep;
+		}
+		
+		Context.pointers[pointer].Usage = PointerUsage.None;
 		
 		gameEngine.Render.RemoveDebugRender("Context.pointerstart" + pointer);
 		gameEngine.Render.RemoveDebugRender("PointerCurrent" + pointer);
@@ -254,20 +271,51 @@ public class ControllerLogic extends
 
 		if (selectTilePointer != null)
 		{
-			// Vector2 vecTranslation = new Vector2(selectTilePointer.Start.x -
-			// x, selectTilePointer.Start.y - y);
-
 			// vecTranslation.rotate(prevCameraAngle);
 
 			Vector2 vec = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + selectTilePointer.Current.x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + selectTilePointer.Current.y) * gameEngine.Render.Camera.zoom);
 
 			GamePlay().UpdateTileLocation(new Vector2(vec.x, vec.y + Context.selectionOffsetY));
 
-			gameEngine.Render.AddDebugRender("Cell0", GamePlay().SelectedTile.Cells[0].Location);
-			gameEngine.Render.AddDebugRender("Cell1", GamePlay().SelectedTile.Cells[1].Location);
+			//gameEngine.Render.AddDebugRender("Cell0", GamePlay().SelectedTile.Cells[0].Location);
+			//gameEngine.Render.AddDebugRender("Cell1", GamePlay().SelectedTile.Cells[1].Location);
 		}
 		// ---
+		
+		
+		
+		//--- Tourne manellement la tuile
+		Pointer turnTilePointer = null;
 
+		if (firstLastPointer != null && pointer == firstLastPointer.Index && firstLastPointer.Usage == PointerUsage.ManualTurnTile)
+		{
+			turnTilePointer = firstLastPointer;
+		}
+		else if (secondLastPointer != null && pointer == secondLastPointer.Index && secondLastPointer.Usage == PointerUsage.ManualTurnTile)
+		{
+			turnTilePointer = secondLastPointer;
+		}
+		
+		if (turnTilePointer != null)
+		{
+			Vector2 vec = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + turnTilePointer.Current.x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + turnTilePointer.Current.y) * gameEngine.Render.Camera.zoom);
+
+			vec = vec.mul(1f/256f);
+			vec = vec.sub(0.5f, 0.5f);
+			vec = vec.sub(GamePlay().SelectedTile.ActiveCell.Location);
+			vec = vec.nor();
+			
+			float angle = (Common.GetAngle(new Vector2(1,0), vec)+(float)Math.PI)/(float)(Math.PI*2) * 6; 
+			/// (float)(Math.PI*2) * 6;
+			
+			GamePlay().TurnTile((int)angle-1);
+			
+			gameEngine.Render.AddDebugRender("Angle", angle);			
+		}
+		//---
+
+		
+		
 		// --- Zoom de la caméra avec les deux derniers pointeurs
 		if (countPointerOnScreen >= 2 && (pointer == firstLastPointer.Index || pointer == secondLastPointer.Index) && (Context.pointers[firstLastPointer.Index].Current != null && Context.pointers[secondLastPointer.Index].Current != null) && GamePlay().SelectedTile == null)
 		{
@@ -277,7 +325,7 @@ public class ControllerLogic extends
 			// ---> Calcul du zoom
 			float diffZoom = (distStart - distCur) / 70f;
 
-			gameEngine.Render.AddDebugRender("DiffZoom", diffZoom);
+			//gameEngine.Render.AddDebugRender("DiffZoom", diffZoom);
 
 			Vector2 vecSecondToFirstStart = new Vector2(firstLastPointer.Start.x - secondLastPointer.Start.x, firstLastPointer.Start.y - secondLastPointer.Start.y);
 			Vector2 vecSecondToFirstCurrent = new Vector2(firstLastPointer.Current.x - secondLastPointer.Current.x, firstLastPointer.Current.y - secondLastPointer.Current.y);
@@ -294,8 +342,8 @@ public class ControllerLogic extends
 			((RenderLogic) gameEngine.Render).PointToDraw[0] = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + firstLastPointer.Current.x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + firstLastPointer.Current.y) * gameEngine.Render.Camera.zoom);
 			((RenderLogic) gameEngine.Render).PointToDraw[1] = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + secondLastPointer.Current.x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + secondLastPointer.Current.y) * gameEngine.Render.Camera.zoom);
 
-			gameEngine.Render.AddDebugRender("vecMidPointStart", vecMidPointStart);
-			gameEngine.Render.AddDebugRender("vecMidPointCurrent", vecMidPointCurrent);
+			//gameEngine.Render.AddDebugRender("vecMidPointStart", vecMidPointStart);
+			//gameEngine.Render.AddDebugRender("vecMidPointCurrent", vecMidPointCurrent);
 
 			// Vector2 vecT = new Vector2(vecMidScreen.x - vecMidPoint2D.x,
 			// vecMidScreen.y - vecMidPoint2D.y);
@@ -323,8 +371,8 @@ public class ControllerLogic extends
 		}
 		// ---
 
-		gameEngine.Render.AddDebugRender("Context.pointerstart" + pointer, Context.pointers[pointer].Start);
-		gameEngine.Render.AddDebugRender("PointerCurrent" + pointer, Context.pointers[pointer].Current);
+		gameEngine.Render.AddDebugRender("Context.pointerSta" + pointer, Context.pointers[pointer].Start);
+		gameEngine.Render.AddDebugRender("Context.pointerCur" + pointer, Context.pointers[pointer].Current);
 
 		return false;
 	}

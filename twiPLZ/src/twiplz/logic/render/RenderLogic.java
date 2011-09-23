@@ -139,7 +139,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 				{
 					if (pointer.Usage == PointerUsage.SelectTile)
 						spriteBatch.setColor(Color.GREEN);
-					else if (pointer.Usage == PointerUsage.TurnTile)
+					else if (pointer.Usage == PointerUsage.ButtonTurnTile)
 						spriteBatch.setColor(Color.RED);
 					else
 						spriteBatch.setColor(Color.BLUE);
@@ -175,7 +175,10 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		if (isSelectedCell)
 		{
-			spriteBatch.setColor(Color.GREEN);
+			if(Context.Mini)
+				spriteBatch.setColor(0.3f,0.3f,0.3f, 1f);
+			else
+				spriteBatch.setColor(Color.GREEN);
 		}
 		else
 			spriteBatch.setColor(Color.WHITE);

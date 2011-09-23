@@ -10,8 +10,10 @@ public class Pointer
 	public Vector2 Current = null;
 	public Date CreationDate = null;
 	public Date PreviousCreationDate = null;
+	public PointerUsage PreviousUsage = PointerUsage.None;
 	public PointerUsage Usage = PointerUsage.None;
 	public int Index = -1;
+	public boolean Handled = false;
 	
 	public Pointer(int x, int y, int index)
 	{
@@ -35,13 +37,20 @@ public class Pointer
 		this.Start = new Vector2(x, y);
 		this.Current = null;
 		this.PreviousCreationDate = this.CreationDate;
+		this.PreviousUsage = Usage;
+		if(Handled = false)
+			this.Usage = PointerUsage.None;
+			
 		this.CreationDate = new Date();
+		this.Handled = false;
 	}
 
 	public boolean IsDoubleTap()
 	{
-		long time = new Date().getTime();
-		if(this.PreviousCreationDate != null && time - this.PreviousCreationDate.getTime() < 2000)
+		Date date = new Date();
+		long time = date.getTime();
+		if(PreviousUsage == PointerUsage.None && Usage == PointerUsage.None &&
+				this.PreviousCreationDate != null && time - this.PreviousCreationDate.getTime() < 300)
 			return true;
 		
 		return false;

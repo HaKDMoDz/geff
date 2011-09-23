@@ -2,5 +2,5 @@ package twiplz.model;
 
 public enum TileState
 {
-	Move, Sleep
+	Move, Sleep, Turn
 }

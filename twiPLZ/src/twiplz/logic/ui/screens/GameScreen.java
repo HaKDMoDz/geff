@@ -108,8 +108,8 @@ public class GameScreen extends ScreenBase
 		@Override
 		public void pressed(SensitiveZone button, float x, float y, int pointer)
 		{
-			Context.pointers[pointer].Usage = PointerUsage.TurnTile;
-			
+			Context.pointers[pointer].Usage = PointerUsage.ButtonTurnTile;
+			Context.pointers[pointer].Handled = true;
 		}
 	};
 	
@@ -119,7 +119,7 @@ public class GameScreen extends ScreenBase
 		public void released(SensitiveZone button, int pointer, boolean isOnButton)
 		{
 			Context.pointers[pointer].Usage = PointerUsage.None;
-			
+			Context.pointers[pointer].Handled = true;
 		}
 	};
 	
@@ -128,7 +128,8 @@ public class GameScreen extends ScreenBase
 		@Override
 		public void dragged(SensitiveZone button, float x, float y, int pointer)
 		{
-			Context.pointers[pointer].Usage = PointerUsage.TurnTile;
+			Context.pointers[pointer].Usage = PointerUsage.ButtonTurnTile;
+			Context.pointers[pointer].Handled = true;
 			
 			GamePlay().TurnTile((int)(y/button.height*6));
 		}
@@ -140,7 +141,7 @@ public class GameScreen extends ScreenBase
 		public void pressed(SensitiveZone button, float x, float y, int pointer)
 		{
 			Context.pointers[pointer].Usage = PointerUsage.SelectTile;
-			
+			Context.pointers[pointer].Handled = true;
 			GamePlay().SelectTile();
 		}
 	};
@@ -153,6 +154,7 @@ public class GameScreen extends ScreenBase
 			if(isOnButton)
 			{
 				Context.pointers[pointer].Usage = PointerUsage.UnselectTile;
+				Context.pointers[pointer].Handled = true;
 			}
 		}
 	};
