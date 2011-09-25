@@ -73,20 +73,32 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	public void TurnTile(int orientation)
 	{
+//		int t = orientation;
+//		orientation = orientation % 6;
+		
+		orientation = Common.mod(orientation,6);
+
 		int offset = orientation - CurrentOrientation;
 
-		CurrentOrientation = orientation;
+		try
+		{
+			CurrentOrientation = orientation;
 
-		if (CurrentOrientation < 0)
-			CurrentOrientation = 5;
-		else if (CurrentOrientation > 5)
-			CurrentOrientation = 0;
+			if (CurrentOrientation < 0)
+				CurrentOrientation = 5;
+			else if (CurrentOrientation > 5)
+				CurrentOrientation = 0;
 
-		TurnTileCellPart(Tile, offset);
-		if (SelectedTile != null)
-			TurnTileCellPart(SelectedTile, offset);
+			TurnTileCellPart(Tile, offset);
+			if (SelectedTile != null)
+				TurnTileCellPart(SelectedTile, offset);
 
-		UpdateTileOrientation();
+			UpdateTileOrientation();
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void TurnTileCellPart(Tile tile, int offset)
@@ -125,8 +137,16 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		int h = (int) (imgNewTile.height / 4f);// * (1 + (2 / Math.sqrt(3f)))));
 		int width = (int) ((2 * h) / Math.sqrt(3f));
 
-		Tile.Cells[0].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[0][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[0][CurrentOrientation].y * h * 2);
-		Tile.Cells[1].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[1][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[1][CurrentOrientation].y * h * 2);
+		Tile.Cells[0].Location = new Vector2(imgNewTile.AbsoluteLocation().x
+				+ imgNewTile.width / 2 - width
+				+ CellDisposition[0][CurrentOrientation].x * width * 2,
+				imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h
+						+ CellDisposition[0][CurrentOrientation].y * h * 2);
+		Tile.Cells[1].Location = new Vector2(imgNewTile.AbsoluteLocation().x
+				+ imgNewTile.width / 2 - width
+				+ CellDisposition[1][CurrentOrientation].x * width * 2,
+				imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h
+						+ CellDisposition[1][CurrentOrientation].y * h * 2);
 
 		if (SelectedTile != null)
 		{
@@ -140,7 +160,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		Cell selectedCell = GetSelectedCell();
 
-		if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
+		if (selectedCell != null
+				&& selectedCell.Neighbourghs[CurrentOrientation] != null)
 		{
 			SelectedTile.Cells[0].Location = selectedCell.Location;
 			SelectedTile.Cells[1].Location = selectedCell.Neighbourghs[CurrentOrientation].Location;
@@ -228,10 +249,12 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		Cell selectedCell = GetSelectedCell();
 
-		if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
+		if (selectedCell != null
+				&& selectedCell.Neighbourghs[CurrentOrientation] != null)
 		{
 			SwapCell(selectedCell, SelectedTile.Cells[0]);
-			SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
+			SwapCell(selectedCell.Neighbourghs[CurrentOrientation],
+					SelectedTile.Cells[1]);
 
 			Context.Map.CalcNeighborough(SelectedTile.Cells[0]);
 			Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
@@ -280,7 +303,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			SelectedTile.State = TileState.Turn;
 			return true;
 		}
-		
+
 		return false;
 	}
 }

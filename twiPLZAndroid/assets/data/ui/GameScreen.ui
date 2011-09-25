@@ -1,6 +1,6 @@
 debug
 	* height:100%
-	|width:80 |expand:x|width:100
+	|width:120 |expand:x|width:100
 	
 	{	
 	debug

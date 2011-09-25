@@ -27,4 +27,12 @@ public class Common
 
 		return (z1 > 0 && z2 > 0 && z3 > 0) || (z1 < 0 && z2 < 0 && z3 < 0);
 	}
+	
+	public static int mod (int a, int b) {
+        int res = a % b;
+        if (res<0 && b>0) {
+            res += b;
+        }
+        return res;
+    }
 }

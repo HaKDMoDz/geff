@@ -233,7 +233,7 @@ public class ControllerLogic extends
 		// ---> Position du centre de l'écran
 		Vector2 vecMidScreen = new Vector2(Gdx.app.getGraphics().getWidth() / 2, Gdx.app.getGraphics().getHeight() / 2);
 
-		// --- Translation de la caméra avec dernier pointeur
+		// --- Translation de la caméra avec le dernier pointeur
 		Pointer translateMapPointer = null;
 
 		if (firstLastPointer != null && pointer == firstLastPointer.Index && firstLastPointer.Usage == PointerUsage.None)
@@ -306,7 +306,6 @@ public class ControllerLogic extends
 			vec = vec.nor();
 			
 			float angle = (Common.GetAngle(new Vector2(1,0), vec)+(float)Math.PI)/(float)(Math.PI*2) * 6; 
-			/// (float)(Math.PI*2) * 6;
 			
 			GamePlay().TurnTile((int)angle-1);
 			
@@ -317,7 +316,7 @@ public class ControllerLogic extends
 		
 		
 		// --- Zoom de la caméra avec les deux derniers pointeurs
-		if (countPointerOnScreen >= 2 && (pointer == firstLastPointer.Index || pointer == secondLastPointer.Index) && (Context.pointers[firstLastPointer.Index].Current != null && Context.pointers[secondLastPointer.Index].Current != null) && GamePlay().SelectedTile == null)
+		if (countPointerOnScreen >= 2 && (pointer == firstLastPointer.Index || pointer == secondLastPointer.Index) && (Context.pointers[firstLastPointer.Index].Current != null && Context.pointers[secondLastPointer.Index].Current != null))
 		{
 			float distStart = firstLastPointer.Start.dst(secondLastPointer.Start);
 			float distCur = firstLastPointer.Current.dst(secondLastPointer.Current);
@@ -368,6 +367,7 @@ public class ControllerLogic extends
 			gameEngine.Render.Camera.update();
 
 			// gameEngine.Render.AddDebugRender("Angle", angle);
+			gameEngine.Render.AddDebugRender("Zoom", gameEngine.Render.Camera.zoom);
 		}
 		// ---
 
@@ -409,7 +409,7 @@ public class ControllerLogic extends
 
 	private void Zoom(float value)
 	{
-		if (value < 10 && value >= 2)
+		if (value < 8  && value >= 0.5f)
 			gameEngine.Render.Camera.zoom = value;
 	}
 }
