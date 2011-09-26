@@ -9,6 +9,7 @@ import plz.engine.GameEngineBase;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -44,14 +45,15 @@ public abstract class RenderLogicBase
 
 	public void Render(float deltaTime)
 	{
-		GL10 gl = Gdx.app.getGraphics().getGL10();
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		gl.glClearColor(0, 0, 0, 0);
+		GL20 gl = Gdx.app.getGraphics().getGL20();
 		gl.glViewport(0, 0, Gdx.app.getGraphics().getWidth(), Gdx.app
 				.getGraphics().getHeight());
 
+		gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		gl.glClearColor(0, 0, 0, 0);
+
 		setProjectionAndCamera();
-		setLighting(gl);
+		//setLighting(gl);
 
 		ProjectGame();
 	}
@@ -98,7 +100,7 @@ public abstract class RenderLogicBase
 	private void setProjectionAndCamera()
 	{
 		Camera.update();
-		Camera.apply(Gdx.gl10);
+		//Camera.apply(Gdx.gl10);
 	}
 
 	private void setLighting(GL10 gl)
