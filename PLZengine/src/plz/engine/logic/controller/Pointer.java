@@ -35,7 +35,7 @@ public class Pointer
 	public void Init(int x, int y)
 	{
 		this.Start = new Vector2(x, y);
-		this.Current = null;
+		this.Current = new Vector2(x, y);
 		this.PreviousCreationDate = this.CreationDate;
 		this.PreviousUsage = Usage;
 		if(Handled = false)

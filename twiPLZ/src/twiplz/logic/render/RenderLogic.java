@@ -13,6 +13,8 @@ import twiplz.model.CellPartType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
 public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
@@ -23,7 +25,8 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 	Texture[] texArrowsIn = new Texture[6];
 	Texture[] texArrowsOut = new Texture[6];
 	Color[] colors;
-
+	ShaderProgram shader;
+	
 	public Vector2[] PointToDraw = new Vector2[5];
 
 	private boolean showCursor = false;
@@ -52,6 +55,8 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		texCellBackground = new Texture(Gdx.files.internal("data/CellBackground.png"));
 		texCircle = new Texture(Gdx.files.internal("data/Circle.png"));
 
+//		shader =  new ShaderProgram(Gdx.files.internal("data/shaders/batch.vert").readString(), Gdx.files.internal("data/shaders/batch.frag").readString());
+		
 		for (int i = 1; i <= 6; i++)
 		{
 			texArrowsIn[i - 1] = new Texture(Gdx.files.internal("data/ArrowIn" + i + ".png"));
@@ -124,8 +129,12 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		gameEngine.CurrentScreen.render(deltaTime);
 
 		// --- Bouton 'Nouvelle tuile'
-		spriteBatch.begin();
+		//spriteBatch.setShader(shader);
 
+	
+		spriteBatch.begin();
+//shader.begin();
+		
 		DrawCell(GamePlay().Tile.Cells[0], true, false);
 		DrawCell(GamePlay().Tile.Cells[1], true, false);
 
@@ -134,7 +143,6 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 			for (Pointer pointer : Context.pointers)
 			{
-
 				if (pointer.Current != null)
 				{
 					if (pointer.Usage == PointerUsage.SelectTile)
@@ -148,10 +156,13 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 				}
 			}
 		}
+		
+		//shader.end();
 
 		spriteBatch.end();
 		// ---
-
+		
+		//spriteBatch.setShader(null);
 	}
 
 	private void DrawCell(Cell cell, boolean isUI, boolean isSelectedCell)

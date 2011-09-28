@@ -120,9 +120,12 @@ public class ControllerLogic extends
 		prevCameraZoom = gameEngine.Render.Camera.zoom;
 		prevCameraPos = new Vector2(gameEngine.Render.Camera.position.x, gameEngine.Render.Camera.position.y);
 		// ---
-
+	
+		
 		// ---> Met le pointeur de départ sur la valeur
 		Context.pointers[pointer].Init(x, y);
+
+		ProcessPointer();
 
 		// --- En mode Touchscreen, si la tuile est en mode sleep, sélectionner
 		// la tuile si possible
@@ -140,18 +143,15 @@ public class ControllerLogic extends
 		}
 		// ---
 		
-//		if(Context.pointers[pointer].PreviousCreationDate== null)
-//			gameEngine.Render.RemoveDebugRender("PreviouCreationDate");
-//		else
-//		{
-//			gameEngine.Render.AddDebugRender("PreviouCreationDate", Context.pointers[pointer].PreviousCreationDate);
-//			gameEngine.Render.AddDebugRender("DiffTime", Context.pointers[pointer].CreationDate.getTime() - Context.pointers[pointer].PreviousCreationDate.getTime());
-//		}
-//		
-//		gameEngine.Render.AddDebugRender("CurrentCreationDate", Context.pointers[pointer].CreationDate);
-
-		//gameEngine.Render.AddDebugRender("Zoom", prevCameraZoom);
-
+		
+		//--- Zoom
+		if (countPointerOnScreen >= 2 && (pointer == firstLastPointer.Index || pointer == secondLastPointer.Index))
+		{
+			firstLastPointer.Usage = PointerUsage.Zoom;
+			secondLastPointer.Usage = PointerUsage.Zoom;
+		}
+		//---
+		
 		return true;
 	}
 
@@ -164,9 +164,10 @@ public class ControllerLogic extends
 		// --- Stock la position précédente de la caméra
 		prevCameraPos = new Vector2(gameEngine.Render.Camera.position.x, gameEngine.Render.Camera.position.y);
 
+		ProcessPointer();
+		
 		// ---> Met le pointeur de départ sur null
 		Context.pointers[pointer].Start = null;
-
 		
 		if (Context.selectionMode == SelectionMode.Desktop && GamePlay().SelectedTile != null && Context.pointers[pointer].Usage == PointerUsage.SelectTile)
 		{
@@ -194,6 +195,22 @@ public class ControllerLogic extends
 			GamePlay().SelectedTile.State = TileState.Sleep;
 		}
 		
+		//--- Désactive le zoom
+		if(countPointerOnScreen >= 2)
+		{
+			if(pointer == firstLastPointer.Index && firstLastPointer.Usage == PointerUsage.Zoom)
+			{
+				secondLastPointer.Start = secondLastPointer.Current;
+				secondLastPointer.Usage = PointerUsage.None;
+			}
+			else if(pointer == secondLastPointer.Index && secondLastPointer.Usage == PointerUsage.Zoom)
+			{
+				firstLastPointer.Start = firstLastPointer.Current;
+				firstLastPointer.Usage = PointerUsage.None;
+			}
+		}
+		//---
+		
 		Context.pointers[pointer].Usage = PointerUsage.None;
 		
 		gameEngine.Render.RemoveDebugRender("Context.pointerstart" + pointer);
@@ -204,20 +221,12 @@ public class ControllerLogic extends
 		return true;
 	}
 
-	@Override
-	public boolean touchDragged(int x, int y, int pointer)
+	private void ProcessPointer()
 	{
-		if (pointer > Context.pointers.length || pointer < 0)
-			return false;
+		countPointerOnScreen = 0;
 
-		int countPointerOnScreen = 0;
-
-		Pointer firstLastPointer = null;
-		Pointer secondLastPointer = null;
-
-		// --- Mise à jour du pointeur actuel
-		Context.pointers[pointer].Current = new Vector2(x, y);
-		// ---
+		firstLastPointer = null;
+		secondLastPointer = null;
 
 		for (int i = 0; i < Context.pointers.length; i++)
 		{
@@ -229,6 +238,23 @@ public class ControllerLogic extends
 				firstLastPointer = Context.pointers[i];
 			}
 		}
+	}
+	
+	Pointer firstLastPointer = null;
+	Pointer secondLastPointer = null;
+	int countPointerOnScreen;
+	
+	@Override
+	public boolean touchDragged(int x, int y, int pointer)
+	{
+		if (pointer > Context.pointers.length || pointer < 0)
+			return false;
+
+		// --- Mise à jour du pointeur actuel
+		Context.pointers[pointer].Current = new Vector2(x, y);
+		// ---
+	
+		 ProcessPointer();
 
 		// ---> Position du centre de l'écran
 		Vector2 vecMidScreen = new Vector2(Gdx.app.getGraphics().getWidth() / 2, Gdx.app.getGraphics().getHeight() / 2);
@@ -316,7 +342,8 @@ public class ControllerLogic extends
 		
 		
 		// --- Zoom de la caméra avec les deux derniers pointeurs
-		if (countPointerOnScreen >= 2 && (pointer == firstLastPointer.Index || pointer == secondLastPointer.Index) && (Context.pointers[firstLastPointer.Index].Current != null && Context.pointers[secondLastPointer.Index].Current != null))
+		if ((firstLastPointer != null && pointer == firstLastPointer.Index && firstLastPointer.Usage == PointerUsage.Zoom) ||
+			(secondLastPointer != null && pointer == secondLastPointer.Index && secondLastPointer.Usage == PointerUsage.Zoom))	
 		{
 			float distStart = firstLastPointer.Start.dst(secondLastPointer.Start);
 			float distCur = firstLastPointer.Current.dst(secondLastPointer.Current);

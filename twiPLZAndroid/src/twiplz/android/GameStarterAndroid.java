@@ -26,7 +26,8 @@ public class GameStarterAndroid extends AndroidApplication {
 		config.useAccelerometer = false;
 		config.useWakelock = false;
 		config.resolutionStrategy = new FillResolutionStrategy();
-
+		config.useGL20 = false;
+		
 		ApplicationListener app = new GameEngine();
 
 		initialize(app, config);

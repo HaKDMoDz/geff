@@ -45,11 +45,15 @@ public abstract class RenderLogicBase
 
 	public void Render(float deltaTime)
 	{
-		GL20 gl = Gdx.app.getGraphics().getGL20();
+		GL10 gl = Gdx.app.getGraphics().getGL10();
+		//GL20 gl = Gdx.app.getGraphics().getGL20();
+		
 		gl.glViewport(0, 0, Gdx.app.getGraphics().getWidth(), Gdx.app
 				.getGraphics().getHeight());
 
-		gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		//gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+		
 		gl.glClearColor(0, 0, 0, 0);
 
 		setProjectionAndCamera();
