@@ -1,5 +1,7 @@
 package twiplz.logic.gameplay;
 
+import java.util.Date;
+
 import plz.engine.Common;
 import plz.engine.logic.ui.components.SensitiveZone;
 
@@ -18,6 +20,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	public Tile SelectedTile;
 	public int CurrentOrientation = 0;
 	public Vector2[][] CellDisposition;
+	private Date FirstTileReleased;
 
 	public GamePlayLogic(GameEngine gameEngine)
 	{
@@ -46,6 +49,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	public void NewMap()
 	{
 		Context.Map = new Map(8, 8);
+		
+		Context.Map.Cells.get(0).Highlighted = true;
 	}
 
 	public void SelectTile()
@@ -73,10 +78,10 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	public void TurnTile(int orientation)
 	{
-//		int t = orientation;
-//		orientation = orientation % 6;
-		
-		orientation = Common.mod(orientation,6);
+		// int t = orientation;
+		// orientation = orientation % 6;
+
+		orientation = Common.mod(orientation, 6);
 
 		int offset = orientation - CurrentOrientation;
 
@@ -94,7 +99,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				TurnTileCellPart(SelectedTile, offset);
 
 			UpdateTileOrientation();
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -137,16 +143,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		int h = (int) (imgNewTile.height / 4f);// * (1 + (2 / Math.sqrt(3f)))));
 		int width = (int) ((2 * h) / Math.sqrt(3f));
 
-		Tile.Cells[0].Location = new Vector2(imgNewTile.AbsoluteLocation().x
-				+ imgNewTile.width / 2 - width
-				+ CellDisposition[0][CurrentOrientation].x * width * 2,
-				imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h
-						+ CellDisposition[0][CurrentOrientation].y * h * 2);
-		Tile.Cells[1].Location = new Vector2(imgNewTile.AbsoluteLocation().x
-				+ imgNewTile.width / 2 - width
-				+ CellDisposition[1][CurrentOrientation].x * width * 2,
-				imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h
-						+ CellDisposition[1][CurrentOrientation].y * h * 2);
+		Tile.Cells[0].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[0][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[0][CurrentOrientation].y * h * 2);
+		Tile.Cells[1].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[1][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[1][CurrentOrientation].y * h * 2);
 
 		if (SelectedTile != null)
 		{
@@ -160,8 +158,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		Cell selectedCell = GetSelectedCell();
 
-		if (selectedCell != null
-				&& selectedCell.Neighbourghs[CurrentOrientation] != null)
+		if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
 		{
 			SelectedTile.Cells[0].Location = selectedCell.Location;
 			SelectedTile.Cells[1].Location = selectedCell.Neighbourghs[CurrentOrientation].Location;
@@ -181,8 +178,13 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				cell.Selected = true;
 				selectedCell = cell;
 			}
+			
+			cell.Highlighted=false;
 		}
 
+//		if(selectedCell !=null && selectedCell.Neighbourghs[0] != null)
+//			selectedCell.Neighbourghs[0].Highlighted=true;
+		
 		return selectedCell;
 	}
 
@@ -249,12 +251,12 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		Cell selectedCell = GetSelectedCell();
 
-		if (selectedCell != null
-				&& selectedCell.Neighbourghs[CurrentOrientation] != null)
+		if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
 		{
 			SwapCell(selectedCell, SelectedTile.Cells[0]);
-			SwapCell(selectedCell.Neighbourghs[CurrentOrientation],
-					SelectedTile.Cells[1]);
+			SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
+
+			FirstTileReleased = new Date();
 
 			Context.Map.CalcNeighborough(SelectedTile.Cells[0]);
 			Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
@@ -305,5 +307,87 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		}
 
 		return false;
+	}
+
+	@Override
+	public void Update(float deltaTime)
+	{
+		CalcMapColors();
+	}
+
+	public void CalcMapColors()
+	{
+		Date currentTime = new Date();
+
+		if (FirstTileReleased == null || currentTime.getTime() - FirstTileReleased.getTime() <= 500)
+			return;
+
+		FirstTileReleased = currentTime;
+
+		// --- Clone la map
+		Map tempMap = new Map(Context.Map.Width, Context.Map.Height);
+
+		for (Cell cell : Context.Map.Cells)
+		{
+			Cell cellDest = (Cell) cell.clone();
+
+			tempMap.Cells.add(cellDest);
+			cellDest.Highlighted = false;
+
+		}
+		// ---
+
+		// --- Passe 0 : Neutraliser les parttype si il sont en inversion avec
+		// leur voisin
+		for (Cell cell : Context.Map.Cells)
+		{
+			
+			for (int i = 0; i < 6; i++)
+			{
+//				if(i==1)
+//					cell.Parts[i] = CellPartType.Out;
+//				else
+//					cell.Parts[i] = CellPartType.Simple;
+
+				try
+				{
+					Cell cellN = cell.Neighbourghs[i];
+					
+					int j = Common.mod(i + 3, 6);
+					if (cellN != null && cell.Parts[i].ordinal() + cellN.Parts[j].ordinal() == 3)
+					{
+//						cell.Parts[i] = CellPartType.Simple;
+//						cellN.Parts[j] = CellPartType.Simple;
+						
+						cell.Highlighted = true;
+						cellN.Highlighted = true;
+					}
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace();
+				}
+			}
+		}
+		// ---
+
+		// --- Passe 1 : Marque les cellules dont au moins un voisin est de la
+		// même couleur
+		for (Cell cell : Context.Map.Cells)
+		{
+
+			for (int i = 0; i < 6; i++)
+			{
+				Cell cellN = cell.Neighbourghs[i];
+
+				if (cellN != null && cell.ColorType == cellN.ColorType)
+				{
+					//cell.Highlighted = true;
+					//cellN.Highlighted = true;
+				}
+			}
+		}
+		// ---
+
 	}
 }

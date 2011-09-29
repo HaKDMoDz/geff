@@ -13,6 +13,7 @@ public class Cell implements Cloneable
 	public byte ColorType;
 	public boolean Selected;
 	public boolean IsEmpty = false;
+	public boolean Highlighted;
 	
 	public Cell()
 	{

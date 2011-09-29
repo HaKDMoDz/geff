@@ -12,7 +12,7 @@ public class GameStarterDesktop
 		
 		ApplicationListener app = new GameEngine();
 		JoglApplication window;
-		
+
 		if(miniWindow)
 		{
 			window = new JoglApplication(app, "twiPLZ", 400, 400, false);

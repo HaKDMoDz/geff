@@ -68,7 +68,7 @@ public class Map
 	public void CalcNeighborough(Cell cell)
 	{
 		cell.Neighbourghs = new Cell[6];
-
+	
 		if (cell.Coord.y % 2 == 1)
 		{
 			cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);

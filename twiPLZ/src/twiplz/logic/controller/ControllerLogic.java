@@ -273,11 +273,11 @@ public class ControllerLogic extends
 
 		if (translateMapPointer != null)
 		{
-			Vector2 vecTranslation = new Vector2(translateMapPointer.Start.x - x, translateMapPointer.Start.y - y);
+			Vector2 vecTranslation = new Vector2(x-translateMapPointer.Start.x, y-translateMapPointer.Start.y);
 
 			vecTranslation.rotate(prevCameraAngle);
 
-			gameEngine.Render.Camera.position.set(prevCameraPos.x + vecTranslation.x * gameEngine.Render.Camera.zoom, prevCameraPos.y - vecTranslation.y * gameEngine.Render.Camera.zoom, 0);
+			gameEngine.Render.Camera.position.set(prevCameraPos.x - vecTranslation.x * gameEngine.Render.Camera.zoom, prevCameraPos.y + vecTranslation.y * gameEngine.Render.Camera.zoom, 0);
 
 			((RenderLogic) gameEngine.Render).PointToDraw[0] = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + translateMapPointer.Current.x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + translateMapPointer.Current.y) * gameEngine.Render.Camera.zoom);
 		}
@@ -363,7 +363,7 @@ public class ControllerLogic extends
 			Vector2 vecMidPointCurrent = new Vector2(secondLastPointer.Current.x + vecSecondToFirstCurrent.x / 2f, secondLastPointer.Current.y + vecSecondToFirstCurrent.y / 2f);
 
 			// ---> Calcul du vecteur de translation
-			Vector2 vecTranslation = new Vector2((vecMidScreen.x - vecMidPointStart.x) + vecMidPointCurrent.x - vecMidPointStart.x, -(vecMidScreen.y - vecMidPointStart.y));// +
+			Vector2 vecTranslation = new Vector2((vecMidScreen.x - vecMidPointStart.x) + vecMidPointCurrent.x - vecMidPointStart.x, (vecMidScreen.y - vecMidPointStart.y) + vecMidPointCurrent.y - vecMidPointStart.y);// +
 																																											// vecMidPointCurrent.y
 			((RenderLogic) gameEngine.Render).PointToDraw[0] = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + firstLastPointer.Current.x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + firstLastPointer.Current.y) * gameEngine.Render.Camera.zoom);
 			((RenderLogic) gameEngine.Render).PointToDraw[1] = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + secondLastPointer.Current.x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + secondLastPointer.Current.y) * gameEngine.Render.Camera.zoom);

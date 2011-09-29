@@ -93,6 +93,8 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		spriteBatch.begin();
 
+
+		
 		if (showColor)
 		{
 			// --- Cellules de la map
@@ -103,6 +105,11 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			}
 			// ---
 		}
+
+//		for (int i = 0; i < 3; i++)
+//		{
+//			spriteBatch.draw(texCellBackground, i*256, 256, 128, 128);
+//		}
 
 		// --- Tuile sélectionnée
 		if (GamePlay().SelectedTile != null)
@@ -191,6 +198,8 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			else
 				spriteBatch.setColor(Color.GREEN);
 		}
+		else if(cell.Highlighted)
+			spriteBatch.setColor(Color.BLUE);
 		else
 			spriteBatch.setColor(Color.WHITE);
 

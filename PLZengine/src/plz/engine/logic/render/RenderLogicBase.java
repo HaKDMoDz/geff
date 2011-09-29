@@ -34,13 +34,10 @@ public abstract class RenderLogicBase
 
 		spriteBatch = new SpriteBatch();
 
-		Camera = new OrthographicCamera(Gdx.app.getGraphics().getWidth(),
-				Gdx.app.getGraphics().getHeight());
-
-		Camera.position.set(256, 256, 0);
-		//Camera.position.set(0, 0, 0);
-		Camera.direction.set(0, 0, -1);
-		Camera.zoom = 3;
+		Camera = new OrthographicCamera();
+		Camera.setToOrtho(false);
+		Camera.position.set(1024, 1024, 0);
+		Camera.zoom = 5;
 	}
 
 	public void Render(float deltaTime)
@@ -69,7 +66,6 @@ public abstract class RenderLogicBase
 
 	public void RenderDebug(float deltaTime)
 	{
-		
 		if (mapDebug.size() > 0)
 		{
 			ProjectUI();
@@ -104,7 +100,7 @@ public abstract class RenderLogicBase
 	private void setProjectionAndCamera()
 	{
 		Camera.update();
-		//Camera.apply(Gdx.gl10);
+		Camera.apply(Gdx.gl10);
 	}
 
 	private void setLighting(GL10 gl)
