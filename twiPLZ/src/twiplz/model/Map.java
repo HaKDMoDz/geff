@@ -69,23 +69,42 @@ public class Map
 	{
 		cell.Neighbourghs = new Cell[6];
 	
+//		if (cell.Coord.y % 2 == 1)
+//		{
+//			cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
+//			cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
+//			cell.Neighbourghs[2] = GetNeighborough(cell, 1, 1);
+//			cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
+//			cell.Neighbourghs[4] = GetNeighborough(cell, 0, 1);
+//			cell.Neighbourghs[5] = GetNeighborough(cell, 0, -1);
+//		}
+//		else
+//		{
+//			cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
+//			cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
+//			cell.Neighbourghs[2] = GetNeighborough(cell, 0, 1);
+//			cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
+//			cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
+//			cell.Neighbourghs[5] = GetNeighborough(cell, -1, -1);
+//		}
+		
 		if (cell.Coord.y % 2 == 1)
 		{
-			cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
-			cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
-			cell.Neighbourghs[2] = GetNeighborough(cell, 1, 1);
-			cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
-			cell.Neighbourghs[4] = GetNeighborough(cell, 0, 1);
-			cell.Neighbourghs[5] = GetNeighborough(cell, 0, -1);
+			cell.Neighbourghs[3] = GetNeighborough(cell, 0, -2);
+			cell.Neighbourghs[2] = GetNeighborough(cell, 1, -1);
+			cell.Neighbourghs[1] = GetNeighborough(cell, 1, 1);
+			cell.Neighbourghs[0] = GetNeighborough(cell, 0, 2);
+			cell.Neighbourghs[5] = GetNeighborough(cell, 0, 1);
+			cell.Neighbourghs[4] = GetNeighborough(cell, 0, -1);
 		}
 		else
 		{
-			cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
-			cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
-			cell.Neighbourghs[2] = GetNeighborough(cell, 0, 1);
-			cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
-			cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
-			cell.Neighbourghs[5] = GetNeighborough(cell, -1, -1);
+			cell.Neighbourghs[3] = GetNeighborough(cell, 0, -2);
+			cell.Neighbourghs[2] = GetNeighborough(cell, 0, -1);
+			cell.Neighbourghs[1] = GetNeighborough(cell, 0, 1);
+			cell.Neighbourghs[0] = GetNeighborough(cell, 0, 2);
+			cell.Neighbourghs[5] = GetNeighborough(cell, -1, 1);
+			cell.Neighbourghs[4] = GetNeighborough(cell, -1, -1);
 		}
 	}
 

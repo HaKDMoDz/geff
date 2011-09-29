@@ -106,8 +106,8 @@ public class GameScreen extends ScreenBase
 
 			if (Context.pointers[pointer].Current != null)
 			{
-				float offsetY = Context.pointers[pointer].Start.y
-						- Context.pointers[pointer].Current.y;
+				float offsetY = -Context.pointers[pointer].Start.y
+						+ Context.pointers[pointer].Current.y;
 
 				// GamePlay().TurnTile((int)(y/button.height*6));
 

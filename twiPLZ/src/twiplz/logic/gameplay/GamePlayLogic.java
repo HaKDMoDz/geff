@@ -31,26 +31,26 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		CellDisposition = new Vector2[2][6];
 		float fh = (float) Math.sin(Math.PI / 3);
 
-		CellDisposition[0][0] = new Vector2(0, 0.5f * fh);
-		CellDisposition[0][1] = new Vector2(-3f / 8f, 1f / 4f * fh);
-		CellDisposition[0][2] = new Vector2(-3f / 8f, -1f / 4f * fh);
-		CellDisposition[0][3] = new Vector2(0, -0.5f * fh);
-		CellDisposition[0][4] = new Vector2(3f / 8f, -1f / 4f * fh);
-		CellDisposition[0][5] = new Vector2(3f / 8f, 1f / 4f * fh);
+		CellDisposition[0][3] = new Vector2(0, 0.5f * fh);
+		CellDisposition[0][2] = new Vector2(-3f / 8f, 1f / 4f * fh);
+		CellDisposition[0][1] = new Vector2(-3f / 8f, -1f / 4f * fh);
+		CellDisposition[0][0] = new Vector2(0, -0.5f * fh);
+		CellDisposition[0][5] = new Vector2(3f / 8f, -1f / 4f * fh);
+		CellDisposition[0][4] = new Vector2(3f / 8f, 1f / 4f * fh);
 
-		CellDisposition[1][0] = new Vector2(0, -0.5f * fh);
-		CellDisposition[1][1] = new Vector2(3f / 8f, -1f / 4f * fh);
-		CellDisposition[1][2] = new Vector2(3f / 8f, 1f / 4f * fh);
-		CellDisposition[1][3] = new Vector2(0, 0.5f * fh);
-		CellDisposition[1][4] = new Vector2(-3f / 8f, 1 / 4f * fh);
-		CellDisposition[1][5] = new Vector2(-3f / 8f, -1f / 4f * fh);
+		CellDisposition[1][3] = new Vector2(0, -0.5f * fh);
+		CellDisposition[1][2] = new Vector2(3f / 8f, -1f / 4f * fh);
+		CellDisposition[1][1] = new Vector2(3f / 8f, 1f / 4f * fh);
+		CellDisposition[1][0] = new Vector2(0, 0.5f * fh);
+		CellDisposition[1][5] = new Vector2(-3f / 8f, 1 / 4f * fh);
+		CellDisposition[1][4] = new Vector2(-3f / 8f, -1f / 4f * fh);
 	}
 
 	public void NewMap()
 	{
 		Context.Map = new Map(8, 8);
 		
-		Context.Map.Cells.get(0).Highlighted = true;
+		//Context.Map.Cells.get(0).Highlighted = true;
 	}
 
 	public void SelectTile()
@@ -83,7 +83,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		orientation = Common.mod(orientation, 6);
 
-		int offset = orientation - CurrentOrientation;
+		int offset =  CurrentOrientation-orientation;
 
 		try
 		{
@@ -178,8 +178,6 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				cell.Selected = true;
 				selectedCell = cell;
 			}
-			
-			cell.Highlighted=false;
 		}
 
 //		if(selectedCell !=null && selectedCell.Neighbourghs[0] != null)
@@ -356,11 +354,11 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 					int j = Common.mod(i + 3, 6);
 					if (cellN != null && cell.Parts[i].ordinal() + cellN.Parts[j].ordinal() == 3)
 					{
-//						cell.Parts[i] = CellPartType.Simple;
-//						cellN.Parts[j] = CellPartType.Simple;
+						cell.Parts[i] = CellPartType.Simple;
+						cellN.Parts[j] = CellPartType.Simple;
 						
-						cell.Highlighted = true;
-						cellN.Highlighted = true;
+//						cell.Highlighted = true;
+//						cellN.Highlighted = true;
 					}
 				}
 				catch (Exception ex)
@@ -382,8 +380,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 				if (cellN != null && cell.ColorType == cellN.ColorType)
 				{
-					//cell.Highlighted = true;
-					//cellN.Highlighted = true;
+					cell.Highlighted = true;
+					cellN.Highlighted = true;
 				}
 			}
 		}

@@ -331,7 +331,7 @@ public class ControllerLogic extends
 			vec = vec.sub(GamePlay().SelectedTile.ActiveCell.Location);
 			vec = vec.nor();
 			
-			float angle = (Common.GetAngle(new Vector2(1,0), vec)+(float)Math.PI)/(float)(Math.PI*2) * 6; 
+			float angle = (-Common.GetAngle(new Vector2(1,0), vec)+(float)Math.PI)/(float)(Math.PI*2) * 6; 
 			
 			GamePlay().TurnTile((int)angle-1);
 			
