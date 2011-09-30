@@ -2,6 +2,8 @@ package twiplz.model;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+
 public class Map
 {
 	public ArrayList<Cell> Cells;
@@ -119,23 +121,27 @@ public class Map
 
 			while (!cell.IsEmpty && !colorFound)
 			{
-				byte colorType = (byte) (1 + Math.random() * 7);
+				cell.NewColorType();
 
 				for (int i = 0; i < 6; i++)
 				{
-					if (cell.Neighbourghs[i] != null && !cell.Neighbourghs[i].IsEmpty && cell.Neighbourghs[i].ColorType == colorType)
+					if (cell.Neighbourghs[i] != null && !cell.Neighbourghs[i].IsEmpty && cell.Neighbourghs[i].ColorType == cell.ColorType)
 					{
-						colorType = 0;
+						cell.ColorType = 0;
 						break;
 					}
 				}
 
-				if (colorType != 0)
+				if (cell.ColorType != 0)
 				{
 					colorFound = true;
-					cell.ColorType = colorType;
 				}
 			}
+			
+//			if(!colorFound)
+//			{
+//				cell.IsEmpty = true;
+//			}
 			// ---
 
 			cell.CalcArrows();

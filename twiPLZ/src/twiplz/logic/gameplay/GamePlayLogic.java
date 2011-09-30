@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import twiplz.Context;
 import twiplz.GameEngine;
 import twiplz.logic.controller.SelectionMode;
+import twiplz.logic.render.RenderLogic;
 import twiplz.logic.ui.screens.GameScreen;
 import twiplz.model.*;
 
@@ -49,8 +50,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	public void NewMap()
 	{
 		Context.Map = new Map(8, 8);
-		
-		//Context.Map.Cells.get(0).Highlighted = true;
+
+		// Context.Map.Cells.get(0).Highlighted = true;
 	}
 
 	public void SelectTile()
@@ -83,7 +84,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		orientation = Common.mod(orientation, 6);
 
-		int offset =  CurrentOrientation-orientation;
+		int offset = CurrentOrientation - orientation;
 
 		try
 		{
@@ -180,9 +181,9 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			}
 		}
 
-//		if(selectedCell !=null && selectedCell.Neighbourghs[0] != null)
-//			selectedCell.Neighbourghs[0].Highlighted=true;
-		
+		// if(selectedCell !=null && selectedCell.Neighbourghs[0] != null)
+		// selectedCell.Neighbourghs[0].Highlighted=true;
+
 		return selectedCell;
 	}
 
@@ -254,7 +255,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			SwapCell(selectedCell, SelectedTile.Cells[0]);
 			SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
 
-			FirstTileReleased = new Date();
+			if (FirstTileReleased == null)
+				FirstTileReleased = new Date();
 
 			Context.Map.CalcNeighborough(SelectedTile.Cells[0]);
 			Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
@@ -317,12 +319,12 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		Date currentTime = new Date();
 
-		if (FirstTileReleased == null || currentTime.getTime() - FirstTileReleased.getTime() <= 500)
+		if (FirstTileReleased == null || currentTime.getTime() - FirstTileReleased.getTime() < 1000)
 			return;
 
 		FirstTileReleased = currentTime;
 
-		// --- Clone la map
+		// --- 1 : Clone la map
 		Map tempMap = new Map(Context.Map.Width, Context.Map.Height);
 
 		for (Cell cell : Context.Map.Cells)
@@ -330,59 +332,133 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			Cell cellDest = (Cell) cell.clone();
 
 			tempMap.Cells.add(cellDest);
-			cellDest.Highlighted = false;
-
+			cellDest.State = CellState.Normal;
 		}
+
+		tempMap.CalcNeighborough();
 		// ---
 
-		// --- Passe 0 : Neutraliser les parttype si il sont en inversion avec
+		// --- 2 : Neutraliser les parttype si il sont en inversion avec
 		// leur voisin
-		for (Cell cell : Context.Map.Cells)
+		for (Cell cell : tempMap.Cells)
 		{
-			
-			for (int i = 0; i < 6; i++)
+			if (!cell.IsEmpty)
 			{
-//				if(i==1)
-//					cell.Parts[i] = CellPartType.Out;
-//				else
-//					cell.Parts[i] = CellPartType.Simple;
-
-				try
+				for (int i = 0; i < 6; i++)
 				{
 					Cell cellN = cell.Neighbourghs[i];
-					
-					int j = Common.mod(i + 3, 6);
-					if (cellN != null && cell.Parts[i].ordinal() + cellN.Parts[j].ordinal() == 3)
+
+					if (cellN != null && !cellN.IsEmpty)
 					{
-						cell.Parts[i] = CellPartType.Simple;
-						cellN.Parts[j] = CellPartType.Simple;
-						
-//						cell.Highlighted = true;
-//						cellN.Highlighted = true;
+						int j = Common.mod(i + 3, 6);
+
+						try
+						{
+							if (cell.Parts[i].ordinal() + cellN.Parts[j].ordinal() == 3)
+							{
+								cell.Parts[i] = CellPartType.Simple;
+								cellN.Parts[j] = CellPartType.Simple;
+							}
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
 					}
-				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace();
 				}
 			}
 		}
 		// ---
 
-		// --- Passe 1 : Marque les cellules dont au moins un voisin est de la
-		// même couleur
+		// --- 3 : Pour toutes les cellules précédement en activées, activer
+		// leurs PartType, changer leur état
 		for (Cell cell : Context.Map.Cells)
 		{
+			int index = Context.Map.Cells.indexOf(cell);
+			Cell cellTmp = tempMap.Cells.get(index);
 
-			for (int i = 0; i < 6; i++)
+			if (cell.State == CellState.Activated)
 			{
-				Cell cellN = cell.Neighbourghs[i];
-
-				if (cellN != null && cell.ColorType == cellN.ColorType)
+				for (int i = 0; i < 6; i++)
 				{
-					cell.Highlighted = true;
-					cellN.Highlighted = true;
+					Cell cellN = cell.Neighbourghs[i];
+
+					if (cellN != null)
+					{
+						index = Context.Map.Cells.indexOf(cellN);
+						
+						try
+						{
+							Cell cellNTmp = tempMap.Cells.get(index);
+
+							if (cell.Parts[i] == CellPartType.In)
+							{
+								cellTmp.ColorType += cellN.ColorType;
+							}
+							else if (cell.Parts[i] == CellPartType.Out)
+							{
+								cellNTmp.ColorType += cell.ColorType;
+							}
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
 				}
+
+				cell.State = CellState.Inactivated;
+			}
+		}
+
+		// ---> Applique la couleur dans la map
+		for (Cell cell : Context.Map.Cells)
+		{
+			int index = Context.Map.Cells.indexOf(cell);
+			Cell cellTmp = tempMap.Cells.get(index);
+
+			if (((RenderLogic) gameEngine.Render).colors.containsKey((int)cellTmp.ColorType))
+			{
+				cell.ColorType = cellTmp.ColorType;
+			}
+			else
+				cell.ColorType = 0;
+		}
+		// ---
+
+		// --- Passe 1 : Marque les cellules dont au moins un voisin est de la
+		// même couleur
+		int countNewActivated = 0;
+		
+		for (Cell cell : Context.Map.Cells)
+		{
+			if (!cell.IsEmpty && cell.State == CellState.Normal)
+			{
+				for (int i = 0; i < 6; i++)
+				{
+					Cell cellN = cell.Neighbourghs[i];
+
+					if (cellN != null && cell.ColorType == cellN.ColorType)
+					{
+						countNewActivated++;
+						
+						cell.State = CellState.Activated;
+
+						if (cellN.State == CellState.Normal)
+							cellN.State = CellState.Activated;
+					}
+				}
+			}
+		}
+		
+		if(countNewActivated==0)
+		{
+			FirstTileReleased = null;
+			
+			for (Cell cell : Context.Map.Cells)
+			{
+				//TODO : remplacer les tuiles Inactivated
+				cell.State = CellState.Normal;
 			}
 		}
 		// ---

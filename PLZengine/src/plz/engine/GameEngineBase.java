@@ -50,9 +50,7 @@ public class GameEngineBase implements ApplicationListener {
 		} catch (Exception ex)
 		{
 			Gdx.app.log("Erreur", ex.getMessage());
-
-int a = 0;
-
+			ex.printStackTrace();
 		}
 	}
 

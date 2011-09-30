@@ -1,5 +1,6 @@
 package plz.engine.logic.render;
 
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
