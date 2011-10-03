@@ -46,6 +46,7 @@ public class GameScreen extends ScreenBase
 		imgNewTile.releaseListener = NewCell_Released;
 
 		imgTurn = AddSensitiveZone("imgTurn", texTurnTile);
+		//imgTurn = AddSensitiveZone("imgTurn");
 		imgTurn.pressListener = TurnNewCell_Pressed;
 		imgTurn.releaseListener = TurnNewCell_Released;
 		imgTurn.dragListener = TrunNewCell_Dragged;

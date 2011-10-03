@@ -13,6 +13,7 @@ import twiplz.logic.ui.screens.GameScreen;
 import twiplz.model.Cell;
 import twiplz.model.CellPartType;
 import twiplz.model.CellState;
+import twiplz.model.GameMode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -83,7 +84,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		{
 			for (Integer key : colors.keySet())
 			{
-				colors.get(key).mul(0.25f);
+				colors.get(key).mul(0.5f);
 			}
 		}
 	}
@@ -194,7 +195,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		else if (cell.State == CellState.Activated)
 			spriteBatch.setColor(Color.BLUE);
 		else if (cell.State == CellState.Inactivated)
-			spriteBatch.setColor(new Color(0.4f, 0.2f, 1f, 1f));
+			spriteBatch.setColor(new Color(0.4f, 0.4f, 1f, 1f));
 		else
 			spriteBatch.setColor(Color.WHITE);
 
@@ -202,10 +203,10 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		if (!cell.IsEmpty)
 		{
-			
+
 			try
 			{
-				spriteBatch.setColor(colors.get((int)cell.ColorType));
+				spriteBatch.setColor(colors.get((int) cell.ColorType));
 			}
 			catch (Exception e)
 			{
@@ -228,22 +229,25 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		else
 			spriteBatch.setColor(Color.WHITE);
 
-		for (int i = 0; i < 6; i++)
+		if (Context.gameMode == GameMode.Arrow)
 		{
-			Texture texturePart = null;
+			for (int i = 0; i < 6; i++)
+			{
+				Texture texturePart = null;
 
-			if (cell.Parts[i] == CellPartType.Out)
-			{
-				texturePart = texArrowsOut[i];
-			}
-			else if (cell.Parts[i] == CellPartType.In)
-			{
-				texturePart = texArrowsIn[i];
-			}
+				if (cell.Parts[i] == CellPartType.Out)
+				{
+					texturePart = texArrowsOut[i];
+				}
+				else if (cell.Parts[i] == CellPartType.In)
+				{
+					texturePart = texArrowsIn[i];
+				}
 
-			if (texturePart != null)
-			{
-				spriteBatch.draw(texturePart, cellLocation.x, cellLocation.y, width, height);
+				if (texturePart != null)
+				{
+					spriteBatch.draw(texturePart, cellLocation.x, cellLocation.y, width, height);
+				}
 			}
 		}
 	}

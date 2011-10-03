@@ -1,5 +1,6 @@
 package twiplz.logic.gameplay;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import plz.engine.Common;
@@ -22,6 +23,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	public int CurrentOrientation = 0;
 	public Vector2[][] CellDisposition;
 	private Date FirstTileReleased;
+	byte[] colorValues = new byte[7];
 
 	public GamePlayLogic(GameEngine gameEngine)
 	{
@@ -45,13 +47,50 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		CellDisposition[1][0] = new Vector2(0, 0.5f * fh);
 		CellDisposition[1][5] = new Vector2(-3f / 8f, 1 / 4f * fh);
 		CellDisposition[1][4] = new Vector2(-3f / 8f, -1f / 4f * fh);
+
+		colorValues[0] = 0;
+		colorValues[1] = 2;
+		colorValues[2] = 6;
+		colorValues[3] = 4;
+		colorValues[4] = 12;
+		colorValues[5] = 8;
+		colorValues[6] = 10;
 	}
 
 	public void NewMap()
 	{
-		Context.Map = new Map(8, 8);
+		Context.Map = new Map(7, 5);
 
-		// Context.Map.Cells.get(0).Highlighted = true;
+		// for (Cell cell : Context.Map.Cells)
+		// {
+		// cell.IsEmpty=true;
+		// cell.ColorType = 0;
+		//
+		// for (int i = 0; i < 6; i++)
+		// {
+		// cell.Parts[i] = CellPartType.Simple;
+		// }
+		// }
+		//
+		// Cell cell = Context.Map.Cells.get(10);
+		//
+		// cell.IsEmpty=false;
+		// cell.Parts[1] = CellPartType.Out;
+		// cell.ColorType = 2;
+		//
+		// cell = cell.Neighbourghs[1];
+		//
+		// cell.IsEmpty=false;
+		//
+		// cell.ColorType = 4;
+		//
+		// cell = cell.Neighbourghs[3];
+		// cell.IsEmpty=false;
+		//
+		// cell.ColorType = 2;
+		//
+		// FirstTileReleased = new Date();
+
 	}
 
 	public void SelectTile()
@@ -81,7 +120,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		// int t = orientation;
 		// orientation = orientation % 6;
-
+		
 		orientation = Common.mod(orientation, 6);
 
 		int offset = CurrentOrientation - orientation;
@@ -95,17 +134,48 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			else if (CurrentOrientation > 5)
 				CurrentOrientation = 0;
 
-			TurnTileCellPart(Tile, offset);
-			if (SelectedTile != null)
-				TurnTileCellPart(SelectedTile, offset);
+			boolean canTurn = true;
 
-			UpdateTileOrientation();
+			if (SelectedTile != null)
+				canTurn = CanTurn(offset);
+
+			if (!canTurn)
+			{
+				if(GetSelectedCell() != null)
+					TurnTileOffset(offset);
+				else
+				{
+					TurnTileCellPart(Tile, offset);
+					UpdateTileOrientation();
+				}
+			}
+			else
+			{
+				TurnTileCellPart(Tile, offset);
+				
+				if (SelectedTile != null)
+					TurnTileCellPart(SelectedTile, offset);
+
+				UpdateTileOrientation();
+			}
 		}
 		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private boolean CanTurn(int offset)
+	{
+		boolean canTurn = false;
+
+		Cell selectedCell = GetSelectedCell();
+
+		if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
+			canTurn = true;
+		
+		return canTurn;
 	}
 
 	private void TurnTileCellPart(Tile tile, int offset)
@@ -155,6 +225,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	public void UpdateTileLocation(Vector2 location)
 	{
+		Vector2 oldLocation = SelectedTile.Location;
 		SelectedTile.Location = new Vector2(location.x, location.y);
 
 		Cell selectedCell = GetSelectedCell();
@@ -163,6 +234,10 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		{
 			SelectedTile.Cells[0].Location = selectedCell.Location;
 			SelectedTile.Cells[1].Location = selectedCell.Neighbourghs[CurrentOrientation].Location;
+		}
+		else
+		{
+			SelectedTile.Location = oldLocation;
 		}
 	}
 
@@ -258,8 +333,11 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			if (FirstTileReleased == null)
 				FirstTileReleased = new Date();
 
-			Context.Map.CalcNeighborough(SelectedTile.Cells[0]);
-			Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
+			Context.Map.CalcNeighborough();// SelectedTile.Cells[0]);
+			// Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
+
+			SelectedTile.Cells[0].State = CellState.Normal;
+			SelectedTile.Cells[1].State = CellState.Normal;
 
 			CreateNewTile();
 			SelectedTile = null;
@@ -319,117 +397,138 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		Date currentTime = new Date();
 
-		if (FirstTileReleased == null || currentTime.getTime() - FirstTileReleased.getTime() < 1000)
+		if (FirstTileReleased == null || currentTime.getTime() - FirstTileReleased.getTime() < 3000)
 			return;
 
 		FirstTileReleased = currentTime;
 
-		// --- 1 : Clone la map
-		Map tempMap = new Map(Context.Map.Width, Context.Map.Height);
-
-		for (Cell cell : Context.Map.Cells)
+		if (Context.gameMode == GameMode.Arrow)
 		{
-			Cell cellDest = (Cell) cell.clone();
+			// --- 1 : Clone la map
+			Map tempMap = new Map(Context.Map.Width, Context.Map.Height);
+			tempMap.Cells.clear();
 
-			tempMap.Cells.add(cellDest);
-			cellDest.State = CellState.Normal;
-		}
-
-		tempMap.CalcNeighborough();
-		// ---
-
-		// --- 2 : Neutraliser les parttype si il sont en inversion avec
-		// leur voisin
-		for (Cell cell : tempMap.Cells)
-		{
-			if (!cell.IsEmpty)
+			for (Cell cell : Context.Map.Cells)
 			{
-				for (int i = 0; i < 6; i++)
+				Cell cellDest = (Cell) cell.clone();
+				cellDest.Map = tempMap;
+				tempMap.Cells.add(cellDest);
+				cellDest.State = CellState.Normal;
+			}
+
+			tempMap.CalcNeighborough();
+			// ---
+
+			// --- 2 : Neutraliser les parttype si il sont en inversion avec
+			// leur voisin
+			for (Cell cell : tempMap.Cells)
+			{
+				if (!cell.IsEmpty)
 				{
-					Cell cellN = cell.Neighbourghs[i];
-
-					if (cellN != null && !cellN.IsEmpty)
+					for (int i = 0; i < 6; i++)
 					{
-						int j = Common.mod(i + 3, 6);
+						Cell cellN = cell.Neighbourghs[i];
 
-						try
+						if (cellN != null && !cellN.IsEmpty)
 						{
-							if (cell.Parts[i].ordinal() + cellN.Parts[j].ordinal() == 3)
+							int j = Common.mod(i + 3, 6);
+
+							try
 							{
-								cell.Parts[i] = CellPartType.Simple;
-								cellN.Parts[j] = CellPartType.Simple;
+								if (cell.Parts[i].ordinal() + cellN.Parts[j].ordinal() == 3)
+								{
+									cell.Parts[i] = CellPartType.Simple;
+									cellN.Parts[j] = CellPartType.Simple;
+								}
 							}
-						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
+							catch (Exception e)
+							{
+								e.printStackTrace();
+							}
 						}
 					}
 				}
 			}
-		}
-		// ---
+			// ---
 
-		// --- 3 : Pour toutes les cellules précédement en activées, activer
-		// leurs PartType, changer leur état
-		for (Cell cell : Context.Map.Cells)
-		{
-			int index = Context.Map.Cells.indexOf(cell);
-			Cell cellTmp = tempMap.Cells.get(index);
-
-			if (cell.State == CellState.Activated)
+			// --- 3 : Pour toutes les cellules précédement activées, activer
+			// leurs PartType, changer leur état
+			for (Cell cell : Context.Map.Cells)
 			{
-				for (int i = 0; i < 6; i++)
+				if (!cell.IsEmpty && cell.State == CellState.Activated)
 				{
-					Cell cellN = cell.Neighbourghs[i];
+					int index = Context.Map.Cells.indexOf(cell);
+					Cell cellTmp = tempMap.Cells.get(index);
 
-					if (cellN != null)
+					for (int i = 0; i < 6; i++)
 					{
-						index = Context.Map.Cells.indexOf(cellN);
-						
-						try
-						{
-							Cell cellNTmp = tempMap.Cells.get(index);
+						Cell cellN = cell.Neighbourghs[i];
 
-							if (cell.Parts[i] == CellPartType.In)
-							{
-								cellTmp.ColorType += cellN.ColorType;
-							}
-							else if (cell.Parts[i] == CellPartType.Out)
-							{
-								cellNTmp.ColorType += cell.ColorType;
-							}
-						}
-						catch (Exception e)
+						if (cellN != null)
 						{
-							e.printStackTrace();
+							index = Context.Map.Cells.indexOf(cellN);
+
+							try
+							{
+								Cell cellNTmp = tempMap.Cells.get(index);
+
+								if (cell.Parts[i] == CellPartType.In)
+								{
+									cellTmp.ColorType += cellN.ColorType;
+								}
+								else if (cell.Parts[i] == CellPartType.Out)
+								{
+									cellNTmp.ColorType += cell.ColorType;
+								}
+							}
+							catch (Exception e)
+							{
+								e.printStackTrace();
+							}
 						}
 					}
+
+					cell.State = CellState.Inactivated;
 				}
-
-				cell.State = CellState.Inactivated;
 			}
-		}
 
-		// ---> Applique la couleur dans la map
-		for (Cell cell : Context.Map.Cells)
-		{
-			int index = Context.Map.Cells.indexOf(cell);
-			Cell cellTmp = tempMap.Cells.get(index);
-
-			if (((RenderLogic) gameEngine.Render).colors.containsKey((int)cellTmp.ColorType))
+			// ---> Applique la couleur dans la map
+			for (Cell cell : Context.Map.Cells)
 			{
-				cell.ColorType = cellTmp.ColorType;
+				int index = Context.Map.Cells.indexOf(cell);
+				Cell cellTmp = tempMap.Cells.get(index);
+
+				if (((RenderLogic) gameEngine.Render).colors.containsKey((int) cellTmp.ColorType))
+				{
+					cell.ColorType = cellTmp.ColorType;
+				}
+				else
+					cell.ColorType = 0;
 			}
-			else
-				cell.ColorType = 0;
+			// ---
 		}
-		// ---
+		else if (Context.gameMode == GameMode.Circular)
+		{
+			for (Cell cell : Context.Map.Cells)
+			{
+				if (!cell.IsEmpty && cell.State == CellState.Activated)
+				{
+					int index = getIndexColor(cell.ColorType);
+					index = (index + 1) % colorValues.length;
+
+					if (index == 0)
+						index = 1;
+
+					cell.ColorType = colorValues[index];
+					cell.State = CellState.Inactivated;
+				}
+			}
+		}
 
 		// --- Passe 1 : Marque les cellules dont au moins un voisin est de la
 		// même couleur
 		int countNewActivated = 0;
-		
+
 		for (Cell cell : Context.Map.Cells)
 		{
 			if (!cell.IsEmpty && cell.State == CellState.Normal)
@@ -438,10 +537,10 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				{
 					Cell cellN = cell.Neighbourghs[i];
 
-					if (cellN != null && cell.ColorType == cellN.ColorType)
+					if (cellN != null && !cellN.IsEmpty && cell.ColorType == cellN.ColorType)
 					{
 						countNewActivated++;
-						
+
 						cell.State = CellState.Activated;
 
 						if (cellN.State == CellState.Normal)
@@ -450,18 +549,25 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				}
 			}
 		}
-		
-		if(countNewActivated==0)
+
+		if (countNewActivated == 0)
 		{
 			FirstTileReleased = null;
-			
-			for (Cell cell : Context.Map.Cells)
-			{
-				//TODO : remplacer les tuiles Inactivated
-				cell.State = CellState.Normal;
-			}
+
+			Context.Map.RenewInactivatedCells();
 		}
 		// ---
 
+	}
+
+	private int getIndexColor(byte colorType)
+	{
+		for (int i = 0; i < colorValues.length; i++)
+		{
+			if (colorValues[i] == colorType)
+				return i;
+		}
+
+		return -1;
 	}
 }

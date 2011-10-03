@@ -1,5 +1,7 @@
 package twiplz;
 
+import twiplz.logic.controller.SelectionMode;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.jogl.JoglApplication;
 
@@ -7,6 +9,7 @@ public class GameStarterDesktop
 {
 	public static void main(String[] argv)
 	{
+		Context.selectionMode = SelectionMode.Desktop;
 		Context.Mini = false;
 		boolean miniWindow = true;
 		

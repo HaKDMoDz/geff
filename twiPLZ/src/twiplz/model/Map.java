@@ -70,26 +70,26 @@ public class Map
 	public void CalcNeighborough(Cell cell)
 	{
 		cell.Neighbourghs = new Cell[6];
-	
-//		if (cell.Coord.y % 2 == 1)
-//		{
-//			cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
-//			cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
-//			cell.Neighbourghs[2] = GetNeighborough(cell, 1, 1);
-//			cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
-//			cell.Neighbourghs[4] = GetNeighborough(cell, 0, 1);
-//			cell.Neighbourghs[5] = GetNeighborough(cell, 0, -1);
-//		}
-//		else
-//		{
-//			cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
-//			cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
-//			cell.Neighbourghs[2] = GetNeighborough(cell, 0, 1);
-//			cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
-//			cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
-//			cell.Neighbourghs[5] = GetNeighborough(cell, -1, -1);
-//		}
-		
+
+		// if (cell.Coord.y % 2 == 1)
+		// {
+		// cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
+		// cell.Neighbourghs[1] = GetNeighborough(cell, 1, -1);
+		// cell.Neighbourghs[2] = GetNeighborough(cell, 1, 1);
+		// cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
+		// cell.Neighbourghs[4] = GetNeighborough(cell, 0, 1);
+		// cell.Neighbourghs[5] = GetNeighborough(cell, 0, -1);
+		// }
+		// else
+		// {
+		// cell.Neighbourghs[0] = GetNeighborough(cell, 0, -2);
+		// cell.Neighbourghs[1] = GetNeighborough(cell, 0, -1);
+		// cell.Neighbourghs[2] = GetNeighborough(cell, 0, 1);
+		// cell.Neighbourghs[3] = GetNeighborough(cell, 0, 2);
+		// cell.Neighbourghs[4] = GetNeighborough(cell, -1, 1);
+		// cell.Neighbourghs[5] = GetNeighborough(cell, -1, -1);
+		// }
+
 		if (cell.Coord.y % 2 == 1)
 		{
 			cell.Neighbourghs[3] = GetNeighborough(cell, 0, -2);
@@ -114,38 +114,44 @@ public class Map
 	{
 		for (Cell cell : Cells)
 		{
-			// --- Calcul de la couleur
-			cell.IsEmpty = Math.random() * 10 > 6;
+			CalcColorAndParts(cell);
+		}
+	}
 
-			boolean colorFound = false;
+	public void CalcColorAndParts(Cell cell)
+	{
+		// --- Calcul de la couleur
+		cell.IsEmpty = Math.random() * 10 > 6;
+		cell.ColorType = 0;
 
-			while (!cell.IsEmpty && !colorFound)
+		boolean colorFound = false;
+
+		while (!cell.IsEmpty && !colorFound)
+		{
+			cell.NewColorType();
+
+			for (int i = 0; i < 6; i++)
 			{
-				cell.NewColorType();
-
-				for (int i = 0; i < 6; i++)
+				if (cell.Neighbourghs[i] != null && !cell.Neighbourghs[i].IsEmpty && cell.Neighbourghs[i].ColorType == cell.ColorType)
 				{
-					if (cell.Neighbourghs[i] != null && !cell.Neighbourghs[i].IsEmpty && cell.Neighbourghs[i].ColorType == cell.ColorType)
-					{
-						cell.ColorType = 0;
-						break;
-					}
-				}
-
-				if (cell.ColorType != 0)
-				{
-					colorFound = true;
+					cell.ColorType = 0;
+					break;
 				}
 			}
-			
-//			if(!colorFound)
-//			{
-//				cell.IsEmpty = true;
-//			}
-			// ---
 
-			cell.CalcArrows();
+			if (cell.ColorType != 0)
+			{
+				colorFound = true;
+			}
 		}
+
+		// if(!colorFound)
+		// {
+		// cell.IsEmpty = true;
+		// }
+		// ---
+
+		cell.CalcArrows();
 	}
 
 	private Cell GetNeighborough(Cell cell, int offsetX, int offsetY)
@@ -161,4 +167,23 @@ public class Map
 		return null;
 	}
 
+	public void RenewInactivatedCells()
+	{
+		for (Cell cell : this.Cells)
+		{
+			if (cell.State == CellState.Inactivated)
+			{
+				// CalcColorAndParts(cell);
+
+				cell.IsEmpty = true;
+
+				for (int i = 0; i < 6; i++)
+				{
+					cell.Parts[i] = CellPartType.Simple;
+				}
+			}
+
+			cell.State = CellState.Normal;
+		}
+	}
 }

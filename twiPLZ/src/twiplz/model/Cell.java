@@ -32,6 +32,7 @@ public class Cell implements Cloneable
 
 		this.Neighbourghs = new Cell[6];
 		this.Parts = new CellPartType[6];
+		State = CellState.Normal;
 	}
 
 	public byte NewColorType()
@@ -48,7 +49,7 @@ public class Cell implements Cloneable
 
 		int index = (int) (Math.random() * 7);
 		this.ColorType = colorValues[index];
-		
+
 		return this.ColorType;
 	}
 
@@ -70,10 +71,14 @@ public class Cell implements Cloneable
 
 	public void CalcArrows()
 	{
-		if (!this.IsEmpty)
+		// --- Calcul des flèches
+		for (int i = 0; i < 6; i++)
 		{
-			// --- Calcul des flèches
-			for (int i = 0; i < 6; i++)
+			if (this.IsEmpty)
+			{
+				this.Parts[i] = CellPartType.Simple;
+			}
+			else
 			{
 				double percentIn = 0.1;
 				double percentOut = 0.1;
@@ -87,9 +92,9 @@ public class Cell implements Cloneable
 				else
 					this.Parts[i] = CellPartType.Simple;
 			}
-
-			// ---
 		}
+
+		// ---
 	}
 
 	@Override
@@ -106,7 +111,7 @@ public class Cell implements Cloneable
 		cell.Map = this.Map;
 		cell.Parts = new CellPartType[6];
 		cell.IsEmpty = this.IsEmpty;
-		
+
 		for (int i = 0; i < 6; i++)
 		{
 			cell.Parts[i] = this.Parts[i];
