@@ -6,6 +6,7 @@ import twiplz.model.*;
 
 public class Context
 {
+	public static final long TimeRefresh = 3000;
 	public static Map Map;
 	public static Pointer[] pointers = new Pointer[10];
 	public static boolean Mini = false;

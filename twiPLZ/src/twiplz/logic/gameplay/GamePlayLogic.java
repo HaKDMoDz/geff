@@ -120,7 +120,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		// int t = orientation;
 		// orientation = orientation % 6;
-		
+
 		orientation = Common.mod(orientation, 6);
 
 		int offset = CurrentOrientation - orientation;
@@ -141,7 +141,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 			if (!canTurn)
 			{
-				if(GetSelectedCell() != null)
+				if (GetSelectedCell() != null)
 					TurnTileOffset(offset);
 				else
 				{
@@ -152,7 +152,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			else
 			{
 				TurnTileCellPart(Tile, offset);
-				
+
 				if (SelectedTile != null)
 					TurnTileCellPart(SelectedTile, offset);
 
@@ -174,7 +174,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
 			canTurn = true;
-		
+
 		return canTurn;
 	}
 
@@ -331,7 +331,10 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
 
 			if (FirstTileReleased == null)
+			{
 				FirstTileReleased = new Date();
+				FirstTileReleased.setTime(new Date().getTime() - Context.TimeRefresh);
+			}
 
 			Context.Map.CalcNeighborough();// SelectedTile.Cells[0]);
 			// Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
@@ -397,7 +400,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		Date currentTime = new Date();
 
-		if (FirstTileReleased == null || currentTime.getTime() - FirstTileReleased.getTime() < 3000)
+		if (FirstTileReleased == null || currentTime.getTime() - FirstTileReleased.getTime() < Context.TimeRefresh)
 			return;
 
 		FirstTileReleased = currentTime;

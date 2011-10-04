@@ -145,7 +145,10 @@ public class ControllerLogic extends
 		
 		
 		//--- Zoom
-		if (countPointerOnScreen >= 2 && (pointer == firstLastPointer.Index || pointer == secondLastPointer.Index))
+		if (countPointerOnScreen >= 2 && (
+				(pointer == firstLastPointer.Index && secondLastPointer.Usage == PointerUsage.None) 
+				|| 
+				(pointer == secondLastPointer.Index && firstLastPointer.Usage == PointerUsage.None)))
 		{
 			firstLastPointer.Usage = PointerUsage.Zoom;
 			secondLastPointer.Usage = PointerUsage.Zoom;

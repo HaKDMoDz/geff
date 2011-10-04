@@ -38,7 +38,7 @@ public abstract class RenderLogicBase
 		Camera = new OrthographicCamera();
 		Camera.setToOrtho(false);
 		Camera.position.set(1024, 1024, 0);
-		Camera.zoom = 5;
+		Camera.zoom = 2.7f;
 	}
 
 	public void Render(float deltaTime)

@@ -17,10 +17,6 @@ public class GameStarterAndroid extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-		Context.Mini = false;
-		Context.selectionOffsetY = 0;
-		Context.selectionMode = SelectionMode.Screentouch;
-		
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.useCompass = false;
 		config.useAccelerometer = false;
@@ -30,6 +26,10 @@ public class GameStarterAndroid extends AndroidApplication {
 		
 		ApplicationListener app = new GameEngine();
 
+		Context.Mini = false;
+		Context.selectionOffsetY = 256;
+		Context.selectionMode = SelectionMode.Screentouch;
+		
 		initialize(app, config);
 	}
 }
