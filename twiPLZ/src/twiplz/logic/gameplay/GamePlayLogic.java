@@ -586,7 +586,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 					Context.Combo = cell.Score;
 			}
 
-			if (!cell.IsEmpty)
+			if (!cell.IsEmpty && cell.State == CellState.Normal)
 				countCell++;
 		}
 
