@@ -2,6 +2,9 @@ package twiplz.model;
 
 import java.util.ArrayList;
 
+import plz.engine.Common;
+import twiplz.Context;
+
 import com.badlogic.gdx.Gdx;
 
 public class Map
@@ -56,7 +59,7 @@ public class Map
 
 		CalcNeighborough();
 
-		CalcColorAndParts();
+		NewColor();
 	}
 
 	public void CalcNeighborough()
@@ -110,15 +113,28 @@ public class Map
 		}
 	}
 
-	public void CalcColorAndParts()
+	private Cell GetNeighborough(Cell cell, int offsetX, int offsetY)
+	{
+		for (Cell cellNeighbor : Cells)
+		{
+			if (cellNeighbor.Coord.x == cell.Coord.x + offsetX && cellNeighbor.Coord.y == cell.Coord.y + offsetY)
+			{
+				return cellNeighbor;
+			}
+		}
+
+		return null;
+	}
+	
+	public void NewColor()
 	{
 		for (Cell cell : Cells)
 		{
-			CalcColorAndParts(cell);
+			NewColor(cell);
 		}
 	}
 
-	public void CalcColorAndParts(Cell cell)
+	public void NewColor(Cell cell)
 	{
 		// --- Calcul de la couleur
 		cell.IsEmpty = Math.random() * 10 > 6;
@@ -150,27 +166,31 @@ public class Map
 		// cell.IsEmpty = true;
 		// }
 		// ---
-
-		cell.CalcArrows();
 	}
 
-	private Cell GetNeighborough(Cell cell, int offsetX, int offsetY)
+	public void NewArrows()
 	{
-		for (Cell cellNeighbor : Cells)
+		for (Cell cell : Cells)
 		{
-			if (cellNeighbor.Coord.x == cell.Coord.x + offsetX && cellNeighbor.Coord.y == cell.Coord.y + offsetY)
-			{
-				return cellNeighbor;
-			}
+			cell.NewArrows();
 		}
-
-		return null;
+	}
+	
+	public void CalcArrows()
+	{
+		for (Cell cell : Cells)
+		{
+			cell.CalcArrows();
+		}
 	}
 
 	public void RenewInactivatedCells()
 	{
 		for (Cell cell : this.Cells)
 		{
+			cell.Score = 0;
+			cell.LeafScore = true;
+			
 			if (cell.State == CellState.Inactivated)
 			{
 				// CalcColorAndParts(cell);

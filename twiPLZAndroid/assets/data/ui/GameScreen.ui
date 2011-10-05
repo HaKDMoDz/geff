@@ -1,15 +1,19 @@
 debug
 	* height:100%
-	|width:120 |expand:x|width:100
+	|width:120 |expand:x fill:x|width:100
 	
 	{	
 	debug
 		[imgTurn] expand fill
 	}
-	
+
 	{
+	debug
+		[Score] height:20 align:top,left
+	---
+		'' expand
 	}
-		
+	
 	{
 	debug
 		[btnNewTile] fill:x height:100

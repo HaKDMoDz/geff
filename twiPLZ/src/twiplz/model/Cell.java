@@ -1,5 +1,7 @@
 package twiplz.model;
 
+import plz.engine.Common;
+
 import com.badlogic.gdx.math.Vector2;
 
 public class Cell implements Cloneable
@@ -11,16 +13,18 @@ public class Cell implements Cloneable
 	public Cell[] Neighbourghs;
 	public CellPartType[] Parts;
 	public byte ColorType;
+	public byte ColorIndex;
 	public boolean Selected;
 	public boolean IsEmpty = false;
 	public CellState State;
+	public int Score=0;
+	public boolean LeafScore = true;
 
 	public Cell()
 	{
 		this.Parts = new CellPartType[6];
 
 		NewColorType();
-		this.CalcArrows();
 	}
 
 	public Cell(Map map, int x, int y, float left, float top)
@@ -47,8 +51,8 @@ public class Cell implements Cloneable
 		colorValues[5] = 8;
 		colorValues[6] = 10;
 
-		int index = (int) (Math.random() * 7);
-		this.ColorType = colorValues[index];
+		ColorIndex = (byte) (1 + (Math.random() * 6));
+		this.ColorType = colorValues[ColorIndex];
 
 		return this.ColorType;
 	}
@@ -70,6 +74,24 @@ public class Cell implements Cloneable
 	}
 
 	public void CalcArrows()
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			Cell cellN = Neighbourghs[i];
+
+			if (!IsEmpty && cellN != null && !cellN.IsEmpty)
+			{
+				if (Common.mod(ColorIndex, 6)+1 == cellN.ColorIndex)
+					Parts[i] = CellPartType.Out;
+				else
+					Parts[i] = CellPartType.Simple;
+			}
+			else
+				Parts[i] = CellPartType.Simple;
+		}
+	}
+
+	public void NewArrows()
 	{
 		// --- Calcul des flèches
 		for (int i = 0; i < 6; i++)
@@ -111,6 +133,7 @@ public class Cell implements Cloneable
 		cell.Map = this.Map;
 		cell.Parts = new CellPartType[6];
 		cell.IsEmpty = this.IsEmpty;
+		cell.ColorIndex = this.ColorIndex;
 
 		for (int i = 0; i < 6; i++)
 		{

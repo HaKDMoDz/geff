@@ -13,4 +13,7 @@ public class Context
 	public static int selectionOffsetY = 0;
 	public static SelectionMode selectionMode = SelectionMode.Screentouch;
 	public static GameMode gameMode = GameMode.Circular;
+	public static int Score = 0;
+	public static int AddedScore = 0;
+	public static int Combo = 0;
 }

@@ -18,6 +18,7 @@ import twiplz.model.GameMode;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
@@ -29,6 +30,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 	Texture texCircle;
 	Texture[] texArrowsIn = new Texture[6];
 	Texture[] texArrowsOut = new Texture[6];
+	public BitmapFont fontScore;
 
 	public HashMap<Integer, Color> colors = new HashMap<Integer, Color>();
 
@@ -72,6 +74,10 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			texArrowsOut[i - 1] = new Texture(Gdx.files.internal("data/ArrowOut" + i + ".png"));
 		}
 
+		fontScore = new BitmapFont();
+		fontScore.setColor(new Color(0,1,1,1));
+		fontScore.scale(0.6f);
+		
 		colors.put(0, Color.WHITE);
 		colors.put(2, new Color(1f, 0.7f, 0.84f, 1f));
 		colors.put(6, new Color(0.78f, 0.7f, 1f, 1f));
@@ -80,6 +86,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		colors.put(8, new Color(0.95f, 1f, 0.66f, 1f));
 		colors.put(10, new Color(1f, 0.79f, 0.68f, 1f));
 
+		
 		if (Context.Mini)
 		{
 			for (Integer key : colors.keySet())
@@ -195,7 +202,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		else if (cell.State == CellState.Activated)
 			spriteBatch.setColor(Color.BLUE);
 		else if (cell.State == CellState.Inactivated)
-			spriteBatch.setColor(new Color(0.4f, 0.4f, 1f, 1f));
+			spriteBatch.setColor(new Color(0.5f, 0.5f, 1f, 1f));
 		else
 			spriteBatch.setColor(Color.WHITE);
 
@@ -229,7 +236,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		else
 			spriteBatch.setColor(Color.WHITE);
 
-		if (Context.gameMode == GameMode.Arrow)
+		//if (Context.gameMode == GameMode.Arrow)
 		{
 			for (int i = 0; i < 6; i++)
 			{

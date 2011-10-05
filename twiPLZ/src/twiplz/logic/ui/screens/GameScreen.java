@@ -6,9 +6,12 @@ import plz.engine.logic.ui.components.SensitiveZone;
 import plz.engine.logic.ui.screens.ScreenBase;
 import twiplz.Context;
 import twiplz.logic.gameplay.GamePlayLogic;
+import twiplz.logic.render.RenderLogic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
 public class GameScreen extends ScreenBase
 {
@@ -50,6 +53,8 @@ public class GameScreen extends ScreenBase
 		imgTurn.pressListener = TurnNewCell_Pressed;
 		imgTurn.releaseListener = TurnNewCell_Released;
 		imgTurn.dragListener = TrunNewCell_Dragged;
+		
+		AddSensitiveZone("Score");
 	}
 
 	@Override
@@ -69,9 +74,20 @@ public class GameScreen extends ScreenBase
 	{
 		super.render(delta);
 
+		Actor actorScore = Stage.findActor("Score");
+
 		gameEngine.Render.spriteBatch.begin();
 		rightBar.draw(gameEngine.Render.spriteBatch, 1f);
+		
+		if(Context.Combo>0)
+			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " Score : " + Context.Score + " + " + Context.AddedScore + " // Combo : " + Context.Combo, actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
+		else if(Context.Combo < 999)
+			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " Score : " + Context.Score, actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
+		else
+			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " === BONUS 1000 POINTS === ", actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
+		
 		gameEngine.Render.spriteBatch.end();
+		
 	}
 
 	SensitiveZone.PressListener TurnNewCell_Pressed = new SensitiveZone.PressListener()

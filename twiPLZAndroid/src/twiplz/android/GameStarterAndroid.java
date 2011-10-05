@@ -3,6 +3,7 @@ package twiplz.android;
 import twiplz.Context;
 import twiplz.GameEngine;
 import twiplz.logic.controller.SelectionMode;
+import twiplz.model.GameMode;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
@@ -29,6 +30,7 @@ public class GameStarterAndroid extends AndroidApplication {
 		Context.Mini = false;
 		Context.selectionOffsetY = 256;
 		Context.selectionMode = SelectionMode.Screentouch;
+		Context.gameMode = GameMode.Circular;
 		
 		initialize(app, config);
 	}

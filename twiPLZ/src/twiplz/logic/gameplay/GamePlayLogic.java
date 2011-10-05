@@ -61,36 +61,10 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		Context.Map = new Map(7, 5);
 
-		// for (Cell cell : Context.Map.Cells)
-		// {
-		// cell.IsEmpty=true;
-		// cell.ColorType = 0;
-		//
-		// for (int i = 0; i < 6; i++)
-		// {
-		// cell.Parts[i] = CellPartType.Simple;
-		// }
-		// }
-		//
-		// Cell cell = Context.Map.Cells.get(10);
-		//
-		// cell.IsEmpty=false;
-		// cell.Parts[1] = CellPartType.Out;
-		// cell.ColorType = 2;
-		//
-		// cell = cell.Neighbourghs[1];
-		//
-		// cell.IsEmpty=false;
-		//
-		// cell.ColorType = 4;
-		//
-		// cell = cell.Neighbourghs[3];
-		// cell.IsEmpty=false;
-		//
-		// cell.ColorType = 2;
-		//
-		// FirstTileReleased = new Date();
-
+		if (Context.gameMode == GameMode.Arrow)
+			Context.Map.NewArrows();
+		else if (Context.gameMode == GameMode.Circular)
+			Context.Map.CalcArrows();
 	}
 
 	public void SelectTile()
@@ -107,6 +81,14 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		Tile = new Tile();
 		SelectedTile = null;
+
+		if (Context.gameMode == GameMode.Arrow)
+		{
+			Tile.Cells[0].NewArrows();
+			Tile.Cells[1].NewArrows();
+		}
+		// else if(Context.gameMode == GameMode.Circular)
+		// Context.Map.CalcArrows();
 
 		UpdateTileOrientation();
 	}
@@ -234,6 +216,56 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		{
 			SelectedTile.Cells[0].Location = selectedCell.Location;
 			SelectedTile.Cells[1].Location = selectedCell.Neighbourghs[CurrentOrientation].Location;
+
+			if (Context.gameMode == GameMode.Circular)
+			{
+				// --- Clone la map
+				Map tempMap = new Map(Context.Map.Width, Context.Map.Height);
+				tempMap.Cells.clear();
+
+				for (Cell cell : Context.Map.Cells)
+				{
+					Cell cellDest = (Cell) cell.clone();
+					cellDest.Map = tempMap;
+					tempMap.Cells.add(cellDest);
+					cellDest.State = CellState.Normal;
+				}
+
+				// ---
+
+				// --- Place les cellules de la tuile dans la map temporaire
+				int index = Context.Map.Cells.indexOf(selectedCell);
+				Cell cellDest = tempMap.Cells.get(index);
+
+				SwapCell(cellDest, SelectedTile.Cells[0], index);
+
+				index = Context.Map.Cells.indexOf(selectedCell.Neighbourghs[CurrentOrientation]);
+				cellDest = tempMap.Cells.get(index);
+
+				SwapCell(cellDest, SelectedTile.Cells[1], index);
+				// ---
+
+				// ---
+				tempMap.CalcNeighborough();
+				tempMap.CalcArrows();
+
+				for (int i = 0; i < tempMap.Cells.size(); i++)
+				{
+					for (int j = 0; j < 6; j++)
+					{
+						Context.Map.Cells.get(i).Parts[j] = tempMap.Cells.get(i).Parts[j];
+					}
+				}
+			}
+
+			// ---
+
+			// SelectedTile.Cells[0].Neighbourghs = selectedCell.Neighbourghs;
+			// SelectedTile.Cells[1].Neighbourghs =
+			// selectedCell.Neighbourghs[CurrentOrientation].Neighbourghs;
+
+			// SelectedTile.Cells[0].CalcArrows();
+			// SelectedTile.Cells[1].CalcArrows();
 		}
 		else
 		{
@@ -260,65 +292,6 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		// selectedCell.Neighbourghs[0].Highlighted=true;
 
 		return selectedCell;
-	}
-
-	private boolean PointInCell(Cell cell, Vector2 location)
-	{
-		int w = 256 / 2;
-		int dw = w / 2;
-		int h = (int) (w * (Math.sqrt(3f) / 2));
-		float k = (int) ((1f - (Math.sqrt(3f) / 2f)) * w);
-		int Lx = (int) (cell.Location.x * 256f);
-		int Ly = (int) (cell.Location.y * 256f + k);
-		// Point point = new Point((int) location.x, (int) location.y);
-
-		Vector2 point = new Vector2(location.x, location.y);
-
-		// 1 : Test du rectangle englobant
-		Rectangle rec = new Rectangle(Lx, Ly, w * 2, 2 * h);
-		if (!rec.contains(location.x, location.y))
-			return false;
-
-		// 2 : Test du rectangle principale
-		rec = new Rectangle(Lx + dw, Ly, w, 2 * h);
-
-		if (rec.contains(location.x, location.y))
-			return true;
-
-		// 3 : Test du triangle 2a
-		Vector2[] triangle = new Vector2[3];
-		triangle[0] = new Vector2(Lx + dw, Ly);
-		triangle[1] = new Vector2(Lx + dw, Ly + h);
-		triangle[2] = new Vector2(Lx, Ly + h);
-
-		if (Common.IsPointInsideTriangle(triangle, point))
-			return true;
-
-		// 4 : Test du triangle 2b
-		triangle[0] = new Vector2(Lx, Ly + h);
-		triangle[1] = new Vector2(Lx + dw, Ly + h);
-		triangle[2] = new Vector2(Lx + dw, Ly + 2 * h);
-
-		if (Common.IsPointInsideTriangle(triangle, point))
-			return true;
-
-		// 5 : Test du triangle 3a
-		triangle[0] = new Vector2(Lx + 3 * dw, Ly);
-		triangle[1] = new Vector2(Lx + 2 * w, Ly + h);
-		triangle[2] = new Vector2(Lx + 3 * dw, Ly + h);
-
-		if (Common.IsPointInsideTriangle(triangle, point))
-			return true;
-
-		// 6 : Test du triangle 3b
-		triangle[0] = new Vector2(Lx + 3 * dw, Ly + h);
-		triangle[1] = new Vector2(Lx + 2 * w, Ly + h);
-		triangle[2] = new Vector2(Lx + 3 * dw, Ly + 2 * h);
-
-		if (Common.IsPointInsideTriangle(triangle, point))
-			return true;
-
-		return false;
 	}
 
 	public void ReleaseTile()
@@ -354,6 +327,24 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	private void SwapCell(Cell cellDest, Cell cellOrig)
 	{
+		// cellOrig.Map = cellDest.Map;
+		// cellOrig.Coord = cellDest.Coord;
+		// cellOrig.InitialLocation = cellDest.InitialLocation;
+		// cellOrig.Neighbourghs = cellDest.Neighbourghs;
+
+		int index = cellDest.Map.Cells.indexOf(cellDest);
+
+		SwapCell(cellDest, cellOrig, index);
+
+		// cellDest.Map.Cells.remove(cellDest);
+		// cellDest.Map.Cells.add(cellOrig);
+		// cellDest.Map.Cells.add(index, cellOrig);
+
+		// cellDest = cellOrig;
+	}
+
+	private void SwapCell(Cell cellDest, Cell cellOrig, int index)
+	{
 		cellOrig.Map = cellDest.Map;
 		cellOrig.Coord = cellDest.Coord;
 		cellOrig.InitialLocation = cellDest.InitialLocation;
@@ -362,8 +353,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		// int index = cellDest.Map.Cells.indexOf(cellDest);
 
 		cellDest.Map.Cells.remove(cellDest);
-		cellDest.Map.Cells.add(cellOrig);
-		// cellDest.Map.Cells.add(index, cellOrig);
+		// cellDest.Map.Cells.add(cellOrig);
+		cellDest.Map.Cells.add(index, cellOrig);
 
 		// cellDest = cellOrig;
 	}
@@ -547,20 +538,63 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 						cell.State = CellState.Activated;
 
 						if (cellN.State == CellState.Normal)
+						{
 							cellN.State = CellState.Activated;
+							cellN.Score = 1;
+							cell.Score = 1;
+						}
+						else
+						{
+							cellN.LeafScore = false;
+							cell.Score = cellN.Score + 1;
+						}
 					}
 				}
 			}
 		}
+
+		ScoreEvaluation();
 
 		if (countNewActivated == 0)
 		{
 			FirstTileReleased = null;
 
 			Context.Map.RenewInactivatedCells();
+
+			if (Context.gameMode == GameMode.Circular)
+				Context.Map.CalcArrows();
+
+			Context.Score += Context.AddedScore;
+			Context.AddedScore = 0;
+			Context.Combo = 0;
 		}
 		// ---
+	}
 
+	public void ScoreEvaluation()
+	{
+		Context.AddedScore = 0;
+		int countCell = 0;
+
+		for (Cell cell : Context.Map.Cells)
+		{
+			if (!cell.IsEmpty && (cell.State == CellState.Activated || cell.State == CellState.Inactivated) && cell.LeafScore)
+			{
+				Context.AddedScore += Math.pow(cell.Score, 2);
+
+				if (Context.Combo < cell.Score)
+					Context.Combo = cell.Score;
+			}
+
+			if (!cell.IsEmpty)
+				countCell++;
+		}
+
+		if (countCell == 0)
+		{
+			Context.AddedScore += 1000;
+			Context.Combo = 999;
+		}
 	}
 
 	private int getIndexColor(byte colorType)
@@ -572,5 +606,64 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		}
 
 		return -1;
+	}
+
+	private boolean PointInCell(Cell cell, Vector2 location)
+	{
+		int w = 256 / 2;
+		int dw = w / 2;
+		int h = (int) (w * (Math.sqrt(3f) / 2));
+		float k = (int) ((1f - (Math.sqrt(3f) / 2f)) * w);
+		int Lx = (int) (cell.Location.x * 256f);
+		int Ly = (int) (cell.Location.y * 256f + k);
+		// Point point = new Point((int) location.x, (int) location.y);
+
+		Vector2 point = new Vector2(location.x, location.y);
+
+		// 1 : Test du rectangle englobant
+		Rectangle rec = new Rectangle(Lx, Ly, w * 2, 2 * h);
+		if (!rec.contains(location.x, location.y))
+			return false;
+
+		// 2 : Test du rectangle principale
+		rec = new Rectangle(Lx + dw, Ly, w, 2 * h);
+
+		if (rec.contains(location.x, location.y))
+			return true;
+
+		// 3 : Test du triangle 2a
+		Vector2[] triangle = new Vector2[3];
+		triangle[0] = new Vector2(Lx + dw, Ly);
+		triangle[1] = new Vector2(Lx + dw, Ly + h);
+		triangle[2] = new Vector2(Lx, Ly + h);
+
+		if (Common.IsPointInsideTriangle(triangle, point))
+			return true;
+
+		// 4 : Test du triangle 2b
+		triangle[0] = new Vector2(Lx, Ly + h);
+		triangle[1] = new Vector2(Lx + dw, Ly + h);
+		triangle[2] = new Vector2(Lx + dw, Ly + 2 * h);
+
+		if (Common.IsPointInsideTriangle(triangle, point))
+			return true;
+
+		// 5 : Test du triangle 3a
+		triangle[0] = new Vector2(Lx + 3 * dw, Ly);
+		triangle[1] = new Vector2(Lx + 2 * w, Ly + h);
+		triangle[2] = new Vector2(Lx + 3 * dw, Ly + h);
+
+		if (Common.IsPointInsideTriangle(triangle, point))
+			return true;
+
+		// 6 : Test du triangle 3b
+		triangle[0] = new Vector2(Lx + 3 * dw, Ly + h);
+		triangle[1] = new Vector2(Lx + 2 * w, Ly + h);
+		triangle[2] = new Vector2(Lx + 3 * dw, Ly + 2 * h);
+
+		if (Common.IsPointInsideTriangle(triangle, point))
+			return true;
+
+		return false;
 	}
 }
