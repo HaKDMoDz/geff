@@ -18,7 +18,7 @@ import twiplz.model.*;
 
 public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 {
-	public Tile Tile;
+	public Tile[] Tiles;
 	public Tile SelectedTile;
 	public int CurrentOrientation = 0;
 	public Vector2[][] CellDisposition;
@@ -55,6 +55,12 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		colorValues[4] = 12;
 		colorValues[5] = 8;
 		colorValues[6] = 10;
+
+		Context.gameStateTime = new GameStateTime();
+		Context.gameStateTime.Date = new Date();
+		Context.gameStateTime.GameState = GameState.Playing;
+
+		Tiles = new Tile[4];
 	}
 
 	public void NewMap()
@@ -67,25 +73,39 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			Context.Map.CalcArrows();
 	}
 
-	public void SelectTile()
+	public void SelectTile(int index)
 	{
-		SelectedTile = new Tile();
+		SelectedTile = new Tile(index);
 
-		SelectedTile.Cells[0] = (Cell) Tile.Cells[0].clone();
-		SelectedTile.Cells[1] = (Cell) Tile.Cells[1].clone();
+		Tiles[index].State = TileState.Selected;
+		SelectedTile.Cells[0] = (Cell) Tiles[index].Cells[0].clone();
+		SelectedTile.Cells[1] = (Cell) Tiles[index].Cells[1].clone();
+		SelectedTile.Cells[0].IsActiveCell = true;
 		SelectedTile.ActiveCell = SelectedTile.Cells[0];
 		SelectedTile.InactiveCell = SelectedTile.Cells[1];
 	}
 
-	public void CreateNewTile()
+	public void CreateNewTile(int index)
 	{
-		Tile = new Tile();
+		Tiles[index] = new Tile(index);
 		SelectedTile = null;
+
+		if (index == 3)
+		{
+			Tiles[index].Cells[0].IsSwapCell = true;
+			Tiles[index].Cells[1].IsSwapCell = true;
+
+			for (int i = 0; i < 6; i++)
+			{
+				Tiles[index].Cells[0].Parts[i] = CellPartType.Simple;
+				Tiles[index].Cells[1].Parts[i] = CellPartType.Simple;
+			}
+		}
 
 		if (Context.gameMode == GameMode.Arrow)
 		{
-			Tile.Cells[0].NewArrows();
-			Tile.Cells[1].NewArrows();
+			Tiles[index].Cells[0].NewArrows();
+			Tiles[index].Cells[1].NewArrows();
 		}
 		// else if(Context.gameMode == GameMode.Circular)
 		// Context.Map.CalcArrows();
@@ -127,13 +147,19 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 					TurnTileOffset(offset);
 				else
 				{
-					TurnTileCellPart(Tile, offset);
+					for (int i = 0; i < 4; i++)
+					{
+						TurnTileCellPart(Tiles[i], offset);
+					}
 					UpdateTileOrientation();
 				}
 			}
 			else
 			{
-				TurnTileCellPart(Tile, offset);
+				for (int i = 0; i < 4; i++)
+				{
+					TurnTileCellPart(Tiles[i], offset);
+				}
 
 				if (SelectedTile != null)
 					TurnTileCellPart(SelectedTile, offset);
@@ -190,14 +216,22 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 	private void UpdateTileOrientation()
 	{
-		SensitiveZone imgNewTile = ((GameScreen) this.gameEngine.CurrentScreen).imgNewTile;
+		SensitiveZone imgNewTile = ((GameScreen) this.gameEngine.CurrentScreen).imgNewTile[0];
 
 		// int h = (int) (imgNewTile.height / (4f * (1 + (2 / Math.sqrt(3f)))));
 		int h = (int) (imgNewTile.height / 4f);// * (1 + (2 / Math.sqrt(3f)))));
 		int width = (int) ((2 * h) / Math.sqrt(3f));
 
-		Tile.Cells[0].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[0][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[0][CurrentOrientation].y * h * 2);
-		Tile.Cells[1].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[1][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[1][CurrentOrientation].y * h * 2);
+		for (int i = 0; i < 4; i++)
+		{
+			if (Tiles[i] != null)
+			{
+				imgNewTile = ((GameScreen) this.gameEngine.CurrentScreen).imgNewTile[i];
+
+				Tiles[i].Cells[0].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[0][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[0][CurrentOrientation].y * h * 2);
+				Tiles[i].Cells[1].Location = new Vector2(imgNewTile.AbsoluteLocation().x + imgNewTile.width / 2 - width + CellDisposition[1][CurrentOrientation].x * width * 2, imgNewTile.AbsoluteLocation().y + imgNewTile.height / 2 - h + CellDisposition[1][CurrentOrientation].y * h * 2);
+			}
+		}
 
 		if (SelectedTile != null)
 		{
@@ -217,7 +251,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			SelectedTile.Cells[0].Location = selectedCell.Location;
 			SelectedTile.Cells[1].Location = selectedCell.Neighbourghs[CurrentOrientation].Location;
 
-			if (Context.gameMode == GameMode.Circular)
+			if (Context.gameMode == GameMode.Circular && !SelectedTile.Cells[0].IsSwapCell)
 			{
 				// --- Clone la map
 				Map tempMap = new Map(Context.Map.Width, Context.Map.Height);
@@ -239,6 +273,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 				SwapCell(cellDest, SelectedTile.Cells[0], index);
 
+				SelectedTile.Cells[0].IsActiveCell = true;
 				index = Context.Map.Cells.indexOf(selectedCell.Neighbourghs[CurrentOrientation]);
 				cellDest = tempMap.Cells.get(index);
 
@@ -257,15 +292,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 					}
 				}
 			}
-
 			// ---
-
-			// SelectedTile.Cells[0].Neighbourghs = selectedCell.Neighbourghs;
-			// SelectedTile.Cells[1].Neighbourghs =
-			// selectedCell.Neighbourghs[CurrentOrientation].Neighbourghs;
-
-			// SelectedTile.Cells[0].CalcArrows();
-			// SelectedTile.Cells[1].CalcArrows();
 		}
 		else
 		{
@@ -300,8 +327,31 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		if (selectedCell != null && selectedCell.Neighbourghs[CurrentOrientation] != null)
 		{
-			SwapCell(selectedCell, SelectedTile.Cells[0]);
-			SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
+			if (SelectedTile.Cells[0].IsSwapCell)
+			{
+				Cell selectedCellN = (Cell) selectedCell.Neighbourghs[CurrentOrientation];
+				Cell selectedCellNClone = (Cell) selectedCellN.clone();
+
+				selectedCellN.ColorIndex = selectedCell.ColorIndex;
+				selectedCellN.ColorType = selectedCell.ColorType;
+				selectedCellN.IsEmpty = selectedCell.IsEmpty;
+
+				selectedCell.ColorIndex = selectedCellNClone.ColorIndex;
+				selectedCell.ColorType = selectedCellNClone.ColorType;
+				selectedCell.IsEmpty = selectedCellNClone.IsEmpty;
+				
+				Context.Map.CalcArrows();				
+			}
+			else
+			{
+				SwapCell(selectedCell, SelectedTile.Cells[0]);
+				SwapCell(selectedCell.Neighbourghs[CurrentOrientation], SelectedTile.Cells[1]);
+
+				SelectedTile.Cells[0].State = CellState.Normal;
+				SelectedTile.Cells[1].State = CellState.Normal;
+				
+				Context.Map.CalcNeighborough();
+			}
 
 			if (FirstTileReleased == null)
 			{
@@ -309,38 +359,25 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				FirstTileReleased.setTime(new Date().getTime() - Context.TimeRefresh);
 			}
 
-			Context.Map.CalcNeighborough();// SelectedTile.Cells[0]);
-			// Context.Map.CalcNeighborough(SelectedTile.Cells[1]);
-
-			SelectedTile.Cells[0].State = CellState.Normal;
-			SelectedTile.Cells[1].State = CellState.Normal;
-
-			CreateNewTile();
+			CreateNewTile(SelectedTile.Index);
 			SelectedTile = null;
 		}
 	}
 
 	public void UnselectTile()
 	{
+		Tiles[SelectedTile.Index].State = TileState.Sleep;
 		SelectedTile = null;
+
+		if (Context.gameMode == GameMode.Circular)
+			Context.Map.CalcArrows();
 	}
 
 	private void SwapCell(Cell cellDest, Cell cellOrig)
 	{
-		// cellOrig.Map = cellDest.Map;
-		// cellOrig.Coord = cellDest.Coord;
-		// cellOrig.InitialLocation = cellDest.InitialLocation;
-		// cellOrig.Neighbourghs = cellDest.Neighbourghs;
-
 		int index = cellDest.Map.Cells.indexOf(cellDest);
 
 		SwapCell(cellDest, cellOrig, index);
-
-		// cellDest.Map.Cells.remove(cellDest);
-		// cellDest.Map.Cells.add(cellOrig);
-		// cellDest.Map.Cells.add(index, cellOrig);
-
-		// cellDest = cellOrig;
 	}
 
 	private void SwapCell(Cell cellDest, Cell cellOrig, int index)
@@ -349,14 +386,10 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		cellOrig.Coord = cellDest.Coord;
 		cellOrig.InitialLocation = cellDest.InitialLocation;
 		cellOrig.Neighbourghs = cellDest.Neighbourghs;
-
-		// int index = cellDest.Map.Cells.indexOf(cellDest);
+		cellOrig.IsActiveCell = false;
 
 		cellDest.Map.Cells.remove(cellDest);
-		// cellDest.Map.Cells.add(cellOrig);
 		cellDest.Map.Cells.add(index, cellOrig);
-
-		// cellDest = cellOrig;
 	}
 
 	public boolean PickTile(Vector2 location)
@@ -384,7 +417,35 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	@Override
 	public void Update(float deltaTime)
 	{
-		CalcMapColors();
+		Date currentTime = new Date();
+		double percentTime = (currentTime.getTime() - Context.gameStateTime.Date.getTime()) / (double) 3000;
+		if (Context.gameStateTime.GameState == GameState.BonusClearScreen && percentTime <= 1)
+		{
+			for (Cell cell : Context.Map.Cells)
+			{
+				// cell.Location.x = (float)
+				// (cell.InitialLocation.x+Math.sin((float)duration/3000f*
+				// (float)cell.Coord.y));
+				// cell.Location.y = (float)
+				// (cell.InitialLocation.y+Math.cos((float)duration/3000f *
+				// (float)cell.Coord.x));
+
+				cell.Location.x = (float) (cell.InitialLocation.x + Math.sin(percentTime * (double) cell.Coord.y * 5) * Common.Gaussian(percentTime));
+				cell.Location.y = (float) (cell.InitialLocation.y + Math.cos(percentTime * (double) cell.Coord.x * 5) * Common.Gaussian(percentTime));
+			}
+		}
+		else if (Context.gameStateTime.GameState == GameState.BonusClearScreen)
+		{
+			for (Cell cell : Context.Map.Cells)
+			{
+				cell.Location.x = cell.InitialLocation.x;
+				cell.Location.y = cell.InitialLocation.y;
+			}
+
+			Context.gameStateTime.GameState = GameState.Playing;
+		}
+		else if (Context.gameStateTime.GameState == GameState.Playing)
+			CalcMapColors();
 	}
 
 	public void CalcMapColors()
@@ -593,7 +654,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		if (countCell == 0)
 		{
 			Context.AddedScore += 1000;
-			Context.Combo = 999;
+			Context.gameStateTime.Date = new Date();
+			Context.gameStateTime.GameState = GameState.BonusClearScreen;
 		}
 	}
 

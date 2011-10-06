@@ -16,7 +16,13 @@ debug
 	
 	{
 	debug
-		[btnNewTile] fill:x height:100
+		[btnNewTile1] fill:x height:100
+		---
+		[btnNewTile2] fill:x height:100
+		---
+		[btnNewTile3] fill:x height:100
+		---
+		[btnSwapTile] fill:x height:100
 		---
 		'' expand
 	}

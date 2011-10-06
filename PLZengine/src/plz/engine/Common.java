@@ -1,6 +1,5 @@
 package plz.engine;
 
-
 import com.badlogic.gdx.math.Vector2;
 
 public class Common
@@ -27,12 +26,23 @@ public class Common
 
 		return (z1 > 0 && z2 > 0 && z3 > 0) || (z1 < 0 && z2 < 0 && z3 < 0);
 	}
-	
-	public static int mod (int a, int b) {
-        int res = a % b;
-        if (res<0 && b>0) {
-            res += b;
-        }
-        return res;
-    }
+
+	public static int mod(int a, int b)
+	{
+		int res = a % b;
+		if (res < 0 && b > 0)
+		{
+			res += b;
+		}
+		return res;
+	}
+
+	public static double Gaussian(double x)
+	{
+		x = (x - 0.5) * 3;
+
+		double sigma = 0.447214;
+		double value = Math.exp(-x * x / (2 * sigma * sigma)) / (Math.sqrt(2 * Math.PI) * sigma);
+		return value;
+	}
 }

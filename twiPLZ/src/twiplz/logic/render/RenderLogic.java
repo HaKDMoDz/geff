@@ -14,6 +14,7 @@ import twiplz.model.Cell;
 import twiplz.model.CellPartType;
 import twiplz.model.CellState;
 import twiplz.model.GameMode;
+import twiplz.model.TileState;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -28,9 +29,11 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 	Texture texCellForeground;
 	Texture texCellBackground;
 	Texture texCircle;
+	Texture texSelected;
 	Texture[] texArrowsIn = new Texture[6];
 	Texture[] texArrowsOut = new Texture[6];
 	public BitmapFont fontScore;
+	public BitmapFont fontBonus;
 
 	public HashMap<Integer, Color> colors = new HashMap<Integer, Color>();
 
@@ -63,6 +66,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		texCellForeground = new Texture(Gdx.files.internal("data/CellForeground.png"));
 		texCellBackground = new Texture(Gdx.files.internal("data/CellBackground.png"));
 		texCircle = new Texture(Gdx.files.internal("data/Circle.png"));
+		texSelected = new Texture(Gdx.files.internal("data/CellSelected.png"));
 
 		// shader = new
 		// ShaderProgram(Gdx.files.internal("data/shaders/batch.vert").readString(),
@@ -75,9 +79,13 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		}
 
 		fontScore = new BitmapFont();
-		fontScore.setColor(new Color(0,1,1,1));
+		fontScore.setColor(new Color(0, 1, 1, 1));
 		fontScore.scale(0.6f);
-		
+
+		fontBonus = new BitmapFont();
+		fontBonus.setColor(new Color(1, 1, 0, 1));
+		fontBonus.scale(2f);
+
 		colors.put(0, Color.WHITE);
 		colors.put(2, new Color(1f, 0.7f, 0.84f, 1f));
 		colors.put(6, new Color(0.78f, 0.7f, 1f, 1f));
@@ -86,7 +94,6 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		colors.put(8, new Color(0.95f, 1f, 0.66f, 1f));
 		colors.put(10, new Color(1f, 0.79f, 0.68f, 1f));
 
-		
 		if (Context.Mini)
 		{
 			for (Integer key : colors.keySet())
@@ -143,12 +150,14 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		spriteBatch.begin();
 		// shader.begin();
 
-		DrawCell(GamePlay().Tile.Cells[0], true, false);
-		DrawCell(GamePlay().Tile.Cells[1], true, false);
+		for (int i = 0; i < 4; i++)
+		{
+			DrawCell(GamePlay().Tiles[i].Cells[0], true, GamePlay().Tiles[i].State == TileState.Selected);
+			DrawCell(GamePlay().Tiles[i].Cells[1], true, GamePlay().Tiles[i].State == TileState.Selected);
+		}
 
 		if (showCursor)
 		{
-
 			for (Pointer pointer : Context.pointers)
 			{
 				if (pointer.Current != null)
@@ -182,7 +191,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		if (isUI)
 		{
-			SensitiveZone imgNewTile = ((GameScreen) this.gameEngine.CurrentScreen).imgNewTile;
+			SensitiveZone imgNewTile = ((GameScreen) this.gameEngine.CurrentScreen).imgNewTile[0];
 
 			height = (int) (imgNewTile.height / 2);
 			width = (int) ((2 * height) / Math.sqrt(3f));
@@ -206,29 +215,25 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		else
 			spriteBatch.setColor(Color.WHITE);
 
-		spriteBatch.draw(texCellBackground, cellLocation.x, cellLocation.y, width, height);
+		if(!cell.IsSwapCell)
+			spriteBatch.draw(texCellBackground, cellLocation.x, cellLocation.y, width, height);
 
-		if (!cell.IsEmpty)
+		if (!cell.IsEmpty && !cell.IsSwapCell)
 		{
-
-			try
-			{
-				spriteBatch.setColor(colors.get((int) cell.ColorType));
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+			spriteBatch.setColor(colors.get((int) cell.ColorType));
 			spriteBatch.draw(texCellForeground, cellLocation.x, cellLocation.y, width, height);
 		}
 
-		if (isSelectedCell)
+		if (cell.IsActiveCell)
 		{
-			if (GamePlay().SelectedTile.ActiveCell == cell)
-			{
-				spriteBatch.setColor(Color.BLACK);
-				spriteBatch.draw(texCircle, cellLocation.x - width / 4, cellLocation.y - height / 4, (int) ((float) width * 1.5f), (int) ((float) height * 1.5));
-			}
+			spriteBatch.setColor(Color.BLACK);
+			spriteBatch.draw(texCircle, cellLocation.x - width / 4, cellLocation.y - height / 4, (int) ((float) width * 1.5f), (int) ((float) height * 1.5));
+		}
+		
+		if(cell.IsSwapCell)
+		{
+			spriteBatch.setColor(new Color(0.25f,0.35f,0.35f,1f));
+			spriteBatch.draw(texSelected, cellLocation.x , cellLocation.y, width, height);
 		}
 
 		if (Context.Mini)
@@ -236,7 +241,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		else
 			spriteBatch.setColor(Color.WHITE);
 
-		//if (Context.gameMode == GameMode.Arrow)
+		if (!cell.IsEmpty)
 		{
 			for (int i = 0; i < 6; i++)
 			{

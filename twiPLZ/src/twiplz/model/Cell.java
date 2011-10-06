@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Cell implements Cloneable
 {
+	public boolean IsActiveCell = false;
 	public Map Map;
 	public Vector2 Coord;
 	public Vector2 Location;
@@ -17,8 +18,9 @@ public class Cell implements Cloneable
 	public boolean Selected;
 	public boolean IsEmpty = false;
 	public CellState State;
-	public int Score=0;
+	public int Score = 0;
 	public boolean LeafScore = true;
+	public boolean IsSwapCell = false;
 
 	public Cell()
 	{
@@ -81,7 +83,7 @@ public class Cell implements Cloneable
 
 			if (!IsEmpty && cellN != null && !cellN.IsEmpty)
 			{
-				if (Common.mod(ColorIndex, 6)+1 == cellN.ColorIndex)
+				if (Common.mod(ColorIndex, 6) + 1 == cellN.ColorIndex)
 					Parts[i] = CellPartType.Out;
 				else
 					Parts[i] = CellPartType.Simple;
@@ -134,6 +136,7 @@ public class Cell implements Cloneable
 		cell.Parts = new CellPartType[6];
 		cell.IsEmpty = this.IsEmpty;
 		cell.ColorIndex = this.ColorIndex;
+		cell.IsSwapCell = this.IsSwapCell;
 
 		for (int i = 0; i < 6; i++)
 		{

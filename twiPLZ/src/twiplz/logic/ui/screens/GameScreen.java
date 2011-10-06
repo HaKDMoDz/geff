@@ -7,15 +7,17 @@ import plz.engine.logic.ui.screens.ScreenBase;
 import twiplz.Context;
 import twiplz.logic.gameplay.GamePlayLogic;
 import twiplz.logic.render.RenderLogic;
+import twiplz.model.GameState;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 public class GameScreen extends ScreenBase
 {
-	public SensitiveZone imgNewTile;
+	public SensitiveZone[] imgNewTile;
 	SensitiveZone rightBar;
 	SensitiveZone leftBar;
 	SensitiveZone imgTurn;
@@ -42,18 +44,42 @@ public class GameScreen extends ScreenBase
 
 		rightBar = new SensitiveZone("rightBar", texTurnTile);
 
+		imgNewTile = new SensitiveZone[4];
+		
 		// --- Create SensitiveZone
-		imgNewTile = AddSensitiveZone("btnNewTile");
-		imgNewTile.visible = false;
-		imgNewTile.pressListener = NewCell_Pressed;
-		imgNewTile.releaseListener = NewCell_Released;
+		imgNewTile[0] = AddSensitiveZone("btnNewTile1");
+		imgNewTile[0].visible = false;
+		imgNewTile[0].pressListener = NewCell_Pressed;
+		imgNewTile[0].releaseListener = NewCell_Released;
+		imgNewTile[0].Tag = 0;
+		
+		// --- Create SensitiveZone
+		imgNewTile[1] = AddSensitiveZone("btnNewTile2");
+		imgNewTile[1].visible = false;
+		imgNewTile[1].pressListener = NewCell_Pressed;
+		imgNewTile[1].releaseListener = NewCell_Released;
+		imgNewTile[1].Tag = 1;
+		
+		// --- Create SensitiveZone
+		imgNewTile[2] = AddSensitiveZone("btnNewTile3");
+		imgNewTile[2].visible = false;
+		imgNewTile[2].pressListener = NewCell_Pressed;
+		imgNewTile[2].releaseListener = NewCell_Released;
+		imgNewTile[2].Tag = 2;
 
+		// --- Create SensitiveZone
+		imgNewTile[3] = AddSensitiveZone("btnSwapTile");
+		imgNewTile[3].visible = false;
+		imgNewTile[3].pressListener = NewCell_Pressed;
+		imgNewTile[3].releaseListener = NewCell_Released;
+		imgNewTile[3].Tag = 3;
+		
 		imgTurn = AddSensitiveZone("imgTurn", texTurnTile);
 		//imgTurn = AddSensitiveZone("imgTurn");
 		imgTurn.pressListener = TurnNewCell_Pressed;
 		imgTurn.releaseListener = TurnNewCell_Released;
 		imgTurn.dragListener = TrunNewCell_Dragged;
-		
+
 		AddSensitiveZone("Score");
 	}
 
@@ -62,11 +88,14 @@ public class GameScreen extends ScreenBase
 	{
 		layout.layout();
 
-		rightBar.x = imgNewTile.AbsoluteLocation().x;
-		rightBar.width = imgNewTile.width;
-		rightBar.height = imgNewTile.parent.height;
+		rightBar.x = imgNewTile[0].AbsoluteLocation().x;
+		rightBar.width = imgNewTile[0].width;
+		rightBar.height = imgNewTile[0].parent.height;
 
-		GamePlay().CreateNewTile();
+		GamePlay().CreateNewTile(0);
+		GamePlay().CreateNewTile(1);
+		GamePlay().CreateNewTile(2);
+		GamePlay().CreateNewTile(3);
 	}
 
 	@Override
@@ -81,13 +110,15 @@ public class GameScreen extends ScreenBase
 		
 		if(Context.Combo>0)
 			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " Score : " + Context.Score + " + " + Context.AddedScore + " // Combo : " + Context.Combo, actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
-		else if(Context.Combo < 999)
-			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " Score : " + Context.Score, actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
 		else
-			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " === BONUS 1000 POINTS === ", actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
+			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " Score : " + Context.Score, actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
+		
+		if(Context.gameStateTime.GameState == GameState.BonusClearScreen)
+		{
+			((RenderLogic)gameEngine.Render).fontBonus.draw(gameEngine.Render.spriteBatch, "Bravo!!!", actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y-20);
+		}
 		
 		gameEngine.Render.spriteBatch.end();
-		
 	}
 
 	SensitiveZone.PressListener TurnNewCell_Pressed = new SensitiveZone.PressListener()
@@ -141,7 +172,7 @@ public class GameScreen extends ScreenBase
 		{
 			Context.pointers[pointer].Usage = PointerUsage.SelectTile;
 			Context.pointers[pointer].Handled = true;
-			GamePlay().SelectTile();
+			GamePlay().SelectTile((Integer)button.Tag);
 		}
 	};
 
@@ -158,35 +189,4 @@ public class GameScreen extends ScreenBase
 			}
 		}
 	};
-
-	// SensitiveZone.EnterListener TurnNewCell_Enter = new
-	// SensitiveZone.EnterListener()
-	// {
-	// @Override
-	// public void onEnter(SensitiveZone button)
-	// {
-	// GamePlay().TurnTile((Integer) button.Tag);
-	// }
-	// };
-	//
-	// SensitiveZone.EnterListener NewCell_Enter = new
-	// SensitiveZone.EnterListener()
-	// {
-	// @Override
-	// public void onEnter(SensitiveZone button)
-	// {
-	// GameScreen.this.NewTileSelected = true;
-	// }
-	// };
-	//
-	// SensitiveZone.LeaveListener NewCell_Leave = new
-	// SensitiveZone.LeaveListener()
-	// {
-	// @Override
-	// public void onLeave(SensitiveZone button)
-	// {
-	// GameScreen.this.NewTileSelected = false;
-	// }
-	// };
-
 }
