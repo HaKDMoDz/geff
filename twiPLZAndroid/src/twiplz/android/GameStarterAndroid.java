@@ -28,7 +28,7 @@ public class GameStarterAndroid extends AndroidApplication {
 		ApplicationListener app = new GameEngine();
 
 		Context.Mini = false;
-		Context.selectionOffsetY = 256;
+		Context.selectionOffsetY = 0;
 		Context.selectionMode = SelectionMode.Screentouch;
 		Context.gameMode = GameMode.Circular;
 		

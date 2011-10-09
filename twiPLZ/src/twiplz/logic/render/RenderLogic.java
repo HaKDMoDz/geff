@@ -65,7 +65,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 	{
 		texCellForeground = new Texture(Gdx.files.internal("data/CellForeground.png"));
 		texCellBackground = new Texture(Gdx.files.internal("data/CellBackground.png"));
-		texCircle = new Texture(Gdx.files.internal("data/Circle.png"));
+		//texCircle = new Texture(Gdx.files.internal("data/Circle.png"));
 		texSelected = new Texture(Gdx.files.internal("data/CellSelected.png"));
 
 		// shader = new
@@ -93,6 +93,14 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		colors.put(12, new Color(0.68f, 1f, 0.7f, 1f));
 		colors.put(8, new Color(0.95f, 1f, 0.66f, 1f));
 		colors.put(10, new Color(1f, 0.79f, 0.68f, 1f));
+		
+		
+//		colors.put(2, new Color(1f, 0f, 1f, 1f));
+//		colors.put(6, new Color(1f, 0.7f, 0.3f, 1f));
+//		colors.put(4, new Color(0f, 1f, 1f, 1f));
+//		colors.put(12, new Color(0f, 1f, 0f, 1f));
+//		colors.put(8, new Color(1f, 1f, 0f, 1f));
+//		colors.put(10, new Color(1f, 0f, 0f, 1f));
 
 		if (Context.Mini)
 		{
@@ -227,19 +235,24 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		if (cell.IsActiveCell)
 		{
 			spriteBatch.setColor(Color.BLACK);
-			spriteBatch.draw(texCircle, cellLocation.x - width / 4, cellLocation.y - height / 4, (int) ((float) width * 1.5f), (int) ((float) height * 1.5));
+			spriteBatch.draw(texSelected, cellLocation.x - width / 4, cellLocation.y - height / 4, (int) ((float) width * 1.5f), (int) ((float) height * 1.5));
 		}
 		
 		if(cell.IsSwapCell)
 		{
-			spriteBatch.setColor(new Color(0.25f,0.35f,0.35f,1f));
+			spriteBatch.setColor(new Color(0.75f,0.15f,0.85f,1f));
 			spriteBatch.draw(texSelected, cellLocation.x , cellLocation.y, width, height);
 		}
 
-		if (Context.Mini)
-			spriteBatch.setColor(Color.BLACK);
-		else
-			spriteBatch.setColor(Color.WHITE);
+//		if (Context.Mini)
+//			spriteBatch.setColor(Color.BLACK);
+//		else
+//			spriteBatch.setColor(Color.WHITE);
+		//calculer le next color cell
+		//Color colorNextCell = colors.get((int) cell.ColorType);
+		Color colorNextCell = Color.RED;
+		
+			spriteBatch.setColor(colorNextCell);
 
 		if (!cell.IsEmpty)
 		{

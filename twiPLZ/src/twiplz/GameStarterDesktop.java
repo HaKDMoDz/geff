@@ -11,7 +11,7 @@ public class GameStarterDesktop
 	{
 		Context.selectionMode = SelectionMode.Desktop;
 		Context.Mini = false;
-		boolean miniWindow = true;
+		boolean miniWindow = false;
 		
 		ApplicationListener app = new GameEngine();
 		JoglApplication window;
@@ -23,7 +23,7 @@ public class GameStarterDesktop
 		}
 		else
 		{
-			window = new JoglApplication(app, "twiPLZ", 800, 600, false);
+			window = new JoglApplication(app, "twiPLZ", 1024, 600, false);
 		}
 			
 	}
