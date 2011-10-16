@@ -59,13 +59,21 @@ namespace InitAgent
         private void AfficherRepartition()
         {
             Dictionary<DayOfWeek, String> dicNomJour = new Dictionary<DayOfWeek, string>();
+            //dicNomJour.Add(DayOfWeek.Friday, "Vendredi   ");
+            //dicNomJour.Add(DayOfWeek.Monday, "Lundi        ");
+            //dicNomJour.Add(DayOfWeek.Saturday, "Samedi      ");
+            //dicNomJour.Add(DayOfWeek.Sunday, "Dimanche");
+            //dicNomJour.Add(DayOfWeek.Thursday, "Jeudi        ");
+            //dicNomJour.Add(DayOfWeek.Tuesday, "Mardi        ");
+            //dicNomJour.Add(DayOfWeek.Wednesday, "Mercredi     ");
+
             dicNomJour.Add(DayOfWeek.Friday, "Vendredi   ");
-            dicNomJour.Add(DayOfWeek.Monday, "Lundi        ");
-            dicNomJour.Add(DayOfWeek.Saturday, "Samedi      ");
+            dicNomJour.Add(DayOfWeek.Monday, "Lundi          ");
+            dicNomJour.Add(DayOfWeek.Saturday, "Samedi        ");
             dicNomJour.Add(DayOfWeek.Sunday, "Dimanche");
-            dicNomJour.Add(DayOfWeek.Thursday, "Jeudi        ");
-            dicNomJour.Add(DayOfWeek.Tuesday, "Mardi        ");
-            dicNomJour.Add(DayOfWeek.Wednesday, "Mercredi     ");
+            dicNomJour.Add(DayOfWeek.Thursday, "Jeudi          ");
+            dicNomJour.Add(DayOfWeek.Tuesday, "Mardi          ");
+            dicNomJour.Add(DayOfWeek.Wednesday, "Mercredi   ");
 
             foreach (Jour jour in listJour)
             {
@@ -345,6 +353,32 @@ namespace InitAgent
             if (Di > 0)
                 throw new Exception(String.Format("Impossible de mettre en place la quantité de Dimanches. {0} Di ne sont pas affectables. Nombre de CA : {1}, nombre de RM {2}", Di, CA, RM));
 
+            
+            //--- Répartir les RP
+            for (int i = RP - (int)numRP.Value + 1; i <= numRP.Value; i++)
+            {
+                for (int j = 0; j < listJour.Count; j++)
+                {
+                    Jour jour = listJour[j];
+                    Jour jourJm1 = null;
+                    Jour jourJp1 = null;
+
+                    if (j > 0)
+                        jourJm1 = listJour[j - 1];
+                    if (j < listJour.Count - 1)
+                        jourJp1 = listJour[j + 1];
+
+                    if (jour.TypeAbsence == "" && (jourJm1 == null || jourJm1.TypeAbsence == "") && (jourJp1 == null || jourJp1.TypeAbsence == ""))
+                    {
+                        jour.TypeAbsence = "RP";
+                        //jour.Numero = i;
+
+                        RP--;
+                        break;
+                    }
+                }
+            }
+
             //--- Répartir les MA
             //---> Calculer le nombre de MA FAC selon la quantité de RPs
             float RPMax = 116f;
@@ -519,6 +553,31 @@ namespace InitAgent
 
             if (RU > 0)
                 throw new Exception(String.Format("Impossible de mettre en place la quantité de RU. {0} RU ne sont pas affectables", RU));
+            //---
+
+            //--- Met à jour les numéros
+            int countRP = 1;
+            int countCA = 1;
+            int countRM = 1;
+
+            foreach (Jour jour in listJour)
+            {
+                if (jour.TypeAbsence.Contains("RP"))
+                {
+                    jour.Numero = countRP;
+                    countRP++;
+                }
+                if (jour.TypeAbsence.Contains("CA"))
+                {
+                    jour.Numero = countCA;
+                    countCA++;
+                }
+                if (jour.TypeAbsence.Contains("RM"))
+                {
+                    jour.Numero = countRM;
+                    countRM++;
+                }
+            }
             //---
 
         }
