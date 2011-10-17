@@ -199,6 +199,81 @@ namespace InitAgent
             if (Di < 0)
                 throw new Exception(String.Format("Impossible de mettre en place la quantité de Week end. {0} Dimanches sont consommés en trop par rapport à la quantité de Di saisie", Math.Abs(Di)));
 
+
+
+
+            //--- Répartition des Di
+            int nbDiAAffecte = Di;
+            for (int i = 1; i <= nbDiAAffecte; i++)
+            {
+                //foreach (Jour jour in listJour)
+                for (int j = 0; j < listJour.Count; j++)
+                {
+                    Jour jour = listJour[j];
+                    Jour precJour = null;
+                    //Jour suivJour = null;
+
+                    if (j > 0)
+                        precJour = listJour[j - 1];
+                    //if (j < listJour.Count - 1)
+                    //    suivJour = listJour[j + 1];
+
+
+                    if ((precJour == null || precJour.Etat == EtatJour.Vide) && jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        if (RP > 0)
+                        {
+                            jour.TypeAbsence = "RP";
+                            jour.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
+                            AjouterEtat(jour, EtatJour.Dimanche);
+                            Di--;
+                            RP--;
+                        }
+                        else if (CA > 0)
+                        {
+                            jour.TypeAbsence = "CA";
+                            jour.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
+                            AjouterEtat(jour, EtatJour.Dimanche);
+                            Di--;
+                            CA--;
+                        }
+                        else if (RM > 0)
+                        {
+                            jour.TypeAbsence = "RM";
+                            jour.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
+                            AjouterEtat(jour, EtatJour.Dimanche);
+                            Di--;
+                            RM--;
+                        }
+                    }
+
+                    if (jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Monday && RP > 0 && (precJour == null || (precJour.ContientEtat(EtatJour.Dimanche) && !precJour.ContientEtat(EtatJour.Simple))))
+                    {
+                        jour.TypeAbsence = "RP";
+                        jour.Détail += " Di " + ((int)numDI.Value - Di).ToString() + "/" + numDI.Value.ToString();
+                        AjouterEtat(jour, EtatJour.Dimanche);
+                        RP--;
+                    }
+
+                    precJour = jour;
+                }
+            }
+
+            //---> Bloque les dimanches restant afin de ne pas mettre d'absence dessus
+            foreach (Jour jour in listJour)
+            {
+                if (jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    jour.TypeAbsence = " ";
+                }
+            }
+            //---
+
+            if (Di > 0)
+                throw new Exception(String.Format("Impossible de mettre en place la quantité de Dimanches. {0} Di ne sont pas affectables. Nombre de CA : {1}, nombre de RM {2}", Di, CA, RM));
+
+
+
             //--- Répartition des RPt (exactement 3 jours RP consécutifs, peut être combiné avec les We)
             for (int i = 1; i <= numRPt.Value; i++)
             {
@@ -234,15 +309,12 @@ namespace InitAgent
                         ))
                     {
                         listJour[j - 2].TypeAbsence = "RP";
-                        listJour[j - 2].Numero = listJour[j - 2].Numero == 0 ? (int)numRP.Value - RP + 1 : listJour[j - 2].Numero;
                         listJour[j - 2].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
 
                         //listJour[j - 1].TypeAbsence = "RP";
-                        //listJour[j - 1].Numero = listJour[j - 1].Numero == 0 ? (int)numRP.Value - RP + 1 : listJour[j - 1].Numero;
                         listJour[j - 1].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
 
                         listJour[j].TypeAbsence = "RP";
-                        listJour[j].Numero = listJour[j].Numero == 0 ? (int)numRP.Value - RP + 1 : listJour[j].Numero;
                         listJour[j].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
 
                         AjouterEtat(jour, EtatJour.Triple);
@@ -269,7 +341,14 @@ namespace InitAgent
                     {
                         Jour jour = listJour[j];
 
-                        if (jour.Etat == EtatJour.Vide)
+                        if (jour.Etat == EtatJour.Vide && 
+                            (jour.Date.DayOfWeek != DayOfWeek.Sunday || Di > 0 || jourVideConsecutif == 0 || jourVideConsecutif==4) // Evite de compter un dimanche à tord
+                           
+                            &&
+                            !(jourVideConsecutif == 2 && jour.Date.DayOfWeek == DayOfWeek.Sunday) && // Evite de former des week end
+                            !(jourVideConsecutif == 3 && jour.Date.DayOfWeek == DayOfWeek.Sunday) //Evite de former des week end
+                            
+                            )
                         {
                             jourVideConsecutif++;
 
@@ -283,19 +362,26 @@ namespace InitAgent
                         if ((jourVideConsecutif == 4 && j == listJour.Count-1) || jourVideConsecutif==5)
                         {
                             listJour[j - 3].TypeAbsence = "RP";
-                            listJour[j - 3].Numero = (int)numRP.Value - RP + 1;
                             listJour[j - 3].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
                             AjouterEtat(listJour[j - 3], EtatJour.Triple);
 
                             listJour[j - 2].TypeAbsence = "RP";
-                            listJour[j - 2].Numero = (int)numRP.Value - RP + 2;
                             listJour[j - 2].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
                             AjouterEtat(listJour[j - 2], EtatJour.Triple);
 
                             listJour[j-1].TypeAbsence = "RP";
-                            listJour[j-1].Numero = (int)numRP.Value - RP + 3;
                             listJour[j-1].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
                             AjouterEtat(listJour[j-1], EtatJour.Triple);
+
+
+                            for (int k = 1; k <= 3; k++)
+                            {
+                                if (listJour[j - k].Date.DayOfWeek == DayOfWeek.Sunday)
+                                {
+                                    listJour[j - k].Détail+= " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
+                                    Di--;
+                                }
+                            }
 
                             RPt--;
                             RP -= 3;
@@ -310,74 +396,47 @@ namespace InitAgent
             if (RPt > 0)
                 throw new Exception(String.Format("Impossible de mettre en place la quantité de RPt. {0} RPt ne sont pas affectables. Nombre de RP restant : {1}", RPt, RP));
 
-            //--- Répartition des Di
-            int nbDiAAffecte = Di;
-            for (int i = 1; i <= nbDiAAffecte; i++)
-            {
-                foreach (Jour jour in listJour)
-                {
-                    if (jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Sunday)
-                    {
-                        if (CA > 0)
-                        {
-                            jour.TypeAbsence = "CA";
-                            jour.Numero = (int)numCA.Value - CA+1;
-                            jour.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
-                            AjouterEtat(jour, EtatJour.Dimanche);
-                            Di--;
-                            CA--;
-                        }
-                        else if (RM > 0)
-                        {
-                            jour.TypeAbsence = "RM";
-                            jour.Numero = (int)numRM.Value - RM+1;
-                            jour.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
-                            AjouterEtat(jour, EtatJour.Dimanche);
-                            Di--;
-                            RM--;
-                        }
-                    }
-                }
-            }
-
-            //---> Bloque les dimanches restant afin de ne pas mettre d'absence dessus
-            foreach (Jour jour in listJour)
-            {
-                if (jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Sunday)
-                {
-                    jour.TypeAbsence = " ";
-                }
-            }
-            //---
-
-            if (Di > 0)
-                throw new Exception(String.Format("Impossible de mettre en place la quantité de Dimanches. {0} Di ne sont pas affectables. Nombre de CA : {1}, nombre de RM {2}", Di, CA, RM));
-
-            
             //--- Répartir les RP
-            for (int i = RP - (int)numRP.Value + 1; i <= numRP.Value; i++)
+            int nbRPConsecutif = 0;
+
+            for (int j = 0; j < listJour.Count; j++)
             {
-                for (int j = 0; j < listJour.Count; j++)
+                if (RP == 0)
+                    break;
+
+                if (nbRPConsecutif == 2)
                 {
-                    Jour jour = listJour[j];
-                    Jour jourJm1 = null;
-                    Jour jourJp1 = null;
+                    nbRPConsecutif = 0;
+                    continue;
 
-                    if (j > 0)
-                        jourJm1 = listJour[j - 1];
-                    if (j < listJour.Count - 1)
-                        jourJp1 = listJour[j + 1];
+                }
 
-                    if (jour.TypeAbsence == "" && (jourJm1 == null || jourJm1.TypeAbsence == "") && (jourJp1 == null || jourJp1.TypeAbsence == ""))
-                    {
-                        jour.TypeAbsence = "RP";
-                        //jour.Numero = i;
+                Jour jour = listJour[j];
+                Jour jourJm1 = null;
+                Jour jourJp1 = null;
 
-                        RP--;
-                        break;
-                    }
+                if (j > 0)
+                    jourJm1 = listJour[j - 1];
+                if (j < listJour.Count - 1)
+                    jourJp1 = listJour[j + 1];
+
+
+                if (jour.TypeAbsence == "" && (jourJm1 == null || jourJm1.Détail == "") && (jourJp1 == null || jourJp1.Détail == ""))
+                {
+                    jour.TypeAbsence = "RP";
+                    nbRPConsecutif++;
+
+                    RP--;
+                }
+                else
+                {
+                    nbRPConsecutif = 0;
                 }
             }
+
+            if (RP > 0)
+                throw new Exception(String.Format("Impossible de mettre en place la quantité de RP. {0} RP ne sont pas affectables", RP));
+            //---
 
             //--- Répartir les MA
             //---> Calculer le nombre de MA FAC selon la quantité de RPs
@@ -496,14 +555,13 @@ namespace InitAgent
             //---
 
             //--- Répartir les CA
-            for (int i = CA - (int)numCA.Value+1; i <= numCA.Value; i++)
+            for (int i = (int)numCA.Value - CA; i < numCA.Value; i++)
             {
                 foreach (Jour jour in listJour)
                 {
                     if (jour.TypeAbsence == "")
                     {
                         jour.TypeAbsence = "CA";
-                        jour.Numero = i;
 
                         CA--;
                         break;
@@ -516,14 +574,13 @@ namespace InitAgent
             //---
 
             //--- Répartir les RM
-            for (int i = RM - (int)numRM.Value + 1; i <= numRM.Value; i++)
+            for (int i = (int)numRM.Value - RM; i < numRM.Value; i++)
             {
                 foreach (Jour jour in listJour)
                 {
                     if (jour.TypeAbsence == "")
                     {
                         jour.TypeAbsence = "RM";
-                        jour.Numero = i;
 
                         RM--;
                         break;
