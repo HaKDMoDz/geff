@@ -40,19 +40,38 @@ namespace InitAgent
 
         private void btnRépartir_Click(object sender, EventArgs e)
         {
-            txt.ForeColor = Color.Black;
-            txt.Clear();
-
             try
             {
                 CalculerRepartition();
+
+                txt.ForeColor = Color.Black;
+                txt.Clear();
+                txtMessage.Clear();
+
                 AfficherRepartition();
             }
             catch (Exception ex)
             {
-                txt.ForeColor = Color.Red;
+                txtMessage.ForeColor = Color.Red;
 
-                txt.AppendText(ex.Message);
+                txtMessage.AppendText(ex.Message);
+            }
+            finally
+            {
+                string message = "";
+
+                VerificationRepartition();
+                if (We != (int)numWe.Value)
+                    message += String.Format("\r\nNombre de Week end évalué incorrect {0} vs {1}", We, numWe.Value);
+
+
+                if (message != "")
+                    message = "\r\n-----------------------------------------\r\n" + message;
+
+                txtMessage.ForeColor = Color.Red;
+
+                txtMessage.AppendText(message);
+
             }
         }
 
@@ -67,23 +86,23 @@ namespace InitAgent
             //dicNomJour.Add(DayOfWeek.Tuesday, "Mardi        ");
             //dicNomJour.Add(DayOfWeek.Wednesday, "Mercredi     ");
 
-            dicNomJour.Add(DayOfWeek.Friday, "Vendredi   ");
-            dicNomJour.Add(DayOfWeek.Monday, "Lundi          ");
-            dicNomJour.Add(DayOfWeek.Saturday, "Samedi        ");
-            dicNomJour.Add(DayOfWeek.Sunday, "Dimanche");
-            dicNomJour.Add(DayOfWeek.Thursday, "Jeudi          ");
-            dicNomJour.Add(DayOfWeek.Tuesday, "Mardi          ");
-            dicNomJour.Add(DayOfWeek.Wednesday, "Mercredi   ");
+            //dicNomJour.Add(DayOfWeek.Friday, "Vendredi   ");
+            //dicNomJour.Add(DayOfWeek.Monday, "Lundi          ");
+            //dicNomJour.Add(DayOfWeek.Saturday, "Samedi        ");
+            //dicNomJour.Add(DayOfWeek.Sunday, "Dimanche");
+            //dicNomJour.Add(DayOfWeek.Thursday, "Jeudi          ");
+            //dicNomJour.Add(DayOfWeek.Tuesday, "Mardi          ");
+            //dicNomJour.Add(DayOfWeek.Wednesday, "Mercredi   ");
 
             foreach (Jour jour in listJour)
             {
                 int txtLength = txt.TextLength;
-                string detail = dicNomJour[jour.Date.DayOfWeek] + "\t" + jour.Date.ToShortDateString();
-                detail += jour.TypeAbsence.Trim() != "" ? " : " + jour.TypeAbsence + " " + jour.Numero : "";
-                detail +=  jour.Détail != "" ?  " (" + jour.Détail +")" : "";
-                detail += "\r\n";
+                //string detail = dicNomJour[jour.Date.DayOfWeek] + "\t" + jour.Date.ToShortDateString();
+                //detail += jour.TypeAbsence.Trim() != "" ? " : " + jour.TypeAbsence + " " + jour.Numero : "";
+                //detail += jour.Détail != "" ? " (" + jour.Détail + ")" : "";
+                //detail += "\r\n";
 
-                txt.AppendText(detail);
+                txt.AppendText(jour.ToString());
 
                 if (jour.Date.DayOfWeek == DayOfWeek.Sunday)
                 {
@@ -92,14 +111,6 @@ namespace InitAgent
                     txt.SelectionColor = Color.Blue;
                 }
             }
-        }
-
-        private void AjouterEtat(Jour jour, EtatJour etat)
-        {
-            if (jour.Etat == EtatJour.Vide)
-                jour.Etat = etat;
-            else
-                jour.Etat |= etat;
         }
 
         private void CalculerRepartition()
@@ -132,19 +143,32 @@ namespace InitAgent
             //--- Répartition des RPs (Un RP isolé sur un dimanche)
             for (int i = 1; i <= numRPs.Value; i++)
             {
-                foreach (Jour jour in listJour)
+                for (int j = 0; j < listJour.Count; j++)
                 {
-                    if (jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Sunday && RP>0)
+                    Jour jour = listJour[j];
+                    Jour jourJm1 = null;
+                    Jour jourJp1 = null;
+
+                    if (j > 0)
+                        jourJm1 = listJour[j - 1];
+                    if (j < listJour.Count - 1)
+                        jourJp1 = listJour[j + 1];
+
+                    if (jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Sunday && RP > 0)
                     {
                         RP--;
                         RPs--;
-                        Di--;
 
                         jour.TypeAbsence = "RP";
                         jour.Numero = (int)numRP.Value - RP;
-                        jour.Détail = "RPs " + i.ToString() + "/" + numRPs.Value.ToString() + " Di " + ((int)numDI.Value-Di).ToString() + "/" + numDI.Value.ToString();;
-                        AjouterEtat(jour, EtatJour.Simple);
-                        AjouterEtat(jour, EtatJour.Dimanche);
+                        jour.Détail = "RPs " + i.ToString() + "/" + numRPs.Value.ToString();
+                        jour.AjouterEtat(EtatJour.Simple);
+                        jour.AjouterEtat(EtatJour.Dimanche);
+
+                        if (jourJm1 != null)
+                            jourJm1.AjouterEtat(EtatJour.InterditRP);
+                        if (jourJp1 != null)
+                            jourJp1.AjouterEtat(EtatJour.InterditRP);
 
                         break;
                     }
@@ -154,13 +178,11 @@ namespace InitAgent
 
             if (RPs > 0)
                 throw new Exception(String.Format("Impossible de mettre en place la quantité de RPs. {0} RPs ne sont pas affectables. Nombre de RP restant : {1}", RPs, RP));
-            if (Di<0)
-                throw new Exception(String.Format("Impossible de mettre en place la quantité de RPs. {0} Dimanches sont consommés en trop par rapport à la quantité de Di saisie", Math.Abs(Di)));
 
             //--- Répartition des We (Samedi et Dimanche en RP)
             for (int i = 1; i <= numWe.Value; i++)
             {
-                for(int j = 0; j < listJour.Count; j++)
+                for (int j = 0; j < listJour.Count; j++)
                 {
                     Jour jourJ = listJour[j];
                     Jour jourJp1 = null;
@@ -168,20 +190,19 @@ namespace InitAgent
                     if (j < listJour.Count - 1)
                         jourJp1 = listJour[j + 1];
 
-                    if (jourJp1 != null && jourJ.TypeAbsence == "" && jourJp1.TypeAbsence == "" && jourJ.Date.DayOfWeek == DayOfWeek.Saturday && jourJp1.Date.DayOfWeek == DayOfWeek.Sunday && RP>=2)
+                    if (jourJp1 != null && jourJ.ContientEtat(EtatJour.Vide) && jourJp1.ContientEtat(EtatJour.Vide) && jourJ.Date.DayOfWeek == DayOfWeek.Saturday && jourJp1.Date.DayOfWeek == DayOfWeek.Sunday && RP >= 2)
                     {
-
                         jourJ.TypeAbsence = "RP";
-                        jourJ.Numero = (int)numRP.Value - RP +1;
+                        jourJ.Numero = (int)numRP.Value - RP + 1;
                         jourJ.Détail = "We " + i.ToString() + "/" + numWe.Value.ToString();
 
                         jourJp1.TypeAbsence = "RP";
-                        jourJp1.Numero = (int)numRP.Value - RP+2;
-                        jourJp1.Détail = "We " + i.ToString() + "/" + numWe.Value.ToString() + " Di " + ((int)numDI.Value-Di+1).ToString() + "/" + numDI.Value.ToString();
+                        jourJp1.Numero = (int)numRP.Value - RP + 2;
+                        jourJp1.Détail = "We " + i.ToString() + "/" + numWe.Value.ToString() + " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
 
-                        AjouterEtat(jourJ, EtatJour.WeekEnd);
-                        AjouterEtat(jourJp1, EtatJour.WeekEnd);
-                        AjouterEtat(jourJp1, EtatJour.Dimanche);
+                        jourJ.AjouterEtat(EtatJour.WeekEnd);
+                        jourJp1.AjouterEtat(EtatJour.WeekEnd);
+                        jourJp1.AjouterEtat(EtatJour.Dimanche);
 
                         RP -= 2;
                         We--;
@@ -193,6 +214,23 @@ namespace InitAgent
             }
             //---
 
+            //--- Verrouille les Week end pour ne plus poser de RP dessus
+            for (int j = 0; j < listJour.Count; j++)
+            {
+                Jour jourJ = listJour[j];
+                Jour jourJp1 = null;
+
+                if (j < listJour.Count - 1)
+                    jourJp1 = listJour[j + 1];
+
+                if (jourJp1 != null && jourJ.ContientEtat(EtatJour.Vide) && jourJp1.ContientEtat(EtatJour.Vide) && jourJ.Date.DayOfWeek == DayOfWeek.Saturday && jourJp1.Date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    jourJ.AjouterEtat(EtatJour.InterditRP);
+                    jourJp1.AjouterEtat(EtatJour.InterditRP);
+                }
+            }
+            //---
+
             if (We > 0)
                 throw new Exception(String.Format("Impossible de mettre en place la quantité de Week end. {0} Week end ne sont pas affectables. Nombre de RP restant : {1}", We, RP));
 
@@ -200,62 +238,335 @@ namespace InitAgent
                 throw new Exception(String.Format("Impossible de mettre en place la quantité de Week end. {0} Dimanches sont consommés en trop par rapport à la quantité de Di saisie", Math.Abs(Di)));
 
 
+            //--- Répartition des RPt (exactement 3 jours RP consécutifs, peut être combiné avec les We)
+            int indexNextRPT = 2;
 
+            for (int i = 1; i <= numRPt.Value; i++)
+            {
+                bool found = false;
+
+                for (int j = 0; j < listJour.Count; j++)
+                {
+                    Jour jour = listJour[j];
+
+                    if (jour.Date.DayOfWeek == DayOfWeek.Saturday && jour.ContientEtat(EtatJour.WeekEnd) && !jour.ContientEtat(EtatJour.Triple) && RP >= 1) //---> Le Dimanche suivant est forcément un week end
+                    {
+                        //--- Détecter le lundi et le vendredi
+                        //Jour jourVendredi = null;
+                        //Jour jourLundi = null;
+
+                        //if (j > 0)
+                        //    jourVendredi = listJour[j - 1];
+                        //if (j + 2 < listJour.Count - 1)
+                        //    jourLundi = listJour[j + 2];
+                        //---
+
+                        Jour jourRPT = null;
+
+
+                        //--- Choisir le lundi en priorité si premier choix puis alterner
+                        if (j+indexNextRPT>0 && j+indexNextRPT< listJour.Count-1 != null)
+                        {
+                            jourRPT = listJour[j+indexNextRPT];
+
+                            if (indexNextRPT == 2)
+                                indexNextRPT = -1;
+                            else
+                                indexNextRPT = 2;
+                        }
+
+                        if (jourRPT == null)
+                        {
+                            jourRPT = listJour[indexNextRPT];
+                        }
+                        //---
+
+
+                        if (jourRPT != null)
+                        {
+                            listJour[j].TypeAbsence = "RP";
+                            listJour[j].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+                            listJour[j].AjouterEtat(EtatJour.Triple);
+
+                            listJour[j + 1].TypeAbsence = "RP";
+                            listJour[j + 1].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+                            listJour[j + 1].AjouterEtat(EtatJour.Triple);
+
+                            jourRPT.TypeAbsence = "RP";
+                            jourRPT.Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+                            jourRPT.AjouterEtat(EtatJour.Triple);
+
+                            if (jourRPT.Date.DayOfWeek == DayOfWeek.Friday && j - 2 >= 0)
+                                listJour[j - 2].AjouterEtat(EtatJour.InterditRP);
+
+                            if (jourRPT.Date.DayOfWeek == DayOfWeek.Monday && j + 3 < listJour.Count-1)
+                                listJour[j +3].AjouterEtat(EtatJour.InterditRP);
+
+                            ////--- Bloque le jeudi et le lundi afin de ne pas poser de RP desuss par la suite
+                            //if (j - 2 > 0)
+                            //    listJour[j - 2].AjouterEtat(EtatJour.InterditRP);
+                            //if (j + 2 < listJour.Count - 1)
+                            //    listJour[j + 2].AjouterEtat(EtatJour.InterditRP);
+                            ////---
+
+                            //for (int k = -1; k < 2; k++)
+                            //{
+                            //    listJour[j + k].TypeAbsence = "RP";
+                            //    listJour[j + k].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+                            //    listJour[j + k].AjouterEtat(EtatJour.Triple);
+                            //}
+
+                            RP--;
+                            RPt--;
+                            found = true;
+
+                            break;
+                        }
+                    }
+
+                    #region old
+                    /*
+                    if (etape == 0 && !jour.ContientEtat(EtatJour.Triple) &&
+                        ((jour.Date.DayOfWeek == DayOfWeek.Friday && jour.TypeAbsence == "")
+                        ||
+                        (jour.Date.DayOfWeek == DayOfWeek.Saturday && jour.TypeAbsence == "RP")
+                        ))
+                    {
+                        etape = 1;
+                        found = true;
+                    }
+                    else if (etape == 1 && !jour.ContientEtat(EtatJour.Triple) &&
+                        ((jour.Date.DayOfWeek == DayOfWeek.Saturday && jour.TypeAbsence == "RP")
+                        ||
+                        (jour.Date.DayOfWeek == DayOfWeek.Sunday && jour.TypeAbsence == "RP")
+                        ))
+                    {
+                        etape = 2;
+                        found = true;
+                    }
+                    else if (etape == 2 && !jour.ContientEtat(EtatJour.Triple) && RP >= 1 &&
+                        ((jour.Date.DayOfWeek == DayOfWeek.Sunday && jour.TypeAbsence == "RP")
+                        ||
+                        (jour.Date.DayOfWeek == DayOfWeek.Monday && jour.TypeAbsence == "")
+                        ))
+                    {
+                        listJour[j - 2].TypeAbsence = "RP";
+                        listJour[j - 2].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+
+                        //listJour[j - 1].TypeAbsence = "RP";
+                        listJour[j - 1].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+
+                        listJour[j].TypeAbsence = "RP";
+                        listJour[j].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+
+                        jour.AjouterEtat(EtatJour.Triple);
+                        listJour[j - 1].AjouterEtat(EtatJour.Triple);
+                        listJour[j - 2].AjouterEtat(EtatJour.Triple);
+
+                        RPt--;
+                        RP--;
+
+                        etape = 3;
+
+                        break;
+                    }
+
+                    if (!found)
+                        etape = 0;
+                */
+                    #endregion
+                }
+
+                if (!found && RP >= 3)
+                {
+                    int jourVideConsecutif = 0;
+
+                    for (int j = 0; j < listJour.Count; j++)
+                    {
+                        Jour jour = listJour[j];
+
+                        if (jour.Etat == EtatJour.Vide)
+                            jourVideConsecutif++;
+                        else
+                            jourVideConsecutif = 0;
+
+                        if (jourVideConsecutif == 3)
+                        {
+                            listJour[j - 2].TypeAbsence = "RP";
+                            listJour[j - 2].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+                            listJour[j - 2].AjouterEtat(EtatJour.Triple);
+
+                            listJour[j - 1].TypeAbsence = "RP";
+                            listJour[j - 1].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+                            listJour[j - 1].AjouterEtat(EtatJour.Triple);
+
+                            listJour[j].TypeAbsence = "RP";
+                            listJour[j].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
+                            listJour[j].AjouterEtat(EtatJour.Triple);
+
+                            RPt--;
+                            RP -= 3;
+
+                            break;
+                        }
+                    }
+                }
+            }
+            //---
+
+            if (RPt > 0)
+                throw new Exception(String.Format("Impossible de mettre en place la quantité de RPt. {0} RPt ne sont pas affectables. Nombre de RP restant : {1}", RPt, RP));
+
+
+            //--- Supprime tous les interdit
+            for (int j = 0; j < listJour.Count; j++)
+            {
+                Jour jour = listJour[j];
+
+                if (jour.ContientEtat(EtatJour.InterditRP))
+                    jour.Etat = EtatJour.Vide;
+
+
+
+            }
+            //---
+
+            //--- Ajoute l'interdit autour des RPs
+            for (int j = 0; j < listJour.Count; j++)
+            {
+                Jour jour = listJour[j];
+                Jour jourJm1 = null;
+                Jour jourJp1 = null;
+
+                if (j > 0)
+                    jourJm1 = listJour[j - 1];
+                if (j < listJour.Count - 1)
+                    jourJp1 = listJour[j + 1];
+
+                if (jour.ContientEtat(EtatJour.Simple))
+                {
+                    if (jourJm1 != null)
+                        jourJm1.Etat = EtatJour.InterditRP;
+                    if (jourJp1 != null)
+                        jourJp1.Etat = EtatJour.InterditRP;
+                }
+            }
+            //---
+
+
+            //--- Détermine les Jour interdit de RP afin de ne pas former des RPt
+            int jourRempliConsecutif = 0;
+            for (int j = 0; j < listJour.Count; j++)
+            {
+                Jour jour = listJour[j];
+
+                if (jour.TypeAbsence == "RP")
+                {
+                    jourRempliConsecutif++;
+                }
+                else if (jour.TypeAbsence == "")
+                {
+                    if (jourRempliConsecutif >= 2)
+                        jour.AjouterEtat(EtatJour.InterditRP);
+
+                    jourRempliConsecutif = 0;
+                }
+            }
+            //---
+
+            listJour.Reverse();
+
+
+            //--- Détermine les Jour interdit de RP afin de ne pas former des RPt
+            jourRempliConsecutif = 0;
+            for (int j = 0; j < listJour.Count; j++)
+            {
+                Jour jour = listJour[j];
+
+                if (jour.TypeAbsence == "RP")
+                {
+                    jourRempliConsecutif++;
+                }
+                else if (jour.TypeAbsence == "")
+                {
+                    if (jourRempliConsecutif >= 2)
+                        jour.AjouterEtat(EtatJour.InterditRP);
+
+                    jourRempliConsecutif = 0;
+                }
+            }
+            //---
+
+            listJour.Reverse();
 
             //--- Répartition des Di
             int nbDiAAffecte = Di;
             for (int i = 1; i <= nbDiAAffecte; i++)
             {
-                //foreach (Jour jour in listJour)
                 for (int j = 0; j < listJour.Count; j++)
                 {
                     Jour jour = listJour[j];
-                    Jour precJour = null;
-                    //Jour suivJour = null;
+                    Jour jourJp1 = null;
 
-                    if (j > 0)
-                        precJour = listJour[j - 1];
-                    //if (j < listJour.Count - 1)
-                    //    suivJour = listJour[j + 1];
+                    if (j < listJour.Count - 1)
+                        jourJp1 = listJour[j + 1];
 
 
-                    if ((precJour == null || precJour.Etat == EtatJour.Vide) && jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Sunday)
+                    if (jour.Date.DayOfWeek == DayOfWeek.Sunday && jour.Etat == EtatJour.Vide && jourJp1 != null && jourJp1.Etat == EtatJour.Vide && (CA + RM + RP >= 2))
                     {
+                        //--- Jour J (Dimanche)
                         if (RP > 0)
                         {
                             jour.TypeAbsence = "RP";
-                            jour.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
-                            AjouterEtat(jour, EtatJour.Dimanche);
-                            Di--;
                             RP--;
                         }
                         else if (CA > 0)
                         {
                             jour.TypeAbsence = "CA";
-                            jour.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
-                            AjouterEtat(jour, EtatJour.Dimanche);
-                            Di--;
                             CA--;
                         }
                         else if (RM > 0)
                         {
                             jour.TypeAbsence = "RM";
-                            jour.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
-                            AjouterEtat(jour, EtatJour.Dimanche);
-                            Di--;
                             RM--;
                         }
+                        //---
+
+                        //--- Jour J+1 (Lundi)
+                        if (RP > 0)
+                        {
+                            jourJp1.TypeAbsence = "RP";
+                            RP--;
+                        }
+                        else if (CA > 0)
+                        {
+                            jourJp1.TypeAbsence = "CA";
+                            CA--;
+                        }
+                        else if (RM > 0)
+                        {
+                            jourJp1.TypeAbsence = "RM";
+                            RM--;
+                        }
+                        //---
+
+                        jour.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
+                        jour.AjouterEtat(EtatJour.Dimanche);
+                        jourJp1.Détail += " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
+                        jourJp1.AjouterEtat(EtatJour.Dimanche);
+
+                        Di--;
+
+                        break;
                     }
 
-                    if (jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Monday && RP > 0 && (precJour == null || (precJour.ContientEtat(EtatJour.Dimanche) && !precJour.ContientEtat(EtatJour.Simple))))
-                    {
-                        jour.TypeAbsence = "RP";
-                        jour.Détail += " Di " + ((int)numDI.Value - Di).ToString() + "/" + numDI.Value.ToString();
-                        AjouterEtat(jour, EtatJour.Dimanche);
-                        RP--;
-                    }
-
-                    precJour = jour;
+                    //if (jour.TypeAbsence == "" && jour.Date.DayOfWeek == DayOfWeek.Monday && RP > 0 && !jour.ContientEtat(EtatJour.InterditRP) && (jourJm1 == null || (jourJm1.ContientEtat(EtatJour.Dimanche) && !jourJm1.ContientEtat(EtatJour.Simple))))
+                    //{
+                    //    jour.TypeAbsence = "RP";
+                    //    jour.Détail += " Di " + ((int)numDI.Value - Di).ToString() + "/" + numDI.Value.ToString();
+                    //    jour.AjouterEtat(EtatJour.Dimanche);
+                    //    RP--;
+                    //}
                 }
             }
 
@@ -272,129 +583,7 @@ namespace InitAgent
             if (Di > 0)
                 throw new Exception(String.Format("Impossible de mettre en place la quantité de Dimanches. {0} Di ne sont pas affectables. Nombre de CA : {1}, nombre de RM {2}", Di, CA, RM));
 
-
-
-            //--- Répartition des RPt (exactement 3 jours RP consécutifs, peut être combiné avec les We)
-            for (int i = 1; i <= numRPt.Value; i++)
-            {
-                int etape = 0;
-
-                for (int j = 0; j < listJour.Count; j++)
-                {
-                    Jour jour = listJour[j];
-                    bool found = false;
-
-                    if (etape == 0 && !jour.ContientEtat(EtatJour.Triple) &&
-                        ((jour.Date.DayOfWeek == DayOfWeek.Friday && jour.TypeAbsence == "") 
-                        || 
-                        (jour.Date.DayOfWeek == DayOfWeek.Saturday && jour.TypeAbsence == "RP")
-                        ))
-                    {
-                        etape = 1;
-                        found = true;
-                    }
-                    else if (etape == 1 && !jour.ContientEtat(EtatJour.Triple) && 
-                        ((jour.Date.DayOfWeek == DayOfWeek.Saturday && jour.TypeAbsence == "RP") 
-                        || 
-                        (jour.Date.DayOfWeek == DayOfWeek.Sunday && jour.TypeAbsence == "RP")
-                        ))
-                    {
-                        etape = 2;
-                        found = true;
-                    }
-                    else if (etape == 2 && !jour.ContientEtat(EtatJour.Triple) && RP>=1 &&
-                        ((jour.Date.DayOfWeek == DayOfWeek.Sunday && jour.TypeAbsence == "RP") 
-                        || 
-                        (jour.Date.DayOfWeek == DayOfWeek.Monday && jour.TypeAbsence == "")
-                        ))
-                    {
-                        listJour[j - 2].TypeAbsence = "RP";
-                        listJour[j - 2].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
-
-                        //listJour[j - 1].TypeAbsence = "RP";
-                        listJour[j - 1].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
-
-                        listJour[j].TypeAbsence = "RP";
-                        listJour[j].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
-
-                        AjouterEtat(jour, EtatJour.Triple);
-                        AjouterEtat(listJour[j - 1], EtatJour.Triple);
-                        AjouterEtat(listJour[j - 2], EtatJour.Triple);
-
-                        RPt--;
-                        RP--;
-
-                        etape = 3;
-
-                        break;
-                    }
-
-                    if (!found)
-                        etape = 0;
-                }
-
-                if (etape != 3 && RP>=3)
-                {
-                    int jourVideConsecutif = 0;
-
-                    for (int j = 0; j < listJour.Count; j++)
-                    {
-                        Jour jour = listJour[j];
-
-                        if (jour.Etat == EtatJour.Vide && 
-                            (jour.Date.DayOfWeek != DayOfWeek.Sunday || Di > 0 || jourVideConsecutif == 0 || jourVideConsecutif==4) // Evite de compter un dimanche à tord
-                           
-                            &&
-                            !(jourVideConsecutif == 2 && jour.Date.DayOfWeek == DayOfWeek.Sunday) && // Evite de former des week end
-                            !(jourVideConsecutif == 3 && jour.Date.DayOfWeek == DayOfWeek.Sunday) //Evite de former des week end
-                            
-                            )
-                        {
-                            jourVideConsecutif++;
-
-                            if (j == 0 || j == listJour.Count - 1)
-                                jourVideConsecutif++;
-                        }
-                        else
-                            jourVideConsecutif = 0;
-
-
-                        if ((jourVideConsecutif == 4 && j == listJour.Count-1) || jourVideConsecutif==5)
-                        {
-                            listJour[j - 3].TypeAbsence = "RP";
-                            listJour[j - 3].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
-                            AjouterEtat(listJour[j - 3], EtatJour.Triple);
-
-                            listJour[j - 2].TypeAbsence = "RP";
-                            listJour[j - 2].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
-                            AjouterEtat(listJour[j - 2], EtatJour.Triple);
-
-                            listJour[j-1].TypeAbsence = "RP";
-                            listJour[j-1].Détail += " RPt " + i.ToString() + "/" + numRPt.Value.ToString();
-                            AjouterEtat(listJour[j-1], EtatJour.Triple);
-
-
-                            for (int k = 1; k <= 3; k++)
-                            {
-                                if (listJour[j - k].Date.DayOfWeek == DayOfWeek.Sunday)
-                                {
-                                    listJour[j - k].Détail+= " Di " + ((int)numDI.Value - Di + 1).ToString() + "/" + numDI.Value.ToString();
-                                    Di--;
-                                }
-                            }
-
-                            RPt--;
-                            RP -= 3;
-
-                            break;
-                        }
-                    }
-                }
-            }
-            //---
-
-            if (RPt > 0)
-                throw new Exception(String.Format("Impossible de mettre en place la quantité de RPt. {0} RPt ne sont pas affectables. Nombre de RP restant : {1}", RPt, RP));
+            return;
 
             //--- Répartir les RP
             int nbRPConsecutif = 0;
@@ -441,7 +630,7 @@ namespace InitAgent
             //--- Répartir les MA
             //---> Calculer le nombre de MA FAC selon la quantité de RPs
             float RPMax = 116f;
-            int MAFac = (int)Math.Round(((float)RPr*365f)/RPMax , MidpointRounding.AwayFromZero);
+            int MAFac = (int)Math.Round(((float)RPr * 365f) / RPMax, MidpointRounding.AwayFromZero);
 
             for (int i = 1; i <= numMA.Value; i++)
             {
@@ -639,6 +828,66 @@ namespace InitAgent
 
         }
 
+        private void VerificationRepartition()
+        {
+            RP = 0;
+            RPr = 0;
+            RPs = 0;
+            RPt = 0;
+            MA = 0;
+            BA = 0;
+            RH = 0;
+            VT = 0;
+            VC = 0;
+            Di = 0;
+            CA = 0;
+            RM = 0;
+            RU = 0;
+            We = 0;
+
+            for (int j = 0; j < listJour.Count; j++)
+            {
+                Jour jour = listJour[j];
+                Jour jourSuivant = null;
+                if (j < listJour.Count - 1)
+                    jourSuivant = listJour[j + 1];
+
+                if (jour.TypeAbsence.Contains("RP"))
+                    RP++;
+                if (jour.TypeAbsence.Contains("MA"))
+                    MA++;
+                if (jour.TypeAbsence.Contains("BA"))
+                    BA++;
+                if (jour.TypeAbsence.Contains("RH"))
+                    RH++;
+                if (jour.TypeAbsence.Contains("VT"))
+                    VT++;
+                if (jour.TypeAbsence.Contains("VC"))
+                    VC++;
+                if (jour.TypeAbsence.Contains("RM"))
+                    RM++;
+                if (jour.TypeAbsence.Contains("RU"))
+                    RU++;
+
+                //--- Compte les WE
+                if (jour.Date.DayOfWeek == DayOfWeek.Saturday && jour.TypeAbsence.Contains("RP"))
+                {
+                    if (j < (listJour.Count - 1))
+                    {
+                        TimeSpan ecartAbsSuivant = jourSuivant.Date.Subtract(jour.Date);
+                        if ((jourSuivant.Date.DayOfWeek == DayOfWeek.Sunday)
+                            && jourSuivant.TypeAbsence.Contains("RP")
+                            && ecartAbsSuivant.Days == 1)
+                        {
+                            We++;
+                        }
+                    }
+                }
+                //---
+
+            }
+        }
+
         private void numRP_ValueChanged(object sender, EventArgs e)
         {
             btnRépartir.PerformClick();
@@ -662,6 +911,34 @@ namespace InitAgent
         {
             return (this.Etat & etat) == etat;
         }
+
+        public void AjouterEtat(EtatJour etat)
+        {
+            if (Etat == EtatJour.Vide)
+                Etat = etat;
+            else
+                Etat |= etat;
+        }
+
+        public override string ToString()
+        {
+            Dictionary<DayOfWeek, String> dicNomJour = new Dictionary<DayOfWeek, string>();
+
+            dicNomJour.Add(DayOfWeek.Friday, "Vendredi   ");
+            dicNomJour.Add(DayOfWeek.Monday, "Lundi          ");
+            dicNomJour.Add(DayOfWeek.Saturday, "Samedi        ");
+            dicNomJour.Add(DayOfWeek.Sunday, "Dimanche");
+            dicNomJour.Add(DayOfWeek.Thursday, "Jeudi          ");
+            dicNomJour.Add(DayOfWeek.Tuesday, "Mardi          ");
+            dicNomJour.Add(DayOfWeek.Wednesday, "Mercredi   ");
+
+            string detail = dicNomJour[Date.DayOfWeek] + "\t" + Date.ToShortDateString();
+            detail += TypeAbsence.Trim() != "" ? " : " + TypeAbsence + " " + Numero : "";
+            detail += Détail != "" ? " (" + Détail + ")" : "";
+            detail += "\r\n";
+
+            return detail;
+        }
     }
 
     [Flags()]
@@ -671,6 +948,7 @@ namespace InitAgent
         Simple = 2,
         WeekEnd = 4,
         Dimanche = 8,
-        Triple = 16
+        Triple = 16,
+        InterditRP = 32
     }
 }

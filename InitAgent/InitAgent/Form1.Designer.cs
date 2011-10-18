@@ -60,6 +60,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txt = new System.Windows.Forms.RichTextBox();
             this.calendar = new System.Windows.Forms.MonthCalendar();
+            this.txtMessage = new System.Windows.Forms.RichTextBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.numRP)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRPr)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numMA)).BeginInit();
@@ -75,6 +77,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numRU)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numWe)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -342,7 +348,7 @@
             // 
             // btnRépartir
             // 
-            this.btnRépartir.Location = new System.Drawing.Point(302, 195);
+            this.btnRépartir.Location = new System.Drawing.Point(302, 174);
             this.btnRépartir.Name = "btnRépartir";
             this.btnRépartir.Size = new System.Drawing.Size(75, 23);
             this.btnRépartir.TabIndex = 28;
@@ -388,30 +394,55 @@
             // 
             // txt
             // 
-            this.txt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
             this.txt.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txt.Location = new System.Drawing.Point(12, 247);
+            this.txt.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txt.Location = new System.Drawing.Point(0, 0);
             this.txt.Name = "txt";
-            this.txt.Size = new System.Drawing.Size(538, 473);
+            this.txt.Size = new System.Drawing.Size(534, 361);
             this.txt.TabIndex = 30;
             this.txt.Text = "";
             // 
             // calendar
             // 
-            this.calendar.Location = new System.Drawing.Point(302, 28);
+            this.calendar.Location = new System.Drawing.Point(302, 12);
             this.calendar.Name = "calendar";
             this.calendar.TabIndex = 31;
             this.calendar.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.calendar_DateChanged);
+            // 
+            // txtMessage
+            // 
+            this.txtMessage.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtMessage.Location = new System.Drawing.Point(0, 0);
+            this.txtMessage.Name = "txtMessage";
+            this.txtMessage.Size = new System.Drawing.Size(534, 108);
+            this.txtMessage.TabIndex = 32;
+            this.txtMessage.Text = "";
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Location = new System.Drawing.Point(12, 247);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.txtMessage);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.txt);
+            this.splitContainer1.Size = new System.Drawing.Size(534, 473);
+            this.splitContainer1.SplitterDistance = 108;
+            this.splitContainer1.TabIndex = 33;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(558, 732);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.calendar);
-            this.Controls.Add(this.txt);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnRépartir);
             this.Name = "Form1";
@@ -434,6 +465,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numWe)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -472,6 +507,8 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RichTextBox txt;
         private System.Windows.Forms.MonthCalendar calendar;
+        private System.Windows.Forms.RichTextBox txtMessage;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
 
