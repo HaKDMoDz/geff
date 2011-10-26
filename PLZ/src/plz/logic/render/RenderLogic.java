@@ -74,7 +74,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		for (int i = 1; i <= 6; i++)
 		{
-			texArrowsIn[i - 1] = new Texture(Gdx.files.internal("data/ArrowIn" + i + ".png"));
+			//texArrowsIn[i - 1] = new Texture(Gdx.files.internal("data/ArrowIn" + i + ".png"));
 			texArrowsOut[i - 1] = new Texture(Gdx.files.internal("data/ArrowOut" + i + ".png"));
 		}
 
