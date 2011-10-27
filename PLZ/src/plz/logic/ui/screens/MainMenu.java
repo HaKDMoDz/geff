@@ -1,4 +1,4 @@
-package twiplz.logic.ui.screens;
+package plz.logic.ui.screens;
 
 import plz.engine.GameEngineBase;
 import plz.engine.logic.ui.screens.ScreenBase;

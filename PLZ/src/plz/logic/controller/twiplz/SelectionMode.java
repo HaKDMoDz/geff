@@ -1,4 +1,4 @@
-package twiplz.logic.controller;
+package plz.logic.controller.twiplz;
 
 public enum SelectionMode
 {

@@ -1,4 +1,4 @@
-package twiplz.model;
+package plz.model.twiplz;
 
 import com.badlogic.gdx.math.Vector2;
 

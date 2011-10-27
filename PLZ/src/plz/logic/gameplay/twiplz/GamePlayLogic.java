@@ -1,4 +1,4 @@
-package twiplz.logic.gameplay;
+package plz.logic.gameplay.twiplz;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,12 +9,21 @@ import plz.engine.logic.ui.components.SensitiveZone;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import twiplz.Context;
-import twiplz.GameEngine;
-import twiplz.logic.controller.SelectionMode;
-import twiplz.logic.render.RenderLogic;
-import twiplz.logic.ui.screens.GameScreen;
-import twiplz.model.*;
+import plz.GameEngine;
+import plz.logic.controller.twiplz.SelectionMode;
+import plz.logic.render.twiplz.RenderLogic;
+import plz.logic.ui.screens.twiplz.GameScreen;
+import plz.model.*;
+import plz.model.twiplz.Cell;
+import plz.model.twiplz.CellPartType;
+import plz.model.twiplz.CellState;
+import plz.model.twiplz.Context;
+import plz.model.twiplz.GameMode;
+import plz.model.twiplz.GameState;
+import plz.model.twiplz.GameStateTime;
+import plz.model.twiplz.Map;
+import plz.model.twiplz.Tile;
+import plz.model.twiplz.TileState;
 
 public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 {
@@ -25,6 +34,11 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	private Date FirstTileReleased;
 	byte[] colorValues = new byte[7];
 
+	public Context Context()
+	{
+		return (Context)gameEngine.Context;
+	}
+	
 	public GamePlayLogic(GameEngine gameEngine)
 	{
 		super(gameEngine);
@@ -56,21 +70,21 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		colorValues[5] = 8;
 		colorValues[6] = 10;
 
-		Context.gameStateTime = new GameStateTime();
-		Context.gameStateTime.Date = new Date();
-		Context.gameStateTime.GameState = GameState.Playing;
+		Context().gameStateTime = new GameStateTime();
+		Context().gameStateTime.Date = new Date();
+		Context().gameStateTime.GameState = GameState.Playing;
 
 		Tiles = new Tile[4];
 	}
 
 	public void NewMap()
 	{
-		Context.Map = new Map(7, 5);
+		Context().Map = new Map(7, 5);
 
-		if (Context.gameMode == GameMode.Arrow)
-			Context.Map.NewArrows();
-		else if (Context.gameMode == GameMode.Circular)
-			Context.Map.CalcArrows();
+		if (Context().gameMode == GameMode.Arrow)
+			Context().Map.NewArrows();
+		else if (Context().gameMode == GameMode.Circular)
+			Context().Map.CalcArrows();
 	}
 
 	public void SelectTile(int index)
@@ -102,13 +116,13 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			}
 		}
 
-		if (Context.gameMode == GameMode.Arrow)
+		if (Context().gameMode == GameMode.Arrow)
 		{
 			Tiles[index].Cells[0].NewArrows();
 			Tiles[index].Cells[1].NewArrows();
 		}
-		// else if(Context.gameMode == GameMode.Circular)
-		// Context.Map.CalcArrows();
+		// else if(Context().gameMode == GameMode.Circular)
+		// Context().Map.CalcArrows();
 
 		UpdateTileOrientation();
 	}
@@ -251,13 +265,13 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			SelectedTile.Cells[0].Location = selectedCell.Location;
 			SelectedTile.Cells[1].Location = selectedCell.Neighbourghs[CurrentOrientation].Location;
 
-			if (Context.gameMode == GameMode.Circular && !SelectedTile.Cells[0].IsSwapCell)
+			if (Context().gameMode == GameMode.Circular && !SelectedTile.Cells[0].IsSwapCell)
 			{
 				// --- Clone la map
-				Map tempMap = new Map(Context.Map.Width, Context.Map.Height);
+				Map tempMap = new Map(Context().Map.Width, Context().Map.Height);
 				tempMap.Cells.clear();
 
-				for (Cell cell : Context.Map.Cells)
+				for (Cell cell : Context().Map.Cells)
 				{
 					Cell cellDest = (Cell) cell.clone();
 					cellDest.Map = tempMap;
@@ -268,13 +282,13 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				// ---
 
 				// --- Place les cellules de la tuile dans la map temporaire
-				int index = Context.Map.Cells.indexOf(selectedCell);
+				int index = Context().Map.Cells.indexOf(selectedCell);
 				Cell cellDest = tempMap.Cells.get(index);
 
 				SwapCell(cellDest, SelectedTile.Cells[0], index);
 
 				SelectedTile.Cells[0].IsActiveCell = true;
-				index = Context.Map.Cells.indexOf(selectedCell.Neighbourghs[CurrentOrientation]);
+				index = Context().Map.Cells.indexOf(selectedCell.Neighbourghs[CurrentOrientation]);
 				cellDest = tempMap.Cells.get(index);
 
 				SwapCell(cellDest, SelectedTile.Cells[1], index);
@@ -288,7 +302,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				{
 					for (int j = 0; j < 6; j++)
 					{
-						Context.Map.Cells.get(i).Parts[j] = tempMap.Cells.get(i).Parts[j];
+						Context().Map.Cells.get(i).Parts[j] = tempMap.Cells.get(i).Parts[j];
 					}
 				}
 			}
@@ -304,7 +318,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		Cell selectedCell = null;
 
-		for (Cell cell : Context.Map.Cells)
+		for (Cell cell : Context().Map.Cells)
 		{
 			cell.Selected = false;
 
@@ -340,7 +354,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				selectedCell.ColorType = selectedCellNClone.ColorType;
 				selectedCell.IsEmpty = selectedCellNClone.IsEmpty;
 				
-				Context.Map.CalcArrows();				
+				Context().Map.CalcArrows();				
 			}
 			else
 			{
@@ -350,13 +364,13 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				SelectedTile.Cells[0].State = CellState.Normal;
 				SelectedTile.Cells[1].State = CellState.Normal;
 				
-				Context.Map.CalcNeighborough();
+				Context().Map.CalcNeighborough();
 			}
 
 			if (FirstTileReleased == null)
 			{
 				FirstTileReleased = new Date();
-				FirstTileReleased.setTime(new Date().getTime() - Context.TimeRefresh);
+				FirstTileReleased.setTime(new Date().getTime() - Context().TimeRefresh);
 			}
 
 			CreateNewTile(SelectedTile.Index);
@@ -369,8 +383,8 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		Tiles[SelectedTile.Index].State = TileState.Sleep;
 		SelectedTile = null;
 
-		if (Context.gameMode == GameMode.Circular)
-			Context.Map.CalcArrows();
+		if (Context().gameMode == GameMode.Circular)
+			Context().Map.CalcArrows();
 	}
 
 	private void SwapCell(Cell cellDest, Cell cellOrig)
@@ -418,10 +432,10 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	public void Update(float deltaTime)
 	{
 		Date currentTime = new Date();
-		double percentTime = (currentTime.getTime() - Context.gameStateTime.Date.getTime()) / (double) 3000;
-		if (Context.gameStateTime.GameState == GameState.BonusClearScreen && percentTime <= 1)
+		double percentTime = (currentTime.getTime() - Context().gameStateTime.Date.getTime()) / (double) 3000;
+		if (Context().gameStateTime.GameState == GameState.BonusClearScreen && percentTime <= 1)
 		{
-			for (Cell cell : Context.Map.Cells)
+			for (Cell cell : Context().Map.Cells)
 			{
 				// cell.Location.x = (float)
 				// (cell.InitialLocation.x+Math.sin((float)duration/3000f*
@@ -434,17 +448,17 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 				cell.Location.y = (float) (cell.InitialLocation.y + Math.cos(percentTime * (double) cell.Coord.x * 5) * Common.Gaussian(percentTime));
 			}
 		}
-		else if (Context.gameStateTime.GameState == GameState.BonusClearScreen)
+		else if (Context().gameStateTime.GameState == GameState.BonusClearScreen)
 		{
-			for (Cell cell : Context.Map.Cells)
+			for (Cell cell : Context().Map.Cells)
 			{
 				cell.Location.x = cell.InitialLocation.x;
 				cell.Location.y = cell.InitialLocation.y;
 			}
 
-			Context.gameStateTime.GameState = GameState.Playing;
+			Context().gameStateTime.GameState = GameState.Playing;
 		}
-		else if (Context.gameStateTime.GameState == GameState.Playing)
+		else if (Context().gameStateTime.GameState == GameState.Playing)
 			CalcMapColors();
 	}
 
@@ -452,18 +466,18 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 	{
 		Date currentTime = new Date();
 
-		if (FirstTileReleased == null || currentTime.getTime() - FirstTileReleased.getTime() < Context.TimeRefresh)
+		if (FirstTileReleased == null || currentTime.getTime() - FirstTileReleased.getTime() < Context().TimeRefresh)
 			return;
 
 		FirstTileReleased = currentTime;
 
-		if (Context.gameMode == GameMode.Arrow)
+		if (Context().gameMode == GameMode.Arrow)
 		{
 			// --- 1 : Clone la map
-			Map tempMap = new Map(Context.Map.Width, Context.Map.Height);
+			Map tempMap = new Map(Context().Map.Width, Context().Map.Height);
 			tempMap.Cells.clear();
 
-			for (Cell cell : Context.Map.Cells)
+			for (Cell cell : Context().Map.Cells)
 			{
 				Cell cellDest = (Cell) cell.clone();
 				cellDest.Map = tempMap;
@@ -508,11 +522,11 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 			// --- 3 : Pour toutes les cellules précédement activées, activer
 			// leurs PartType, changer leur état
-			for (Cell cell : Context.Map.Cells)
+			for (Cell cell : Context().Map.Cells)
 			{
 				if (!cell.IsEmpty && cell.State == CellState.Activated)
 				{
-					int index = Context.Map.Cells.indexOf(cell);
+					int index = Context().Map.Cells.indexOf(cell);
 					Cell cellTmp = tempMap.Cells.get(index);
 
 					for (int i = 0; i < 6; i++)
@@ -521,7 +535,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 						if (cellN != null)
 						{
-							index = Context.Map.Cells.indexOf(cellN);
+							index = Context().Map.Cells.indexOf(cellN);
 
 							try
 							{
@@ -548,9 +562,9 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			}
 
 			// ---> Applique la couleur dans la map
-			for (Cell cell : Context.Map.Cells)
+			for (Cell cell : Context().Map.Cells)
 			{
-				int index = Context.Map.Cells.indexOf(cell);
+				int index = Context().Map.Cells.indexOf(cell);
 				Cell cellTmp = tempMap.Cells.get(index);
 
 				if (((RenderLogic) gameEngine.Render).colors.containsKey((int) cellTmp.ColorType))
@@ -562,9 +576,9 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			}
 			// ---
 		}
-		else if (Context.gameMode == GameMode.Circular)
+		else if (Context().gameMode == GameMode.Circular)
 		{
-			for (Cell cell : Context.Map.Cells)
+			for (Cell cell : Context().Map.Cells)
 			{
 				if (!cell.IsEmpty && cell.State == CellState.Activated)
 				{
@@ -584,7 +598,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		// même couleur
 		int countNewActivated = 0;
 
-		for (Cell cell : Context.Map.Cells)
+		for (Cell cell : Context().Map.Cells)
 		{
 			if (!cell.IsEmpty && cell.State == CellState.Normal)
 			{
@@ -620,31 +634,31 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		{
 			FirstTileReleased = null;
 
-			Context.Map.RenewInactivatedCells();
+			Context().Map.RenewInactivatedCells();
 
-			if (Context.gameMode == GameMode.Circular)
-				Context.Map.CalcArrows();
+			if (Context().gameMode == GameMode.Circular)
+				Context().Map.CalcArrows();
 
-			Context.Score += Context.AddedScore;
-			Context.AddedScore = 0;
-			Context.Combo = 0;
+			Context().Score += Context().AddedScore;
+			Context().AddedScore = 0;
+			Context().Combo = 0;
 		}
 		// ---
 	}
 
 	public void ScoreEvaluation()
 	{
-		Context.AddedScore = 0;
+		Context().AddedScore = 0;
 		int countCell = 0;
 
-		for (Cell cell : Context.Map.Cells)
+		for (Cell cell : Context().Map.Cells)
 		{
 			if (!cell.IsEmpty && (cell.State == CellState.Activated || cell.State == CellState.Inactivated) && cell.LeafScore)
 			{
-				Context.AddedScore += Math.pow(cell.Score, 2);
+				Context().AddedScore += Math.pow(cell.Score, 2);
 
-				if (Context.Combo < cell.Score)
-					Context.Combo = cell.Score;
+				if (Context().Combo < cell.Score)
+					Context().Combo = cell.Score;
 			}
 
 			if (!cell.IsEmpty && cell.State == CellState.Normal)
@@ -653,9 +667,9 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		if (countCell == 0)
 		{
-			Context.AddedScore += 1000;
-			Context.gameStateTime.Date = new Date();
-			Context.gameStateTime.GameState = GameState.BonusClearScreen;
+			Context().AddedScore += 1000;
+			Context().gameStateTime.Date = new Date();
+			Context().gameStateTime.GameState = GameState.BonusClearScreen;
 		}
 	}
 

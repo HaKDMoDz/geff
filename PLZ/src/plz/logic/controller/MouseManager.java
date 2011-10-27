@@ -1,4 +1,4 @@
-package twiplz.logic.controller;
+package plz.logic.controller;
 
 public class MouseManager extends plz.engine.logic.controller.MouseManager{
 

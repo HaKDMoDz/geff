@@ -1,13 +1,14 @@
-package twiplz.logic.ui.screens;
+package plz.logic.ui.screens.twiplz;
 
 import plz.engine.GameEngineBase;
 import plz.engine.logic.controller.PointerUsage;
 import plz.engine.logic.ui.components.SensitiveZone;
 import plz.engine.logic.ui.screens.ScreenBase;
-import twiplz.Context;
-import twiplz.logic.gameplay.GamePlayLogic;
-import twiplz.logic.render.RenderLogic;
-import twiplz.model.GameState;
+import plz.logic.controller.twiplz.SelectionMode;
+import plz.logic.gameplay.twiplz.GamePlayLogic;
+import plz.logic.render.twiplz.RenderLogic;
+import plz.model.twiplz.Context;
+import plz.model.twiplz.GameState;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,6 +26,11 @@ public class GameScreen extends ScreenBase
 
 	public boolean NewTileSelected = false;
 
+	public Context Context()
+	{
+		return (Context)gameEngine.Context;
+	}
+	
 	private GamePlayLogic GamePlay()
 	{
 		return (GamePlayLogic) gameEngine.GamePlay;
@@ -108,12 +114,12 @@ public class GameScreen extends ScreenBase
 		gameEngine.Render.spriteBatch.begin();
 		rightBar.draw(gameEngine.Render.spriteBatch, 1f);
 		
-		if(Context.Combo>0)
-			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " Score : " + Context.Score + " + " + Context.AddedScore + " // Combo : " + Context.Combo, actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
+		if(Context().Combo>0)
+			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " Score : " + Context().Score + " + " + Context().AddedScore + " // Combo : " + Context().Combo, actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
 		else
-			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " Score : " + Context.Score, actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
+			((RenderLogic)gameEngine.Render).fontScore.draw(gameEngine.Render.spriteBatch, " Score : " + Context().Score, actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y);
 		
-		if(Context.gameStateTime.GameState == GameState.BonusClearScreen)
+		if(Context().gameStateTime.GameState == GameState.BonusClearScreen)
 		{
 			((RenderLogic)gameEngine.Render).fontBonus.draw(gameEngine.Render.spriteBatch, "Bravo!!!", actorScore.parent.x+actorScore.x, actorScore.parent.y+actorScore.y-20);
 		}
@@ -128,8 +134,8 @@ public class GameScreen extends ScreenBase
 		{
 			GameScreen.this.tileOrientationOnPress = GamePlay().CurrentOrientation;
 
-			Context.pointers[pointer].Usage = PointerUsage.ButtonTurnTile;
-			Context.pointers[pointer].Handled = true;
+			Context().pointers[pointer].Usage = PointerUsage.ButtonTurnTile;
+			Context().pointers[pointer].Handled = true;
 		}
 	};
 
@@ -139,8 +145,8 @@ public class GameScreen extends ScreenBase
 		public void released(SensitiveZone button, int pointer,
 				boolean isOnButton)
 		{
-			Context.pointers[pointer].Usage = PointerUsage.None;
-			Context.pointers[pointer].Handled = true;
+			Context().pointers[pointer].Usage = PointerUsage.None;
+			Context().pointers[pointer].Handled = true;
 		}
 	};
 
@@ -149,13 +155,13 @@ public class GameScreen extends ScreenBase
 		@Override
 		public void dragged(SensitiveZone button, float x, float y, int pointer)
 		{
-			Context.pointers[pointer].Usage = PointerUsage.ButtonTurnTile;
-			Context.pointers[pointer].Handled = true;
+			Context().pointers[pointer].Usage = PointerUsage.ButtonTurnTile;
+			Context().pointers[pointer].Handled = true;
 
-			if (Context.pointers[pointer].Current != null)
+			if (Context().pointers[pointer].Current != null)
 			{
-				float offsetY = -Context.pointers[pointer].Start.y
-						+ Context.pointers[pointer].Current.y;
+				float offsetY = -Context().pointers[pointer].Start.y
+						+ Context().pointers[pointer].Current.y;
 
 				// GamePlay().TurnTile((int)(y/button.height*6));
 
@@ -170,8 +176,8 @@ public class GameScreen extends ScreenBase
 		@Override
 		public void pressed(SensitiveZone button, float x, float y, int pointer)
 		{
-			Context.pointers[pointer].Usage = PointerUsage.SelectTile;
-			Context.pointers[pointer].Handled = true;
+			Context().pointers[pointer].Usage = PointerUsage.SelectTile;
+			Context().pointers[pointer].Handled = true;
 			GamePlay().SelectTile((Integer)button.Tag);
 		}
 	};
@@ -184,8 +190,8 @@ public class GameScreen extends ScreenBase
 		{
 			if (isOnButton)
 			{
-				Context.pointers[pointer].Usage = PointerUsage.UnselectTile;
-				Context.pointers[pointer].Handled = true;
+				Context().pointers[pointer].Usage = PointerUsage.UnselectTile;
+				Context().pointers[pointer].Handled = true;
 			}
 		}
 	};

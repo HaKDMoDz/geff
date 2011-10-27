@@ -1,9 +1,8 @@
-package twiplz.model;
+package plz.model.twiplz;
 
 import java.util.ArrayList;
 
 import plz.engine.Common;
-import twiplz.Context;
 
 import com.badlogic.gdx.Gdx;
 

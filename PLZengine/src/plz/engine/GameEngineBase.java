@@ -14,6 +14,7 @@ public class GameEngineBase implements ApplicationListener {
 	public RenderLogicBase Render;
 	public GamePlayLogicBase GamePlay;
 	public SoundLogicBase Sound;
+	public ContextBase Context;
 	public float DeltaTime;
 	public ScreenBase CurrentScreen;
 	public ScreenBase NextScreen;

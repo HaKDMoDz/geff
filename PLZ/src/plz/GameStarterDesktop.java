@@ -1,6 +1,6 @@
-package twiplz;
+package plz;
 
-import twiplz.logic.controller.SelectionMode;
+import plz.logic.controller.twiplz.SelectionMode;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.jogl.JoglApplication;
@@ -9,22 +9,19 @@ public class GameStarterDesktop
 {
 	public static void main(String[] argv)
 	{
-		Context.selectionMode = SelectionMode.Desktop;
-		Context.Mini = false;
-		boolean miniWindow = false;
+		boolean miniWindow = true;
 		
-		ApplicationListener app = new GameEngine();
+		GameEngine app = new GameEngine();
 		JoglApplication window;
 
 		if(miniWindow)
 		{
-			window = new JoglApplication(app, "twiPLZ", 400, 400, false);
+			window = new JoglApplication(app, "plz", 400, 400, false);
 			window.getJFrame().setLocation(2100, 550);
 		}
 		else
 		{
-			window = new JoglApplication(app, "twiPLZ", 1024, 600, false);
+			window = new JoglApplication(app, "plz", 1024, 600, false);
 		}
-			
 	}
 }

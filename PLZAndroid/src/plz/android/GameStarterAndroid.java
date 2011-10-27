@@ -1,9 +1,9 @@
-package twiplz.android;
+package plz.android;
 
-import twiplz.Context;
-import twiplz.GameEngine;
-import twiplz.logic.controller.SelectionMode;
-import twiplz.model.GameMode;
+import plz.GameEngine;
+import plz.logic.controller.twiplz.SelectionMode;
+import plz.model.twiplz.Context;
+import plz.model.twiplz.GameMode;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
@@ -25,13 +25,10 @@ public class GameStarterAndroid extends AndroidApplication {
 		config.resolutionStrategy = new FillResolutionStrategy();
 		config.useGL20 = false;
 		
-		ApplicationListener app = new GameEngine();
+		GameEngine app = new GameEngine();
 
-		Context.Mini = false;
-		Context.selectionOffsetY = 0;
-		Context.selectionMode = SelectionMode.Screentouch;
-		Context.gameMode = GameMode.Circular;
-		
 		initialize(app, config);
+		
+
 	}
 }

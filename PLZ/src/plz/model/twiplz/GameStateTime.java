@@ -1,4 +1,4 @@
-package twiplz.model;
+package plz.model.twiplz;
 
 public class GameStateTime
 {

@@ -1,4 +1,4 @@
-package twiplz.logic.render;
+package plz.logic.render.twiplz;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -6,15 +6,15 @@ import java.util.Iterator;
 import plz.engine.logic.controller.Pointer;
 import plz.engine.logic.controller.PointerUsage;
 import plz.engine.logic.ui.components.SensitiveZone;
-import twiplz.Context;
-import twiplz.GameEngine;
-import twiplz.logic.gameplay.GamePlayLogic;
-import twiplz.logic.ui.screens.GameScreen;
-import twiplz.model.Cell;
-import twiplz.model.CellPartType;
-import twiplz.model.CellState;
-import twiplz.model.GameMode;
-import twiplz.model.TileState;
+import plz.GameEngine;
+import plz.logic.gameplay.twiplz.GamePlayLogic;
+import plz.logic.ui.screens.twiplz.GameScreen;
+import plz.model.twiplz.Cell;
+import plz.model.twiplz.CellPartType;
+import plz.model.twiplz.CellState;
+import plz.model.twiplz.Context;
+import plz.model.twiplz.GameMode;
+import plz.model.twiplz.TileState;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -52,6 +52,11 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 	private GameScreen GameScreen()
 	{
 		return (GameScreen) gameEngine.CurrentScreen;
+	}
+	
+	public Context Context()
+	{
+		return (Context)gameEngine.Context;
 	}
 
 	public RenderLogic(GameEngine gameEngine)
@@ -102,7 +107,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 //		colors.put(8, new Color(1f, 1f, 0f, 1f));
 //		colors.put(10, new Color(1f, 0f, 0f, 1f));
 
-		if (Context.Mini)
+		if (Context().Mini)
 		{
 			for (Integer key : colors.keySet())
 			{
@@ -116,7 +121,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 	{
 		super.Render(deltaTime);
 
-		if (Context.Mini)
+		if (Context().Mini)
 			spriteBatch.setColor(Color.BLACK);
 		else
 			spriteBatch.setColor(Color.WHITE);
@@ -126,7 +131,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		if (showColor)
 		{
 			// --- Cellules de la map
-			for (Cell cell : Context.Map.Cells)
+			for (Cell cell : Context().Map.Cells)
 			{
 				// if (!cell.Selected)
 				DrawCell(cell, false, false);
@@ -166,7 +171,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		if (showCursor)
 		{
-			for (Pointer pointer : Context.pointers)
+			for (Pointer pointer : Context().pointers)
 			{
 				if (pointer.Current != null)
 				{
@@ -211,7 +216,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		if (isSelectedCell)
 		{
-			if (Context.Mini)
+			if (Context().Mini)
 				spriteBatch.setColor(0.3f, 0.3f, 0.3f, 1f);
 			else
 				spriteBatch.setColor(Color.GREEN);
