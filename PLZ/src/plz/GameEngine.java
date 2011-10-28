@@ -1,6 +1,8 @@
 package plz;
 
+import plz.engine.ContextBase;
 import plz.engine.logic.controller.PLZInputMultiplexer;
+import plz.engine.logic.render.RenderLogicBase;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
@@ -27,34 +29,36 @@ public class GameEngine extends plz.engine.GameEngineBase
 //		music.setLooping(true);
 //		music.play();
 		
-		this.Context = new Context();
 		
-		if(Gdx.app.getType() ==ApplicationType.Android)
+//		this.Context = new ContextBase();
+//		this.Render = new RenderLogicBase(this);
+//		this.CurrentScreen = new MainMenu(this);
+//		this.CurrentScreen.show();
+		
+		
+		plz.model.griplz.Context context =new plz.model.griplz.Context();
+		context.Mini = true;
+		Context = context;
+		
+		if(Gdx.app.getType() == ApplicationType.Android)
 		{
-			((Context)Context).Mini = false;
-			((Context)Context).selectionOffsetY = 0;
-			((Context)Context).selectionMode = SelectionMode.Screentouch;
-			((Context)Context).gameMode = GameMode.Circular;
+			((plz.model.griplz.Context)Context).Mini = false;
+			((plz.model.griplz.Context)Context).selectionOffsetY = 0;
 		}
 		else
 		{
-			((Context)Context).selectionMode = SelectionMode.Screentouch;
-			((Context)Context).Mini = true;
+			((plz.model.griplz.Context)Context).Mini = true;
 		}
 		
-		this.Render = new RenderLogic(this);
-		this.Controller = new ControllerLogic(this);
-		this.GamePlay = new GamePlayLogic(this);
+		Render = new plz.logic.render.griplz.RenderLogic((GameEngine)this);
+		Controller = new plz.logic.controller.griplz.ControllerLogic((GameEngine)this);
+		GamePlay = new plz.logic.gameplay.griplz.GamePlayLogic((GameEngine)this);
 		
-		this.CurrentScreen = new GameScreen(this);
-		this.CurrentScreen.show();
+		//this.CurrentScreen = new GameScreen(this);
+		CurrentScreen = new plz.logic.ui.screens.griplz.GameScreen((GameEngine)this);
+		CurrentScreen.show();
 		
-		//--- Enregistrement de l'InputMultiplexer
-		PLZInputMultiplexer input = new PLZInputMultiplexer();
-		input.addProcessor(this.CurrentScreen.Stage);
-		input.addProcessor(this.Controller);
-		
-		Gdx.input.setInputProcessor(input);
-		//---
+	
+		RegisterInput();
 	}
 }

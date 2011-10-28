@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public abstract class RenderLogicBase
+public class RenderLogicBase
 {
 	private final Map<String, Object> mapDebug = new HashMap<String, Object>();
 	private final BitmapFont fontDebug;

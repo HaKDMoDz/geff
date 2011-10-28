@@ -1,6 +1,7 @@
 package plz.engine;
 
 import plz.engine.logic.controller.ControllerLogicBase;
+import plz.engine.logic.controller.PLZInputMultiplexer;
 import plz.engine.logic.gameplay.GamePlayLogicBase;
 import plz.engine.logic.render.RenderLogicBase;
 import plz.engine.logic.sound.SoundLogicBase;
@@ -70,5 +71,17 @@ public class GameEngineBase implements ApplicationListener {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void RegisterInput()
+	{
+		//--- Enregistrement de l'InputMultiplexer
+		PLZInputMultiplexer input = new PLZInputMultiplexer();
+		input.addProcessor(this.CurrentScreen.Stage);
+		if(this.Controller != null)
+			input.addProcessor(this.Controller);
+		
+		Gdx.input.setInputProcessor(input);
+		//---
 	}
 }
