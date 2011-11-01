@@ -1,6 +1,7 @@
 package plz.model.griplz;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import plz.engine.Common;
 
@@ -11,7 +12,7 @@ public class Map
 	public ArrayList<Cell> Cells;
 	public int Width;
 	public int Height;
-	
+
 	public CellSeed[] Seed;
 
 	public Map(int width, int height)
@@ -55,66 +56,63 @@ public class Map
 				Cell cell1 = new Cell(this, x, (y * 2) - 1, fx, fy);
 
 				Cells.add(cell1);
-				
-				if(x== Width/4 && y==Height/2)
+
+				if (x == Width / 4 && y == Height / 2)
 				{
-					int a =0;
+					int a = 0;
 				}
 			}
 		}
 
 		CalcNeighborough();
-		
+
 		CalcSeeds();
 	}
-	
+
 	public void CalcSeeds()
 	{
 		int countLayer = 6;
-		
-		Cell cellSeed = Cells.get(Cells.size()/3);
-		
-		Seed = new CellSeed[countLayer];
-		
-		Seed[0] = new CellSeed();
-		
 
-		SwapCell(cellSeed, Seed[0]);
-		
+		Seed = new CellSeed[countLayer];
+		Seed[0] = new CellSeed();
+		SwapCell(Cells.get(Cells.size() / 3), Seed[0]);
+
 		Cell prevCell = Seed[0].Neighbourghs[0];
-		
+
 		for (int i = 0; i < countLayer; i++)
 		{
+			Seed[i] = new CellSeed();
+			SwapCell(prevCell, Seed[i]);
+			prevCell = Seed[i];
+
 			for (int j = 4; j >= -1; j--)
 			{
-				for (int k = 0; k < i+1; k++)
+				for (int k = 0; k < i + 1; k++)
 				{
-					if((j==-1 & k < i) || j!= -1)
+					if ((j == -1 & k < i) || j != -1)
 					{
 						int j2 = j;
-						if(j==-1)
+						if (j == -1)
 							j2 = 5;
-						
+
 						prevCell = prevCell.Neighbourghs[j2];
-						
+
 						CellLayer cellLayer = new CellLayer();
-						cellLayer.TypeItem = (byte)i;
+						cellLayer.TypeItem = (byte) i;
 						SwapCell(prevCell, cellLayer);
 
-						CalcNeighborough();
-						
-						prevCell = cellLayer;						
+						// CalcNeighborough();
+
+						prevCell = cellLayer;
 					}
 				}
 			}
-			
 
-			
-			prevCell = prevCell.Neighbourghs[5].Neighbourghs[0];
+			if(i < countLayer)
+				prevCell = prevCell.Neighbourghs[5].Neighbourghs[0];
 		}
-		
 	}
-	
+
 	private void SwapCell(Cell cellDest, Cell cellOrig)
 	{
 		int index = cellDest.Map.Cells.indexOf(cellDest);
@@ -129,8 +127,22 @@ public class Map
 		cellOrig.InitialLocation = cellDest.InitialLocation;
 		cellOrig.Neighbourghs = cellDest.Neighbourghs;
 
+		for (int i = 0; i < 6; i++)
+		{
+			if (cellOrig.Neighbourghs[i] != null)
+			{
+				for (int j = 0; j < 6; j++)
+				{
+					if (cellOrig.Neighbourghs[i].Neighbourghs[j] == cellDest)
+					{
+						cellOrig.Neighbourghs[i].Neighbourghs[j] = cellOrig;
+					}
+				}
+			}
+		}
+
 		cellOrig.Location = cellDest.Location;
-		
+
 		cellDest.Map.Cells.remove(cellDest);
 		cellDest.Map.Cells.add(index, cellOrig);
 	}
@@ -155,8 +167,7 @@ public class Map
 			cell.Neighbourghs[0] = GetNeighborough(cell, 0, 2);
 			cell.Neighbourghs[5] = GetNeighborough(cell, 0, 1);
 			cell.Neighbourghs[4] = GetNeighborough(cell, 0, -1);
-		}
-		else
+		} else
 		{
 			cell.Neighbourghs[3] = GetNeighborough(cell, 0, -2);
 			cell.Neighbourghs[2] = GetNeighborough(cell, 0, -1);
@@ -171,7 +182,8 @@ public class Map
 	{
 		for (Cell cellNeighbor : Cells)
 		{
-			if (cellNeighbor.Coord.x == cell.Coord.x + offsetX && cellNeighbor.Coord.y == cell.Coord.y + offsetY)
+			if (cellNeighbor.Coord.x == cell.Coord.x + offsetX
+					&& cellNeighbor.Coord.y == cell.Coord.y + offsetY)
 			{
 				return cellNeighbor;
 			}

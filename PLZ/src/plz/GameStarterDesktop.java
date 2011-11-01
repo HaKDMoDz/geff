@@ -9,7 +9,7 @@ public class GameStarterDesktop
 {
 	public static void main(String[] argv)
 	{
-		boolean miniWindow = true;
+		boolean miniWindow = false;
 		
 		GameEngine app = new GameEngine();
 		JoglApplication window;

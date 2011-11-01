@@ -8,6 +8,7 @@ import plz.logic.gameplay.griplz.GamePlayLogic;
 import plz.logic.ui.screens.griplz.GameScreen;
 import plz.model.griplz.Cell;
 import plz.model.griplz.CellLayer;
+import plz.model.griplz.CellSeed;
 import plz.model.griplz.Context;
 
 import com.badlogic.gdx.Gdx;
@@ -86,6 +87,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		colors.put(4, new Color(0.68f, 1f, 0.7f, 1f));
 		colors.put(5, new Color(0.95f, 1f, 0.66f, 1f));
 		colors.put(6, new Color(1f, 0.79f, 0.68f, 1f));
+		colors.put(7, Color.RED);
 		
 //		colors.put(2, new Color(1f, 0f, 1f, 1f));
 //		colors.put(6, new Color(1f, 0.7f, 0.3f, 1f));
@@ -207,10 +209,13 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		if(cell.getClass() == CellLayer.class)
 		{
 			spriteBatch.setColor(colors.get((int)cell.TypeItem));
+		}
+		else if(cell.getClass() == CellSeed.class)
+		{
+			spriteBatch.setColor(colors.get(7));
 			
 			
 		}
-		
 		spriteBatch.draw(texCellForeground, cellLocation.x, cellLocation.y, width, height);
 
 //		if (Context.Mini)

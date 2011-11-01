@@ -37,7 +37,7 @@ public class GameEngine extends plz.engine.GameEngineBase
 		
 		
 		plz.model.griplz.Context context =new plz.model.griplz.Context();
-		context.Mini = true;
+		context.Mini = false;
 		Context = context;
 		
 		if(Gdx.app.getType() == ApplicationType.Android)
@@ -47,7 +47,7 @@ public class GameEngine extends plz.engine.GameEngineBase
 		}
 		else
 		{
-			((plz.model.griplz.Context)Context).Mini = true;
+			((plz.model.griplz.Context)Context).Mini = false;
 		}
 		
 		Render = new plz.logic.render.griplz.RenderLogic((GameEngine)this);
