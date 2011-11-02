@@ -14,21 +14,16 @@ import plz.logic.controller.griplz.SelectionMode;
 import plz.logic.render.griplz.RenderLogic;
 import plz.logic.ui.screens.griplz.GameScreen;
 import plz.model.griplz.*;
-import plz.model.griplz.Cell;
-import plz.model.griplz.CellState;
-import plz.model.griplz.Context;
-import plz.model.griplz.GameState;
-import plz.model.griplz.GameStateTime;
-import plz.model.griplz.Map;
 
 public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 {
+	float tileAnimationDuration = 200f;
 
 	public Context Context()
 	{
-		return (Context)gameEngine.Context;
+		return (Context) gameEngine.Context;
 	}
-	
+
 	public GamePlayLogic(GameEngine gameEngine)
 	{
 		super(gameEngine);
@@ -45,12 +40,65 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		Context().Map = new Map(20, 20);
 	}
 
-
-
 	@Override
 	public void Update(float deltaTime)
 	{
+		UpdateHole(deltaTime);
+	}
+
+	private void UpdateHole(float deltaTime)
+	{
+		CellLayer curCellLayer;
+		CellLayer prevCellLayer;
+		Date dateStartMovement = new Date();
+
+		for (int i = 0; i < Context().Map.Seed.length; i++)
+		{
+			curCellLayer = (CellLayer) Context().Map.Seed[i].Neighbourghs[2];
+
+			for (int j = 0; j < 6 * (i + 1) - 2; j++)
+			{
+				prevCellLayer = (CellLayer) curCellLayer.Neighbourghs[curCellLayer.PreviousCellIndex];
+
+				if ((curCellLayer.Tile == null || curCellLayer.Tile.DirectionMovement > -1) && prevCellLayer.Tile != null && prevCellLayer.Tile.DirectionMovement == -1)
+				{
+					prevCellLayer.Tile.DirectionMovement = prevCellLayer.NextCellIndex;
+					prevCellLayer.Tile.StartTimeMovement = dateStartMovement;
+				}
+
+				curCellLayer = prevCellLayer;
+			}
+		}
 		
+		
+		for (int i = 0; i < Context().Map.Seed.length; i++)
+		{
+			curCellLayer = (CellLayer) Context().Map.Seed[i].Neighbourghs[2];
+			
+			for (int j = 0; j < 6 * (i + 1) - 2; j++)
+			{
+				prevCellLayer = (CellLayer) curCellLayer.Neighbourghs[curCellLayer.PreviousCellIndex];
+				
+				if (prevCellLayer.Tile != null && prevCellLayer.Tile.DirectionMovement > -1)
+				{
+					prevCellLayer.Tile.PercentMovement = (float) (dateStartMovement.getTime() - prevCellLayer.Tile.StartTimeMovement.getTime()) / tileAnimationDuration;
+
+					if (prevCellLayer.Tile.PercentMovement >= 1f)
+					{
+							prevCellLayer.Neighbourghs[prevCellLayer.Tile.DirectionMovement].Tile = prevCellLayer.Tile;
+							prevCellLayer.Tile.ParentCell = prevCellLayer.Neighbourghs[prevCellLayer.Tile.DirectionMovement];
+
+							prevCellLayer.Tile.DirectionMovement = -1;
+							prevCellLayer.Tile.PercentMovement = 0f;
+							prevCellLayer.Tile.StartTimeMovement = null;
+
+							prevCellLayer.Tile = null;
+					}
+				}
+				
+				curCellLayer = prevCellLayer;
+			}
+		}
 	}
 
 	private boolean PointInCell(Cell cell, Vector2 location)

@@ -1,6 +1,5 @@
 package plz.model.griplz;
 
-public class CellSeed extends Cell
+public class CellSeed extends CellLayer
 {
-
 }

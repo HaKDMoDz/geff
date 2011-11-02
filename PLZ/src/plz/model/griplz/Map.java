@@ -86,26 +86,35 @@ public class Map
 			SwapCell(prevCell, Seed[i]);
 			prevCell = Seed[i];
 
+			int prevIndex = 4;
+
 			for (int j = 4; j >= -1; j--)
 			{
 				for (int k = 0; k < i + 1; k++)
 				{
+					int j2 = j;
+					if (j == -1)
+						j2 = 5;
+
+					if (prevCell.getClass() == CellLayer.class)
+					{
+						((CellLayer) prevCell).NextCellIndex = j2;
+						((CellLayer) prevCell).PreviousCellIndex = Common.mod(prevIndex + 3, 6);
+						prevIndex = j2;
+					}
+
 					if ((j == -1 & k < i) || j != -1)
 					{
-						int j2 = j;
-						if (j == -1)
-							j2 = 5;
-
 						prevCell = prevCell.Neighbourghs[j2];
 
 						CellLayer cellLayer = new CellLayer();
 						cellLayer.LayerNumber = i;
+
 						SwapCell(prevCell, cellLayer);
-						// CalcNeighborough();
 
 						prevCell = cellLayer;
-						
-						if(rnd.nextInt(3)==0)
+
+						if (rnd.nextInt(2) == 0)
 						{
 							cellLayer.Tile = new Tile();
 							cellLayer.Tile.ParentCell = cellLayer;
@@ -115,7 +124,7 @@ public class Map
 				}
 			}
 
-			if(i < countLayer)
+			if (i < countLayer)
 				prevCell = prevCell.Neighbourghs[5].Neighbourghs[0];
 		}
 	}
@@ -174,7 +183,8 @@ public class Map
 			cell.Neighbourghs[0] = GetNeighborough(cell, 0, 2);
 			cell.Neighbourghs[5] = GetNeighborough(cell, 0, 1);
 			cell.Neighbourghs[4] = GetNeighborough(cell, 0, -1);
-		} else
+		}
+		else
 		{
 			cell.Neighbourghs[3] = GetNeighborough(cell, 0, -2);
 			cell.Neighbourghs[2] = GetNeighborough(cell, 0, -1);
@@ -189,8 +199,7 @@ public class Map
 	{
 		for (Cell cellNeighbor : Cells)
 		{
-			if (cellNeighbor.Coord.x == cell.Coord.x + offsetX
-					&& cellNeighbor.Coord.y == cell.Coord.y + offsetY)
+			if (cellNeighbor.Coord.x == cell.Coord.x + offsetX && cellNeighbor.Coord.y == cell.Coord.y + offsetY)
 			{
 				return cellNeighbor;
 			}

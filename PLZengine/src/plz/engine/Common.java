@@ -45,4 +45,9 @@ public class Common
 		double value = Math.exp(-x * x / (2 * sigma * sigma)) / (Math.sqrt(2 * Math.PI) * sigma);
 		return value;
 	}
+	
+	public static float Lerp(float a, float b, float percent)
+	{
+		return a + (b-a) * percent;
+	}
 }

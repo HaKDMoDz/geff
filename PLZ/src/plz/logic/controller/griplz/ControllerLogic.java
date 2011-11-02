@@ -145,6 +145,12 @@ public class ControllerLogic extends
 		}
 				*/
 		
+		
+		if (Context().pointers[pointer].Usage == PointerUsage.None && Context().pointers[pointer].IsDoubleTap())
+		{
+			GamePlay().NewMap();
+		}
+		
 		Context().pointers[pointer].Usage = PointerUsage.None;
 		
 		return true;
