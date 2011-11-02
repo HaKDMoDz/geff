@@ -20,18 +20,15 @@ import com.badlogic.gdx.math.Vector2;
 
 public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 {
-	Texture texCellForeground;
+	Texture[] texCellForeground;
 	Texture texCellBackground;
 	Texture texCircle;
 	Texture texSelected;
-	Texture[] texArrowsIn = new Texture[6];
-	Texture[] texArrowsOut = new Texture[6];
+
 	public BitmapFont fontScore;
 	public BitmapFont fontBonus;
 
 	public HashMap<Integer, Color> colors = new HashMap<Integer, Color>();
-
-	ShaderProgram shader;
 
 	public Vector2[] PointToDraw = new Vector2[5];
 
@@ -62,14 +59,22 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 	private void LoadTextures()
 	{
-		texCellForeground = new Texture(Gdx.files.internal("data/CellForeground.png"));
-		texCellBackground = new Texture(Gdx.files.internal("data/CellBackground.png"));
+		String path = "data/";
+		
+		if(Context().Mini)
+			path +="Mini/";
+		
+		texCellForeground = new Texture[3];
+		
+		texCellForeground[0] = new Texture(Gdx.files.internal(path + "CellForeground_Small.png"));
+		texCellForeground[1] = new Texture(Gdx.files.internal(path + "CellForeground_Medium.png"));
+		texCellForeground[2] = new Texture(Gdx.files.internal(path + "CellForeground_Large.png"));
+		
+		texCellBackground = new Texture(Gdx.files.internal(path + "CellBackground.png"));
+		
+		
 		//texCircle = new Texture(Gdx.files.internal("data/Circle.png"));
-		texSelected = new Texture(Gdx.files.internal("data/CellSelected.png"));
-
-		// shader = new
-		// ShaderProgram(Gdx.files.internal("data/shaders/batch.vert").readString(),
-		// Gdx.files.internal("data/shaders/batch.frag").readString());
+		//texSelected = new Texture(Gdx.files.internal(path + "CellSelected.png"));
 
 
 		fontScore = new BitmapFont();
@@ -158,7 +163,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 					else
 						spriteBatch.setColor(Color.BLUE);
 
-					spriteBatch.draw(texCellForeground, pointer.Current.x - 20, Gdx.graphics.getHeight() - (pointer.Current.y - 20), 40, 40);
+					spriteBatch.draw(texCellForeground[0], pointer.Current.x - 20, Gdx.graphics.getHeight() - (pointer.Current.y - 20), 40, 40);
 				}
 			}
 		}
@@ -196,6 +201,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			cellLocation.mul(256f);
 		}
 
+		/*
 		if (isSelectedCell)
 		{
 			if (Context().Mini)
@@ -204,7 +210,10 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 				spriteBatch.setColor(Color.GREEN);
 		}
 		
-		spriteBatch.setColor(Color.WHITE);
+		if (Context().Mini)
+			spriteBatch.setColor(0.3f, 0.3f, 0.3f, 1f);
+		else
+			spriteBatch.setColor(Color.WHITE);
 
 		if(cell.getClass() == CellLayer.class)
 		{
@@ -213,10 +222,47 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		else if(cell.getClass() == CellSeed.class)
 		{
 			spriteBatch.setColor(colors.get(7));
-			
-			
 		}
-		spriteBatch.draw(texCellForeground, cellLocation.x, cellLocation.y, width, height);
+		*/
+		
+		//--- Cell Background
+		if(cell.getClass() == CellLayer.class)
+		{
+			float v = ((float)((CellLayer)cell).LayerNumber) /12f;
+			
+			spriteBatch.setColor(0.1f+v,0.1f+v,0.1f+v,1f);
+		}
+		else if(cell.getClass() == CellSeed.class)
+		{
+			spriteBatch.setColor(0.2f,0.2f,0.35f,1f);
+		}
+		else
+		{
+			spriteBatch.setColor(0.2f,0.2f,0.2f,2f);
+		}
+		
+		spriteBatch.draw(texCellBackground, cellLocation.x, cellLocation.y, width, height);
+		//---
+		
+		//--- Cell Foreground
+		Texture texForeGround = null;
+		
+		if(cell.Tile != null)
+		{
+			if(cell.Tile.IsFilled)
+				spriteBatch.setColor(Color.WHITE);
+			else
+				spriteBatch.setColor(0.3f,0.3f,0.3f,1f);
+			
+			texForeGround = texCellForeground[cell.Tile.TypeTile];
+		}
+
+		if(texForeGround != null)
+			spriteBatch.draw(texForeGround, cellLocation.x, cellLocation.y, width, height);
+		//---
+		
+		
+
 
 //		if (Context.Mini)
 //			spriteBatch.setColor(Color.BLACK);
@@ -224,8 +270,8 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 //			spriteBatch.setColor(Color.WHITE);
 		//calculer le next color cell
 		//Color colorNextCell = colors.get((int) cell.ColorType);
-		Color colorNextCell = Color.RED;
+		//Color colorNextCell = Color.RED;
 		
-		spriteBatch.setColor(colorNextCell);
+		//spriteBatch.setColor(colorNextCell);
 	}
 }

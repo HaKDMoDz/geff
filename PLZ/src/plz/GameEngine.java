@@ -47,7 +47,7 @@ public class GameEngine extends plz.engine.GameEngineBase
 		}
 		else
 		{
-			((plz.model.griplz.Context)Context).Mini = false;
+			((plz.model.griplz.Context)Context).Mini = true;
 		}
 		
 		Render = new plz.logic.render.griplz.RenderLogic((GameEngine)this);

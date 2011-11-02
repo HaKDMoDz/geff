@@ -2,6 +2,7 @@ package plz.model.griplz;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import plz.engine.Common;
 
@@ -71,6 +72,7 @@ public class Map
 
 	public void CalcSeeds()
 	{
+		Random rnd = new Random();
 		int countLayer = 6;
 
 		Seed = new CellSeed[countLayer];
@@ -78,7 +80,6 @@ public class Map
 		SwapCell(Cells.get(Cells.size() / 3), Seed[0]);
 
 		Cell prevCell = Seed[0].Neighbourghs[0];
-
 		for (int i = 0; i < countLayer; i++)
 		{
 			Seed[i] = new CellSeed();
@@ -98,12 +99,18 @@ public class Map
 						prevCell = prevCell.Neighbourghs[j2];
 
 						CellLayer cellLayer = new CellLayer();
-						cellLayer.TypeItem = (byte) i;
+						cellLayer.LayerNumber = i;
 						SwapCell(prevCell, cellLayer);
-
 						// CalcNeighborough();
 
 						prevCell = cellLayer;
+						
+						if(rnd.nextInt(3)==0)
+						{
+							cellLayer.Tile = new Tile();
+							cellLayer.Tile.ParentCell = cellLayer;
+							cellLayer.Tile.TypeTile = rnd.nextInt(3);
+						}
 					}
 				}
 			}

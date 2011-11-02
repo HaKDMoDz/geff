@@ -12,7 +12,7 @@ public class Cell implements Cloneable
 	public Vector2 InitialLocation;
 	public Cell[] Neighbourghs;
 
-	public byte TypeItem;
+	public Tile Tile;
 	public boolean Selected;
 	public CellState State;
 
@@ -53,7 +53,6 @@ public class Cell implements Cloneable
 	{
 		Cell cell = new Cell();
 
-		cell.TypeItem = this.TypeItem;
 		if (this.Coord != null)
 			cell.Coord = new Vector2(this.Coord.x, this.Coord.y);
 		if (this.InitialLocation != null)
@@ -61,6 +60,9 @@ public class Cell implements Cloneable
 		cell.Location = new Vector2(this.Location.x, this.Location.y);
 		cell.Map = this.Map;
 
+		if(this.Tile != null)
+			cell.Tile = (Tile)this.Tile.clone();
+		
 		return cell;
 	}
 }
