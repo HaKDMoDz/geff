@@ -235,7 +235,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			if (cell.Tile != null)
 			{
 				if (cell.Tile.IsFilled)
-					spriteBatch.setColor(Color.WHITE);
+					spriteBatch.setColor(Color.BLUE);
 				else if (Context().Mini)
 				{
 					spriteBatch.setColor(0.3f, 0.3f, 0.3f, 1f);

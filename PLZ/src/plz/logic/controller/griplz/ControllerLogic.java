@@ -130,7 +130,7 @@ public class ControllerLogic extends
 		{
 			Cell selectedCell = ((Cell) curPointer.Tag);
 			
-			if (curPointer.Current.dst(curPointer.Start) >= 10 && selectedCell.Tile.DirectionMovement > -1)
+			if (curPointer.Current.dst(curPointer.Start) >= 20 && selectedCell.Tile.DirectionMovement > -1)
 			{
 				selectedCell.Tile.State = TileState.Move;
 				selectedCell.Tile.StartTimeMovement = new Date();
@@ -186,7 +186,7 @@ public class ControllerLogic extends
 
 			Cell selectedCell = ((Cell) curPointer.Tag);
 			
-			if (curPointer.Current.dst(curPointer.Start) >= 10 && selectedCell.Neighbourghs[direction] != null && selectedCell.Neighbourghs[direction].Tile == null)
+			if (curPointer.Current.dst(curPointer.Start) >= 20 && selectedCell.Neighbourghs[direction] != null && selectedCell.Neighbourghs[direction].Tile == null)
 			{
 				selectedCell.Tile.DirectionMovement = direction;
 			}

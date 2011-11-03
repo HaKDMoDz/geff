@@ -116,11 +116,25 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 					cell.Neighbourghs[cell.Tile.DirectionMovement].Tile = cell.Tile;
 					cell.Tile.ParentCell = cell.Neighbourghs[cell.Tile.DirectionMovement];
 
-					if (cell.Neighbourghs[cell.Tile.DirectionMovement].Neighbourghs[cell.Tile.DirectionMovement] == null || cell.Neighbourghs[cell.Tile.DirectionMovement].Neighbourghs[cell.Tile.DirectionMovement].Tile != null)
+					
+					Cell nextCell = cell.Neighbourghs[cell.Tile.DirectionMovement].Neighbourghs[cell.Tile.DirectionMovement];
+					
+					
+					if (nextCell == null || nextCell.Tile != null)
 					{
 						cell.Tile.StartTimeMovement = null;
 						cell.Tile.State = TileState.Normal;
 						cell.Tile.DirectionMovement = -1;
+						
+						if(nextCell != null && nextCell.Tile != null && nextCell.Tile.TypeTile == cell.Tile.TypeTile+1)
+						{
+							cell.Tile.ParentCell.Tile = null;
+							
+							if(nextCell.Tile.IsFilled)
+								ExplodeTile(nextCell);
+							else
+								nextCell.Tile.IsFilled=true;
+						}
 					}
 					else
 					{
