@@ -14,6 +14,7 @@ public class Pointer
 	public PointerUsage Usage = PointerUsage.None;
 	public int Index = -1;
 	public boolean Handled = false;
+	public Object Tag;
 	
 	public Pointer(int x, int y, int index)
 	{

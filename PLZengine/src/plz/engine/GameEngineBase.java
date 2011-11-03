@@ -47,7 +47,7 @@ public class GameEngineBase implements ApplicationListener {
 			if (Render != null) {
 				Render.Render(this.DeltaTime);
 				Render.RenderUI(this.DeltaTime);
-				//Render.RenderDebug(this.DeltaTime);
+				Render.RenderDebug(this.DeltaTime);
 			}
 		} catch (Exception ex)
 		{

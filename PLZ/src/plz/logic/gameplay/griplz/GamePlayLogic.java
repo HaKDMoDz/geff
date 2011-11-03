@@ -2,6 +2,7 @@ package plz.logic.gameplay.griplz;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import plz.engine.Common;
 import plz.engine.logic.ui.components.SensitiveZone;
@@ -60,7 +61,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			{
 				prevCellLayer = (CellLayer) curCellLayer.Neighbourghs[curCellLayer.PreviousCellIndex];
 
-				if ((curCellLayer.Tile == null || curCellLayer.Tile.DirectionMovement > -1) && prevCellLayer.Tile != null && prevCellLayer.Tile.DirectionMovement == -1)
+				if ((curCellLayer.Tile == null || curCellLayer.Tile.StartTimeMovement != null) && prevCellLayer.Tile != null && prevCellLayer.Tile.StartTimeMovement == null)
 				{
 					prevCellLayer.Tile.DirectionMovement = prevCellLayer.NextCellIndex;
 					prevCellLayer.Tile.StartTimeMovement = dateStartMovement;
@@ -79,7 +80,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			{
 				prevCellLayer = (CellLayer) curCellLayer.Neighbourghs[curCellLayer.PreviousCellIndex];
 				
-				if (prevCellLayer.Tile != null && prevCellLayer.Tile.DirectionMovement > -1)
+				if (prevCellLayer.Tile != null && prevCellLayer.Tile.StartTimeMovement != null)
 				{
 					prevCellLayer.Tile.PercentMovement = (float) (dateStartMovement.getTime() - prevCellLayer.Tile.StartTimeMovement.getTime()) / tileAnimationDuration;
 
@@ -101,6 +102,49 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		}
 	}
 
+	public Cell PickTile(Vector2 location)
+	{
+		for (Cell cell : Context().Map.Cells)
+		{
+			if(PointInCell(cell, location))
+			{
+//				if(cell.Tile != null)
+//				{
+//					ExplodeTile(cell);
+//				}
+				
+				return cell;
+			}
+		}
+		
+		return null;
+	}
+	
+	public void ExplodeTile(Cell cell)
+	{
+		List<Cell> analyzedCells = new ArrayList<Cell>();
+		
+		ExplodeTile(cell, analyzedCells);
+	}
+
+	private void ExplodeTile(Cell cell, List<Cell> analyzedCells)
+	{
+		analyzedCells.add(cell);
+		
+		for (int i = 0; i < 6; i++)
+		{
+			if(		cell.Neighbourghs[i] != null && 
+					cell.Neighbourghs[i].Tile != null && 
+					cell.Neighbourghs[i].Tile.TypeTile == cell.Tile.TypeTile && 
+					!analyzedCells.contains(cell.Neighbourghs[i]))
+			{
+				ExplodeTile(cell.Neighbourghs[i], analyzedCells);
+			}
+		}
+		
+		cell.Tile = null;
+	}
+	
 	private boolean PointInCell(Cell cell, Vector2 location)
 	{
 		int w = 256 / 2;
@@ -159,4 +203,5 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 		return false;
 	}
+
 }

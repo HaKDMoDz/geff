@@ -1,11 +1,16 @@
 package plz.logic.controller.griplz;
 
 import plz.GameEngine;
+import plz.engine.Common;
+import plz.engine.logic.controller.Pointer;
 import plz.engine.logic.controller.PointerUsage;
 import plz.logic.gameplay.griplz.GamePlayLogic;
+import plz.model.griplz.Cell;
+import plz.model.griplz.CellState;
 import plz.model.griplz.Context;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.math.Vector2;
 
 public class ControllerLogic extends
 		plz.engine.logic.controller.ControllerLogicBase
@@ -86,6 +91,8 @@ public class ControllerLogic extends
 
 		super.touchDown(x, y, pointer, button);
 
+		Pointer curPointer = Context().pointers[pointer];
+		
 		/*
 		// --- En mode Touchscreen, si la tuile est en mode sleep, sélectionner
 		// la tuile si possible
@@ -100,6 +107,21 @@ public class ControllerLogic extends
 		}
 		// ---
 		*/
+		
+		if (curPointer.Usage == PointerUsage.None)
+		{
+			Vector2 vec = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + y) * gameEngine.Render.Camera.zoom);
+			
+			Cell selectedCell = GamePlay().PickTile(vec);
+			
+			if(selectedCell!= null && selectedCell.Tile != null)
+			{
+				curPointer.Usage = PointerUsage.SelectTile;
+				selectedCell.State = CellState.Selected;
+				curPointer.Tag = selectedCell;
+			}
+			
+		}
 
 		return true;
 	}
@@ -111,6 +133,8 @@ public class ControllerLogic extends
 			return false;
 
 		super.touchUp(x, y, pointer, button);
+		
+		Pointer curPointer = Context().pointers[pointer];
 		
 		/*
 		//--- Lâche la tuile sélectionnée en mode Desktop, débute la validation
@@ -145,13 +169,37 @@ public class ControllerLogic extends
 		}
 				*/
 		
+
 		
-		if (Context().pointers[pointer].Usage == PointerUsage.None && Context().pointers[pointer].IsDoubleTap())
+		//--- Si une tuile est sélectionnée, déclenche ou annule le mouvement
+		if (curPointer.Usage == PointerUsage.SelectTile)
 		{
-			GamePlay().NewMap();
+			/*
+			if(curPointer.Current.dst(curPointer.Start) >= 10)
+			{
+				((Cell)curPointer.Tag).State = CellState.Move;
+			}
+			else
+			{
+				((Cell)curPointer.Tag).State = CellState.Visible;
+				((Cell)curPointer.Tag).Tile.DirectionMovement=-1;
+			}*/
 		}
 		
-		Context().pointers[pointer].Usage = PointerUsage.None;
+		//--- Explose la tuile sélectionnée ou renouvelle la map si il y'a un double tap
+		if (curPointer.Usage == PointerUsage.None && curPointer.IsDoubleTap())
+		{
+			Vector2 vec = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + y) * gameEngine.Render.Camera.zoom);
+			
+			Cell selectedCell = GamePlay().PickTile(vec);
+			
+			if(selectedCell != null)
+				GamePlay().ExplodeTile(selectedCell);
+			else
+				GamePlay().NewMap();
+		}
+		
+		curPointer.Usage = PointerUsage.None;
 		
 		return true;
 	}
@@ -164,6 +212,8 @@ public class ControllerLogic extends
 
 		super.touchDragged(x, y, pointer);
 
+		Pointer curPointer = Context().pointers[pointer];
+		
 		/*
 		// --- Déplacement de la tuile sélectionée
 		Pointer selectTilePointer = null;
@@ -212,6 +262,28 @@ public class ControllerLogic extends
 		}
 		//---
 */
+		
+		
+		
+		if (curPointer.Usage == PointerUsage.SelectTile)
+		{
+			Vector2 vec = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + y) * gameEngine.Render.Camera.zoom);
+			
+			vec = vec.mul(1f/256f);
+			vec = vec.sub(0.5f, 0.5f);
+			vec = vec.sub(((Cell)curPointer.Tag).Location);
+			vec = vec.nor();
+			
+			float angle = (-Common.GetAngle(new Vector2(1,0), vec)+(float)Math.PI)/(float)(Math.PI*2)*6f; 
+			
+			((Cell)curPointer.Tag).Tile.DirectionMovement=(int)angle;
+			
+			if(((Cell)curPointer.Tag).Tile.DirectionMovement < 0 || ((Cell)curPointer.Tag).Tile.DirectionMovement > 5)
+				((Cell)curPointer.Tag).Tile.DirectionMovement = -1;
+			
+			gameEngine.Render.AddDebugRender("Angle", angle);
+		}
+		
 		
 		return false;
 	}

@@ -17,6 +17,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 
@@ -25,6 +26,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 	Texture[] texCellForeground;
 	Texture texCellBackground;
 	Texture texCircle;
+	TextureRegion texArrow;
 	Texture texSelected;
 
 	public BitmapFont fontScore;
@@ -73,6 +75,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		texCellForeground[2] = new Texture(Gdx.files.internal(path + "CellForeground_Large.png"));
 
 		texCellBackground = new Texture(Gdx.files.internal(path + "CellBackground.png"));
+		texArrow = TextureRegion.split(new Texture(Gdx.files.internal(path + "Arrow.png")), 256, 256)[0][0];
 
 		// texCircle = new Texture(Gdx.files.internal("data/Circle.png"));
 		// texSelected = new Texture(Gdx.files.internal(path +
@@ -224,7 +227,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			{
 				if (cell.Tile.IsFilled)
 					spriteBatch.setColor(Color.WHITE);
-				else if(Context().Mini)
+				else if (Context().Mini)
 				{
 					spriteBatch.setColor(0.3f, 0.3f, 0.3f, 1f);
 				}
@@ -242,11 +245,24 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 					cellLocation.x = Common.Lerp(cellLocation.x, nextCellLocation.x, cell.Tile.PercentMovement);
 					cellLocation.y = Common.Lerp(cellLocation.y, nextCellLocation.y, cell.Tile.PercentMovement);
+
+					if (colors.containsKey(cell.Tile.DirectionMovement))
+						spriteBatch.setColor(colors.get(cell.Tile.DirectionMovement));
+
 				}
 			}
 
 			if (texForeGround != null)
 				spriteBatch.draw(texForeGround, cellLocation.x, cellLocation.y, width, height);
+			// ---
+
+			// --- Fleche
+			if (cell.Tile != null && cell.Tile.DirectionMovement > -1)
+			{
+				spriteBatch.setColor(Color.WHITE);
+				spriteBatch.draw(texArrow, cellLocation.x+0, cellLocation.y+128, 128f, 0f, width, height, 1f, 1f, (float) cell.Tile.DirectionMovement*60f);
+
+			}
 			// ---
 		}
 	}
