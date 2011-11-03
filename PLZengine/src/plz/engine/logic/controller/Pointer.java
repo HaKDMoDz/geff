@@ -50,10 +50,19 @@ public class Pointer
 	{
 		Date date = new Date();
 		long time = date.getTime();
-		if(PreviousUsage == PointerUsage.None && Usage == PointerUsage.None &&
-				this.PreviousCreationDate != null && time - this.PreviousCreationDate.getTime() < 300)
+		//if(PreviousUsage == PointerUsage.None && Usage == PointerUsage.None &&
+		//		this.PreviousCreationDate != null && time - this.PreviousCreationDate.getTime() < 400)
+		
+		if(this.PreviousCreationDate != null && time - this.PreviousCreationDate.getTime() < 400)
 			return true;
 		
 		return false;
+	}
+
+	public void Reset()
+	{
+		this.Start = null;
+		this.Current = null;
+		this.Usage = PointerUsage.None;
 	}
 }

@@ -53,6 +53,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		CellLayer prevCellLayer;
 		Date dateStartMovement = new Date();
 
+		//--- Commence le mouvement sur les couches
 		for (int i = 0; i < Context().Map.Seed.length; i++)
 		{
 			curCellLayer = (CellLayer) Context().Map.Seed[i].Neighbourghs[2];
@@ -61,90 +62,114 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			{
 				prevCellLayer = (CellLayer) curCellLayer.Neighbourghs[curCellLayer.PreviousCellIndex];
 
-				if ((curCellLayer.Tile == null || curCellLayer.Tile.StartTimeMovement != null) && prevCellLayer.Tile != null && prevCellLayer.Tile.StartTimeMovement == null)
+				if ((curCellLayer.Tile == null || curCellLayer.Tile.State == TileState.MoveOnLayer) && prevCellLayer.Tile != null && prevCellLayer.Tile.State == TileState.Normal)
 				{
 					prevCellLayer.Tile.DirectionMovement = prevCellLayer.NextCellIndex;
 					prevCellLayer.Tile.StartTimeMovement = dateStartMovement;
+					prevCellLayer.Tile.State = TileState.MoveOnLayer;
 				}
 
 				curCellLayer = prevCellLayer;
 			}
 		}
-		
-		
+
+		//--- Bouge les tuiles des couches
 		for (int i = 0; i < Context().Map.Seed.length; i++)
 		{
 			curCellLayer = (CellLayer) Context().Map.Seed[i].Neighbourghs[2];
-			
+
 			for (int j = 0; j < 6 * (i + 1) - 2; j++)
 			{
 				prevCellLayer = (CellLayer) curCellLayer.Neighbourghs[curCellLayer.PreviousCellIndex];
-				
-				if (prevCellLayer.Tile != null && prevCellLayer.Tile.StartTimeMovement != null)
+
+				if (prevCellLayer.Tile != null && prevCellLayer.Tile.State == TileState.MoveOnLayer)
 				{
 					prevCellLayer.Tile.PercentMovement = (float) (dateStartMovement.getTime() - prevCellLayer.Tile.StartTimeMovement.getTime()) / tileAnimationDuration;
 
 					if (prevCellLayer.Tile.PercentMovement >= 1f)
 					{
-							prevCellLayer.Neighbourghs[prevCellLayer.Tile.DirectionMovement].Tile = prevCellLayer.Tile;
-							prevCellLayer.Tile.ParentCell = prevCellLayer.Neighbourghs[prevCellLayer.Tile.DirectionMovement];
+						prevCellLayer.Neighbourghs[prevCellLayer.Tile.DirectionMovement].Tile = prevCellLayer.Tile;
+						prevCellLayer.Tile.ParentCell = prevCellLayer.Neighbourghs[prevCellLayer.Tile.DirectionMovement];
 
-							prevCellLayer.Tile.DirectionMovement = -1;
-							prevCellLayer.Tile.PercentMovement = 0f;
-							prevCellLayer.Tile.StartTimeMovement = null;
+						prevCellLayer.Tile.DirectionMovement = -1;
+						prevCellLayer.Tile.PercentMovement = 0f;
+						prevCellLayer.Tile.StartTimeMovement = null;
+						prevCellLayer.Tile.State = TileState.Normal;
 
-							prevCellLayer.Tile = null;
+						prevCellLayer.Tile = null;
 					}
 				}
-				
+
 				curCellLayer = prevCellLayer;
 			}
 		}
+
+		//--- Bouge les tuiles qui ne sont pas initialement sur une couche
+		for (Cell cell : Context().Map.Cells)
+		{
+			if (cell.Tile != null && cell.Tile.State == TileState.Move)
+			{
+				cell.Tile.PercentMovement = (float) (dateStartMovement.getTime() - cell.Tile.StartTimeMovement.getTime()) / tileAnimationDuration;
+
+				if (cell.Tile.PercentMovement >= 1f)
+				{
+					cell.Neighbourghs[cell.Tile.DirectionMovement].Tile = cell.Tile;
+					cell.Tile.ParentCell = cell.Neighbourghs[cell.Tile.DirectionMovement];
+
+					if (cell.Neighbourghs[cell.Tile.DirectionMovement].Neighbourghs[cell.Tile.DirectionMovement] == null || cell.Neighbourghs[cell.Tile.DirectionMovement].Neighbourghs[cell.Tile.DirectionMovement].Tile != null)
+					{
+						cell.Tile.StartTimeMovement = null;
+						cell.Tile.State = TileState.Normal;
+						cell.Tile.DirectionMovement = -1;
+					}
+					else
+					{
+						cell.Tile.StartTimeMovement = dateStartMovement;
+					}
+
+					cell.Tile.PercentMovement = 0f;
+					cell.Tile = null;
+				}
+			}
+		}
+
 	}
 
 	public Cell PickTile(Vector2 location)
 	{
 		for (Cell cell : Context().Map.Cells)
 		{
-			if(PointInCell(cell, location))
+			if (PointInCell(cell, location))
 			{
-//				if(cell.Tile != null)
-//				{
-//					ExplodeTile(cell);
-//				}
-				
 				return cell;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public void ExplodeTile(Cell cell)
 	{
 		List<Cell> analyzedCells = new ArrayList<Cell>();
-		
+
 		ExplodeTile(cell, analyzedCells);
 	}
 
 	private void ExplodeTile(Cell cell, List<Cell> analyzedCells)
 	{
 		analyzedCells.add(cell);
-		
+
 		for (int i = 0; i < 6; i++)
 		{
-			if(		cell.Neighbourghs[i] != null && 
-					cell.Neighbourghs[i].Tile != null && 
-					cell.Neighbourghs[i].Tile.TypeTile == cell.Tile.TypeTile && 
-					!analyzedCells.contains(cell.Neighbourghs[i]))
+			if (cell.Neighbourghs[i] != null && cell.Neighbourghs[i].Tile != null && cell.Neighbourghs[i].Tile.TypeTile == cell.Tile.TypeTile && !analyzedCells.contains(cell.Neighbourghs[i]))
 			{
 				ExplodeTile(cell.Neighbourghs[i], analyzedCells);
 			}
 		}
-		
+
 		cell.Tile = null;
 	}
-	
+
 	private boolean PointInCell(Cell cell, Vector2 location)
 	{
 		int w = 256 / 2;

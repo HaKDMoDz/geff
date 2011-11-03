@@ -12,6 +12,7 @@ import plz.model.griplz.Cell;
 import plz.model.griplz.CellLayer;
 import plz.model.griplz.CellSeed;
 import plz.model.griplz.Context;
+import plz.model.griplz.TileState;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -132,7 +133,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			for (Cell cell : Context().Map.Cells)
 			{
 				// if (!cell.Selected)
-				DrawCell(cell, true);
+				DrawCell(cell, RenderItem.BackGround);
 			}
 			// ---
 
@@ -140,7 +141,15 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			for (Cell cell : Context().Map.Cells)
 			{
 				// if (!cell.Selected)
-				DrawCell(cell, false);
+				DrawCell(cell, RenderItem.Tile);
+			}
+			// ---
+			
+			// --- Cellules de la map
+			for (Cell cell : Context().Map.Cells)
+			{
+				// if (!cell.Selected)
+				DrawCell(cell, RenderItem.Arrow);
 			}
 			// ---
 		}
@@ -187,7 +196,7 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 		// spriteBatch.setShader(null);
 	}
 
-	private void DrawCell(Cell cell, boolean onlyBackGround)
+	private void DrawCell(Cell cell, RenderItem renderItem)
 	{
 
 		Vector2 cellLocation = cell.Location.cpy();
@@ -197,9 +206,10 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 		cellLocation.mul(256f);
 
-		// --- Cell Background
-		if (onlyBackGround)
+
+		if (renderItem == RenderItem.BackGround)
 		{
+			// --- Cell Background
 			if (cell.getClass() == CellLayer.class)
 			{
 				float v = ((float) ((CellLayer) cell).LayerNumber) / 12f;
@@ -217,9 +227,8 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 			spriteBatch.draw(texCellBackground, cellLocation.x, cellLocation.y, width, height);
 		}
-		else
+		else if(renderItem == RenderItem.Tile)
 		{
-
 			// --- Cell Foreground
 			Texture texForeGround = null;
 
@@ -245,25 +254,20 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 
 					cellLocation.x = Common.Lerp(cellLocation.x, nextCellLocation.x, cell.Tile.PercentMovement);
 					cellLocation.y = Common.Lerp(cellLocation.y, nextCellLocation.y, cell.Tile.PercentMovement);
-
-					if (colors.containsKey(cell.Tile.DirectionMovement))
-						spriteBatch.setColor(colors.get(cell.Tile.DirectionMovement));
-
 				}
 			}
 
 			if (texForeGround != null)
 				spriteBatch.draw(texForeGround, cellLocation.x, cellLocation.y, width, height);
-			// ---
-
+		}
+		else if(renderItem == RenderItem.Arrow)
+		{
 			// --- Fleche
-			if (cell.Tile != null && cell.Tile.DirectionMovement > -1)
+			if (cell.Tile != null && cell.Tile.State == TileState.Selected && cell.Tile.DirectionMovement>-1)
 			{
 				spriteBatch.setColor(Color.WHITE);
-				spriteBatch.draw(texArrow, cellLocation.x+0, cellLocation.y+128, 128f, 0f, width, height, 1f, 1f, (float) cell.Tile.DirectionMovement*60f);
-
+				spriteBatch.draw(texArrow, cellLocation.x, cellLocation.y+height/2, width/2, 0f, width, height, 1f, 1f, (float) (-cell.Tile.DirectionMovement)*60f);
 			}
-			// ---
 		}
 	}
 }

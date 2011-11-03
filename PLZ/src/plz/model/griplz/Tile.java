@@ -10,6 +10,12 @@ public class Tile implements Cloneable
 	public int DirectionMovement=-1;
 	public boolean IsFilled;
 	public float PercentMovement;
+	public TileState State;
+	
+	public Tile()
+	{
+		State = TileState.Normal;
+	}
 	
 	@Override
 	public Object clone()
@@ -21,6 +27,7 @@ public class Tile implements Cloneable
 		tile.StartTimeMovement = this.StartTimeMovement;
 		tile.DirectionMovement = this.DirectionMovement;
 		tile.IsFilled = this.IsFilled;
+		tile.State = this.State;
 		
 		return tile;
 	}

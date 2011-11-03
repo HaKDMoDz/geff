@@ -98,7 +98,7 @@ public abstract class ControllerLogicBase implements InputProcessor
 		ProcessPointer();
 		
 		// ---> Met le pointeur de départ sur null
-		Context().pointers[pointer].Start = null;
+		//Context().pointers[pointer].Start = null;
 		
 		
 		
