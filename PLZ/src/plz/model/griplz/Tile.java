@@ -11,7 +11,8 @@ public class Tile implements Cloneable
 	public boolean IsFilled;
 	public float PercentMovement;
 	public TileState State;
-	
+	public Cell TargetCell;
+
 	public Tile()
 	{
 		State = TileState.Normal;

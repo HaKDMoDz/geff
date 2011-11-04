@@ -11,6 +11,7 @@ import plz.logic.ui.screens.griplz.GameScreen;
 import plz.model.griplz.Cell;
 import plz.model.griplz.CellLayer;
 import plz.model.griplz.CellSeed;
+import plz.model.griplz.CellState;
 import plz.model.griplz.Context;
 import plz.model.griplz.TileState;
 
@@ -222,7 +223,16 @@ public class RenderLogic extends plz.engine.logic.render.RenderLogicBase
 			}
 			else
 			{
-				spriteBatch.setColor(0.2f, 0.2f, 0.2f, 2f);
+				spriteBatch.setColor(0.2f, 0.2f, 0.2f, 1f);
+			}
+			
+			if(cell.State == CellState.Highlighted)
+			{
+				spriteBatch.setColor(0.3f, 0.6f, 0.6f, 1f);
+			}
+			else if(cell.State == CellState.Selected)
+			{
+				spriteBatch.setColor(0.4f, 0.95f, 0.95f, 1f);
 			}
 
 			spriteBatch.draw(texCellBackground, cellLocation.x, cellLocation.y, width, height);

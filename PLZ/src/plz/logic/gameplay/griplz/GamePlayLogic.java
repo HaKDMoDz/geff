@@ -53,7 +53,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 		CellLayer prevCellLayer;
 		Date dateStartMovement = new Date();
 
-		//--- Commence le mouvement sur les couches
+		// --- Commence le mouvement sur les couches
 		for (int i = 0; i < Context().Map.Seed.length; i++)
 		{
 			curCellLayer = (CellLayer) Context().Map.Seed[i].Neighbourghs[2];
@@ -73,7 +73,7 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			}
 		}
 
-		//--- Bouge les tuiles des couches
+		// --- Bouge les tuiles des couches
 		for (int i = 0; i < Context().Map.Seed.length; i++)
 		{
 			curCellLayer = (CellLayer) Context().Map.Seed[i].Neighbourghs[2];
@@ -104,36 +104,40 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 			}
 		}
 
-		//--- Bouge les tuiles qui ne sont pas initialement sur une couche
+		// --- Bouge les tuiles qui ne sont pas initialement sur une couche
 		for (Cell cell : Context().Map.Cells)
 		{
+			if(cell.State == CellState.Highlighted)
+				cell.State = CellState.Visible;
+
 			if (cell.Tile != null && cell.Tile.State == TileState.Move)
 			{
 				cell.Tile.PercentMovement = (float) (dateStartMovement.getTime() - cell.Tile.StartTimeMovement.getTime()) / tileAnimationDuration;
 
 				if (cell.Tile.PercentMovement >= 1f)
 				{
+					//--- La tuile change de cellule
 					cell.Neighbourghs[cell.Tile.DirectionMovement].Tile = cell.Tile;
 					cell.Tile.ParentCell = cell.Neighbourghs[cell.Tile.DirectionMovement];
 
-					
 					Cell nextCell = cell.Neighbourghs[cell.Tile.DirectionMovement].Neighbourghs[cell.Tile.DirectionMovement];
-					
-					
-					if (nextCell == null || nextCell.Tile != null)
+
+					//--- La tuile s'arrête si elle rencontre le bord de la map, une autre tuile ou sa cellule cible
+					if (nextCell == null || nextCell.Tile != null || cell.Tile.ParentCell == cell.Tile.TargetCell)
 					{
 						cell.Tile.StartTimeMovement = null;
 						cell.Tile.State = TileState.Normal;
 						cell.Tile.DirectionMovement = -1;
-						
-						if(nextCell != null && nextCell.Tile != null && nextCell.Tile.TypeTile == cell.Tile.TypeTile+1)
+
+						//--- Rempli ou fait exploser la tuile voisine si elle est directement plus grosse
+						if (nextCell != null && nextCell.Tile != null && nextCell.Tile.TypeTile == cell.Tile.TypeTile + 1)
 						{
 							cell.Tile.ParentCell.Tile = null;
-							
-							if(nextCell.Tile.IsFilled)
+
+							if (nextCell.Tile.IsFilled)
 								ExplodeTile(nextCell);
 							else
-								nextCell.Tile.IsFilled=true;
+								nextCell.Tile.IsFilled = true;
 						}
 					}
 					else
@@ -143,6 +147,25 @@ public class GamePlayLogic extends plz.engine.logic.gameplay.GamePlayLogicBase
 
 					cell.Tile.PercentMovement = 0f;
 					cell.Tile = null;
+				}
+			}
+		}
+
+		//--- Surligne les cellules dans la lignée du tir
+		for (Cell cell : Context().Map.Cells)
+		{
+			if (cell.Tile != null && cell.Tile.State == TileState.Selected && cell.Tile.DirectionMovement>-1)
+			{
+				Cell nextCell = cell;
+				for (int i = 0; i < 6; i++)
+				{
+					if(nextCell.State == CellState.Visible)
+						nextCell.State = CellState.Highlighted;
+					
+					if(nextCell.Neighbourghs[cell.Tile.DirectionMovement] != null && nextCell.Neighbourghs[cell.Tile.DirectionMovement].Tile == null)
+						nextCell = nextCell.Neighbourghs[cell.Tile.DirectionMovement];
+					else
+						break;
 				}
 			}
 		}

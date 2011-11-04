@@ -95,11 +95,10 @@ public class ControllerLogic extends
 
 		Pointer curPointer = Context().pointers[pointer];
 
-
-		//--- Sélectionne une tuile
+		// --- Sélectionne une tuile
 		if (curPointer.Usage == PointerUsage.None)
 		{
-			Vector2 vec = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + y) * gameEngine.Render.Camera.zoom);
+			Vector2 vec = GetPosition(x, y);
 
 			Cell selectedCell = GamePlay().PickTile(vec);
 
@@ -129,11 +128,13 @@ public class ControllerLogic extends
 		if (curPointer.Usage == PointerUsage.SelectTile)
 		{
 			Cell selectedCell = ((Cell) curPointer.Tag);
-			
-			if (curPointer.Current.dst(curPointer.Start) >= 20 && selectedCell.Tile.DirectionMovement > -1)
+			float distance = GetPosition(curPointer.Current.x, curPointer.Current.y).dst(GetPosition(curPointer.Start.x, curPointer.Start.y));
+
+			if (distance >= 128f && selectedCell.Tile.DirectionMovement > -1)
 			{
 				selectedCell.Tile.State = TileState.Move;
 				selectedCell.Tile.StartTimeMovement = new Date();
+				selectedCell.Tile.TargetCell.State = CellState.Visible;
 			}
 			else
 			{
@@ -146,7 +147,7 @@ public class ControllerLogic extends
 		// double tap
 		if (curPointer.IsDoubleTap())
 		{
-			Vector2 vec = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + y) * gameEngine.Render.Camera.zoom);
+			Vector2 vec = GetPosition(x, y);
 
 			Cell selectedCell = GamePlay().PickTile(vec);
 
@@ -173,7 +174,7 @@ public class ControllerLogic extends
 
 		if (curPointer.Usage == PointerUsage.SelectTile)
 		{
-			Vector2 vec = new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + y) * gameEngine.Render.Camera.zoom);
+			Vector2 vec = GetPosition(x, y);
 
 			vec = vec.mul(1f / 256f);
 			vec = vec.sub(0.5f, 0.5f);
@@ -182,11 +183,14 @@ public class ControllerLogic extends
 
 			float angle = (-Common.GetAngle(new Vector2(1, 0), vec) + (float) Math.PI) / (float) (Math.PI * 2) * 6f;
 
-			int direction = Common.mod(((int) angle)+2, 6);
+			int direction = Common.mod(((int) angle) + 2, 6);
+			float distance = GetPosition(curPointer.Current.x, curPointer.Current.y).dst(GetPosition(curPointer.Start.x, curPointer.Start.y));
+
+			// curPointer.Current.dst(curPointer.Start);
 
 			Cell selectedCell = ((Cell) curPointer.Tag);
-			
-			if (curPointer.Current.dst(curPointer.Start) >= 20 && selectedCell.Neighbourghs[direction] != null && selectedCell.Neighbourghs[direction].Tile == null)
+
+			if (distance >= 128f && selectedCell.Neighbourghs[direction] != null && selectedCell.Neighbourghs[direction].Tile == null)
 			{
 				selectedCell.Tile.DirectionMovement = direction;
 			}
@@ -194,13 +198,37 @@ public class ControllerLogic extends
 			{
 				selectedCell.Tile.DirectionMovement = -1;
 			}
-			
-			
-			
+
+			//--- Annule la sélection de la cellule cible du lancé
+			if (selectedCell.Tile.TargetCell != null)
+			{
+				selectedCell.Tile.TargetCell.State = CellState.Visible;
+			}
+
+			//--- Sélectionne la nouvelle cellule cible du lancé
+			if (selectedCell.Tile.DirectionMovement > -1)
+			{
+				selectedCell.Tile.TargetCell = selectedCell;
+				for (int i = 0; i < (int) (distance / 128f) && i< 5; i++)
+				{
+					if (selectedCell.Tile.TargetCell.Neighbourghs[selectedCell.Tile.DirectionMovement] != null && selectedCell.Tile.TargetCell.Neighbourghs[selectedCell.Tile.DirectionMovement].Tile == null)
+						selectedCell.Tile.TargetCell = selectedCell.Tile.TargetCell.Neighbourghs[selectedCell.Tile.DirectionMovement];
+					else
+						break;
+				}
+
+				selectedCell.Tile.TargetCell.State = CellState.Selected;
+			}
+
 			// gameEngine.Render.AddDebugRender("Angle", angle);
 		}
 
 		return false;
+	}
+
+	public Vector2 GetPosition(float x, float y)
+	{
+		return new Vector2(gameEngine.Render.Camera.position.x + (-vecMidScreen.x + x) * gameEngine.Render.Camera.zoom, gameEngine.Render.Camera.position.y - (-vecMidScreen.y + y) * gameEngine.Render.Camera.zoom);
 	}
 
 	@Override

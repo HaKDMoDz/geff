@@ -13,7 +13,6 @@ public class Cell implements Cloneable
 	public Cell[] Neighbourghs;
 
 	public Tile Tile;
-	public boolean Selected;
 	public CellState State;
 
 	public Cell()

@@ -4,5 +4,5 @@ public enum CellState
 {
 	Visible,
 	Invisible,
- Stoned, Selected
+	Stoned, Selected, Highlighted
 }
