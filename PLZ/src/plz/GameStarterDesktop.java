@@ -6,12 +6,12 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.jogl.JoglApplication;
 
 public class GameStarterDesktop
-{
+{	
 	public static void main(String[] argv)
 	{
-		boolean miniWindow = true;
+		boolean miniWindow = false;
 		
-		GameEngine app = new GameEngine();
+		GameEngine app = new GameEngine(argv);
 		JoglApplication window;
 
 		if(miniWindow)

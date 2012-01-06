@@ -19,7 +19,13 @@ public class GameEngineBase implements ApplicationListener {
 	public float DeltaTime;
 	public ScreenBase CurrentScreen;
 	public ScreenBase NextScreen;
-
+	public String[] argv;
+	
+	public GameEngineBase(String[] argv)
+	{
+		this.argv = argv;
+	}
+	
 	@Override
 	public void create() {
 		// TODO Auto-generated method stub

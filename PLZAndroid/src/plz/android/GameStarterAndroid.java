@@ -25,7 +25,7 @@ public class GameStarterAndroid extends AndroidApplication {
 		config.resolutionStrategy = new FillResolutionStrategy();
 		config.useGL20 = false;
 		
-		GameEngine app = new GameEngine();
+		GameEngine app = new GameEngine(null);
 
 		initialize(app, config);
 		

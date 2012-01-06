@@ -17,9 +17,10 @@ import plz.model.twiplz.Context;
 import plz.model.twiplz.GameMode;
 
 public class GameEngine extends plz.engine.GameEngineBase
-{
-	public GameEngine()
+{	
+	public GameEngine(String[] argv)
 	{
+		super(argv);
 	}
 	
 	@Override
@@ -29,35 +30,10 @@ public class GameEngine extends plz.engine.GameEngineBase
 //		music.setLooping(true);
 //		music.play();
 		
-		
-//		this.Context = new ContextBase();
-//		this.Render = new RenderLogicBase(this);
-//		this.CurrentScreen = new MainMenu(this);
-//		this.CurrentScreen.show();
-		
-		
-		plz.model.griplz.Context context =new plz.model.griplz.Context();
-		context.Mini = false;
-		Context = context;
-		
-		if(Gdx.app.getType() == ApplicationType.Android)
-		{
-			((plz.model.griplz.Context)Context).Mini = false;
-			((plz.model.griplz.Context)Context).selectionOffsetY = 0;
-		}
-		else
-		{
-			((plz.model.griplz.Context)Context).Mini = true;
-		}
-		
-		Render = new plz.logic.render.griplz.RenderLogic((GameEngine)this);
-		Controller = new plz.logic.controller.griplz.ControllerLogic((GameEngine)this);
-		GamePlay = new plz.logic.gameplay.griplz.GamePlayLogic((GameEngine)this);
-		
-		//this.CurrentScreen = new GameScreen(this);
-		CurrentScreen = new plz.logic.ui.screens.griplz.GameScreen((GameEngine)this);
-		CurrentScreen.show();
-		
+		this.Context = new ContextBase();
+		this.Render = new RenderLogicBase(this);
+		this.CurrentScreen = new MainMenu(this);
+		this.CurrentScreen.show();
 	
 		RegisterInput();
 	}

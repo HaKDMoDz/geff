@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Delay;
 import com.badlogic.gdx.scenes.scene2d.actions.FadeIn;
 import com.badlogic.gdx.scenes.scene2d.actions.FadeOut;
 import com.badlogic.gdx.scenes.scene2d.actions.Forever;
+import com.badlogic.gdx.scenes.scene2d.actions.RotateTo;
 import com.badlogic.gdx.scenes.scene2d.actions.ScaleTo;
 import com.badlogic.gdx.scenes.scene2d.actions.Sequence;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -26,6 +27,7 @@ public class MainMenu extends ScreenBase
 
 	SensitiveZone btnTwiPLZ;
 	SensitiveZone btnGriPLZ;
+	SensitiveZone bbtnLiPLZ;
 	
 	@Override
 	public void InitScreen()
@@ -34,7 +36,8 @@ public class MainMenu extends ScreenBase
 		
 		Texture texTwiPLZ = new Texture(Gdx.files.internal("data/twiPLZ_Button.png"));
 		Texture texGriPLZ = new Texture(Gdx.files.internal("data/griPLZ_Button.png"));
-
+		Texture texLiPLZ = new Texture(Gdx.files.internal("data/liPLZ_Button.png"));
+		
 		btnTwiPLZ = AddSensitiveZone("btnTwiPLZ", texTwiPLZ);
 		btnTwiPLZ.releaseListener = btnTwiPLZ_Released;
 		btnTwiPLZ.pressListener = btn_Pressed;
@@ -42,6 +45,20 @@ public class MainMenu extends ScreenBase
 		btnGriPLZ = AddSensitiveZone("btnGriPLZ", texGriPLZ);
 		btnGriPLZ.releaseListener = btnGriPLZ_Released;
 		btnGriPLZ.pressListener = btn_Pressed;
+		
+		bbtnLiPLZ = AddSensitiveZone("btnLiPLZ", texLiPLZ);
+		bbtnLiPLZ.releaseListener = btnLiPLZ_Released;
+		bbtnLiPLZ.pressListener = btn_Pressed;
+		
+		if(this.gameEngine.argv.length==1)
+		{
+			if(this.gameEngine.argv[0].equalsIgnoreCase("twiPLZ"))
+				btnTwiPLZ_Released.released(btnTwiPLZ, 0, true);
+			if(this.gameEngine.argv[0].equalsIgnoreCase("griPLZ"))
+				btnGriPLZ_Released.released(btnGriPLZ, 0, true);
+			if(this.gameEngine.argv[0].equalsIgnoreCase("liPLZ"))
+				btnLiPLZ_Released.released(bbtnLiPLZ, 0, true);
+		}
 		
 //		btnTwiPLZ.action(Forever.$(Sequence.$(FadeOut.$(3), FadeIn.$(3))));
 		//Stage.getRoot().action(Forever.$(Sequence.$(FadeOut.$(3), FadeIn.$(3))));
@@ -64,7 +81,7 @@ public class MainMenu extends ScreenBase
 		@Override
 		public void pressed(SensitiveZone button, float x, float y, int pointer)
 		{
-			button.action(ScaleTo.$(2f,2f,0.2f));
+			button.action(Sequence.$(ScaleTo.$(2f,2f,0.2f),RotateTo.$(5f, 0.1f)));
 		}
 	};
 	
@@ -104,7 +121,7 @@ public class MainMenu extends ScreenBase
 				gameEngine.RegisterInput();
 			}
 
-			button.action(ScaleTo.$(1f,1f, 0.2f));
+			button.action(Sequence.$(RotateTo.$(0f, 0.1f),ScaleTo.$(1f,1f,0.2f)));
 		}
 	};
 	
@@ -141,7 +158,43 @@ public class MainMenu extends ScreenBase
 				gameEngine.RegisterInput();
 			}
 
-			button.action(ScaleTo.$(1f,1f, 0.2f));
+			button.action(Sequence.$(RotateTo.$(0f, 0.1f),ScaleTo.$(1f,1f,0.2f)));
+		}
+	};
+	
+	
+	SensitiveZone.ReleaseListener btnLiPLZ_Released = new SensitiveZone.ReleaseListener()
+	{
+		@Override
+		public void released(SensitiveZone button, int pointer,
+				boolean isOnButton)
+		{
+			if (isOnButton)
+			{
+				plz.model.liplz.Context context =new plz.model.liplz.Context();
+				context.Mini = gameEngine.Context.Mini;
+				gameEngine.Context = context;
+				
+				if(Gdx.app.getType() == ApplicationType.Android)
+				{
+					((plz.model.liplz.Context)gameEngine.Context).Mini = false;
+				}
+				else
+				{
+					((plz.model.liplz.Context)gameEngine.Context).Mini = false;
+				}
+				
+				gameEngine.Render = new plz.logic.render.liplz.RenderLogic((GameEngine)gameEngine);
+				gameEngine.Controller = new plz.logic.controller.liplz.ControllerLogic((GameEngine)gameEngine);
+				gameEngine.GamePlay = new plz.logic.gameplay.liplz.GamePlayLogic((GameEngine)gameEngine);
+				
+				gameEngine.CurrentScreen = new plz.logic.ui.screens.liplz.GameScreen((GameEngine)gameEngine);
+				gameEngine.CurrentScreen.show();
+				
+				gameEngine.RegisterInput();
+			}
+			
+			button.action(Sequence.$(RotateTo.$(0f, 0.1f),ScaleTo.$(1f,1f,0.2f)));
 		}
 	};
 }
