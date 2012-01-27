@@ -56,12 +56,17 @@
             this.label13 = new System.Windows.Forms.Label();
             this.numWe = new System.Windows.Forms.NumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
-            this.btnRépartir = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txt = new System.Windows.Forms.RichTextBox();
             this.calendar = new System.Windows.Forms.MonthCalendar();
             this.txtMessage = new System.Windows.Forms.RichTextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnTestsAuto = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnRepartir = new System.Windows.Forms.Button();
+            this.btnValiderGraine = new System.Windows.Forms.Button();
+            this.numGraine = new System.Windows.Forms.NumericUpDown();
+            this.label15 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numRP)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRPr)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numMA)).BeginInit();
@@ -77,10 +82,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.numRU)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numWe)).BeginInit();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numGraine)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -95,11 +101,16 @@
             // numRP
             // 
             this.numRP.Location = new System.Drawing.Point(57, 14);
+            this.numRP.Maximum = new decimal(new int[] {
+            116,
+            0,
+            0,
+            0});
             this.numRP.Name = "numRP";
             this.numRP.Size = new System.Drawing.Size(74, 20);
             this.numRP.TabIndex = 1;
             this.numRP.Value = new decimal(new int[] {
-            25,
+            26,
             0,
             0,
             0});
@@ -214,7 +225,7 @@
             this.numDI.Size = new System.Drawing.Size(74, 20);
             this.numDI.TabIndex = 15;
             this.numDI.Value = new decimal(new int[] {
-            2,
+            5,
             0,
             0,
             0});
@@ -331,7 +342,7 @@
             this.numWe.Size = new System.Drawing.Size(74, 20);
             this.numWe.TabIndex = 27;
             this.numWe.Value = new decimal(new int[] {
-            3,
+            5,
             0,
             0,
             0});
@@ -345,16 +356,6 @@
             this.label14.Size = new System.Drawing.Size(25, 13);
             this.label14.TabIndex = 26;
             this.label14.Text = "WE";
-            // 
-            // btnRépartir
-            // 
-            this.btnRépartir.Location = new System.Drawing.Point(302, 174);
-            this.btnRépartir.Name = "btnRépartir";
-            this.btnRépartir.Size = new System.Drawing.Size(75, 23);
-            this.btnRépartir.TabIndex = 28;
-            this.btnRépartir.Text = "&Répartir";
-            this.btnRépartir.UseVisualStyleBackColor = true;
-            this.btnRépartir.Click += new System.EventHandler(this.btnRépartir_Click);
             // 
             // groupBox1
             // 
@@ -421,6 +422,9 @@
             // 
             // splitContainer1
             // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(12, 247);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -436,15 +440,79 @@
             this.splitContainer1.SplitterDistance = 108;
             this.splitContainer1.TabIndex = 33;
             // 
+            // btnTestsAuto
+            // 
+            this.btnTestsAuto.Location = new System.Drawing.Point(6, 39);
+            this.btnTestsAuto.Name = "btnTestsAuto";
+            this.btnTestsAuto.Size = new System.Drawing.Size(75, 23);
+            this.btnTestsAuto.TabIndex = 34;
+            this.btnTestsAuto.Text = "Tests auto";
+            this.btnTestsAuto.UseVisualStyleBackColor = true;
+            this.btnTestsAuto.Click += new System.EventHandler(this.btnTestsAuto_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.btnRepartir);
+            this.groupBox2.Controls.Add(this.btnValiderGraine);
+            this.groupBox2.Controls.Add(this.numGraine);
+            this.groupBox2.Controls.Add(this.label15);
+            this.groupBox2.Controls.Add(this.btnTestsAuto);
+            this.groupBox2.Location = new System.Drawing.Point(302, 173);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(244, 68);
+            this.groupBox2.TabIndex = 35;
+            this.groupBox2.TabStop = false;
+            // 
+            // btnRepartir
+            // 
+            this.btnRepartir.Location = new System.Drawing.Point(6, 11);
+            this.btnRepartir.Name = "btnRepartir";
+            this.btnRepartir.Size = new System.Drawing.Size(75, 23);
+            this.btnRepartir.TabIndex = 38;
+            this.btnRepartir.Text = "Répartir";
+            this.btnRepartir.UseVisualStyleBackColor = true;
+            this.btnRepartir.Click += new System.EventHandler(this.btnRepartir_Click);
+            // 
+            // btnValiderGraine
+            // 
+            this.btnValiderGraine.Location = new System.Drawing.Point(187, 39);
+            this.btnValiderGraine.Name = "btnValiderGraine";
+            this.btnValiderGraine.Size = new System.Drawing.Size(51, 23);
+            this.btnValiderGraine.TabIndex = 37;
+            this.btnValiderGraine.Text = "Ok";
+            this.btnValiderGraine.UseVisualStyleBackColor = true;
+            this.btnValiderGraine.Click += new System.EventHandler(this.btnValiderGraine_Click);
+            // 
+            // numGraine
+            // 
+            this.numGraine.Location = new System.Drawing.Point(125, 39);
+            this.numGraine.Maximum = new decimal(new int[] {
+            500000,
+            0,
+            0,
+            0});
+            this.numGraine.Name = "numGraine";
+            this.numGraine.Size = new System.Drawing.Size(56, 20);
+            this.numGraine.TabIndex = 36;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(87, 44);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(38, 13);
+            this.label15.TabIndex = 35;
+            this.label15.Text = "Graine";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(558, 732);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.calendar);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.btnRépartir);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Répartition des absences";
@@ -467,8 +535,10 @@
             this.groupBox1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numGraine)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -503,12 +573,17 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.NumericUpDown numWe;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Button btnRépartir;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RichTextBox txt;
         private System.Windows.Forms.MonthCalendar calendar;
         private System.Windows.Forms.RichTextBox txtMessage;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Button btnTestsAuto;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button btnValiderGraine;
+        private System.Windows.Forms.NumericUpDown numGraine;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button btnRepartir;
     }
 }
 
