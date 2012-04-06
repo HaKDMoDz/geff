@@ -44,8 +44,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Standard Assets\Code\Game\Card.cs" />
      <Compile Include="Assets\Standard Assets\Code\Game\Continent\Continent.cs" />
      <Compile Include="Assets\Standard Assets\Code\Game\Continent\ContinentCard.cs" />
+     <Compile Include="Assets\Standard Assets\Code\Game\Game.cs" />
      <Compile Include="Assets\Standard Assets\Code\MainMenu\MenuOnePlayer.cs" />
      <Compile Include="Assets\Standard Assets\_Scripts\General Scripts\ActivateTrigger.cs" />
      <Compile Include="Assets\Standard Assets\_Scripts\Utility Scripts\CombineChildren.cs" />

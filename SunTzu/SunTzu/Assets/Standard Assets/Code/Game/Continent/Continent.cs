@@ -1,15 +1,24 @@
 using UnityEngine;
 using System.Collections;
 
-public class Continent : MonoBehaviour {
+public class Continent : MonoBehaviour
+{
+    public ContinentCard continentCard;
+    public Vector3 initialLocation;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    void Start()
+    {
+        continentCard = (ContinentCard)this.GetComponentInChildren(typeof(ContinentCard));
+        initialLocation = this.transform.position;
+    }
+
+    void Update()
+    {
+
+    }
+
+    public void OnMouseEnter()
+    {
+        transform.position = new Vector3(initialLocation.x, initialLocation.y, 15);
+    }
 }
