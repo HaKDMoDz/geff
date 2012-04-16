@@ -16,8 +16,8 @@ public class Game : MonoBehaviour
 
         for (int i = 0; i <= nbCard; i++)
         {
-            Vector3 vec = new Vector3(leftLimit + (float)i * (rightLimit - leftLimit) / (float)(nbCard), 1.2f, -8f+(float)i*0.001f);
-            Transform transNewCard = (Transform)GameObject.Instantiate(transCard, vec, Quaternion.Euler(270f,180f,0f));
+            Vector3 vec = new Vector3(leftLimit + (float)i * (rightLimit - leftLimit) / (float)(nbCard), 0.5f+ (float)i * 0.001f, -8f);
+            Transform transNewCard = (Transform)GameObject.Instantiate(transCard, vec, Quaternion.Euler(-130f,0f,0f));
             Card card = transNewCard.gameObject.GetComponent<Card>();
             listCard.Add(card);
         }
