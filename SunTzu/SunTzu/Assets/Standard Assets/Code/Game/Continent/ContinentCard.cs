@@ -17,11 +17,11 @@ public class ContinentCard : MonoBehaviour
 
     public void OnMouseEnter()
     {
-        continent.transform.position = new Vector3(continent.initialLocation.x, 0.2f, continent.initialLocation.z);
+        //continent.transform.position = new Vector3(continent.initialLocation.x, 0.2f, continent.initialLocation.z);
     }
 
     public void OnMouseExit()
     {
-        continent.transform.position = continent.initialLocation;
+        //continent.transform.position = continent.initialLocation;
     }
 }

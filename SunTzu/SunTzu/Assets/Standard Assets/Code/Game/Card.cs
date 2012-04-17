@@ -3,14 +3,24 @@ using System.Collections;
 
 public class Card : MonoBehaviour
 {
+    public CardType CardType = CardType.PawnValue;
+    public int CardValue;
     public Vector3 initialLocation;
     bool isSelected = false;
-    Collider boardCollider;
+    Collider colBoard;
+
+    /*
+    public Card(CardType cardType, int cardValue)
+    {
+        this.CardType = CardType;
+        this.CardValue = CardValue;
+    }
+    */
 
     void Start()
     {
         initialLocation = this.transform.position;
-        boardCollider = GameObject.Find("Board").GetComponent<BoxCollider>();
+        colBoard = GameObject.Find("Board").GetComponent<BoxCollider>();
     }
 
     void Update()
@@ -52,3 +62,12 @@ public class Card : MonoBehaviour
         isSelected = false;
     }
 }
+
+public enum CardType
+{
+    PawnValue,
+    PawnMinusValue,
+    PawnBonusValue,
+    Sick
+}
+
