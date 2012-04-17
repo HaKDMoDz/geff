@@ -97,5 +97,6 @@ public enum GameState
     PrepareAnimationCardInHandBeforPicking,
     AnimateCardInHandBeforPicking,
     PickCardInHand,
+    CardPickedInHand,
     WaitingTurnValidation
 }

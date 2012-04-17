@@ -8,6 +8,9 @@ public class Card : MonoBehaviour
     public Vector3 initialLocation;
     bool isSelected = false;
     Collider colBoard;
+    Collider colCardPlan;
+
+    private Vector3 vecInitialSelection = Vector3.zero;
 
     /*
     public Card(CardType cardType, int cardValue)
@@ -21,45 +24,61 @@ public class Card : MonoBehaviour
     {
         initialLocation = this.transform.position;
         colBoard = GameObject.Find("Board").GetComponent<BoxCollider>();
+        colCardPlan = GameObject.Find("CardPlan").GetComponent<BoxCollider>();
     }
 
     void Update()
     {
-        
+
         if (isSelected)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
+            if (colCardPlan.Raycast(ray, out hit, 100f))
             {
-                /*
-                if (hit != null && hit.collider == boardCollider)
-                {
-                    this.transform
-                }*/
+                if (vecInitialSelection == Vector3.zero)
+                    vecInitialSelection = hit.point;
+
+                this.transform.position = this.initialLocation + hit.point - vecInitialSelection;
             }
         }
     }
 
     public void OnMouseEnter()
     {
-        this.transform.position = new Vector3(this.initialLocation.x, this.initialLocation.y + 0.05f, this.initialLocation.z);
+        if (Game.GameState == GameState.PickCardInHand)
+        {
+            this.transform.position = new Vector3(this.initialLocation.x, this.initialLocation.y + 0.05f, this.initialLocation.z);
+        }
     }
 
     public void OnMouseExit()
     {
-        this.transform.position = this.initialLocation;
+        if (Game.GameState == GameState.PickCardInHand)
+        {
+            this.transform.position = this.initialLocation;
+        }
     }
 
     public void OnMouseDown()
     {
-        isSelected = true;
+        if (Game.GameState == GameState.PickCardInHand)
+        {
+            isSelected = true;
+            vecInitialSelection = Vector3.zero;
+            Game.GameState = GameState.CardPickedInHand;
+        }
     }
 
     public void OnMouseUp()
     {
-        isSelected = false;
+        if (Game.GameState == GameState.CardPickedInHand)
+        {
+            isSelected = false;
+            vecInitialSelection = Vector3.zero;
+            Game.GameState = GameState.PickCardInHand;
+        }
     }
 }
 
