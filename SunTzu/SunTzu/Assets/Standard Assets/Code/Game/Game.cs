@@ -6,10 +6,8 @@ public class Game : MonoBehaviour
 {
     public Transform transCard;
     public List<Player> ListPlayer;
-    public static GameState GameState = GameState.PrepareAnimationCardInHandBeforPicking;
-    public Player Player;
-
-    private float startTimeAnimationCard = 0f;
+    public static GameState GameState = GameState.PickCardInHand;
+    public static Player Player;
 
     void Start()
     {
@@ -52,50 +50,22 @@ public class Game : MonoBehaviour
             player.PickCards(4, true);
         }
 
-        Game.GameState = GameState.PrepareAnimationCardInHandBeforPicking;
+        Game.GameState = global::GameState.PrepareCardBeforPicking;
     }
 
     void Update()
     {
-        if (Game.GameState == global::GameState.PrepareAnimationCardInHandBeforPicking)
+        if (Game.GameState == global::GameState.PrepareCardBeforPicking)
         {
-            float i = 0f;
-            foreach (Card card in Player.ListCardInHand)
-            {
-                card.transform.position = new Vector3(2.5f, 0.92f + i * 0.001f, -8.17f);
-                card.transform.rotation = Quaternion.Euler(325, 180f, 180f);
-                i++;
-            }
-
-            startTimeAnimationCard = Time.time;
-            Game.GameState = global::GameState.AnimateCardInHandBeforPicking;
-        }
-        else if (Game.GameState == global::GameState.AnimateCardInHandBeforPicking)
-        {
-            float leftLimit = -1.7f;
-            float rightLimit = 2.1f;
-            float animationDuration = 1f;
-            float currentTime = Time.time;
-
-            for (int i = 0; i < Player.ListCardInHand.Count; i++)
-            {
-                Card card = Player.ListCardInHand[i];
-
-                float x = Mathf.Lerp(2.5f, leftLimit + (float)i * (rightLimit - leftLimit) / (float)(Player.ListCardInHand.Count), (currentTime - startTimeAnimationCard) / animationDuration);
-                card.transform.position = new Vector3(x, card.transform.position.y, card.transform.position.z);
-                card.initialLocation = card.transform.position;
-            }
-
-            if (currentTime - startTimeAnimationCard >= animationDuration)
-                Game.GameState = global::GameState.PickCardInHand;
+            Game.Player.SortPileInHand(true);
+            Game.GameState = global::GameState.PickCardInHand;
         }
     }
 }
 
 public enum GameState
 {
-    PrepareAnimationCardInHandBeforPicking,
-    AnimateCardInHandBeforPicking,
+    PrepareCardBeforPicking,
     PickCardInHand,
     CardPickedInHand,
     WaitingTurnValidation

@@ -21,31 +21,41 @@ public class Player : Object
         ListCardInHand = new List<Card>();
         ListCardInDiscardPile = new List<Card>();
 
-        CreateCard(CardType.PawnValue, 1);
-        CreateCard(CardType.PawnValue, 2);
-        CreateCard(CardType.PawnValue, 3);
-        CreateCard(CardType.PawnValue, 4);
-        CreateCard(CardType.PawnValue, 5);
-        CreateCard(CardType.PawnValue, 6);
-        CreateCard(CardType.PawnMinusValue, -1);
-        CreateCard(CardType.PawnBonusValue, 1);
-        CreateCard(CardType.PawnBonusValue, 2);
-        CreateCard(CardType.PawnBonusValue, 3);
-        CreateCard(CardType.Sick, 0);
+        CreateCard(CardType.PawnValue, 1, 0);
+        CreateCard(CardType.PawnValue, 2, 1);
+        CreateCard(CardType.PawnValue, 3, 2);
+        CreateCard(CardType.PawnValue, 4, 3);
+        CreateCard(CardType.PawnValue, 5, 4);
+        CreateCard(CardType.PawnValue, 6, 5);
+        CreateCard(CardType.PawnValue, 7, 6);
+        CreateCard(CardType.PawnValue, 8, 7);
+        CreateCard(CardType.PawnValue, 9, 8);
+        CreateCard(CardType.PawnValue, 10, 9);
+        CreateCard(CardType.PawnMinusValue, -1, 10);
+        CreateCard(CardType.PawnMinusValue, -1, 11);
+        CreateCard(CardType.PawnMinusValue, -1, 12);
+        CreateCard(CardType.PawnBonusValue, 1, 13);
+        CreateCard(CardType.PawnBonusValue, 1, 14);
+        CreateCard(CardType.PawnBonusValue, 1, 15);
+        CreateCard(CardType.PawnBonusValue, 2, 16);
+        CreateCard(CardType.PawnBonusValue, 3, 17);
+        CreateCard(CardType.Sick, 4, 18);
+        CreateCard(CardType.Sick, 4, 19);
     }
 
-    private void CreateCard(CardType cardType, int cardValue)
+    private void CreateCard(CardType cardType, int cardValue, int index)
     {
-		GameObject gameLogic = GameObject.Find("GameLogic");
-		Game game = gameLogic.GetComponent<Game>();
-		
-		Transform transNewCard = (Transform)GameObject.Instantiate(game.transCard);
-		
-		Card card = transNewCard.GetComponent<Card>();
+        GameObject gameLogic = GameObject.Find("GameLogic");
+        Game game = gameLogic.GetComponent<Game>();
+
+        Transform transNewCard = (Transform)GameObject.Instantiate(game.transCard);
+
+        Card card = transNewCard.GetComponent<Card>();
         card.CardType = cardType;
         card.CardValue = cardValue;
-		
-		ListCardInDrawPile.Add(card);
+        card.Index = index;
+
+        ListCardInDrawPile.Add(card);
     }
 
     public void PickCards(int nbCardToPick, bool randomly)
@@ -53,8 +63,8 @@ public class Player : Object
         for (int i = 0; i < nbCardToPick; i++)
         {
             int indexCard = i;
-            
-            if(randomly)
+
+            if (randomly)
                 indexCard = Random.Range(0, ListCardInDrawPile.Count - 1);
 
             Card pickedCard = ListCardInDrawPile[indexCard];
@@ -62,6 +72,39 @@ public class Player : Object
             ListCardInHand.Add(pickedCard);
             ListCardInDrawPile.Remove(pickedCard);
         }
+    }
+
+    public void SortPileInHand(bool firstSort)
+    {
+        float leftLimit = -1.7f;
+        float rightLimit = 2.1f;
+
+        ListCardInHand.Sort(new ComparerCard());
+
+        for (int i = 0; i < ListCardInHand.Count; i++)
+        {
+            Card card = ListCardInHand[i];
+
+            if (firstSort)
+            {
+                card.transform.position = new Vector3(2.5f, 0.92f + (float)i * 0.001f, -8.17f);
+                card.transform.rotation = Quaternion.Euler(325, 180f, 180f);
+            }
+
+            card.StartLocation = card.transform.position;
+            card.Location = new Vector3(leftLimit + (float)i * (rightLimit - leftLimit) / (float)(ListCardInHand.Count), 0.92f + (float)i * 0.001f, -8.17f);
+            card.LastTimeAnimation = Time.time;
+			card.DurationAnimation = 0.7f;
+        }
+    }
+}
+
+public class ComparerCard : Comparer<Card>
+{
+    public override int Compare(Card x, Card y)
+    {
+		int val =x.Index.CompareTo(y.Index);
+        return val;
     }
 }
 
