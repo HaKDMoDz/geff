@@ -46,8 +46,8 @@ public class Game : MonoBehaviour
     {
         foreach (Player player in ListPlayer)
         {
-            player.PickCards(6, false);
-            player.PickCards(4, true);
+            player.PickCards(6, false, Object.ReferenceEquals(player, Player));
+            player.PickCards(4, true, Object.ReferenceEquals(player, Player));
         }
 
         Game.GameState = global::GameState.PrepareCardBeforPicking;

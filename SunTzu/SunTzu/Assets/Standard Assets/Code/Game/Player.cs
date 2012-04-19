@@ -50,6 +50,8 @@ public class Player : Object
 
         Transform transNewCard = (Transform)GameObject.Instantiate(game.transCard);
 
+        transNewCard.gameObject.renderer.enabled = false;
+
         Card card = transNewCard.GetComponent<Card>();
         card.CardType = cardType;
         card.CardValue = cardValue;
@@ -58,7 +60,7 @@ public class Player : Object
         ListCardInDrawPile.Add(card);
     }
 
-    public void PickCards(int nbCardToPick, bool randomly)
+    public void PickCards(int nbCardToPick, bool randomly, bool showCard)
     {
         for (int i = 0; i < nbCardToPick; i++)
         {
@@ -69,6 +71,8 @@ public class Player : Object
 
             Card pickedCard = ListCardInDrawPile[indexCard];
 
+            pickedCard.renderer.enabled = showCard;
+
             ListCardInHand.Add(pickedCard);
             ListCardInDrawPile.Remove(pickedCard);
         }
@@ -76,8 +80,8 @@ public class Player : Object
 
     public void SortPileInHand(bool firstSort)
     {
-        float leftLimit = -1.7f;
-        float rightLimit = 2.1f;
+        float leftLimit = -4.2f;
+        float rightLimit = 4.2f;
 
         ListCardInHand.Sort(new ComparerCard());
 
@@ -87,12 +91,12 @@ public class Player : Object
 
             if (firstSort)
             {
-                card.transform.position = new Vector3(2.5f, 0.92f + (float)i * 0.001f, -8.17f);
+                card.transform.position = new Vector3(4.2f, 1.5f + (float)i * 0.001f, -0.6f);
                 card.transform.rotation = Quaternion.Euler(325, 180f, 180f);
             }
 
             card.StartLocation = card.transform.position;
-            card.Location = new Vector3(leftLimit + (float)i * (rightLimit - leftLimit) / (float)(ListCardInHand.Count), 0.92f + (float)i * 0.001f, -8.17f);
+            card.Location = new Vector3(leftLimit + (float)i * (rightLimit - leftLimit) / (float)(ListCardInHand.Count-1), 1.5f + (float)i * 0.001f, -0.6f);
             card.LastTimeAnimation = Time.time;
 			card.DurationAnimation = 0.7f;
         }
