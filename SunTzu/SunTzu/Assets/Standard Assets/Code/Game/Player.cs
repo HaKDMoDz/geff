@@ -80,8 +80,14 @@ public class Player : Object
 
     public void SortPileInHand(bool firstSort)
     {
-        float leftLimit = -4.2f;
-        float rightLimit = 4.2f;
+        if (ListCardInHand == null || ListCardInHand.Count == 0)
+            return;
+
+        float cardWidth = ListCardInHand[0].transform.collider.bounds.size.x;
+        float space = 0.01f;
+        float nbCard = (float)ListCardInHand.Count;
+        float large = (nbCard - 1) * (cardWidth + space);
+
 
         ListCardInHand.Sort(new ComparerCard());
 
@@ -96,7 +102,7 @@ public class Player : Object
             }
 
             card.StartLocation = card.transform.position;
-            card.Location = new Vector3(leftLimit + (float)i * (rightLimit - leftLimit) / (float)(ListCardInHand.Count-1), 1.5f + (float)i * 0.001f, -0.6f);
+            card.Location = new Vector3(-large/2f+((float)i)*(cardWidth+space*2f), 1.5f + (float)i * 0.001f, -0.6f);
             card.LastTimeAnimation = Time.time;
 			card.DurationAnimation = 0.7f;
         }
