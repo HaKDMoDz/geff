@@ -5,11 +5,11 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{DF509B31-B9CE-C4A8-A972-C6A1FBB2D7FC}</ProjectGuid>
+	<ProjectGuid>{8DE41985-53BA-737E-4035-90D1439017CC}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
-	<AssemblyName>Assembly-UnityScript-firstpass</AssemblyName>
+	<AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,11 +44,17 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Standard Assets\_Particles\Legacy Particles\TimedObjectDestructor.js" />
-     <Compile Include="Assets\Standard Assets\_Scripts\Camera Scripts\MouseOrbit.js" />
-     <Compile Include="Assets\Standard Assets\_Scripts\Camera Scripts\SmoothFollow.js" />
-     <Compile Include="Assets\Standard Assets\_Scripts\Camera Scripts\SmoothLookAt.js" />
-     <Compile Include="Assets\Standard Assets\_Scripts\General Scripts\DragRigidbody.js" />
+     <Compile Include="Assets\Standard Assets\Code\Game\Card.cs" />
+     <Compile Include="Assets\Standard Assets\Code\Game\Continent\Continent.cs" />
+     <Compile Include="Assets\Standard Assets\Code\Game\Continent\ContinentCard.cs" />
+     <Compile Include="Assets\Standard Assets\Code\Game\Game.cs" />
+     <Compile Include="Assets\Standard Assets\Code\Game\Player.cs" />
+     <Compile Include="Assets\Standard Assets\Code\MainMenu\MenuOnePlayer.cs" />
+     <Compile Include="Assets\Standard Assets\Code\Utils\DrawCollider.cs" />
+     <Compile Include="Assets\Standard Assets\Code\Utils\OnTouchMouse.cs" />
+     <Compile Include="Assets\Standard Assets\_Scripts\General Scripts\ActivateTrigger.cs" />
+     <Compile Include="Assets\Standard Assets\_Scripts\Utility Scripts\CombineChildren.cs" />
+     <Compile Include="Assets\Standard Assets\_Scripts\Utility Scripts\MeshCombineUtility.cs" />
      <None Include="Assets\Standard Assets\_Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

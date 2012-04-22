@@ -98,7 +98,7 @@ public class Player : Object
             if (firstSort)
             {
                 card.transform.position = new Vector3(4.2f, 1.5f + (float)i * 0.001f, -0.6f);
-                card.transform.rotation = Quaternion.Euler(325, 180f, 180f);
+                card.transform.rotation = Quaternion.Euler(320, 180f, 180f);
             }
 
             card.StartLocation = card.transform.position;

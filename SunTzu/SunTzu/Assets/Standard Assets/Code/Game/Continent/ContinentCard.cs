@@ -4,6 +4,7 @@ using System.Collections;
 public class ContinentCard : MonoBehaviour
 {
     public Continent continent;
+    public Card Card;
 
     void Start()
     {
