@@ -101,10 +101,7 @@ public class Player : Object
                 card.transform.rotation = Quaternion.Euler(320, 180f, 180f);
             }
 
-            card.StartLocation = card.transform.position;
-            card.Location = new Vector3(-large/2f+((float)i)*(cardWidth+space*2f), 1.5f + (float)i * 0.001f, -0.6f);
-            card.LastTimeAnimation = Time.time;
-			card.DurationAnimation = 0.7f;
+            card.LerpAnimation = new LerpVector3(card.transform.position, new Vector3(-large/2f+((float)i)*(cardWidth+space*2f), 1.5f + (float)i * 0.001f, -0.6f), false,false,0.7f);
         }
     }
 }
@@ -113,7 +110,7 @@ public class ComparerCard : Comparer<Card>
 {
     public override int Compare(Card x, Card y)
     {
-		int val =x.Index.CompareTo(y.Index);
+        int val = x.Index.CompareTo(y.Index);
         return val;
     }
 }

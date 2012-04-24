@@ -8,10 +8,11 @@ public class Card : MonoBehaviour
     public int CardValue;
     public int Index;
 
-    public float LastTimeAnimation = 0f;
-    public Vector3 Location;
-    public Vector3 StartLocation;
-    public float DurationAnimation = 1f;
+    //public float LastTimeAnimation = 0f;
+    //public Vector3 Location;
+    //public Vector3 StartLocation;
+    //public float DurationAnimation = 1f;
+    public LerpVector3 LerpAnimation;
 
     public bool isSelected = false;
     Collider colBoard;
@@ -22,9 +23,10 @@ public class Card : MonoBehaviour
     public ContinentCard ContinentCard = null;
     public ContinentCard NextContinentCard = null;
 
+
     void Start()
     {
-        Location = this.transform.position;
+        //Location = this.transform.position;
         colBoard = GameObject.Find("Board").GetComponent<BoxCollider>();
         colCardPlan = GameObject.Find("CardPlan").GetComponent<BoxCollider>();
 
@@ -40,11 +42,10 @@ public class Card : MonoBehaviour
 
     void Update()
     {
-        if ((!isSelected && NextContinentCard==null) && Game.GameState == GameState.PickCardInHand && Mathf.Abs(this.StartLocation.sqrMagnitude - this.Location.sqrMagnitude) > 0.05f)
+        //if ((!isSelected && NextContinentCard == null) && Game.GameState == GameState.PickCardInHand && Mathf.Abs(this.StartLocation.sqrMagnitude - this.Location.sqrMagnitude) > 0.05f)
+        if (LerpAnimation != null && !LerpAnimation.IsFinished())
         {
-            this.transform.position = Vector3.Lerp(this.StartLocation, this.Location, (Time.time - LastTimeAnimation) / DurationAnimation);
-
-            //       if (currentTime - LastTimeAnimation >= animationDuration)
+            this.transform.position = LerpAnimation.Eval();
         }
         else if (isSelected)
         {
@@ -56,7 +57,7 @@ public class Card : MonoBehaviour
                 if (vecInitialSelection == Vector3.zero)
                     vecInitialSelection = hit.point;
 
-                Vector3 cardPosition = this.Location + hit.point - vecInitialSelection;
+                Vector3 cardPosition = LerpAnimation.EndValue + hit.point - vecInitialSelection;
 
                 Quaternion quat = Quaternion.AngleAxis(90, Vector3.up);
                 Vector3 vect = quat * this.transform.up;
@@ -134,36 +135,33 @@ public class Card : MonoBehaviour
 
             if (NextContinentCard != null)
             {
+                //---> Déplacement d'une carte par dessus une autre carte
                 if (NextContinentCard.Card != null)
                 {
+                    //---> Déplacement d'une carte issue de la main sur une carte déja posée
                     if (ContinentCard == null)
                     {
                         Game.Player.ListCardInHand.Add(NextContinentCard.Card);
                         Game.Player.SortPileInHand(false);
+
                         NextContinentCard.Card.ContinentCard = null;
                     }
+                    //---> Déplacement d'une carte déja posée sur une carte déja posée
                     else
                     {
-                        NextContinentCard.Card.Location = ContinentCard.transform.position;
-                        NextContinentCard.Card.Location.y += 0.01f;
+                        NextContinentCard.Card.LerpAnimation = new LerpVector3(NextContinentCard.Card.transform.position, Tools.TransYVector(ContinentCard.transform.position), false, false, 0.2f);
+
                         NextContinentCard.Card.ContinentCard = ContinentCard;
                         ContinentCard.Card = NextContinentCard.Card;
                     }
-
-                    NextContinentCard.Card.StartLocation = NextContinentCard.Card.transform.position;
-                    NextContinentCard.Card.LastTimeAnimation = Time.time;
-                    NextContinentCard.Card.DurationAnimation = 0.2f;
                 }
                 else if (ContinentCard != null)
                 {
                     ContinentCard.Card = null;
                 }
 
-                StartLocation = this.transform.position;
-                Location = NextContinentCard.transform.position;
-                Location.y += 0.01f;
-                LastTimeAnimation = Time.time;
-                DurationAnimation = 0.2f;
+                LerpAnimation = new LerpVector3(this.transform.position, new Vector3(NextContinentCard.transform.position.x,NextContinentCard.transform.position.y+0.01f,NextContinentCard.transform.position.z), false, false, 0.2f);
+
                 NextContinentCard.Card = this;
             }
             else
@@ -172,7 +170,8 @@ public class Card : MonoBehaviour
                     ContinentCard.Card = null;
 
                 Game.Player.ListCardInHand.Add(this);
-                this.StartLocation = this.transform.position;
+
+                this.LerpAnimation.StartValue = this.transform.position;
 
                 Game.Player.SortPileInHand(false);
             }
