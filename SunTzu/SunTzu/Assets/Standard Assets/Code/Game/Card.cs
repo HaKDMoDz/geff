@@ -42,7 +42,6 @@ public class Card : MonoBehaviour
 
     void Update()
     {
-        //if ((!isSelected && NextContinentCard == null) && Game.GameState == GameState.PickCardInHand && Mathf.Abs(this.StartLocation.sqrMagnitude - this.Location.sqrMagnitude) > 0.05f)
         if (LerpAnimation != null && !LerpAnimation.IsFinished())
         {
             this.transform.position = LerpAnimation.Eval();
@@ -57,7 +56,7 @@ public class Card : MonoBehaviour
                 if (vecInitialSelection == Vector3.zero)
                     vecInitialSelection = hit.point;
 
-                Vector3 cardPosition = LerpAnimation.EndValue + hit.point - vecInitialSelection;
+                Vector3 cardPosition = LerpAnimation.EndValue + hit.point - vecInitialSelection + new Vector3(0,0.3f,0f);
 
                 Quaternion quat = Quaternion.AngleAxis(90, Vector3.up);
                 Vector3 vect = quat * this.transform.up;
@@ -70,8 +69,6 @@ public class Card : MonoBehaviour
 
                 foreach (BoxCollider colContinentCard in listColContinentCard)
                 {
-                    //ContinentCard continentCard = colContinentCard.gameObject.GetComponent<ContinentCard>();
-
                     if (colContinentCard.Raycast(ray, out hit, 100f))
                     {
                         NextContinentCard = colContinentCard.gameObject.GetComponent<ContinentCard>();
