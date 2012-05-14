@@ -51,7 +51,9 @@
      <Compile Include="Assets\Standard Assets\Code\Game\Player.cs" />
      <Compile Include="Assets\Standard Assets\Code\MainMenu\MenuOnePlayer.cs" />
      <Compile Include="Assets\Standard Assets\Code\Utils\DrawCollider.cs" />
+     <Compile Include="Assets\Standard Assets\Code\Utils\Lerp.cs" />
      <Compile Include="Assets\Standard Assets\Code\Utils\OnTouchMouse.cs" />
+     <Compile Include="Assets\Standard Assets\Code\Utils\Tools.cs" />
      <Compile Include="Assets\Standard Assets\_Scripts\General Scripts\ActivateTrigger.cs" />
      <Compile Include="Assets\Standard Assets\_Scripts\Utility Scripts\CombineChildren.cs" />
      <Compile Include="Assets\Standard Assets\_Scripts\Utility Scripts\MeshCombineUtility.cs" />
