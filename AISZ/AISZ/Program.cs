@@ -18,7 +18,7 @@ namespace AISZ
             int winOp = 0;
 
             //Parallel.For(0,100, i =>
-            for(int i =0; i < 1000; i++)
+            //for(int i =0; i < 1000; i++)
             {
                 game = new Game();
                 game.Init();
@@ -26,7 +26,7 @@ namespace AISZ
                 while (!game.IsFinished)
                 {
                     game.NextTurn();
-                    //game.PrintScore();
+                    game.PrintScore();
                 }
 
                 if (game.friendPlayer.Score > game.oppositePlayer.Score)
@@ -141,14 +141,19 @@ namespace AISZ
         public Choice Choice { get; set; }
         public int FreePawns { get; set; }
         public int Score { get; set; }
+        public PlayerType PlayerType { get; set; }
+        public Player OtherPlayer { get; set; }
+        public Game Game { get; set; }
 
-        public Player()
+        public Player(Game game, PlayerType playerType)
         {
             ListCard = new List<Card>();
             ListIndexPickedCard = new List<int>();
             ListIndexAvailableCard = new List<int>();
             Score = 0;
             FreePawns = 17;
+            PlayerType = playerType;
+            Game = game;
         }
 
         public void PickCard()
@@ -170,6 +175,200 @@ namespace AISZ
                 ListIndexPickedCard.Add(i);
             }
         }
+
+        public void PlayerTurn()
+        {
+            if (PlayerType == AISZ.PlayerType.RandomIA)
+                RandomIAPlayerTurn();
+            else if (PlayerType == AISZ.PlayerType.IA)
+                IAPlayerTurn();
+            else if (PlayerType == AISZ.PlayerType.Human)
+                HumanPlayerTurn();
+        }
+
+        private void RandomIAPlayerTurn()
+        {
+            Random rnd = new Random();
+            Choice = new Choice();
+
+            for (int i = 0; i < 5; i++)
+            {
+                Choice.ChoiceBoards[i] = new ChoiceBoard();
+                Choice.ChoiceBoards[i].IdBoard = i;
+
+                //--- En commentaire pour le test avec des valeurs par défaut
+                Choice.ChoiceBoards[i].IdPlayerCard = ListIndexPickedCard[rnd.Next(0, ListIndexPickedCard.Count)];
+                ListIndexPickedCard.Remove(Choice.ChoiceBoards[i].IdPlayerCard);
+                //---
+            }
+
+            //--- Test, valeur par défaut
+            //oppositePlayer.Choice.ChoiceBoards[0].IdPlayerCard = 13;
+            //oppositePlayer.Choice.ChoiceBoards[1].IdPlayerCard = 4;
+            //oppositePlayer.Choice.ChoiceBoards[2].IdPlayerCard = 10;
+            //oppositePlayer.Choice.ChoiceBoards[3].IdPlayerCard = 2;
+            //oppositePlayer.Choice.ChoiceBoards[4].IdPlayerCard = 1;
+
+            //oppositePlayer.ListIndexPickedCard.Remove(12);
+            //oppositePlayer.ListIndexPickedCard.Remove(4);
+            //oppositePlayer.ListIndexPickedCard.Remove(10);
+            //oppositePlayer.ListIndexPickedCard.Remove(2);
+            //oppositePlayer.ListIndexPickedCard.Remove(1);
+            //---
+        }
+
+        private void IAPlayerTurn()
+        {
+            Choice = null;
+
+            Choice choice = new Choice();
+
+            for (int i = 0; i < ListIndexPickedCard.Count; i++)
+            {
+                choice.IdPlayerCards.Add(i);
+            }
+
+            PlayerTurnRecursively(choice, 0);
+        }
+
+        private void PlayerTurnRecursively(Choice choice, int numBoard)
+        {
+            if (numBoard >= Game.Boards.Length)
+            {
+                CalcScore(choice);
+
+                if (Choice == null || choice.Score >= Choice.Score)
+                    Choice = choice;
+
+                return;
+            }
+
+            for (int i = 0; i < choice.IdPlayerCards.Count; i++)
+            {
+                Choice newChoice = choice.Clone();
+
+                newChoice.SetPlayerChoice(Game.Boards[numBoard], i);
+
+                PlayerTurnRecursively(newChoice, numBoard + 1);
+            }
+        }
+
+        private void CalcScore(Choice choiceFriendPlayer)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                Card friendPlayerCard = ListCard[choiceFriendPlayer.ChoiceBoards[i].IdPlayerCard];
+                Card oppositePlayerCard = OtherPlayer.ListCard[OtherPlayer.Choice.ChoiceBoards[i].IdPlayerCard];
+                int value = 0;
+                int f = friendPlayerCard.Value;
+                int o = oppositePlayerCard.Value;
+
+                if (friendPlayerCard.CardType == CardType.Value)
+                {
+                    if (oppositePlayerCard.CardType == CardType.Value)
+                    {
+                        value = f - o;
+                    }
+                    else if (oppositePlayerCard.CardType == CardType.PlusValue)
+                    {
+                        value = -f - o;
+                    }
+                    else if (oppositePlayerCard.CardType == CardType.MinusValue)
+                    {
+                        value = 1;
+                    }
+                }
+                else if (friendPlayerCard.CardType == CardType.PlusValue)
+                {
+                    if (oppositePlayerCard.CardType == CardType.Value)
+                    {
+                        value = f + o;
+                    }
+                    else if (oppositePlayerCard.CardType == CardType.PlusValue)
+                    {
+                        value = f - o;
+                    }
+                    else if (oppositePlayerCard.CardType == CardType.MinusValue)
+                    {
+                        value = f;
+                    }
+                }
+                else if (friendPlayerCard.CardType == CardType.MinusValue)
+                {
+                    if (oppositePlayerCard.CardType == CardType.Value)
+                    {
+                        value = -1;
+                    }
+                    else if (oppositePlayerCard.CardType == CardType.PlusValue)
+                    {
+                        value = -o;
+                    }
+                    else if (oppositePlayerCard.CardType == CardType.MinusValue)
+                    {
+                        value = 0;
+                    }
+                }
+
+                choiceFriendPlayer.ChoiceBoards[i].Score = value;
+
+                choiceFriendPlayer.Score += Game.Boards[i].PawnsFriendPlayer + (choiceFriendPlayer.ChoiceBoards[i].Score + Math.Sign(choiceFriendPlayer.ChoiceBoards[i].Score)) * Game.Boards[i].Scores[(Game.turn - 1) / 3] * 4;
+            }
+        }
+
+        private void HumanPlayerTurn()
+        {
+            Choice = new AISZ.Choice();
+
+            Console.WriteLine();
+            Console.WriteLine(new String('_', 80));
+
+            Console.WriteLine(" Score : [  {0}  ] [  {1}  ] [  {2}  ] [  {3}  ] [  {4}  ]", Game.Boards[0].Scores[(Game.turn - 1) / 3], Game.Boards[1].Scores[(Game.turn - 1) / 3], Game.Boards[2].Scores[(Game.turn - 1) / 3], Game.Boards[3].Scores[(Game.turn - 1) / 3], Game.Boards[4].Scores[(Game.turn - 1) / 3]);
+            Console.WriteLine(" Pions : [ {0,2}  ] [ {1,2}  ] [ {2,2}  ] [ {3,2}  ] [ {4,2}  ]", Game.Boards[0].PawnsFriendPlayer, Game.Boards[1].PawnsFriendPlayer, Game.Boards[2].PawnsFriendPlayer, Game.Boards[3].PawnsFriendPlayer, Game.Boards[4].PawnsFriendPlayer);
+            Console.WriteLine();
+
+            for (int i = 0; i < 5; i++)
+            {
+                bool cardIsAvailable = false;
+
+                while (!cardIsAvailable)
+                {
+                    string availableCards = " Main  : ";
+                    for (int k = 0; k < ListIndexPickedCard.Count; k++)
+                    {
+                        availableCards += "  " + ListCard[ListIndexPickedCard[k]].ToString() + " ";
+                    }
+
+                    Console.WriteLine(availableCards);
+                    Console.WriteLine();
+
+                    Console.WriteLine(" Plateau {0} : ", i + 1);
+                    string input = Console.ReadLine();
+
+                    for (int j = 0; j < ListIndexPickedCard.Count; j++)
+                    {
+                        string cardName = ListCard[ListIndexPickedCard[j]].ToString();
+
+                        if (cardName == input)
+                        {
+                            Choice.ChoiceBoards[i] = new ChoiceBoard();
+                            Choice.ChoiceBoards[i].IdBoard = i;
+                            Choice.ChoiceBoards[i].IdPlayerCard = ListIndexPickedCard[j];
+                            ListIndexPickedCard.RemoveAt(j);
+
+                            j = 1000;
+                            cardIsAvailable = true;
+                        }
+                    }
+
+                    if (!cardIsAvailable)
+                    {
+                        Console.WriteLine("Entrée non reconnue, veuillez recommencer!");
+                        Console.WriteLine();
+                    }
+                }
+            }
+        }
+
     }
 
     public enum CardType
@@ -177,6 +376,13 @@ namespace AISZ
         Value,
         PlusValue,
         MinusValue
+    }
+
+    public enum PlayerType
+    {
+        RandomIA,
+        IA,
+        Human
     }
 
     public class Game
@@ -190,12 +396,12 @@ namespace AISZ
             }
         }
 
-        private int turn;
+        public int turn;
         public Player friendPlayer;
         public Player oppositePlayer;
         public List<Choice[]> Choices;
 
-        private Board[] Boards;
+        public Board[] Boards;
 
         private Random rnd = new Random();
 
@@ -203,8 +409,11 @@ namespace AISZ
         {
             rnd = new Random();
 
-            friendPlayer = new Player();
-            oppositePlayer = new Player();
+            friendPlayer = new Player(this, PlayerType.IA);
+            oppositePlayer = new Player(this, PlayerType.Human);
+            friendPlayer.OtherPlayer = oppositePlayer;
+            oppositePlayer.OtherPlayer = friendPlayer;
+
             Choices = new List<Choice[]>();
 
             Boards = new Board[5];
@@ -261,8 +470,8 @@ namespace AISZ
                 oppositePlayer.PickCard();
             }
 
-            OppositePlayerTurn();
-            FriendPlayerTurn();
+            oppositePlayer.PlayerTurn();
+            friendPlayer.PlayerTurn();
 
             RevealCards();
 
@@ -406,140 +615,15 @@ namespace AISZ
                 else if (Boards[i].PawnsFriendPlayer > 0)
                     winnerName = "IA";
 
-                Console.WriteLine("P {0} ({5}): Op= {1,2}  IA= {2,2}  Gagne= {3,2}  Score= {6,2}  fE= {4,3}  Pions= {7,2}", i + 1, oppositePlayerCard.ToString(), friendPlayerCard.ToString(), winnerName, Boards[i].PawnsFriendPlayer, Boards[i].Scores[0], friendPlayer.Choice.ChoiceBoards[i].Score, Boards[i].PawnsFriendPlayer);
+                Console.WriteLine("P {0} ({5}): Op= {1,2}  IA= {2,2}  Gagne= {3,2}  Score= {6,2}  fE= {4,3}  Pions= {7,2}", i + 1, oppositePlayerCard.ToString(), friendPlayerCard.ToString(), winnerName, Boards[i].PawnsFriendPlayer, Boards[i].Scores[(turn-1)/3], friendPlayer.Choice.ChoiceBoards[i].Score, Boards[i].PawnsFriendPlayer);
             }
 
             Console.ReadKey();
         }
 
-        private void OppositePlayerTurn()
-        {
-            oppositePlayer.Choice = new Choice();
+       
 
-            for (int i = 0; i < 5; i++)
-            {
-                oppositePlayer.Choice.ChoiceBoards[i] = new ChoiceBoard();
-                oppositePlayer.Choice.ChoiceBoards[i].IdBoard = i;
-
-                //--- En commentaire pour le test avec des valeurs par défaut
-                oppositePlayer.Choice.ChoiceBoards[i].IdPlayerCard = oppositePlayer.ListIndexPickedCard[rnd.Next(0, oppositePlayer.ListIndexPickedCard.Count)];
-                oppositePlayer.ListIndexPickedCard.Remove(oppositePlayer.Choice.ChoiceBoards[i].IdPlayerCard);
-                //---
-            }
-
-            //--- Test, valeur par défaut
-            //oppositePlayer.Choice.ChoiceBoards[0].IdPlayerCard = 13;
-            //oppositePlayer.Choice.ChoiceBoards[1].IdPlayerCard = 4;
-            //oppositePlayer.Choice.ChoiceBoards[2].IdPlayerCard = 10;
-            //oppositePlayer.Choice.ChoiceBoards[3].IdPlayerCard = 2;
-            //oppositePlayer.Choice.ChoiceBoards[4].IdPlayerCard = 1;
-
-            //oppositePlayer.ListIndexPickedCard.Remove(12);
-            //oppositePlayer.ListIndexPickedCard.Remove(4);
-            //oppositePlayer.ListIndexPickedCard.Remove(10);
-            //oppositePlayer.ListIndexPickedCard.Remove(2);
-            //oppositePlayer.ListIndexPickedCard.Remove(1);
-            //---
-        }
-
-        private void FriendPlayerTurn()
-        {
-            friendPlayer.Choice = null;
-
-            Choice choice = new Choice();
-
-            for (int i = 0; i < friendPlayer.ListIndexPickedCard.Count; i++)
-            {
-                choice.IdPlayerCards.Add(i);
-            }
-
-            PlayerTurnRecursively(choice, 0);
-        }
-
-        private void CalcScore(Choice choiceFriendPlayer)
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                Card friendPlayerCard = friendPlayer.ListCard[choiceFriendPlayer.ChoiceBoards[i].IdPlayerCard];
-                Card oppositePlayerCard = oppositePlayer.ListCard[oppositePlayer.Choice.ChoiceBoards[i].IdPlayerCard];
-                int value = 0;
-                int f = friendPlayerCard.Value;
-                int o = oppositePlayerCard.Value;
-
-                if (friendPlayerCard.CardType == CardType.Value)
-                {
-                    if (oppositePlayerCard.CardType == CardType.Value)
-                    {
-                        value = f - o;
-                    }
-                    else if (oppositePlayerCard.CardType == CardType.PlusValue)
-                    {
-                        value = -f - o;
-                    }
-                    else if (oppositePlayerCard.CardType == CardType.MinusValue)
-                    {
-                        value = 1;
-                    }
-                }
-                else if (friendPlayerCard.CardType == CardType.PlusValue)
-                {
-                    if (oppositePlayerCard.CardType == CardType.Value)
-                    {
-                        value = f + o;
-                    }
-                    else if (oppositePlayerCard.CardType == CardType.PlusValue)
-                    {
-                        value = f - o;
-                    }
-                    else if (oppositePlayerCard.CardType == CardType.MinusValue)
-                    {
-                        value = f;
-                    }
-                }
-                else if (friendPlayerCard.CardType == CardType.MinusValue)
-                {
-                    if (oppositePlayerCard.CardType == CardType.Value)
-                    {
-                        value = -1;
-                    }
-                    else if (oppositePlayerCard.CardType == CardType.PlusValue)
-                    {
-                        value = -o;
-                    }
-                    else if (oppositePlayerCard.CardType == CardType.MinusValue)
-                    {
-                        value = 0;
-                    }
-                }
-
-                choiceFriendPlayer.ChoiceBoards[i].Score = value;
-
-                choiceFriendPlayer.Score += Boards[i].PawnsFriendPlayer + (choiceFriendPlayer.ChoiceBoards[i].Score + Math.Sign(choiceFriendPlayer.ChoiceBoards[i].Score)) * Boards[i].Scores[(turn - 1) / 3] * 4;
-            }
-        }
-
-
-        private void PlayerTurnRecursively(Choice choice, int numBoard)
-        {
-            if (numBoard >= Boards.Length)
-            {
-                CalcScore(choice);
-
-                if (friendPlayer.Choice == null || choice.Score >= friendPlayer.Choice.Score)
-                    friendPlayer.Choice = choice;
-
-                return;
-            }
-
-            for (int i = 0; i < choice.IdPlayerCards.Count; i++)
-            {
-                Choice newChoice = choice.Clone();
-
-                newChoice.SetPlayerChoice(Boards[numBoard], i);
-
-                PlayerTurnRecursively(newChoice, numBoard + 1);
-            }
-        }
+       
 
         private void InitCards(ref Player player)
         {
