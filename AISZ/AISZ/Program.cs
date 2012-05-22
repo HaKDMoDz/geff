@@ -18,7 +18,7 @@ namespace AISZ
             int winOp = 0;
 
             //Parallel.For(0,100, i =>
-            //for(int i =0; i < 1000; i++)
+            for(int i =0; i < 1000; i++)
             {
                 game = new Game();
                 game.Init();
@@ -26,7 +26,7 @@ namespace AISZ
                 while (!game.IsFinished)
                 {
                     game.NextTurn();
-                    game.PrintScore();
+                    //game.PrintScore();
                 }
 
                 if (game.friendPlayer.Score > game.oppositePlayer.Score)
@@ -160,8 +160,7 @@ namespace AISZ
         {
             if (ListIndexAvailableCard.Count > 0)
             {
-                Random rnd = new Random();
-                int indexPickedCard = ListIndexAvailableCard[rnd.Next(0, ListIndexAvailableCard.Count)];
+                int indexPickedCard = ListIndexAvailableCard[Game.rnd.Next(0, ListIndexAvailableCard.Count)];
                 ListIndexAvailableCard.Remove(indexPickedCard);
                 ListIndexPickedCard.Add(indexPickedCard);
             }
@@ -169,10 +168,10 @@ namespace AISZ
 
         public void DisposeCards()
         {
-            ListIndexPickedCard = new List<int>();
             for (int i = 0; i < 6; i++)
             {
-                ListIndexPickedCard.Add(i);
+                if(!ListIndexPickedCard.Contains(i))
+                    ListIndexPickedCard.Add(i);
             }
         }
 
@@ -197,7 +196,7 @@ namespace AISZ
                 Choice.ChoiceBoards[i].IdBoard = i;
 
                 //--- En commentaire pour le test avec des valeurs par défaut
-                Choice.ChoiceBoards[i].IdPlayerCard = ListIndexPickedCard[rnd.Next(0, ListIndexPickedCard.Count)];
+                Choice.ChoiceBoards[i].IdPlayerCard = ListIndexPickedCard[Game.rnd.Next(0, ListIndexPickedCard.Count)];
                 ListIndexPickedCard.Remove(Choice.ChoiceBoards[i].IdPlayerCard);
                 //---
             }
@@ -225,10 +224,21 @@ namespace AISZ
 
             for (int i = 0; i < ListIndexPickedCard.Count; i++)
             {
-                choice.IdPlayerCards.Add(i);
+                choice.IdPlayerCards.Add(ListIndexPickedCard[i]);
             }
 
             PlayerTurnRecursively(choice, 0);
+
+            //--- Supprime les cartes consommées
+            for (int i = 0; i < 5; i++)
+            {
+                if (Choice.ChoiceBoards[i].IdPlayerCard > 5)
+                {
+                    ListIndexPickedCard.Remove(Choice.ChoiceBoards[i].IdPlayerCard);
+                    ListIndexAvailableCard.Remove(Choice.ChoiceBoards[i].IdPlayerCard);
+                }
+            }
+            //---
         }
 
         private void PlayerTurnRecursively(Choice choice, int numBoard)
@@ -322,16 +332,22 @@ namespace AISZ
             Console.WriteLine();
             Console.WriteLine(new String('_', 80));
 
-            Console.WriteLine(" Score : [  {0}  ] [  {1}  ] [  {2}  ] [  {3}  ] [  {4}  ]", Game.Boards[0].Scores[(Game.turn - 1) / 3], Game.Boards[1].Scores[(Game.turn - 1) / 3], Game.Boards[2].Scores[(Game.turn - 1) / 3], Game.Boards[3].Scores[(Game.turn - 1) / 3], Game.Boards[4].Scores[(Game.turn - 1) / 3]);
-            Console.WriteLine(" Pions : [ {0,2}  ] [ {1,2}  ] [ {2,2}  ] [ {3,2}  ] [ {4,2}  ]", Game.Boards[0].PawnsFriendPlayer, Game.Boards[1].PawnsFriendPlayer, Game.Boards[2].PawnsFriendPlayer, Game.Boards[3].PawnsFriendPlayer, Game.Boards[4].PawnsFriendPlayer);
-            Console.WriteLine();
-
             for (int i = 0; i < 5; i++)
             {
                 bool cardIsAvailable = false;
 
                 while (!cardIsAvailable)
                 {
+                    Console.WriteLine(" Score : [  {0}      ] [  {1}      ] [  {2}      ] [  {3}      ] [  {4}      ]", Game.Boards[0].Scores[(Game.turn - 1) / 3], Game.Boards[1].Scores[(Game.turn - 1) / 3], Game.Boards[2].Scores[(Game.turn - 1) / 3], Game.Boards[3].Scores[(Game.turn - 1) / 3], Game.Boards[4].Scores[(Game.turn - 1) / 3]);
+                    Console.WriteLine(" Pions : [ {0,2}{5,4}  ] [ {1,2}{6,4}  ] [ {2,2}{7,4}  ] [ {3,2}{8,4}  ] [ {4,2}{9,4}  ]", Game.Boards[0].PawnsFriendPlayer, Game.Boards[1].PawnsFriendPlayer, Game.Boards[2].PawnsFriendPlayer, Game.Boards[3].PawnsFriendPlayer, Game.Boards[4].PawnsFriendPlayer, 
+                        Choice.ChoiceBoards[0] != null? "=>" +ListCard[Choice.ChoiceBoards[0].IdPlayerCard].ToString():"",
+                        Choice.ChoiceBoards[1] != null? "=>" +ListCard[Choice.ChoiceBoards[1].IdPlayerCard].ToString():"",
+                        Choice.ChoiceBoards[2] != null? "=>" +ListCard[Choice.ChoiceBoards[2].IdPlayerCard].ToString():"",
+                        Choice.ChoiceBoards[3] != null? "=>" +ListCard[Choice.ChoiceBoards[3].IdPlayerCard].ToString():"",
+                        Choice.ChoiceBoards[4] != null ? "=>" + ListCard[Choice.ChoiceBoards[4].IdPlayerCard].ToString() : "");
+
+                    Console.WriteLine();
+
                     string availableCards = " Main  : ";
                     for (int k = 0; k < ListIndexPickedCard.Count; k++)
                     {
@@ -369,6 +385,28 @@ namespace AISZ
             }
         }
 
+        public void EvalScore()
+        {
+            if (PlayerType == AISZ.PlayerType.Human)
+            {
+                CalcScore(Choice);
+            }
+        }
+
+        public string Name 
+        {
+            get
+            {
+                if (PlayerType == AISZ.PlayerType.RandomIA)
+                    return "IA aléatoire";
+                else if (PlayerType == AISZ.PlayerType.IA)
+                    return "IA";
+                else if (PlayerType == AISZ.PlayerType.Human)
+                    return "Humain";
+                else
+                    return "Inconnu";
+            }
+        }
     }
 
     public enum CardType
@@ -403,14 +441,14 @@ namespace AISZ
 
         public Board[] Boards;
 
-        private Random rnd = new Random();
+        public Random rnd = new Random();
 
         public void Init()
         {
             rnd = new Random();
 
             friendPlayer = new Player(this, PlayerType.IA);
-            oppositePlayer = new Player(this, PlayerType.Human);
+            oppositePlayer = new Player(this, PlayerType.RandomIA);
             friendPlayer.OtherPlayer = oppositePlayer;
             oppositePlayer.OtherPlayer = friendPlayer;
 
@@ -472,6 +510,7 @@ namespace AISZ
 
             oppositePlayer.PlayerTurn();
             friendPlayer.PlayerTurn();
+            friendPlayer.EvalScore();
 
             RevealCards();
 
@@ -519,6 +558,7 @@ namespace AISZ
         private void SwapPawns(Player player, int i)
         {
             int sign = 1;
+            int rest = 0;
             Player otherPlayer = oppositePlayer;
             if (player == oppositePlayer)
             {
@@ -547,7 +587,7 @@ namespace AISZ
             }
             else
             {
-                int rest = sign * friendPlayer.Choice.ChoiceBoards[i].Score - player.FreePawns;
+                rest = sign * friendPlayer.Choice.ChoiceBoards[i].Score - player.FreePawns;
                 player.FreePawns = 0;
 
                 int orientation = -1;
@@ -585,7 +625,7 @@ namespace AISZ
                 }
             }
 
-            Boards[i].PawnsFriendPlayer += friendPlayer.Choice.ChoiceBoards[i].Score;
+            Boards[i].PawnsFriendPlayer += friendPlayer.Choice.ChoiceBoards[i].Score + sign*rest;
         }
 
         public void PrintScore()
@@ -594,7 +634,7 @@ namespace AISZ
                 return;
 
             Console.WriteLine(new String('_', 80));
-            Console.WriteLine("Score : {0}", friendPlayer.Choice.Score);
+            Console.WriteLine("Score fE : {0}", friendPlayer.Choice.Score);
             Console.WriteLine("Tour : {0}", turn);
 
             Console.WriteLine("Réserve Op : {0}", oppositePlayer.FreePawns);
@@ -615,15 +655,17 @@ namespace AISZ
                 else if (Boards[i].PawnsFriendPlayer > 0)
                     winnerName = "IA";
 
-                Console.WriteLine("P {0} ({5}): Op= {1,2}  IA= {2,2}  Gagne= {3,2}  Score= {6,2}  fE= {4,3}  Pions= {7,2}", i + 1, oppositePlayerCard.ToString(), friendPlayerCard.ToString(), winnerName, Boards[i].PawnsFriendPlayer, Boards[i].Scores[(turn-1)/3], friendPlayer.Choice.ChoiceBoards[i].Score, Boards[i].PawnsFriendPlayer);
+                Console.WriteLine("P {0} ({1}): Op= {2,2}  IA= {3,2}  Gagne= {4,2}  Score= {5,2} Pions= {6,2}", i + 1, Boards[i].Scores[(turn - 1) / 3], oppositePlayerCard.ToString(), friendPlayerCard.ToString(), winnerName, friendPlayer.Choice.ChoiceBoards[i].Score, Boards[i].PawnsFriendPlayer);
+            }
+
+            if (IsFinished)
+            {
+                Console.WriteLine();
+                Console.WriteLine("=========> Joueur {0} gagne", Winner.Name);
             }
 
             Console.ReadKey();
         }
-
-       
-
-       
 
         private void InitCards(ref Player player)
         {
