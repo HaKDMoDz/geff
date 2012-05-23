@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AISZ
 {
@@ -18,7 +16,7 @@ namespace AISZ
             int winOp = 0;
 
             //Parallel.For(0,100, i =>
-            for(int i =0; i < 1000; i++)
+            //for (int i = 0; i < 10000; i++)
             {
                 game = new Game();
                 game.Init();
@@ -26,7 +24,7 @@ namespace AISZ
                 while (!game.IsFinished)
                 {
                     game.NextTurn();
-                    //game.PrintScore();
+                    game.PrintScore();
                 }
 
                 if (game.friendPlayer.Score > game.oppositePlayer.Score)
@@ -170,7 +168,7 @@ namespace AISZ
         {
             for (int i = 0; i < 6; i++)
             {
-                if(!ListIndexPickedCard.Contains(i))
+                if (!ListIndexPickedCard.Contains(i))
                     ListIndexPickedCard.Add(i);
             }
         }
@@ -339,11 +337,11 @@ namespace AISZ
                 while (!cardIsAvailable)
                 {
                     Console.WriteLine(" Score : [  {0}      ] [  {1}      ] [  {2}      ] [  {3}      ] [  {4}      ]", Game.Boards[0].Scores[(Game.turn - 1) / 3], Game.Boards[1].Scores[(Game.turn - 1) / 3], Game.Boards[2].Scores[(Game.turn - 1) / 3], Game.Boards[3].Scores[(Game.turn - 1) / 3], Game.Boards[4].Scores[(Game.turn - 1) / 3]);
-                    Console.WriteLine(" Pions : [ {0,2}{5,4}  ] [ {1,2}{6,4}  ] [ {2,2}{7,4}  ] [ {3,2}{8,4}  ] [ {4,2}{9,4}  ]", Game.Boards[0].PawnsFriendPlayer, Game.Boards[1].PawnsFriendPlayer, Game.Boards[2].PawnsFriendPlayer, Game.Boards[3].PawnsFriendPlayer, Game.Boards[4].PawnsFriendPlayer, 
-                        Choice.ChoiceBoards[0] != null? "=>" +ListCard[Choice.ChoiceBoards[0].IdPlayerCard].ToString():"",
-                        Choice.ChoiceBoards[1] != null? "=>" +ListCard[Choice.ChoiceBoards[1].IdPlayerCard].ToString():"",
-                        Choice.ChoiceBoards[2] != null? "=>" +ListCard[Choice.ChoiceBoards[2].IdPlayerCard].ToString():"",
-                        Choice.ChoiceBoards[3] != null? "=>" +ListCard[Choice.ChoiceBoards[3].IdPlayerCard].ToString():"",
+                    Console.WriteLine(" Pions : [ {0,2}{5,4}  ] [ {1,2}{6,4}  ] [ {2,2}{7,4}  ] [ {3,2}{8,4}  ] [ {4,2}{9,4}  ]", Game.Boards[0].PawnsFriendPlayer, Game.Boards[1].PawnsFriendPlayer, Game.Boards[2].PawnsFriendPlayer, Game.Boards[3].PawnsFriendPlayer, Game.Boards[4].PawnsFriendPlayer,
+                        Choice.ChoiceBoards[0] != null ? "=>" + ListCard[Choice.ChoiceBoards[0].IdPlayerCard].ToString() : "",
+                        Choice.ChoiceBoards[1] != null ? "=>" + ListCard[Choice.ChoiceBoards[1].IdPlayerCard].ToString() : "",
+                        Choice.ChoiceBoards[2] != null ? "=>" + ListCard[Choice.ChoiceBoards[2].IdPlayerCard].ToString() : "",
+                        Choice.ChoiceBoards[3] != null ? "=>" + ListCard[Choice.ChoiceBoards[3].IdPlayerCard].ToString() : "",
                         Choice.ChoiceBoards[4] != null ? "=>" + ListCard[Choice.ChoiceBoards[4].IdPlayerCard].ToString() : "");
 
                     Console.WriteLine();
@@ -393,7 +391,7 @@ namespace AISZ
             }
         }
 
-        public string Name 
+        public string Name
         {
             get
             {
@@ -448,7 +446,7 @@ namespace AISZ
             rnd = new Random();
 
             friendPlayer = new Player(this, PlayerType.IA);
-            oppositePlayer = new Player(this, PlayerType.RandomIA);
+            oppositePlayer = new Player(this, PlayerType.Human);
             friendPlayer.OtherPlayer = oppositePlayer;
             oppositePlayer.OtherPlayer = friendPlayer;
 
@@ -516,7 +514,7 @@ namespace AISZ
 
             EvalScore();
 
-            Choices.Add(new Choice[]{oppositePlayer.Choice, friendPlayer.Choice});
+            Choices.Add(new Choice[] { oppositePlayer.Choice, friendPlayer.Choice });
         }
 
         private void EvalScore()
@@ -532,9 +530,9 @@ namespace AISZ
                 }
             }
 
-            if (friendPlayer.Score >= 9 && oppositePlayer.Score < 9)
+            if (friendPlayer.Score >= 9 && friendPlayer.Score > oppositePlayer.Score)
                 Winner = friendPlayer;
-            if (oppositePlayer.Score >= 9 && friendPlayer.Score < 9)
+            if (oppositePlayer.Score >= 9 && oppositePlayer.Score > friendPlayer.Score)
                 Winner = oppositePlayer;
         }
 
@@ -558,34 +556,37 @@ namespace AISZ
         private void SwapPawns(Player player, int i)
         {
             int sign = 1;
-            int rest = 0;
             Player otherPlayer = oppositePlayer;
             if (player == oppositePlayer)
             {
                 sign = -1;
                 otherPlayer = friendPlayer;
             }
+            int rest = sign * friendPlayer.Choice.ChoiceBoards[i].Score;
 
             //---> Si le plateau était remporté par l'autre joueur
             if (sign * Boards[i].PawnsFriendPlayer < 0)
             {
                 //---> Si l'autre joueur garde l'avantage
-                if (sign * (Boards[i].PawnsFriendPlayer + friendPlayer.Choice.ChoiceBoards[i].Score) <= 0)
+                if (sign * (Boards[i].PawnsFriendPlayer + rest) <= 0)
                 {
                     otherPlayer.FreePawns += sign * friendPlayer.Choice.ChoiceBoards[i].Score;
+                    rest = 0;
                 }
                 else
                 {
                     otherPlayer.FreePawns += Math.Abs(Boards[i].PawnsFriendPlayer);
+                    rest -= Math.Abs(Boards[i].PawnsFriendPlayer);
                 }
             }
 
             //---> Assez de pions en réserve
-            if (player.FreePawns - sign * friendPlayer.Choice.ChoiceBoards[i].Score >= 0)
+            if (rest > 0 && player.FreePawns - rest >= 0)
             {
-                player.FreePawns -= sign * friendPlayer.Choice.ChoiceBoards[i].Score;
+                player.FreePawns -= rest;
+                rest = 0;
             }
-            else
+            else if (rest > 0)
             {
                 rest = sign * friendPlayer.Choice.ChoiceBoards[i].Score - player.FreePawns;
                 player.FreePawns = 0;
@@ -625,7 +626,7 @@ namespace AISZ
                 }
             }
 
-            Boards[i].PawnsFriendPlayer += friendPlayer.Choice.ChoiceBoards[i].Score + sign*rest;
+            Boards[i].PawnsFriendPlayer += friendPlayer.Choice.ChoiceBoards[i].Score + sign * rest;
         }
 
         public void PrintScore()
