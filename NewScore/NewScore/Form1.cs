@@ -12,6 +12,9 @@ namespace NewScore
 {
     public partial class Form1 : Form
     {
+        Music music;
+        int[,] noteState = new int[12, 2];
+
         public Form1()
         {
             InitializeComponent();
@@ -19,6 +22,42 @@ namespace NewScore
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            noteState[0, 0] = 0;
+            noteState[0, 1] = 0;
+
+            noteState[1, 0] = 1;
+            noteState[1, 1] = 0;
+
+            noteState[2, 0] = 1;
+            noteState[2, 1] = 1;
+
+            noteState[3, 0] = 2;
+            noteState[3, 1] = 0;
+
+            noteState[4, 0] = 2;
+            noteState[4, 1] = 1;
+
+            noteState[5, 0] = 3;
+            noteState[5, 1] = 0;
+
+            noteState[6, 0] = 3;
+            noteState[6, 1] = 1;
+
+            noteState[7, 0] = 4;
+            noteState[7, 1] = 0;
+
+            noteState[8, 0] = 5;
+            noteState[8, 1] = 0;
+
+            noteState[9, 0] = 5;
+            noteState[9, 1] = 1;
+
+            noteState[10, 0] = 6;
+            noteState[10, 1] = 0;
+
+            noteState[11, 0] = 6;
+            noteState[11, 1] = 1;
+
 
             OpenMidiFile(@"D:\GDD\Log\Geff\NewScore\beethoven-pour-elise.mid");
             //OpenMidiFile(@"D:\GDD\Log\Geff\NewScore\Debussy - Clair de lune.mid");
@@ -65,7 +104,7 @@ namespace NewScore
             dicNoteType.Add(1.5f * 0.0625f, "Quadruple croche pointée");
             dicNoteType.Add(0.0625f, "Quadruple croche");
 
-            Music music = new Music();
+            music = new Music();
             music.ListChanel = new List<Channel>();
             Dictionary<int, int> dicChannel = new Dictionary<int, int>();
 
@@ -131,9 +170,14 @@ namespace NewScore
                                 dicChannel.Add(noteEvent.Channel, music.ListChanel.Count - 1);
                             }
 
+                            float measureLenght = (float)lastTimeSignature.Numerator * 4f / (float)lastTimeSignature.Denominator * (float)midiFile.DeltaTicksPerQuarterNote;
+
                             Note newNote = new Note();
                             newNote.NoteLength = noteEvent.NoteLength;
                             newNote.NoteName = noteEvent.NoteName;
+                            newNote.NoteNumber = noteEvent.NoteNumber;
+                            newNote.AbsoluteTime = noteEvent.AbsoluteTime;
+
                             currentChannel.ListMeasure[0].ListNode.Add(newNote);
                         }
                         else
@@ -145,6 +189,82 @@ namespace NewScore
             }
 
             int a = 0;
+        }
+
+        public void DrawScore(Music music, Graphics g)
+        {
+            g.Clear(Color.White);
+
+            float interlineSize = 7f;
+            float currentY = 20;
+
+            int nbPart = (int)Math.Round((double)((g.VisibleClipBounds.Height - currentY) / (7f * interlineSize * (float)music.ListChanel.Count + 5f * interlineSize)), MidpointRounding.AwayFromZero);
+
+
+            float firstPartY = currentY;
+
+            for (int i = 0; i < nbPart; i++)
+            {
+                firstPartY = currentY;
+
+                for (int j = 0; j < music.ListChanel.Count; j++)
+                {
+                    for (int k = 0; k < 7; k++)
+                    {
+
+                        if (k < 5)
+                        {
+                            g.DrawLine(Pens.DarkGray, new Point(5, (int)currentY), new Point((int)g.VisibleClipBounds.Width - 5, (int)currentY));
+                        }
+
+                        currentY += interlineSize;
+
+                    }
+                }
+
+                g.DrawLine(Pens.DarkGray, new Point(5, (int)firstPartY), new Point(5, (int)(currentY - 3f * interlineSize)));
+                g.DrawLine(Pens.DarkGray, new Point((int)g.VisibleClipBounds.Width - 5, (int)firstPartY), new Point((int)g.VisibleClipBounds.Width - 5, (int)(currentY - 3f * interlineSize)));
+
+                currentY += 3f * interlineSize;
+            }
+
+
+            //---
+
+            
+            //foreach (Channel channel in music.ListChanel)
+            for (int i = 0; i < music.ListChanel.Count; i++)
+			{
+                currentY=20 + i * 7f * interlineSize;
+                float currentX = 5f;
+                foreach (Measure measure in music.ListChanel[i].ListMeasure)
+                {
+                    foreach (Note note in measure.ListNode)
+                    {
+                        int noteIndex = note.NoteNumber % 12-4;
+                        if (noteIndex < 0)
+                            noteIndex += 12;
+
+                        float noteY = interlineSize / 2f * (6-noteState[noteIndex, 0]);
+                        Rectangle rec= new Rectangle((int)currentX, (int)(currentY + noteY), 10, (int)interlineSize - 2);
+
+                        if (noteState[noteIndex, 1] == 0)
+                            g.DrawRectangle(Pens.Black, rec);
+                        else
+                            g.FillRectangle(Brushes.Black, rec);
+
+                        currentX+=10f;
+                    }
+                }
+            }
+
+        }
+
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics graphics = pictureBox1.CreateGraphics();
+            DrawScore(music, graphics);
         }
     }
 }
