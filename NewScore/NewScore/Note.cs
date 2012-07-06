@@ -11,5 +11,10 @@ namespace NewScore
         public String NoteName { get; set; }
         public int NoteNumber { get; set; }
         public long AbsoluteTime { get; set; }
+
+        public override string ToString()
+        {
+            return NoteName + " - " + NoteLength.ToString();
+        }
     }
 }

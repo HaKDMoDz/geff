@@ -7,8 +7,15 @@ namespace NewScore
 {
     public class Measure
     {
-        public int CountBeat { get; set; }
-        public float Unity { get; set; }
+        public float MeasureStart { get; set; }
+        public float MeasureLength { get; set; }
         public List<Note> ListNode { get; set; }
+
+        public Measure(float measureStart, float measureLength)
+        {
+            this.MeasureStart = measureStart;
+            this.MeasureLength = measureLength;
+            this.ListNode = new List<Note>();
+        }
     }
 }
