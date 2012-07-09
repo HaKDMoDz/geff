@@ -15,6 +15,7 @@ namespace NewScore
     {
         Music music;
         int[,] noteState = new int[12, 2];
+        Dictionary<string, string> dicNoteName = new Dictionary<string, string>();
 
         public Form1()
         {
@@ -58,6 +59,14 @@ namespace NewScore
 
             noteState[11, 0] = 6;
             noteState[11, 1] = 1;
+
+            dicNoteName.Add("C", "Do");
+            dicNoteName.Add("D", "Ré");
+            dicNoteName.Add("E", "Mi");
+            dicNoteName.Add("F", "Fa");
+            dicNoteName.Add("G", "Sol");
+            dicNoteName.Add("A", "La");
+            dicNoteName.Add("B", "Si");
 
 
             OpenMidiFile(@"D:\GDD\Log\Geff\NewScore\beethoven-pour-elise.mid");
@@ -154,9 +163,6 @@ namespace NewScore
 
                             float measureLenght = (float)lastTimeSignature.Numerator * 4f / (float)lastTimeSignature.No32ndNotesInQuarterNote * (float)midiFile.DeltaTicksPerQuarterNote;
 
-                           
-
-
                             Note newNote = new Note();
                             newNote.NoteLength = noteEvent.NoteLength;
                             newNote.NoteName = noteEvent.NoteName;
@@ -184,51 +190,68 @@ namespace NewScore
 
                     if (hasNote)
                     {
-                        music.ListChanel.Add(currentChannel);
+                        music.AddChannel(currentChannel);
                     }
                 }
             }
 
-            int a = 0;
+            Form1_Resize(null, null);
         }
 
-        float interlineSize = 24f;
+        float interlineSize = 28f;
         float currentY = 40;
         float currentX = 30f;
 
+
+        float margeX = 30f;
+        float margeY = 80f;
+
         public void DrawScore(Music music)
         {
+            if (pictureBox1.Width == 0 || pictureBox1.Height == 0)
+                return;
+
             Image bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
 
             Graphics g = Graphics.FromImage(bmp);
 
             pictureBox1.Image = bmp;
 
-            string[] noteNames = new string[] { "E", "F", "G", "A", "B", "C", "D", "E", "F", "G", "A"};
+            string[] noteNames = new string[] { "E", "F", "G", "A", "B", "C", "D", "E", "F", "G", "A" };
+
+
+
             g.Clear(Color.White);
 
-            interlineSize = 24f;
-            currentY = 40;
-            currentX = 30f;
+            interlineSize = 28f;
+            currentY = margeY;
+            currentX = margeX;
 
-            //currentY -= vScrollBar1.Value * interlineSize * music.ListChanel.Count;
+            currentY -= vScrollBar1.Value*interlineSize;
 
-            int nbPart = (int)Math.Round((double)((g.VisibleClipBounds.Height - currentY) / (7f * interlineSize * (float)music.ListChanel.Count + 5f * interlineSize)), MidpointRounding.AwayFromZero);
+            int nbPart = (int)Math.Round((double)((g.VisibleClipBounds.Height) / (5f * interlineSize * (float)music.ListChanel.Count + 5f * interlineSize)), MidpointRounding.AwayFromZero);
 
-            float firstPartY = currentY;
-            float noteNameY = currentY;
+            float firstPartY = margeY;
+            float noteNameY = margeY;
 
-            for (int i = 0; i < nbPart; i++)
+
+            double firstMeasure = 1+4*Math.Round((((float)vScrollBar1.Value * interlineSize - margeY) / (6f * interlineSize * (float)music.ListChanel.Count + 2f * interlineSize)), MidpointRounding.AwayFromZero);
+
+            for (int i = 0; i <= music.MaxMeasure/4; i++)
             {
+                bool draw = true;
+                if (!(i*4+1 >= (firstMeasure-4) && i*4+1 <= (firstMeasure+ nbPart*4)))
+                    draw=false;
+
                 firstPartY = currentY;
 
                 for (int j = 0; j < music.ListChanel.Count; j++)
                 {
                     for (int k = 0; k < 6; k++)
                     {
-                        if (k < 5)
+                        if (draw && k < 5)
                         {
-                            g.DrawLine(Pens.DarkGray, new Point((int)currentX, (int)currentY), new Point((int)(g.VisibleClipBounds.Width - currentX), (int)currentY));
+                            g.DrawLine(Pens.DarkGray, new Point((int)margeX, (int)currentY), new Point((int)(g.VisibleClipBounds.Width - margeX), (int)currentY));
                         }
 
                         currentY += interlineSize;
@@ -237,14 +260,21 @@ namespace NewScore
                     noteNameY = currentY;
                     for (int k = 0; k < noteNames.Length; k++)
                     {
-                        g.DrawString(noteNames[k], this.Font, Brushes.Black, new PointF(8, (int)(noteNameY - (k+4) * interlineSize / 2 - interlineSize / 4)));
+                        if (draw)
+                        {
+                            string noteName = dicNoteName[noteNames[k]];
+                            g.DrawString(noteName, this.Font, Brushes.Black, new PointF(8, (int)(noteNameY - (k + 4) * interlineSize / 2 - interlineSize / 4)));
+                        }
                     }
                 }
 
-                g.DrawLine(Pens.DarkGray, new Point((int)currentX, (int)firstPartY), new Point((int)currentX, (int)(currentY - 3f * interlineSize)));
-                g.DrawLine(Pens.DarkGray, new Point((int)(g.VisibleClipBounds.Width - currentX), (int)firstPartY), new Point((int)(g.VisibleClipBounds.Width - currentX), (int)(currentY - 3f * interlineSize)));
+                if (draw)
+                {
+                    g.DrawLine(Pens.DarkGray, new Point((int)margeX, (int)firstPartY), new Point((int)margeX, (int)(currentY - 2f * interlineSize)));
+                    g.DrawLine(Pens.DarkGray, new Point((int)(g.VisibleClipBounds.Width - margeX), (int)firstPartY), new Point((int)(g.VisibleClipBounds.Width - margeX), (int)(currentY - 2f * interlineSize)));
+                }
 
-                currentY += 3f * interlineSize;
+                currentY += 2f * interlineSize;
             }
 
 
@@ -255,11 +285,22 @@ namespace NewScore
 
             for (int i = 0; i < music.ListChanel.Count; i++)
 			{
-                currentY=40 + i * 6f * interlineSize;
+                currentY = margeY + i * 6f * interlineSize - vScrollBar1.Value*interlineSize;
                 foreach (Measure measure in music.ListChanel[i].ListMeasure)
                 {
-                    Point pointTopMeasure = new Point((int)(((g.VisibleClipBounds.Width - 2*currentX) / 4) / measure.MeasureLength * measure.MeasureStart + currentX), (int)currentY);
+                    float nbMeasure = measure.MeasureStart / measure.MeasureLength;
+
+                    if (!(nbMeasure >= (firstMeasure-4) && nbMeasure <= (firstMeasure +nbPart*4)))
+                        continue;
+
+                    Point pointTopMeasure = new Point((int)(((g.VisibleClipBounds.Width - 2*margeX) / 4) * (nbMeasure%4) + margeX), (int)margeY+
+                        (int)((int)(i*6f*interlineSize)+
+                        ((music.ListChanel.Count * 6 + 2f) * interlineSize) * (int)(nbMeasure / 4f)) - (int)(vScrollBar1.Value * interlineSize));
+
                     g.DrawLine(Pens.DarkOrange, pointTopMeasure, new Point(pointTopMeasure.X, pointTopMeasure.Y+ (int)(4f*interlineSize)));
+                    
+                    if( i == 0)
+                        g.DrawString((nbMeasure+1).ToString(), this.Font, Brushes.Black, new Point(pointTopMeasure.X+5, pointTopMeasure.Y-(int)interlineSize));
 
                     foreach (Note note in measure.ListNode)
                     {
@@ -267,22 +308,38 @@ namespace NewScore
                         if (noteIndex < 0)
                             noteIndex += 12;
 
-                        float noteX = ((g.VisibleClipBounds.Width - 2 * currentX) / 4) / measure.MeasureLength * (float)note.AbsoluteTime;
+                        float noteX = ((g.VisibleClipBounds.Width - 2 * margeX) / 4) / measure.MeasureLength * (float)note.AbsoluteTime;
                         float noteY = interlineSize / 2f * (float)(7-noteState[noteIndex, 0]);
-
                         if (note.NoteNumber > 75)
                             noteY -= 3.5f * interlineSize;
 
                         noteY += interlineSize / 4f;
+
+                        if (noteX >= g.VisibleClipBounds.Width - 2f*margeX)
+                        {
+                            currentY = margeY + i * 6f * interlineSize - (vScrollBar1.Value * interlineSize) + ((music.ListChanel.Count*6+2f) * interlineSize)* (int)(noteX/(g.VisibleClipBounds.Width - 2f * margeX));
+                            noteX %= g.VisibleClipBounds.Width -2f*margeX;
+                        }
 
                         Rectangle rec = new Rectangle((int)(currentX + noteX + 2), (int)(currentY + noteY + 1), (int)(((g.VisibleClipBounds.Width - 2 * currentX) / 4) / measure.MeasureLength * (float)note.NoteLength) - 2, (int)(interlineSize / 2f - 2));
 
                         g.DrawRectangle(Pens.Black, rec);
 
                         if (noteState[noteIndex, 1] == 1)
+                        {
+                            string noteName = dicNoteName[note.NoteName.Substring(0,1)];
+
                             g.FillRectangle(brushBlack, rec);
+                            g.DrawString(noteName, this.Font, Brushes.White, rec.Location);
+
+                        }
                         else
+                        {
+                            string noteName = dicNoteName[note.NoteName.Substring(0, 1)];
+
                             g.FillRectangle(brushWhite, rec);
+                            g.DrawString(noteName, this.Font, Brushes.Black, rec.Location);
+                        }
                     }
                 }
             }
@@ -296,16 +353,32 @@ namespace NewScore
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            //int max = music.ListChanel.Max(c=>c.ListMeasure.Count);
+            int max = music.ListChanel.Max(c=>c.ListMeasure.Count);
 
-            //int nbPart = (int)Math.Round((double)((pictureBox1.Height - currentY) / (7f * interlineSize * (float)music.ListChanel.Count + 5f * interlineSize)), MidpointRounding.AwayFromZero);
+            int nbPart = (int)Math.Round((double)(pictureBox1.Height / (6f * interlineSize * (float)music.ListChanel.Count + 2f * interlineSize)), MidpointRounding.AwayFromZero);
 
-            //vScrollBar1.Maximum = max / 4 * music.ListChanel.Count / nbPart;
+            if (nbPart == 0)
+                return;
+
+            vScrollBar1.Minimum = 0;
+            vScrollBar1.Maximum = (int)((margeY + (6f * interlineSize * (float)music.ListChanel.Count + 2f * interlineSize) * (float)max /4f ) / interlineSize);
         }
 
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
         {
+            double firstMeasure = 1+4*Math.Round((((float)vScrollBar1.Value * interlineSize - margeY) / (((float)music.ListChanel.Count*6f + 2f)* interlineSize)),  MidpointRounding.AwayFromZero);
+            this.Text = firstMeasure.ToString();
             DrawScore(music);
+        }
+
+        private void btnOuvrir_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "*.mid |*.mid";
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                OpenMidiFile(dlg.FileName);
+            }
         }
     }
 }

@@ -30,6 +30,7 @@
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
+            this.btnOuvrir = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,15 +56,26 @@
             this.vScrollBar1.TabIndex = 1;
             this.vScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBar1_Scroll);
             // 
+            // btnOuvrir
+            // 
+            this.btnOuvrir.Location = new System.Drawing.Point(12, 10);
+            this.btnOuvrir.Name = "btnOuvrir";
+            this.btnOuvrir.Size = new System.Drawing.Size(75, 23);
+            this.btnOuvrir.TabIndex = 2;
+            this.btnOuvrir.Text = "&Ouvrir";
+            this.btnOuvrir.UseVisualStyleBackColor = true;
+            this.btnOuvrir.Click += new System.EventHandler(this.btnOuvrir_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(758, 691);
+            this.Controls.Add(this.btnOuvrir);
             this.Controls.Add(this.vScrollBar1);
             this.Controls.Add(this.pictureBox1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "New Sheet Music Viewer";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.Resize += new System.EventHandler(this.Form1_Resize);
@@ -76,6 +88,7 @@
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.VScrollBar vScrollBar1;
+        private System.Windows.Forms.Button btnOuvrir;
     }
 }
 
