@@ -18,5 +18,11 @@ namespace NewScore
         {
             return ListMeasure.Find(m => m.MeasureStart <= absolutePosition && m.MeasureStart + m.MeasureLength > absolutePosition);
         }
+
+        public void AddMeasure(Measure measure)
+        {
+            this.ListMeasure.Add(measure);
+            measure.NumMeasure = (int)(measure.MeasureStart / measure.MeasureLength + 1);
+        }
     }
 }

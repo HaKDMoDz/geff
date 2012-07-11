@@ -36,6 +36,7 @@
             this.optFrancaise = new System.Windows.Forms.RadioButton();
             this.optAmericaine = new System.Windows.Forms.RadioButton();
             this.optAucune = new System.Windows.Forms.RadioButton();
+            this.optNombre = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackZom)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -49,7 +50,7 @@
             this.pictureBox1.BackColor = System.Drawing.Color.White;
             this.pictureBox1.Location = new System.Drawing.Point(12, 59);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(710, 771);
+            this.pictureBox1.Size = new System.Drawing.Size(744, 771);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -57,9 +58,9 @@
             // 
             this.vScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScrollBar1.Location = new System.Drawing.Point(722, 59);
+            this.vScrollBar1.Location = new System.Drawing.Point(759, 59);
             this.vScrollBar1.Name = "vScrollBar1";
-            this.vScrollBar1.Size = new System.Drawing.Size(21, 771);
+            this.vScrollBar1.Size = new System.Drawing.Size(48, 771);
             this.vScrollBar1.TabIndex = 1;
             this.vScrollBar1.ValueChanged += new System.EventHandler(this.vScrollBar1_ValueChanged);
             // 
@@ -87,12 +88,13 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.optNombre);
             this.groupBox1.Controls.Add(this.optFrancaise);
             this.groupBox1.Controls.Add(this.optAmericaine);
             this.groupBox1.Controls.Add(this.optAucune);
             this.groupBox1.Location = new System.Drawing.Point(393, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(329, 45);
+            this.groupBox1.Size = new System.Drawing.Size(414, 45);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Notes";
@@ -100,7 +102,7 @@
             // optFrancaise
             // 
             this.optFrancaise.AutoSize = true;
-            this.optFrancaise.Location = new System.Drawing.Point(189, 19);
+            this.optFrancaise.Location = new System.Drawing.Point(161, 19);
             this.optFrancaise.Name = "optFrancaise";
             this.optFrancaise.Size = new System.Drawing.Size(71, 17);
             this.optFrancaise.TabIndex = 2;
@@ -112,7 +114,7 @@
             // 
             this.optAmericaine.AutoSize = true;
             this.optAmericaine.Checked = true;
-            this.optAmericaine.Location = new System.Drawing.Point(98, 19);
+            this.optAmericaine.Location = new System.Drawing.Point(79, 19);
             this.optAmericaine.Name = "optAmericaine";
             this.optAmericaine.Size = new System.Drawing.Size(77, 17);
             this.optAmericaine.TabIndex = 1;
@@ -132,11 +134,22 @@
             this.optAucune.UseVisualStyleBackColor = true;
             this.optAucune.CheckedChanged += new System.EventHandler(this.optAucune_CheckedChanged);
             // 
+            // optNombre
+            // 
+            this.optNombre.AutoSize = true;
+            this.optNombre.Location = new System.Drawing.Point(238, 20);
+            this.optNombre.Name = "optNombre";
+            this.optNombre.Size = new System.Drawing.Size(62, 17);
+            this.optNombre.TabIndex = 3;
+            this.optNombre.Text = "Nombre";
+            this.optNombre.UseVisualStyleBackColor = true;
+            this.optNombre.CheckedChanged += new System.EventHandler(this.optAucune_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(758, 842);
+            this.ClientSize = new System.Drawing.Size(816, 842);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.trackZom);
             this.Controls.Add(this.btnOuvrir);
@@ -167,6 +180,7 @@
         private System.Windows.Forms.RadioButton optFrancaise;
         private System.Windows.Forms.RadioButton optAmericaine;
         private System.Windows.Forms.RadioButton optAucune;
+        private System.Windows.Forms.RadioButton optNombre;
     }
 }
 

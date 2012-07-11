@@ -16,6 +16,7 @@ namespace NewScore
         Music music;
         int[,] noteStateSol = new int[12, 2];
         int[,] noteStateFa = new int[12, 2];
+        SolidBrush[,] brushNote;
 
         Dictionary<string, string> dicNoteName = new Dictionary<string, string>();
 
@@ -71,7 +72,7 @@ namespace NewScore
             noteStateFa[1, 1] = 1;
 
             noteStateFa[2, 0] = 1;
-            noteStateFa[2, 1] = 1;
+            noteStateFa[2, 1] = 0;
 
             noteStateFa[3, 0] = 1;
             noteStateFa[3, 1] = 1;
@@ -108,9 +109,22 @@ namespace NewScore
             dicNoteName.Add("A", "La");
             dicNoteName.Add("B", "Si");
 
+            brushNote = new SolidBrush[4, 2];
 
-            OpenMidiFile(@"D:\GDD\Log\Geff\NewScore\beethoven-pour-elise.mid");
-            //OpenMidiFile(@"D:\GDD\Log\Geff\NewScore\Debussy - Clair de lune.mid");
+            brushNote[0, 0] = new SolidBrush(Color.SkyBlue);
+            brushNote[0, 1] = new SolidBrush(Color.SteelBlue);
+
+            brushNote[1, 0] = new SolidBrush(Color.FromArgb(173, 235, 135));
+            brushNote[1, 1] = new SolidBrush(Color.FromArgb(93, 180, 70));
+
+            brushNote[2, 0] = new SolidBrush(Color.FromArgb(235, 135, 206));
+            brushNote[2, 1] = new SolidBrush(Color.FromArgb(180, 70, 130));
+
+            brushNote[3, 0] = new SolidBrush(Color.FromArgb(235, 221, 135));
+            brushNote[3, 1] = new SolidBrush(Color.FromArgb(178, 180, 70));
+
+            //OpenMidiFile(@"D:\GDD\Log\Geff\NewScore\beethoven-pour-elise.mid");
+            OpenMidiFile(@"D:\GDD\Log\Geff\NewScore\Debussy - Clair de lune.mid");
         }
 
         public void OpenMidiFile(string fileName)
@@ -158,6 +172,8 @@ namespace NewScore
             music.ListChanel = new List<Channel>();
             Measure curMeasure = null;
             bool hasNote = false;
+            StringBuilder partition = new StringBuilder();
+
             if (midiFile != null)
             {
                 part += String.Format(" [ DeltaTicksPerQuarterNote : {0} ] ", midiFile.DeltaTicksPerQuarterNote);
@@ -168,27 +184,30 @@ namespace NewScore
                     currentChannel = new Channel();
                     hasNote = false;
 
-                    part += "\r\n";
+                    partition.AppendLine();
+
                     foreach (MidiEvent midiEvent in midiFile.Events[i])
                     {
                         NoteOnEvent noteEvent = midiEvent as NoteOnEvent;
 
-                        part += "\r\n";
+                        partition.AppendLine();
+
                         if (midiEvent is TimeSignatureEvent)
                         {
                             lastTimeSignature = midiEvent as TimeSignatureEvent;
-                            part += String.Format(" [ {0} ] ", midiEvent.ToString());
+                            //part += String.Format(" [ {0} ] ", midiEvent.ToString());
+                            partition.AppendLine(String.Format(" [ {0} ] ", midiEvent.ToString()));
                         }
                         else if (noteEvent != null && noteEvent.CommandCode == MidiCommandCode.NoteOn && noteEvent.Velocity > 0)
                         {
                             int noteLength = 1;
-                            try
+                            //try
                             {
                                 noteLength = noteEvent.NoteLength;
                             }
-                            catch { }
+                            //catch { }
 
-                            part += String.Format(" [ AbsoluteTime {0} #  DeltaTime {1} # NoteName {2} # NoteNumber {3} # NoteLength {4}  # Channel {5}]  ", noteEvent.AbsoluteTime, noteEvent.DeltaTime, noteEvent.NoteName, noteEvent.NoteNumber, noteLength, noteEvent.Channel);
+                            partition.AppendLine(String.Format(" [ AbsoluteTime {0} #  DeltaTime {1} # NoteName {2} # NoteNumber {3} # NoteLength {4}  # Channel {5}]  ", noteEvent.AbsoluteTime, noteEvent.DeltaTime, noteEvent.NoteName, noteEvent.NoteNumber, noteLength, noteEvent.Channel));
 
                             float typeNote = (float)noteLength / (float)midiFile.DeltaTicksPerQuarterNote;
 
@@ -197,7 +216,7 @@ namespace NewScore
                             if (dicNoteType.ContainsKey(typeNote))
                                 typeNoteString = dicNoteType[typeNote];
 
-                            part += String.Format(" OFF :: {0} :: {1}", typeNote, typeNoteString);
+                            partition.AppendLine(String.Format(" OFF :: {0} :: {1}", typeNote, typeNoteString));
 
                             listNote.Add(noteEvent);
 
@@ -216,7 +235,7 @@ namespace NewScore
                                 int nbPrevMeasure = (int)(noteEvent.AbsoluteTime / measureLenght);
 
                                 curMeasure = new Measure(nbPrevMeasure * measureLenght, measureLenght);
-                                currentChannel.ListMeasure.Add(curMeasure);
+                                currentChannel.AddMeasure(curMeasure);
                             }
 
                             curMeasure.AddNote(newNote);
@@ -224,7 +243,7 @@ namespace NewScore
                         }
                         else
                         {
-                            part += String.Format(" [ {0} ] ", midiEvent.ToString());
+                            partition.AppendLine(String.Format(" [ {0} ] ", midiEvent.ToString()));
                         }
                     }
 
@@ -241,8 +260,6 @@ namespace NewScore
         float interlineSize = 36f;
         float currentY = 40;
         float currentX = 30f;
-
-
         float margeX = 30f;
         float margeY = 80f;
 
@@ -317,12 +334,12 @@ namespace NewScore
 
             //---
 
-            SolidBrush brushWhite = new SolidBrush(Color.SkyBlue);
-            SolidBrush brushBlack = new SolidBrush(Color.SteelBlue);
 
-            for (int i = 0; i < music.ListChanel.Count; i++)
+            for (int i = 0; i < Math.Min(4, music.ListChanel.Count); i++)
             {
                 currentY = margeY + i * 6f * interlineSize - vScrollBar1.Value * interlineSize;
+                Measure prevMeasure = null;
+
                 foreach (Measure measure in music.ListChanel[i].ListMeasure)
                 {
                     float nbMeasure = measure.MeasureStart / measure.MeasureLength + 1;
@@ -330,47 +347,47 @@ namespace NewScore
                     if (!(nbMeasure >= firstMeasure && nbMeasure <= (firstMeasure + nbPart * 4)))
                         continue;
 
-                    Point pointTopMeasure = new Point((int)(((g.VisibleClipBounds.Width - 2 * margeX) / 4) * (nbMeasure % 4) + margeX),
+                    Point pointTopMeasure = new Point((int)(((g.VisibleClipBounds.Width - 2 * margeX) / 4) * ((nbMeasure - 1) % 4) + margeX),
                         (int)margeY + (int)interlineSize + (int)((int)(i * 6f * interlineSize) +
-                        ((music.ListChanel.Count * 6 + 1f) * interlineSize) * (int)(nbMeasure / 4f)) - (int)(vScrollBar1.Value * interlineSize));
+                        ((music.ListChanel.Count * 6 + 1f) * interlineSize) * (int)((nbMeasure - 1) / 4f)) - (int)(vScrollBar1.Value * interlineSize));
 
                     g.DrawLine(Pens.DarkOrange, pointTopMeasure, new Point(pointTopMeasure.X, pointTopMeasure.Y + (int)(4f * interlineSize)));
 
                     if (i == 0)
-                        g.DrawString((nbMeasure + 1).ToString(), this.Font, Brushes.Black, new Point(pointTopMeasure.X + 5, pointTopMeasure.Y - (int)interlineSize));
+                        g.DrawString(nbMeasure.ToString(), this.Font, Brushes.Black, new Point(pointTopMeasure.X + 5, pointTopMeasure.Y - (int)interlineSize));
 
                     int[,] noteState = null;
 
-                    if (measure.BaseCle == 64)
+                    if (measure.BaseKey == 64)
                         noteState = noteStateSol;
                     else
                         noteState = noteStateFa;
 
                     foreach (Note note in measure.ListNote)
                     {
-                        int noteIndex = note.NoteNumber % 12 - (measure.BaseCle==64? 4 : 7);
+                        int noteIndex = note.NoteNumber % 12 - (measure.BaseKey == 64 ? 4 : 7);
                         if (noteIndex < 0)
                             noteIndex += 12;
 
                         float noteX = ((g.VisibleClipBounds.Width - 2 * margeX) / 4) / measure.MeasureLength * (float)note.AbsoluteTime;
                         float noteY = interlineSize + interlineSize / 2f * (float)(7 - noteState[noteIndex, 0]);
 
-                        int delta = note.NoteNumber - measure.BaseCle;
+                        int delta = note.NoteNumber - measure.BaseKey;
                         //int div = (delta / 12);
 
-                        if (note.NoteNumber == 45 || note.NoteNumber == 52)
+                        if (note.NoteNumber == 37)
                         {
                             int a = 0;
                         }
 
                         float div = 0;
-                        if (delta <0 || delta >= 12)
-                            div = 1f;
+                        if(delta >= 12)
+                            div =delta/12;
+                        if (delta < 0)
+                            div = -delta / 12 + 1;
 
                         noteY += -(float)Math.Sign(delta) * div * 3.5f * interlineSize;
                         noteY += interlineSize / 4f;
-
-                        //noteY -= measure.OffsetCle * interlineSize;
 
                         if (noteX >= g.VisibleClipBounds.Width - 2f * margeX)
                         {
@@ -380,26 +397,42 @@ namespace NewScore
 
                         Rectangle rec = new Rectangle((int)(currentX + noteX + 2), (int)(currentY + noteY + 1), (int)(((g.VisibleClipBounds.Width - 2 * currentX) / 4) / measure.MeasureLength * (float)note.NoteLength) - 2, (int)(interlineSize / 2f - 2));
 
-                        //g.DrawRectangle(Pens.Black, rec);
+                        string noteName = String.Empty;
 
-                        string noteName = dicNoteName[note.NoteName.Substring(0, 1)];
-
+                        if (optFrancaise.Checked)
+                            noteName = dicNoteName[note.NoteName.Substring(0, 1)];
                         if (optAmericaine.Checked)
                             noteName = note.NoteName;
-                        if (optAucune.Checked)
+                        if (optNombre.Checked)
                             noteName = note.NoteNumber.ToString();
 
                         if (noteState[noteIndex, 1] == 1)
                         {
-                            g.FillRectangle(brushBlack, rec);
+                            g.FillRectangle(brushNote[i, 1], rec);
                             g.DrawString(noteName, this.Font, Brushes.White, rec.Location);
                         }
                         else
                         {
-                            g.FillRectangle(brushWhite, rec);
+                            g.FillRectangle(brushNote[i, 0], rec);
                             g.DrawString(noteName, this.Font, Brushes.Black, rec.Location);
                         }
                     }
+
+                    if (prevMeasure == null || measure.BaseKey != prevMeasure.BaseKey || nbMeasure % 4 == 1 || (measure.NumMeasure - 1) / 4 != (prevMeasure.NumMeasure - 1) / 4)
+                    {
+                        Rectangle recCle = new Rectangle(pointTopMeasure.X - (int)(interlineSize / 4), pointTopMeasure.Y + (int)(((4 - measure.LocationKey) * interlineSize) - interlineSize / 4), (int)interlineSize / 2, (int)interlineSize / 2);
+                        SolidBrush b = new SolidBrush(Color.FromArgb(100, 120, 120, 180));
+                        g.FillEllipse(b, recCle);
+
+                        string nameKey = measure.NameKey;
+
+                        if (!optAmericaine.Checked)
+                            nameKey = dicNoteName[nameKey];
+
+                        g.DrawString(nameKey, this.Font, Brushes.White, recCle.Location.X + recCle.Width / 2 - g.MeasureString(nameKey, this.Font).Width / 2, recCle.Location.Y + recCle.Height / 2 - g.MeasureString(nameKey, this.Font).Height / 2);
+                    }
+
+                    prevMeasure = measure;
                 }
             }
 
