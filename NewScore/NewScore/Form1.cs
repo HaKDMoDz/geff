@@ -124,7 +124,7 @@ namespace NewScore
             brushNote[3, 1] = new SolidBrush(Color.FromArgb(178, 180, 70));
 
             //OpenMidiFile(@"D:\GDD\Log\Geff\NewScore\beethoven-pour-elise.mid");
-            OpenMidiFile(@"D:\GDD\Log\Geff\NewScore\Debussy - Clair de lune.mid");
+            OpenMidiFile(@"D:\Geff\Log\geff\NewScore\Debussy - Clair de lune.mid");
         }
 
         public void OpenMidiFile(string fileName)
@@ -268,7 +268,13 @@ namespace NewScore
             if (pictureBox1.Width == 0 || pictureBox1.Height == 0)
                 return;
 
-            Image bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            Image bmp = null;
+
+            try
+            {
+                bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            }
+            catch { return; }
 
             Graphics g = Graphics.FromImage(bmp);
 
@@ -445,6 +451,9 @@ namespace NewScore
 
         private void Form1_Resize(object sender, EventArgs e)
         {
+            if (music == null)
+                return;
+
             int max = music.ListChanel.Max(c => c.ListMeasure.Count);
 
             vScrollBar1.Minimum = 0;
