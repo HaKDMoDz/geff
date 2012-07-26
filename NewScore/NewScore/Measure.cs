@@ -44,11 +44,6 @@ namespace NewScore
                     max = note.NoteNumber;
             }
 
-            if (min == 57 && ListNote.Count == 4)
-            {
-                int a = 0;
-            }
-
             int[,] tabKey = new int[2, 2];
             tabKey[0, 0] = 43;
             tabKey[0, 1] = 54;

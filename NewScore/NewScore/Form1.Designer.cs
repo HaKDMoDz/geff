@@ -1,6 +1,6 @@
 ﻿namespace NewScore
 {
-    partial class Form1
+    partial class FrmNewSheetMusic
     {
         /// <summary>
         /// Variable nécessaire au concepteur.
@@ -28,47 +28,54 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
+            this.picPart = new System.Windows.Forms.PictureBox();
+            this.vScrollBar = new System.Windows.Forms.VScrollBar();
             this.btnOuvrir = new System.Windows.Forms.Button();
             this.trackZom = new System.Windows.Forms.TrackBar();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBoxNote = new System.Windows.Forms.GroupBox();
             this.optNombre = new System.Windows.Forms.RadioButton();
             this.optFrancaise = new System.Windows.Forms.RadioButton();
             this.optAmericaine = new System.Windows.Forms.RadioButton();
             this.optAucune = new System.Windows.Forms.RadioButton();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.btnPrevMeasure = new System.Windows.Forms.Button();
+            this.btnNextMeasure = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.picPart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackZom)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.groupBoxNote.SuspendLayout();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // picPart
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.picPart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.BackColor = System.Drawing.Color.White;
-            this.pictureBox1.Location = new System.Drawing.Point(16, 73);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1010, 949);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.picPart.BackColor = System.Drawing.Color.White;
+            this.picPart.Location = new System.Drawing.Point(16, 73);
+            this.picPart.Margin = new System.Windows.Forms.Padding(4);
+            this.picPart.Name = "picPart";
+            this.picPart.Size = new System.Drawing.Size(1110, 605);
+            this.picPart.TabIndex = 0;
+            this.picPart.TabStop = false;
+            this.picPart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picPart_MouseDown);
+            this.picPart.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picPart_MouseMove);
+            this.picPart.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picPart_MouseUp);
             // 
-            // vScrollBar1
+            // vScrollBar
             // 
-            this.vScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.vScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScrollBar1.Location = new System.Drawing.Point(1030, 73);
-            this.vScrollBar1.Name = "vScrollBar1";
-            this.vScrollBar1.Size = new System.Drawing.Size(48, 949);
-            this.vScrollBar1.TabIndex = 1;
-            this.vScrollBar1.ValueChanged += new System.EventHandler(this.vScrollBar1_ValueChanged);
+            this.vScrollBar.Location = new System.Drawing.Point(1131, 73);
+            this.vScrollBar.Name = "vScrollBar";
+            this.vScrollBar.Size = new System.Drawing.Size(48, 605);
+            this.vScrollBar.TabIndex = 1;
+            this.vScrollBar.ValueChanged += new System.EventHandler(this.vScrollBar1_ValueChanged);
             // 
             // btnOuvrir
             // 
+            this.btnOuvrir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnOuvrir.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.btnOuvrir.Location = new System.Drawing.Point(16, 15);
-            this.btnOuvrir.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnOuvrir.Margin = new System.Windows.Forms.Padding(4);
             this.btnOuvrir.Name = "btnOuvrir";
             this.btnOuvrir.Size = new System.Drawing.Size(100, 50);
             this.btnOuvrir.TabIndex = 2;
@@ -79,7 +86,7 @@
             // trackZom
             // 
             this.trackZom.Location = new System.Drawing.Point(124, 15);
-            this.trackZom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.trackZom.Margin = new System.Windows.Forms.Padding(4);
             this.trackZom.Maximum = 60;
             this.trackZom.Minimum = 8;
             this.trackZom.Name = "trackZom";
@@ -89,28 +96,32 @@
             this.trackZom.Value = 36;
             this.trackZom.Scroll += new System.EventHandler(this.trackZom_Scroll);
             // 
-            // groupBox1
+            // groupBoxNote
             // 
-            this.groupBox1.Controls.Add(this.optNombre);
-            this.groupBox1.Controls.Add(this.optFrancaise);
-            this.groupBox1.Controls.Add(this.optAmericaine);
-            this.groupBox1.Controls.Add(this.optAucune);
-            this.groupBox1.Location = new System.Drawing.Point(524, 15);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox1.Size = new System.Drawing.Size(552, 55);
-            this.groupBox1.TabIndex = 4;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Notes";
+            this.groupBoxNote.Controls.Add(this.optNombre);
+            this.groupBoxNote.Controls.Add(this.optFrancaise);
+            this.groupBoxNote.Controls.Add(this.optAmericaine);
+            this.groupBoxNote.Controls.Add(this.optAucune);
+            this.groupBoxNote.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.groupBoxNote.ForeColor = System.Drawing.Color.Silver;
+            this.groupBoxNote.Location = new System.Drawing.Point(524, 10);
+            this.groupBoxNote.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBoxNote.Name = "groupBoxNote";
+            this.groupBoxNote.Padding = new System.Windows.Forms.Padding(4);
+            this.groupBoxNote.Size = new System.Drawing.Size(402, 55);
+            this.groupBoxNote.TabIndex = 4;
+            this.groupBoxNote.TabStop = false;
+            this.groupBoxNote.Text = "Notes";
             // 
             // optNombre
             // 
             this.optNombre.AutoSize = true;
+            this.optNombre.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.optNombre.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.optNombre.Location = new System.Drawing.Point(317, 25);
-            this.optNombre.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.optNombre.Margin = new System.Windows.Forms.Padding(4);
             this.optNombre.Name = "optNombre";
-            this.optNombre.Size = new System.Drawing.Size(79, 21);
+            this.optNombre.Size = new System.Drawing.Size(78, 21);
             this.optNombre.TabIndex = 3;
             this.optNombre.Text = "Nombre";
             this.optNombre.UseVisualStyleBackColor = true;
@@ -119,10 +130,12 @@
             // optFrancaise
             // 
             this.optFrancaise.AutoSize = true;
+            this.optFrancaise.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.optFrancaise.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.optFrancaise.Location = new System.Drawing.Point(215, 23);
-            this.optFrancaise.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.optFrancaise.Margin = new System.Windows.Forms.Padding(4);
             this.optFrancaise.Name = "optFrancaise";
-            this.optFrancaise.Size = new System.Drawing.Size(91, 21);
+            this.optFrancaise.Size = new System.Drawing.Size(90, 21);
             this.optFrancaise.TabIndex = 2;
             this.optFrancaise.Text = "Française";
             this.optFrancaise.UseVisualStyleBackColor = true;
@@ -132,10 +145,12 @@
             // 
             this.optAmericaine.AutoSize = true;
             this.optAmericaine.Checked = true;
+            this.optAmericaine.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.optAmericaine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.optAmericaine.Location = new System.Drawing.Point(105, 23);
-            this.optAmericaine.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.optAmericaine.Margin = new System.Windows.Forms.Padding(4);
             this.optAmericaine.Name = "optAmericaine";
-            this.optAmericaine.Size = new System.Drawing.Size(99, 21);
+            this.optAmericaine.Size = new System.Drawing.Size(98, 21);
             this.optAmericaine.TabIndex = 1;
             this.optAmericaine.TabStop = true;
             this.optAmericaine.Text = "Américaine";
@@ -145,36 +160,69 @@
             // optAucune
             // 
             this.optAucune.AutoSize = true;
+            this.optAucune.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.optAucune.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.optAucune.Location = new System.Drawing.Point(9, 25);
-            this.optAucune.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.optAucune.Margin = new System.Windows.Forms.Padding(4);
             this.optAucune.Name = "optAucune";
-            this.optAucune.Size = new System.Drawing.Size(77, 21);
+            this.optAucune.Size = new System.Drawing.Size(76, 21);
             this.optAucune.TabIndex = 0;
             this.optAucune.Text = "Aucune";
             this.optAucune.UseVisualStyleBackColor = true;
             this.optAucune.CheckedChanged += new System.EventHandler(this.optAucune_CheckedChanged);
             // 
-            // Form1
+            // btnPrevMeasure
+            // 
+            this.btnPrevMeasure.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPrevMeasure.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPrevMeasure.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnPrevMeasure.Location = new System.Drawing.Point(944, 15);
+            this.btnPrevMeasure.Margin = new System.Windows.Forms.Padding(4);
+            this.btnPrevMeasure.Name = "btnPrevMeasure";
+            this.btnPrevMeasure.Size = new System.Drawing.Size(87, 50);
+            this.btnPrevMeasure.TabIndex = 5;
+            this.btnPrevMeasure.Text = "<<";
+            this.btnPrevMeasure.UseVisualStyleBackColor = true;
+            this.btnPrevMeasure.Click += new System.EventHandler(this.btnPrevMeasure_Click);
+            // 
+            // btnNextMeasure
+            // 
+            this.btnNextMeasure.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNextMeasure.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNextMeasure.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnNextMeasure.Location = new System.Drawing.Point(1039, 15);
+            this.btnNextMeasure.Margin = new System.Windows.Forms.Padding(4);
+            this.btnNextMeasure.Name = "btnNextMeasure";
+            this.btnNextMeasure.Size = new System.Drawing.Size(87, 50);
+            this.btnNextMeasure.TabIndex = 6;
+            this.btnNextMeasure.Text = ">>";
+            this.btnNextMeasure.UseVisualStyleBackColor = true;
+            this.btnNextMeasure.Click += new System.EventHandler(this.btnNextMeasure_Click);
+            // 
+            // FrmNewSheetMusic
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1088, 687);
-            this.Controls.Add(this.groupBox1);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
+            this.ClientSize = new System.Drawing.Size(1188, 687);
+            this.Controls.Add(this.btnNextMeasure);
+            this.Controls.Add(this.btnPrevMeasure);
+            this.Controls.Add(this.groupBoxNote);
             this.Controls.Add(this.trackZom);
             this.Controls.Add(this.btnOuvrir);
-            this.Controls.Add(this.vScrollBar1);
-            this.Controls.Add(this.pictureBox1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.Name = "Form1";
+            this.Controls.Add(this.vScrollBar);
+            this.Controls.Add(this.picPart);
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "FrmNewSheetMusic";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "New Sheet Music Viewer";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.Resize += new System.EventHandler(this.Form1_Resize);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackZom)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.groupBoxNote.ResumeLayout(false);
+            this.groupBoxNote.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -182,15 +230,17 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.VScrollBar vScrollBar1;
+        private System.Windows.Forms.PictureBox picPart;
+        private System.Windows.Forms.VScrollBar vScrollBar;
         private System.Windows.Forms.Button btnOuvrir;
         private System.Windows.Forms.TrackBar trackZom;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBoxNote;
         private System.Windows.Forms.RadioButton optFrancaise;
         private System.Windows.Forms.RadioButton optAmericaine;
         private System.Windows.Forms.RadioButton optAucune;
         private System.Windows.Forms.RadioButton optNombre;
+        private System.Windows.Forms.Button btnPrevMeasure;
+        private System.Windows.Forms.Button btnNextMeasure;
     }
 }
 
