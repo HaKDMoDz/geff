@@ -61,9 +61,10 @@
             this.ClientSize = new System.Drawing.Size(461, 428);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.pic);
-            this.MinimumSize = new System.Drawing.Size(10, 10);
+            this.MinimumSize = new System.Drawing.Size(10, 34);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pic)).EndInit();
             this.ResumeLayout(false);
