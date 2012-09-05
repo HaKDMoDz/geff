@@ -44,8 +44,8 @@ namespace Paper
             bmp = new Bitmap(pic.Width, pic.Height);
             gBmp = Graphics.FromImage(bmp);
             lineMidScreen = new Line();
-            lineMidScreen.P1 = new Point(0, pic.Height / 2);
-            lineMidScreen.P2 = new Point(pic.Width, pic.Height / 2);
+            lineMidScreen.P1 = new Point(0, pic.Height *75/100);
+            lineMidScreen.P2 = new Point(pic.Width, pic.Height *75/100);
 
             DrawScene();
         }
@@ -134,6 +134,7 @@ namespace Paper
 
             if (e.Button == System.Windows.Forms.MouseButtons.None)
             {
+
                 int distanceNearestCuboid = int.MaxValue;
 
                 Cuboid nearestCuboid = null;
@@ -147,7 +148,7 @@ namespace Paper
                     //--- Distance move
                     int distance = Tools.Distance(new Point(e.X, e.Y), cuboid.Location);
 
-                    if (distance < 5 && distance < distanceNearestCuboid)
+                    if (distance < 10 && distance < distanceNearestCuboid)
                     {
                         nearestCuboid = cuboid;
                         nearestModeSelection = ModeSelection.NearMove;
@@ -157,7 +158,7 @@ namespace Paper
                     //--- Distance resize
                     distance = Tools.Distance(new Point(e.X, e.Y), new Point(cuboid.Location.X + cuboid.Width, lineMidScreen.P1.Y + depthUnity * cuboid.Depth));
 
-                    if (distance < 5 && distance < distanceNearestCuboid)
+                    if (distance < 10 && distance < distanceNearestCuboid)
                     {
                         nearestCuboid = cuboid;
                         nearestModeSelection = ModeSelection.NearResize;
@@ -168,26 +169,39 @@ namespace Paper
                 if (nearestCuboid != null)
                     nearestCuboid.ModeSelection = nearestModeSelection;
 
+                SortCuboid();
+
                 DrawScene();
             }
         }
 
         private void SortCuboid()
         {
-            listCuboid.Sort((c1, c2) => c1.Depth - c2.Depth);
+            SortCuboid(true);
+        }
+
+        private void SortCuboid(bool handleSelection)
+        {
+            if(handleSelection)
+                listCuboid.Sort(new CuboidComparerWithSelection());
+            else
+                listCuboid.Sort(new CuboidComparer());
         }
 
         private void CalcCuboidIntersections()
         {
+            SortCuboid(false);
+
             foreach (Cuboid cuboid in listCuboid)
             {
                 if (cuboid.Depth > 1)
                 {
                     Rectangle recTopCuboid = new Rectangle(cuboid.Location.X, cuboid.Location.Y - cuboid.Depth * depthUnity, cuboid.Width, cuboid.Depth * depthUnity);
+                    cuboid.ListCutting = new List<Rectangle>();
 
                     foreach (Cuboid innerCuboid in listCuboid)
                     {
-                        if (innerCuboid.Depth < cuboid.Depth)
+                        if (innerCuboid.Depth < cuboid.Depth && innerCuboid.Location.Y-innerCuboid.Depth*depthUnity < recTopCuboid.Y)
                         {
                             Rectangle recFaceInnerCuboid = new Rectangle(innerCuboid.Location.X, innerCuboid.Location.Y, innerCuboid.Width, lineMidScreen.P1.Y - innerCuboid.Location.Y + innerCuboid.Depth * depthUnity);
 
@@ -195,7 +209,11 @@ namespace Paper
 
                             if (recFaceInnerCuboid.Width * recFaceInnerCuboid.Height > 0)
                             {
-                                int a = 0;
+                                recFaceInnerCuboid.X = innerCuboid.Location.X;
+                                recFaceInnerCuboid.Height = innerCuboid.Depth * depthUnity;
+                                recFaceInnerCuboid.Width = innerCuboid.Width;
+
+                                cuboid.ListCutting.Add(recFaceInnerCuboid);
                             }
                         }
                     }
@@ -218,7 +236,7 @@ namespace Paper
             brush = new SolidBrush(Color.FromArgb(181, 219, 255));
             gBmp.FillRectangle(brush, lineMidScreen.P1.X, lineMidScreen.P1.Y + 4 * depthUnity, lineMidScreen.P2.X, 2 * depthUnity);
 
-            gBmp.DrawLine(penDotFar, new Point(0, pic.Height / 2), new Point(pic.Width, pic.Height / 2));
+            gBmp.DrawLine(penDotFar, lineMidScreen.P1, lineMidScreen.P2);
 
             Pen pen = Pens.Black;
 
@@ -242,7 +260,7 @@ namespace Paper
                 {
                     brush = new SolidBrush(Color.FromArgb(181, 219, 255));
                     depthFactor = cuboid.Depth > 5 ? 2 : 1;
-                    gBmp.FillRectangle(brush, cuboid.Location.X, cuboid.Location.Y + (4 - cuboid.Depth) * depthUnity + 2, cuboid.Width, depthFactor * depthUnity);
+                    gBmp.FillRectangle(brush, cuboid.Location.X, cuboid.Location.Y + (4 - cuboid.Depth) * depthUnity, cuboid.Width, depthFactor * depthUnity);
                 }
 
                 gBmp.DrawLine(pen, cuboid.Location.X, cuboid.Location.Y - depthUnity * cuboid.Depth, cuboid.Location.X, lineMidScreen.P1.Y + depthUnity * cuboid.Depth);
@@ -252,6 +270,28 @@ namespace Paper
 
                 gBmp.DrawLine(penDotFar, cuboid.Location.X, cuboid.Location.Y - depthUnity * cuboid.Depth, cuboid.Location.X + cuboid.Width, cuboid.Location.Y - depthUnity * cuboid.Depth);
                 gBmp.DrawLine(penDotFar, cuboid.Location.X, lineMidScreen.P1.Y + depthUnity * cuboid.Depth, cuboid.Location.X + cuboid.Width, lineMidScreen.P1.Y + depthUnity * cuboid.Depth);
+
+
+                foreach (Rectangle recCutting in cuboid.ListCutting)
+                {
+                    gBmp.FillRectangle(Brushes.White, recCutting);
+
+                    gBmp.DrawLine(pen, recCutting.Left, recCutting.Top, recCutting.X, recCutting.Bottom);
+                    gBmp.DrawLine(pen, recCutting.Right, recCutting.Top, recCutting.Right, recCutting.Bottom);
+
+                    Line lineFolding = new Line();
+                    if(cuboid.Location.X < recCutting.X)
+                        lineFolding.P1 = new Point(recCutting.X, recCutting.Bottom);
+                    else
+                        lineFolding.P1 = new Point(cuboid.Location.X, recCutting.Bottom);
+
+                    if(cuboid.Location.X+cuboid.Width < recCutting.Right)
+                        lineFolding.P2 = new Point(cuboid.Location.X + cuboid.Width, recCutting.Bottom);
+                    else
+                        lineFolding.P2 = new Point(recCutting.Right, recCutting.Bottom);
+
+                    gBmp.DrawLine(penDotFar, lineFolding.P1, lineFolding.P2);
+                }
 
                 if (cuboid.ModeSelection != ModeSelection.None)
                 {
