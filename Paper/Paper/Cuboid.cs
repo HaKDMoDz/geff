@@ -24,6 +24,23 @@ namespace Paper
             this.CreationDate = DateTime.Now;
             this.ListCutting = new List<Rectangle>();
         }
+
+        public Rectangle RecTop
+        {
+            get
+            {
+                return new Rectangle(Location.X, Location.Y - Depth * Common.depthUnity, Width, Depth * Common.depthUnity);
+            }
+        }
+
+        public Rectangle RecFace
+        {
+            get
+            {
+                return new Rectangle(Location.X, Location.Y, Width, Common.lineMidScreen.P1.Y - Location.Y + Depth * Common.depthUnity);
+            }
+        }
+
     }
 
     public class CuboidComparerWithSelection : IComparer<Cuboid>
