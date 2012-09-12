@@ -37,11 +37,16 @@ public class PerspectiveSwitcher : MonoBehaviour
         {
            orthoOn = !orthoOn;
 			
-			
             if (orthoOn)
+			{
+				camera.cullingMask = -1;//2^LayerMask.NameToLayer("Everything");
                 blender.BlendToMatrix(camera, ortho, 2f);
+			}
             else
+			{
+				camera.cullingMask = -257;//2^LayerMask.NameToLayer("Everything") - 2^LayerMask.NameToLayer("Tools");;
                 blender.BlendToMatrix(camera, perspective, 2f);
+			}
         }
     }
 }
