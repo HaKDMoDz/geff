@@ -1,8 +1,23 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench>
+    <Pads>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>Game.GameState</Value>
+          <Value>isSelected</Value>
+          <Value>Input.touchCount</Value>
+          <Value>!IsTool</Value>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="D:\GDD\Log\Geff\Paper\Unity\Assets\Code\OnTouchMouse.cs" line="13" />
+      <Breakpoint file="D:\GDD\Log\Geff\Paper\Unity\Assets\Code\OnTouchMouse.cs" line="19" />
+      <Breakpoint file="D:\GDD\Log\Geff\Paper\Unity\Assets\Code\OnTouchMouse.cs" line="28" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

@@ -13,7 +13,7 @@ public class PerspectiveSwitcher : MonoBehaviour
     private float       aspect;
     private CameraChanger blender;
     private bool        orthoOn;
-	public Camera camera;
+	public new Camera camera;
 	
     void Start()
     {
