@@ -1,16 +1,27 @@
 using UnityEngine;
 using System.Collections;
 
-public class Cuboid : MonoBehaviour
+public class Cuboid : MonoBehaviour//, ITouchable
 {
 	private Vector3 vecInitialSelection = Vector3.zero;
 	private BoxCollider paperUp;
 	public bool isSelected = false;
+	public bool isMouseOver = false;
 	private GameObject planeUp;
 	private GameObject planeDown;
 	private BoxCollider boxCollider;
 	public bool IsTool = false;
 	
+	public bool Visible {
+		get {
+			return this.planeUp.renderer.enabled;
+		}
+	
+		set {
+			this.planeUp.renderer.enabled = value;
+			this.planeDown.renderer.enabled = value;
+		}
+	}
 	// Use this for initialization
 	void Start ()
 	{
@@ -23,40 +34,18 @@ public class Cuboid : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		Ray ray = Camera.mainCamera.ScreenPointToRay (Input.mousePosition);
-		RaycastHit hit;
-		
-		if (boxCollider.Raycast (ray, out hit, 100f)) {
+		if (isMouseOver) {
 			planeUp.renderer.material.color = Color.blue;
 		} else {
 			planeUp.renderer.material.color = Color.white;
 		}
-			
-		if (Game.GameState == GameState.PickCuboid && isSelected && !IsTool && isTouched) {
-			Game.CurrentCuboid.planeUp.renderer.enabled = true;
-			Game.CurrentCuboid.planeDown.renderer.enabled = true;
 		
-		
-			if (paperUp.Raycast (ray, out hit, 100f)) {
-				if (vecInitialSelection == Vector3.zero) {
-					vecInitialSelection = hit.point;
-					Debug.Log (vecInitialSelection);
-				}
-				
-				
-				
-				Vector3 position = hit.point;// - vecInitialSelection;// + new Vector3(0f, 0.3f, 0f);
-				
-				this.transform.position = position;
-			}
-			
-			
-			planeUp.renderer.material.color = Color.yellow;
-		} 
+		isMouseOver = false;
 	}
 	
 	public void OnMouseDown ()
 	{
+		/*
 		Game.GameState = GameState.PickCuboid;
 		
 		if (IsTool && !isSelected) {
@@ -76,9 +65,8 @@ public class Cuboid : MonoBehaviour
 			
 			if (Game.CurrentCuboid == null || Game.CurrentCuboid.gameObject.active == true) {
 				Game.CurrentCuboid = (Cuboid)Instantiate (this);
-				Game.CurrentCuboid.Start();
-				Game.CurrentCuboid.planeUp.renderer.enabled = false;
-				Game.CurrentCuboid.planeDown.renderer.enabled = false;
+				Game.CurrentCuboid.Start ();
+				Game.CurrentCuboid.Visible = false;
 				Game.CurrentCuboid.IsTool = false;
 				Game.CurrentCuboid.isSelected = true;
 			}
@@ -87,12 +75,17 @@ public class Cuboid : MonoBehaviour
 		if (!IsTool)
 			isSelected = true;
 		
-		vecInitialSelection = Vector3.zero;
+		vecInitialSelection = Vector3.zero;*/
 	}
 
 	public void OnMouseUp ()
 	{
 		//Game.GameState = GameState.None;
 		isSelected = false;
+	}
+	
+	public void OnMouseMove ()
+	{
+		isMouseOver = true;
 	}
 }

@@ -48,9 +48,9 @@
      <Compile Include="Assets\Code\Cuboid.cs" />
      <Compile Include="Assets\Code\DrawCollider.cs" />
      <Compile Include="Assets\Code\Game.cs" />
-     <Compile Include="Assets\Code\OnTouchMouse.cs" />
      <Compile Include="Assets\Code\PaperUp.cs" />
      <Compile Include="Assets\Code\PerspectiveSwitcher.cs" />
+     <Compile Include="Assets\Code\TouchManager.cs" />
      <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />
      <None Include="Assets\Standard Assets (Mobile)\Shaders\Particle Shaders\Mobile Multiply Culled.shader" />
      <None Include="Assets\Standard Assets (Mobile)\Shaders\Miscellaneous Shaders\Mobile Background.shader" />
