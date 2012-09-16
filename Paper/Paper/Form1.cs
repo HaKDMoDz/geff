@@ -29,10 +29,7 @@ namespace Paper
         {
             InitializeComponent();
 
-            penDotFar = new Pen(Color.Green, 1);
-            penDotFar.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-            penDotNear = new Pen(Color.Blue, 1);
-            penDotNear.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+
 
             Form1_Resize(null, null);
         }
@@ -45,6 +42,11 @@ namespace Paper
             Common.lineMidScreen = new Line();
             Common.lineMidScreen.P1 = new Point(0, pic.Height *75/100);
             Common.lineMidScreen.P2 = new Point(pic.Width, pic.Height *75/100);
+
+            penDotFar = new Pen(Color.Green, 1);
+            penDotFar.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+            penDotNear = new Pen(Color.Blue, 1);
+            penDotNear.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
 
             DrawScene();
         }

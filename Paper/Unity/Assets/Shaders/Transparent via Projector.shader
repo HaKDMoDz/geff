@@ -2,14 +2,14 @@ Shader "Transparent via Projector" {
 	
 SubShader
 {
-	Tags
-		{"Queue" = "Overlay"}
-	
-	// The alpha is supplied by the projector.
-	Blend OneMinusDstAlpha DstAlpha
-	
-	Color (.6,0,.7)
-	Pass {}
+	Tags {"Queue" = "Geometry+300"}	
+	Pass 
+	{
+		// The alpha is supplied by the projector.
+		Blend OneMinusDstAlpha DstAlpha
+		
+		Color (0.5,0.5,0.5)
+	}
 }
 
 

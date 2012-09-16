@@ -1,13 +1,15 @@
-Shader "Transparency Projector" {	
+Shader "Transparency Projectors" {	
 
 Properties {_MainTex ("Cookie", 2D) = "" {TexGen ObjectLinear}}
 
 SubShader
 {
-	Tags {"Queue" = "Geometry+10"}
-	Pass
+	Tags {"Queue" = "Geometry+200"}
+	
+	Pass 
 	{
-		ColorMask A   		
+		ColorMask A
+		Blend One One
 		SetTexture[_MainTex] {Matrix[_Projector]}
 	}   
 }
