@@ -36,5 +36,8 @@ public class Game : MonoBehaviour
 public enum GameState
 {
     PickCuboid,
-    None
+    None,
+    LeftAnchor,
+    RightAnchor,
+    FaceAnchor
 }

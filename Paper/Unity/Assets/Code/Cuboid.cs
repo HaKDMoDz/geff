@@ -57,11 +57,13 @@ public class Cuboid : MonoBehaviour, ITouchable
         {
             if (isMouseOver && (Game.CurrentCuboid == null || !Game.CurrentCuboid.Visible))
             {
-                planeUp.renderer.material.color = Color.blue;
+                planeUp.renderer.material.color = Color.yellow;
+                planeDown.renderer.material.color = Color.yellow;
             }
             else
             {
                 planeUp.renderer.material.color = Color.white;
+                planeDown.renderer.material.color = Color.white;
             }
         }
 

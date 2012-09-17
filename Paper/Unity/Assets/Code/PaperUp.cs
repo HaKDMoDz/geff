@@ -40,6 +40,7 @@ public class PaperUp : MonoBehaviour, ITouchable
 
     public void MouseMove(RaycastHit hit)
     {
+        //---> Création du cuboid
         if (Game.GameState == GameState.PickCuboid && Game.CurrentCuboid != null && Game.CurrentCuboid.Visible)
         {
             float scaleX = Game.InitialPositionCurrentCuboid.x - hit.point.x;
@@ -51,14 +52,20 @@ public class PaperUp : MonoBehaviour, ITouchable
             Game.CurrentCuboid.transform.localScale = new Vector3(Mathf.Abs(scaleX), scaleY, Game.CurrentCuboid.transform.localScale.z);
             Game.CurrentCuboid.transform.position = Game.InitialPositionCurrentCuboid + new Vector3(-scaleX / 2f, 0f, 0f);
 
-            Game.CurrentCuboid.AnchorLeftCollider.center = new Vector3(-0.5f + 0.05f/Game.CurrentCuboid.transform.localScale.x, 1f, -0.5f);
+            Game.CurrentCuboid.AnchorLeftCollider.center = new Vector3(-0.5f + 0.05f / Game.CurrentCuboid.transform.localScale.x, 1f, -0.5f);
             Game.CurrentCuboid.AnchorLeftCollider.size = new Vector3(0.1f / Game.CurrentCuboid.transform.localScale.x, 0.1f / Game.CurrentCuboid.transform.localScale.y, 1f);
 
-            Game.CurrentCuboid.AnchorRightCollider.center = new Vector3(0.45f, 1f, -0.5f);
-            Game.CurrentCuboid.AnchorRightCollider.size = new Vector3(0.1f, 0.1f, 1f);
+            Game.CurrentCuboid.AnchorRightCollider.center = new Vector3(0.5f - 0.05f / Game.CurrentCuboid.transform.localScale.x, 1f, -0.5f);
+            Game.CurrentCuboid.AnchorRightCollider.size = new Vector3(0.1f / Game.CurrentCuboid.transform.localScale.x, 0.1f / Game.CurrentCuboid.transform.localScale.y, 1f);
 
-            Game.CurrentCuboid.AnchorFaceCollider.center = new Vector3(0f, 1f, -0.95f);
-            Game.CurrentCuboid.AnchorFaceCollider.size = new Vector3(0.8f, 0.1f, 0.1f);
+            Game.CurrentCuboid.AnchorFaceCollider.center = new Vector3(0f, 1f, -1f + 0.05f / Game.CurrentCuboid.transform.localScale.z);
+            Game.CurrentCuboid.AnchorFaceCollider.size = new Vector3(1f - 0.2f / Game.CurrentCuboid.transform.localScale.x, 0.1f / Game.CurrentCuboid.transform.localScale.y, 0.1f / Game.CurrentCuboid.transform.localScale.z);
+        }
+
+        //---> Redimensionnement du cuboid
+        if (Game.GameState == GameState.LeftAnchor && Game.CurrentCuboid != null && Game.CurrentCuboid.Visible)
+        {
+            Game.CurrentCuboid.transform.position = hit.point;
         }
     }
 }
