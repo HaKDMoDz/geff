@@ -4,10 +4,14 @@ using System.Collections;
 public class TouchManager : MonoBehaviour
 {
     private bool leftMouseButtonWasPressed;
-    // Use this for initialization
+    private ITouchable pickableBackgroundTouchable;
+    private BoxCollider pickableBackgroundCollider;
+    public GameObject PickableBackground;
+
     void Start()
     {
-
+        pickableBackgroundTouchable = (ITouchable)PickableBackground.gameObject.GetComponent(typeof(ITouchable));
+        pickableBackgroundCollider = PickableBackground.gameObject.GetComponent<BoxCollider>();
     }
 
     private ITouchable GetTouchedGameObject(Vector2 position, out RaycastHit hit)
@@ -23,6 +27,12 @@ public class TouchManager : MonoBehaviour
         return touchableObject;
     }
 
+    private bool IsGameObjectTouched(BoxCollider collider, Vector2 position, out RaycastHit hit)
+    {
+        Ray ray = Camera.mainCamera.ScreenPointToRay(position);
+        return collider.Raycast(ray, out hit, 100f);
+    }
+
     void Update()
     {
         ITouchable touchableObject = null;
@@ -36,6 +46,9 @@ public class TouchManager : MonoBehaviour
                 touchableObject = GetTouchedGameObject(new Vector2(Input.mousePosition.x, Input.mousePosition.y), out hit);
                 if (touchableObject != null)
                     touchableObject.MouseDown(hit);
+
+                if (IsGameObjectTouched(pickableBackgroundCollider, new Vector2(Input.mousePosition.x, Input.mousePosition.y), out hit))
+                    pickableBackgroundTouchable.MouseDown(hit);
             }
             else if (Input.GetMouseButtonUp(0) && leftMouseButtonWasPressed)
             {
@@ -43,14 +56,17 @@ public class TouchManager : MonoBehaviour
                 touchableObject = GetTouchedGameObject(new Vector2(Input.mousePosition.x, Input.mousePosition.y), out hit);
                 if (touchableObject != null)
                     touchableObject.MouseUp(hit);
+
+                if (IsGameObjectTouched(pickableBackgroundCollider, new Vector2(Input.mousePosition.x, Input.mousePosition.y), out hit))
+                    pickableBackgroundTouchable.MouseUp(hit);
             }
-            
-            //else if (Input.GetMouseButtonDown(0) && leftMouseButtonWasPressed)
-            {
-                touchableObject = GetTouchedGameObject(new Vector2(Input.mousePosition.x, Input.mousePosition.y), out hit);
-                if (touchableObject != null)
-                    touchableObject.MouseMove(hit);
-            }
+
+            touchableObject = GetTouchedGameObject(new Vector2(Input.mousePosition.x, Input.mousePosition.y), out hit);
+            if (touchableObject != null)
+                touchableObject.MouseMove(hit);
+
+            if (IsGameObjectTouched(pickableBackgroundCollider, new Vector2(Input.mousePosition.x, Input.mousePosition.y), out hit))
+                pickableBackgroundTouchable.MouseMove(hit);
         }
         else if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
@@ -61,18 +77,27 @@ public class TouchManager : MonoBehaviour
                     touchableObject = GetTouchedGameObject(Input.GetTouch(i).position, out hit);
                     if (touchableObject != null)
                         touchableObject.MouseDown(hit);
+
+                    if (IsGameObjectTouched(pickableBackgroundCollider, Input.GetTouch(i).position, out hit))
+                        pickableBackgroundTouchable.MouseDown(hit);
                 }
                 else if (Input.GetTouch(i).phase.Equals(TouchPhase.Ended))
                 {
                     touchableObject = GetTouchedGameObject(Input.GetTouch(i).position, out hit);
                     if (touchableObject != null)
                         touchableObject.MouseUp(hit);
+
+                    if (IsGameObjectTouched(pickableBackgroundCollider, Input.GetTouch(i).position, out hit))
+                        pickableBackgroundTouchable.MouseUp(hit);
                 }
                 else if (Input.GetTouch(i).phase.Equals(TouchPhase.Moved))
                 {
                     touchableObject = GetTouchedGameObject(Input.GetTouch(i).position, out hit);
                     if (touchableObject != null)
                         touchableObject.MouseMove(hit);
+
+                    if (IsGameObjectTouched(pickableBackgroundCollider, Input.GetTouch(i).position, out hit))
+                        pickableBackgroundTouchable.MouseMove(hit);
                 }
             }
         }

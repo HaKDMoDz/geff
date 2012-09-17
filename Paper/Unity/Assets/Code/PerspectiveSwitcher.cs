@@ -14,7 +14,9 @@ public class PerspectiveSwitcher : MonoBehaviour
     private CameraChanger blender;
     private bool        orthoOn;
 	public new Camera camera;
-	
+    private float changeDuration = 2f;
+    private float startTime = float.MinValue;
+
     void Start()
     {
 		//Debug.Log(camera.fov);
@@ -36,17 +38,23 @@ public class PerspectiveSwitcher : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
            orthoOn = !orthoOn;
-			
+			startTime = Time.time;
+
             if (orthoOn)
 			{
-				camera.cullingMask = -1;//2^LayerMask.NameToLayer("Everything");
-                blender.BlendToMatrix(camera, ortho, 2f);
+                blender.BlendToMatrix(camera, ortho, changeDuration);
 			}
             else
 			{
-				camera.cullingMask = -257;//2^LayerMask.NameToLayer("Everything") - 2^LayerMask.NameToLayer("Tools");;
-                blender.BlendToMatrix(camera, perspective, 2f);
+                camera.cullingMask = -257;//2^LayerMask.NameToLayer("Everything") - 2^LayerMask.NameToLayer("Tools");;
+                blender.BlendToMatrix(camera, perspective, changeDuration);
 			}
+        }
+
+        if (startTime != float.MinValue && orthoOn && Time.time - startTime >= changeDuration)
+        {
+            camera.cullingMask = -1;//2^LayerMask.NameToLayer("Everything");
+            startTime = float.MinValue;
         }
     }
 }

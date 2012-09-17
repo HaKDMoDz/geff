@@ -6,7 +6,6 @@ public class CameraChanger : MonoBehaviour
 { 
     public static Matrix4x4 MatrixLerp(Matrix4x4 from, Matrix4x4 to, float time) 
     { 
-
         Matrix4x4 ret = new Matrix4x4(); 
 
         for (int i = 0; i < 16; i++) 
@@ -21,19 +20,16 @@ public class CameraChanger : MonoBehaviour
         float startTime = Time.time; 
 			
         while (Time.time - startTime < duration) 
-
         { 
             camera.projectionMatrix = MatrixLerp(src, dest, (Time.time - startTime) / duration); 
             yield return 1; 
         } 
         camera.projectionMatrix = dest; 
-		
     } 
 
     public Coroutine BlendToMatrix(Camera camera, Matrix4x4 targetMatrix, float duration) 
     { 
         StopAllCoroutines(); 
-
         return StartCoroutine(LerpFromTo(camera, camera.projectionMatrix, targetMatrix, duration)); 
     } 
 }

@@ -3,15 +3,19 @@ using System.Collections;
 
 public class Cuboid : MonoBehaviour, ITouchable
 {
-    private Vector3 vecInitialSelection = Vector3.zero;
-    private BoxCollider paperUp;
     public bool isSelected = false;
     public bool isMouseOver = false;
+    public BoxCollider AnchorLeftCollider;
+    public BoxCollider AnchorRightCollider;
+    public BoxCollider AnchorFaceCollider;
+    public bool IsTool = false;
+
+    private Vector3 vecInitialSelection = Vector3.zero;
+    private BoxCollider paperUp; 
     private GameObject planeUp;
     private GameObject planeDown;
     private BoxCollider boxCollider;
-    public bool IsTool = false;
-
+    
     public bool Visible
     {
         get
@@ -25,25 +29,40 @@ public class Cuboid : MonoBehaviour, ITouchable
             this.planeDown.renderer.enabled = value;
         }
     }
-    // Use this for initialization
+
+    public void Initialize()
+    {
+        Start();
+        this.gameObject.layer = LayerMask.NameToLayer("Default");
+        this.planeUp.layer = LayerMask.NameToLayer("Default");
+        this.planeDown.layer = LayerMask.NameToLayer("Default");
+    }
+
     void Start()
     {
         paperUp = GameObject.Find("PaperUp").GetComponent<BoxCollider>();
         planeUp = (GameObject)this.transform.Find("PlaneUp").gameObject;
         planeDown = (GameObject)this.transform.Find("PlaneDown").gameObject;
+
+        AnchorLeftCollider = this.transform.Find("LeftAnchor").GetComponent<BoxCollider>();
+        AnchorRightCollider = this.transform.Find("RightAnchor").GetComponent<BoxCollider>();
+        AnchorFaceCollider = this.transform.Find("FaceAnchor").GetComponent<BoxCollider>();
+
         boxCollider = this.GetComponent<BoxCollider>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (isMouseOver)
+        if (!isSelected)
         {
-            planeUp.renderer.material.color = Color.blue;
-        }
-        else
-        {
-            planeUp.renderer.material.color = Color.white;
+            if (isMouseOver && (Game.CurrentCuboid == null || !Game.CurrentCuboid.Visible))
+            {
+                planeUp.renderer.material.color = Color.blue;
+            }
+            else
+            {
+                planeUp.renderer.material.color = Color.white;
+            }
         }
 
         isMouseOver = false;
@@ -62,6 +81,7 @@ public class Cuboid : MonoBehaviour, ITouchable
 
             foreach (GameObject cuboidTool in cuboidTools)
             {
+                cuboidTool.GetComponent<Cuboid>().isSelected = false;
                 cuboidTool.GetComponent<Cuboid>().planeUp.renderer.material.color = colorDeselectedPlaneUp;
                 cuboidTool.GetComponent<Cuboid>().planeDown.renderer.material.color = colorDeselectedPlaneDown;
             }
@@ -69,27 +89,16 @@ public class Cuboid : MonoBehaviour, ITouchable
             planeUp.renderer.material.color = Color.yellow;
             planeDown.renderer.material.color = Color.yellow;
             Game.CurrentCuboidTool = this;
+            isSelected = true;
 
-            if (Game.CurrentCuboid == null || Game.CurrentCuboid.Visible)
-            {
-                Game.CurrentCuboid = (Cuboid)Instantiate(this);
-                Game.CurrentCuboid.Start();
-                Game.CurrentCuboid.Visible = false;
-                Game.CurrentCuboid.IsTool = false;
-                Game.CurrentCuboid.isSelected = true;
-            }
+            Game.CreateNewCuboid();
         }
-
-        //if (!IsTool)
-        //	isSelected = true;
-
-        //vecInitialSelection = Vector3.zero;
     }
 
     public void MouseUp(RaycastHit hit)
     {
-        //Game.GameState = GameState.None;
-        isSelected = false;
+        if (!IsTool)
+            isSelected = false;
     }
 
     public void MouseMove(RaycastHit hit)
