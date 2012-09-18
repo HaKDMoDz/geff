@@ -30,15 +30,17 @@ public class Anchor : MonoBehaviour, ITouchable
             Game.GameState = GameState.FaceAnchor;
 
         Game.CurrentCuboid = parentCuboid;
+        Game.InitialPositionCurrentCuboid = Game.CurrentCuboid.transform.localPosition;
         parentCuboid.isSelected = true;
     }
 
     public void MouseUp(RaycastHit hit)
     {
-        Game.GameState = GameState.PickCuboid;
+        //Game.GameState = GameState.PickCuboid;
     }
 
     public void MouseMove(RaycastHit hit)
     {
+        parentCuboid.isMouseOver = true;
     }
 }

@@ -9,6 +9,7 @@ public class Game : MonoBehaviour
     public static Cuboid CurrentCuboid;
     public static Cuboid CurrentCuboidTool;
     public static Vector3 InitialPositionCurrentCuboid { get; set; }
+    public static Vector3 InitialSizeCurrentCuboid { get; set; }
 
     void Start()
     {
