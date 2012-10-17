@@ -47,6 +47,9 @@
      <Compile Include="Assets\Code\Cube.cs" />
      <Compile Include="Assets\Code\Cubeat.cs" />
      <Compile Include="Assets\Code\Map.cs" />
+     <Compile Include="Assets\Code\Point.cs" />
+     <Compile Include="Assets\Code\Resource.cs" />
+     <Compile Include="Assets\Code\Utils\OnTouchMouse.cs" />
      <Compile Include="Assets\Scene\Scripts\General Scripts\ActivateTrigger.cs" />
      <Compile Include="Assets\Scene\Scripts\Utility Scripts\CombineChildren.cs" />
      <Compile Include="Assets\Scene\Scripts\Utility Scripts\MeshCombineUtility.cs" />
