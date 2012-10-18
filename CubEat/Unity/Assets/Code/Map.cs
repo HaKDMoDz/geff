@@ -29,13 +29,18 @@ public class Map
             _audioSources.Add(GameObject.Find("Audio").GetComponents<AudioSource>()[i]);
 
             if (AudioSamples.ContainsKey(i + 1))
+            {
                 _audioSources[i].clip = AudioSamples[i + 1];
+
+                _audioSources[i].rolloffMode = AudioRolloffMode.Linear;
+
+            }
         }
 
         channelColors.Add(Color.blue);
         channelColors.Add(Color.green);
         channelColors.Add(Color.yellow);
-        channelColors.Add(Color.Lerp(Color.yellow, Color.red, 0.5f));
+        channelColors.Add(Color.Lerp(Color.yellow, Color.red, 0.3f));
         channelColors.Add(Color.red);
         channelColors.Add(Color.Lerp(Color.red, Color.blue, 0.5f));
 
@@ -44,6 +49,8 @@ public class Map
 
     public void CreateMap()
     {
+        System.Random rnd = new System.Random();
+
         for (int layer = 0; layer < LayerCount; layer++)
         {
             int numberOnLayer = 0;
@@ -67,6 +74,9 @@ public class Map
                     cube.Color = channelColors[layer];
 
                     cube.IsEmpty = true;
+
+                    //if (rnd.NextDouble() > 0.7)
+                    //    cube.IsEmpty = false;
 
                     numberOnLayer++;
 
@@ -155,6 +165,9 @@ public class Map
         
         if (AudioSamples.ContainsKey(cube.Layer+1))
         {
+            if (_audioSources[cube.Layer].isPlaying)
+                _audioSources[cube.Layer].Stop();
+
             _audioSources[cube.Layer].Play();
         }
     }
