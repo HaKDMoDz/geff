@@ -18,4 +18,20 @@ public static class Resource
         }
     }
 
+    public static Dictionary<int, AudioClip> GetAudioSamples(string libraryName)
+    {
+        Dictionary<int, AudioClip> dicAudioSamples = new Dictionary<int, AudioClip>();
+
+        for (int i = 1; i < 20; i++)
+        {
+            AudioClip audioClip = (AudioClip)Resources.Load("Samples/" + libraryName + "/" + i.ToString());
+            if (audioClip != null)
+                dicAudioSamples.Add(i, audioClip);
+            else
+                break;
+        }
+
+        return dicAudioSamples;
+    }
+
 }

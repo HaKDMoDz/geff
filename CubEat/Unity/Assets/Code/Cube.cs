@@ -10,6 +10,7 @@ public class Cube : MonoBehaviour
     public bool IsEmitting;// { get; set; }
     public bool IsInPlayedTime;// { get; set; }
     public bool IsOnMeasure;// { get; set; }
+    public Color Color { get; set; }
 
     public bool IsEmpty 
     {
@@ -20,10 +21,10 @@ public class Cube : MonoBehaviour
         set
         {
             _isEmpty = value;
-            if (_isEmpty)
-                this.gameObject.renderer.material.color = Color.blue;
+            if (!_isEmpty)
+                this.gameObject.renderer.material.color = Color;
             else
-                this.gameObject.renderer.material.color = Color.white;
+                this.gameObject.renderer.material.color = Color.Lerp(Color, Color.black, 0.5f);
         }
     }
 
@@ -49,4 +50,5 @@ public class Cube : MonoBehaviour
     {
         IsEmpty = !IsEmpty;
     }
+
 }
