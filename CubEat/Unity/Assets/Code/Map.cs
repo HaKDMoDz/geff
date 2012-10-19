@@ -16,15 +16,14 @@ public class Map
     private List<AudioSource> _audioSources = new List<AudioSource>();
     private List<Color> channelColors = new List<Color>();
 
-    public Map(int layerCount)
+    public Map(string audioLibrary)
     {
-        this.LayerCount = layerCount;
-        this.Size = LayerCount * 2 - 1;
         this.LayerCubes = new Dictionary<int, List<Cube>>();
+        AudioSamples = Resource.GetAudioSamples(audioLibrary);
+        this.LayerCount = 3;// AudioSamples.Count;
+        this.Size = LayerCount * 2 - 1;
 
-        AudioSamples = Resource.GetAudioSamples("Bass");
-
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < this.LayerCount; i++)
         {
             _audioSources.Add(GameObject.Find("Audio").GetComponents<AudioSource>()[i]);
 
@@ -36,6 +35,8 @@ public class Map
 
             }
         }
+
+        this.LayerCount = 10;
 
         channelColors.Add(Color.blue);
         channelColors.Add(Color.green);
@@ -71,7 +72,9 @@ public class Map
                     cube.Layer = layer;
                     cube.NumberOnLayer = numberOnLayer;
                     cube.IsOnMeasure = cube.NumberOnLayer % 4 == 0;
-                    cube.Color = channelColors[layer];
+                    
+                    if(channelColors.Count > layer)
+                        cube.Color = channelColors[layer];
 
                     cube.IsEmpty = true;
 
@@ -115,9 +118,7 @@ public class Map
                         y = p1 - step;
                     }
 
-
                     //Debug.Log(String.Format("layer : {0} // side : {1} // step  : {2} // p0 : {3} // x : {4} // y : {5}", layer, side, step, p0, x, y));
-
 
                     cubeObject.transform.localPosition = new Vector3(cube.transform.localScale.x * (x - (Size / 2 - 1)), 0, cube.transform.localScale.z * (y - (Size / 2 - 1)));
                 }

@@ -11,15 +11,35 @@ public class Cubeat : MonoBehaviour
 
     void Start()
     {
-        int layer = 5;
-        map = new Map(layer);
+        map = new Map("Bass");
         Speed = 150f;
 
-        theForwardDirection = Camera.main.transform.TransformDirection(Vector3.forward);
-        theForwardDirection.Normalize();
+        //theForwardDirection = Camera.main.transform.TransformDirection(Vector3.forward);
+        //theForwardDirection.Normalize();
 
         //Camera.main.transform.Translate(-theForwardDirection * (layer-3)*4);
         //Camera.main.transform.LookAt(Vector3.zero);
+
+        ComputeCameraPosition();
+    }
+
+    private void ComputeCameraPosition()
+    {
+        float halfHeight = map.Size / 2.0f;
+
+        float halfFov = Camera.main.fov / 2.0f;
+
+        float fovTan = Mathf.Tan(halfFov * Mathf.Deg2Rad);
+
+        theForwardDirection = Camera.main.transform.TransformDirection(Vector3.forward);
+        theForwardDirection.Normalize();
+        Camera.main.transform.Translate(-theForwardDirection * halfHeight / fovTan/1000f);
+
+
+        Debug.Log(halfHeight / fovTan);
+        Debug.Log(theForwardDirection);
+
+        Camera.main.transform.LookAt(Vector3.zero);
     }
 
     void Update()
