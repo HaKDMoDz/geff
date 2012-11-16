@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace Paper
 {
-    public static class Tools
+    public static class Utils
     {
         public static int Distance(Point point1, Point point2)
         {

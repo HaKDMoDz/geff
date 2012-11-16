@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using Paper.Properties;
 
 namespace Paper
 {
@@ -28,8 +29,6 @@ namespace Paper
         public Form1()
         {
             InitializeComponent();
-
-
 
             Form1_Resize(null, null);
         }
@@ -148,7 +147,7 @@ namespace Paper
                         cuboid.ModeSelection = ModeSelection.None;
 
                     //--- Distance move
-                    int distance = Tools.Distance(new Point(e.X, e.Y), cuboid.Location);
+                    int distance = Utils.Distance(new Point(e.X, e.Y), cuboid.Location);
 
                     if (distance < 10 && distance < distanceNearestCuboid)
                     {
@@ -158,7 +157,7 @@ namespace Paper
                     //---
 
                     //--- Distance resize
-                    distance = Tools.Distance(new Point(e.X, e.Y), new Point(cuboid.Location.X + cuboid.Width, Common.lineMidScreen.P1.Y + Common.depthUnity * cuboid.Depth));
+                    distance = Utils.Distance(new Point(e.X, e.Y), new Point(cuboid.Location.X + cuboid.Width, Common.lineMidScreen.P1.Y + Common.depthUnity * cuboid.Depth));
 
                     if (distance < 10 && distance < distanceNearestCuboid)
                     {
@@ -302,11 +301,11 @@ namespace Paper
 
                 if (cuboid.ModeSelection != ModeSelection.None)
                 {
-                    gBmp.DrawImage(Resource.Move, cuboid.Location.X - Resource.Move.Width / 2, cuboid.Location.Y - Resource.Move.Height / 2);
-                    gBmp.DrawImage(Resource.Circle, cuboid.Location.X - Resource.Circle.Width / 2, cuboid.Location.Y - Resource.Circle.Height / 2);
+                    gBmp.DrawImage(Resources.Move, cuboid.Location.X - Resources.Move.Width / 2, cuboid.Location.Y - Resources.Move.Height / 2);
+                    gBmp.DrawImage(Resources.Circle, cuboid.Location.X - Resources.Circle.Width / 2, cuboid.Location.Y - Resources.Circle.Height / 2);
 
-                    gBmp.DrawImage(Resource.Resize, cuboid.Location.X + cuboid.Width - Resource.Resize.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * cuboid.Depth - Resource.Resize.Height / 2);
-                    gBmp.DrawImage(Resource.Circle, cuboid.Location.X + cuboid.Width - Resource.Circle.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * cuboid.Depth - Resource.Circle.Height / 2);
+                    gBmp.DrawImage(Resources.Resize, cuboid.Location.X + cuboid.Width - Resources.Resize.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * cuboid.Depth - Resources.Resize.Height / 2);
+                    gBmp.DrawImage(Resources.Circle, cuboid.Location.X + cuboid.Width - Resources.Circle.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * cuboid.Depth - Resources.Circle.Height / 2);
                 }
                 else
                 {
@@ -325,6 +324,76 @@ namespace Paper
                 curCuboid = null;
                 DrawScene();
             }
+        }
+
+        private void UncheckAllButtons()
+        {
+            btnFolding.Checked = false;
+            btnLink.Checked = false;
+            btnMovingZoneH.Checked = false;
+            btnMovingzoneV.Checked = false;
+            btnPlatform.Checked = false;
+            btnSensorButton.Checked = false;
+            btnSensorCamera.Checked = false;
+            btnSensorNearness.Checked = false;
+            btnSensorRemoteControl.Checked = false;
+            btnZoneCuttingH.Checked = false;
+            btnzoneCuttingV.Checked = false;
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton11_Click(object sender, EventArgs e)
+        {
+
         }
 
 

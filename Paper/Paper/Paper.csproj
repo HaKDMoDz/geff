@@ -58,29 +58,20 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rec.cs" />
-    <Compile Include="Resource.Designer.cs">
+    <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.resx</DependentUpon>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Tools.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="Triangulation.cs" />
     <Compile Include="Vector2.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Resource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -93,16 +84,37 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Move.png" />
+    <None Include="Data\Icon\Icon_CuttingZoneH.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resize.png" />
+    <None Include="Data\Icon\Icon_CuttingZoneV.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Circle.png" />
+    <None Include="Data\Icon\Icon_Folding.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Move.png" />
+    <None Include="Data\Icon\Icon_Link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Icon\Icon_MovingZoneH.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Icon\Icon_MovingZoneV.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Icon\Icon_Platform.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Icon\Icon_SensorButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Icon\Icon_SensorCamera.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Icon\Icon_SensorNearness.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Icon\Icon_SensorRemoteControl.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
