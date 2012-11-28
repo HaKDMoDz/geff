@@ -10,13 +10,15 @@ namespace Paper
         public static Line lineMidScreen = null;
         public static int depthUnity = 20;
         public static Tools CurrentTool = Tools.None;
+        public static int CurrentColorIndex = 1;
+        public static System.Drawing.Size ScreenSize { get; set; }
     }
 
     public enum Tools
     {
         None,
-        ZoneCuttingH,
-        zonecuttingV,
+        ZoneFoldingH,
+        ZoneFoldingV,
         ZoneMovingH,
         ZoneMovingV,
         Folding,

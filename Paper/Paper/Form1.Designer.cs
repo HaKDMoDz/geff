@@ -29,14 +29,13 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.pic = new System.Windows.Forms.PictureBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnNew = new System.Windows.Forms.ToolStripButton();
             this.btnOuvrir = new System.Windows.Forms.ToolStripButton();
             this.btnEnregistrer = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnZoneCuttingH = new System.Windows.Forms.ToolStripButton();
-            this.btnzoneCuttingV = new System.Windows.Forms.ToolStripButton();
+            this.btnZoneFoldingV = new System.Windows.Forms.ToolStripButton();
+            this.btnZoneFoldingH = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnMovingZoneH = new System.Windows.Forms.ToolStripButton();
             this.btnMovingzoneV = new System.Windows.Forms.ToolStripButton();
@@ -50,7 +49,7 @@
             this.btnSensorRemoteControl = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.btnLink = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
@@ -58,30 +57,18 @@
             this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton7 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton8 = new System.Windows.Forms.ToolStripButton();
-            this.btnSensor = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton9 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton10 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton11 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton12 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton13 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton14 = new System.Windows.Forms.ToolStripButton();
-            ((System.ComponentModel.ISupportInitialize)(this.pic)).BeginInit();
+            this.pic = new System.Windows.Forms.PictureBox();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.btnSensor = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton11 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pic)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pic
-            // 
-            this.pic.BackColor = System.Drawing.Color.White;
-            this.pic.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pic.Location = new System.Drawing.Point(0, 0);
-            this.pic.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.pic.Name = "pic";
-            this.pic.Size = new System.Drawing.Size(1079, 854);
-            this.pic.TabIndex = 0;
-            this.pic.TabStop = false;
-            this.pic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pic_MouseDown);
-            this.pic.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pic_MouseMove);
-            this.pic.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pic_MouseUp);
             // 
             // toolStrip1
             // 
@@ -91,8 +78,8 @@
             this.btnOuvrir,
             this.btnEnregistrer,
             this.toolStripSeparator5,
-            this.btnZoneCuttingH,
-            this.btnzoneCuttingV,
+            this.btnZoneFoldingV,
+            this.btnZoneFoldingH,
             this.toolStripSeparator1,
             this.btnMovingZoneH,
             this.btnMovingzoneV,
@@ -105,10 +92,11 @@
             this.btnSensorCamera,
             this.btnSensorRemoteControl,
             this.toolStripSeparator4,
-            this.btnLink});
+            this.btnLink,
+            this.toolStripComboBox1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1079, 39);
+            this.toolStrip1.Size = new System.Drawing.Size(809, 39);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -118,7 +106,7 @@
             this.btnNew.Image = ((System.Drawing.Image)(resources.GetObject("btnNew.Image")));
             this.btnNew.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(95, 36);
+            this.btnNew.Size = new System.Drawing.Size(54, 36);
             this.btnNew.Text = "Nouveau";
             this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
             // 
@@ -128,7 +116,7 @@
             this.btnOuvrir.Image = ((System.Drawing.Image)(resources.GetObject("btnOuvrir.Image")));
             this.btnOuvrir.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnOuvrir.Name = "btnOuvrir";
-            this.btnOuvrir.Size = new System.Drawing.Size(71, 36);
+            this.btnOuvrir.Size = new System.Drawing.Size(41, 36);
             this.btnOuvrir.Text = "Ouvrir";
             this.btnOuvrir.Click += new System.EventHandler(this.btnOuvrir_Click);
             // 
@@ -138,7 +126,7 @@
             this.btnEnregistrer.Image = ((System.Drawing.Image)(resources.GetObject("btnEnregistrer.Image")));
             this.btnEnregistrer.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnEnregistrer.Name = "btnEnregistrer";
-            this.btnEnregistrer.Size = new System.Drawing.Size(110, 36);
+            this.btnEnregistrer.Size = new System.Drawing.Size(64, 36);
             this.btnEnregistrer.Text = "Enregistrer";
             this.btnEnregistrer.Click += new System.EventHandler(this.btnEnregistrer_Click);
             // 
@@ -147,27 +135,27 @@
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 39);
             // 
-            // btnZoneCuttingH
+            // btnZoneFoldingV
             // 
-            this.btnZoneCuttingH.CheckOnClick = true;
-            this.btnZoneCuttingH.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnZoneCuttingH.Image = global::Paper.Properties.Resources.Icon_CuttingZoneV;
-            this.btnZoneCuttingH.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnZoneCuttingH.Name = "btnZoneCuttingH";
-            this.btnZoneCuttingH.Size = new System.Drawing.Size(36, 36);
-            this.btnZoneCuttingH.Text = "Découpage horizontal";
-            this.btnZoneCuttingH.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.btnZoneFoldingV.CheckOnClick = true;
+            this.btnZoneFoldingV.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnZoneFoldingV.Image = global::Paper.Properties.Resources.Icon_CuttingZoneV;
+            this.btnZoneFoldingV.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnZoneFoldingV.Name = "btnZoneFoldingV";
+            this.btnZoneFoldingV.Size = new System.Drawing.Size(36, 36);
+            this.btnZoneFoldingV.Text = "Découpage horizontal";
+            this.btnZoneFoldingV.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
-            // btnzoneCuttingV
+            // btnZoneFoldingH
             // 
-            this.btnzoneCuttingV.CheckOnClick = true;
-            this.btnzoneCuttingV.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnzoneCuttingV.Image = global::Paper.Properties.Resources.Icon_CuttingZoneH;
-            this.btnzoneCuttingV.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnzoneCuttingV.Name = "btnzoneCuttingV";
-            this.btnzoneCuttingV.Size = new System.Drawing.Size(36, 36);
-            this.btnzoneCuttingV.Text = "toolStripButton2";
-            this.btnzoneCuttingV.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.btnZoneFoldingH.CheckOnClick = true;
+            this.btnZoneFoldingH.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnZoneFoldingH.Image = global::Paper.Properties.Resources.Icon_CuttingZoneH;
+            this.btnZoneFoldingH.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnZoneFoldingH.Name = "btnZoneFoldingH";
+            this.btnZoneFoldingH.Size = new System.Drawing.Size(36, 36);
+            this.btnZoneFoldingH.Text = "toolStripButton2";
+            this.btnZoneFoldingH.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripSeparator1
             // 
@@ -288,14 +276,20 @@
             this.btnLink.Text = "toolStripButton11";
             this.btnLink.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
-            // toolStripButton1
+            // toolStripComboBox1
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = global::Paper.Properties.Resources.Icon_CuttingZoneV;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "Découpage horizontal";
+            this.toolStripComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBox1.DropDownWidth = 100;
+            this.toolStripComboBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.toolStripComboBox1.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"});
+            this.toolStripComboBox1.Name = "toolStripComboBox1";
+            this.toolStripComboBox1.Size = new System.Drawing.Size(121, 39);
+            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripButton2
             // 
@@ -353,15 +347,6 @@
             this.toolStripButton8.Size = new System.Drawing.Size(36, 36);
             this.toolStripButton8.Text = "toolStripButton8";
             // 
-            // btnSensor
-            // 
-            this.btnSensor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnSensor.Image = global::Paper.Properties.Resources.Icon_SensorNearness;
-            this.btnSensor.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSensor.Name = "btnSensor";
-            this.btnSensor.Size = new System.Drawing.Size(36, 36);
-            this.btnSensor.Text = "toolStripButton8";
-            // 
             // toolStripButton9
             // 
             this.toolStripButton9.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -377,15 +362,6 @@
             this.toolStripButton10.Name = "toolStripButton10";
             this.toolStripButton10.Size = new System.Drawing.Size(36, 36);
             this.toolStripButton10.Text = "toolStripButton10";
-            // 
-            // toolStripButton11
-            // 
-            this.toolStripButton11.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton11.Image = global::Paper.Properties.Resources.Icon_Link;
-            this.toolStripButton11.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton11.Name = "toolStripButton11";
-            this.toolStripButton11.Size = new System.Drawing.Size(36, 36);
-            this.toolStripButton11.Text = "toolStripButton11";
             // 
             // toolStripButton12
             // 
@@ -411,21 +387,60 @@
             this.toolStripButton14.Size = new System.Drawing.Size(64, 36);
             this.toolStripButton14.Text = "Enregistrer";
             // 
+            // pic
+            // 
+            this.pic.BackColor = System.Drawing.Color.White;
+            this.pic.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pic.Location = new System.Drawing.Point(0, 0);
+            this.pic.Name = "pic";
+            this.pic.Size = new System.Drawing.Size(809, 694);
+            this.pic.TabIndex = 0;
+            this.pic.TabStop = false;
+            this.pic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pic_MouseDown);
+            this.pic.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pic_MouseMove);
+            this.pic.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pic_MouseUp);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = global::Paper.Properties.Resources.Icon_CuttingZoneV;
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "Découpage horizontal";
+            // 
+            // btnSensor
+            // 
+            this.btnSensor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnSensor.Image = global::Paper.Properties.Resources.Icon_SensorNearness;
+            this.btnSensor.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSensor.Name = "btnSensor";
+            this.btnSensor.Size = new System.Drawing.Size(36, 36);
+            this.btnSensor.Text = "toolStripButton8";
+            // 
+            // toolStripButton11
+            // 
+            this.toolStripButton11.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton11.Image = global::Paper.Properties.Resources.Icon_Link;
+            this.toolStripButton11.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton11.Name = "toolStripButton11";
+            this.toolStripButton11.Size = new System.Drawing.Size(36, 36);
+            this.toolStripButton11.Text = "toolStripButton11";
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1079, 854);
+            this.ClientSize = new System.Drawing.Size(809, 694);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.pic);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.MinimumSize = new System.Drawing.Size(18, 46);
+            this.MinimumSize = new System.Drawing.Size(16, 44);
             this.Name = "Form1";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.Resize += new System.EventHandler(this.Form1_Resize);
-            ((System.ComponentModel.ISupportInitialize)(this.pic)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pic)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -435,8 +450,8 @@
 
         private System.Windows.Forms.PictureBox pic;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton btnZoneCuttingH;
-        private System.Windows.Forms.ToolStripButton btnzoneCuttingV;
+        private System.Windows.Forms.ToolStripButton btnZoneFoldingV;
+        private System.Windows.Forms.ToolStripButton btnZoneFoldingH;
         private System.Windows.Forms.ToolStripButton btnMovingZoneH;
         private System.Windows.Forms.ToolStripButton btnMovingzoneV;
         private System.Windows.Forms.ToolStripButton btnFolding;
@@ -469,6 +484,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton12;
         private System.Windows.Forms.ToolStripButton toolStripButton13;
         private System.Windows.Forms.ToolStripButton toolStripButton14;
+        private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
     }
 }
 

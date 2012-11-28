@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Paper.Model
 {
-    interface IResizableWidth
+    interface IResizableWidth : IResizable
     {
         int Width { get; set; }
     }

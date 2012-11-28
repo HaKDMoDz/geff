@@ -37,6 +37,19 @@ namespace Paper.Model
             }
         }
 
+        public List<Line> LineResizable
+        {
+            get;
+            set;
+        }
+
+        public override System.Drawing.Rectangle RectangleSelection
+        {
+            get
+            {
+                return new System.Drawing.Rectangle(Location.X, Location.Y, Width, Height);
+            }
+        }
     }
 
     public class CuboidComparerWithSelection : IComparer<ComponentBase>

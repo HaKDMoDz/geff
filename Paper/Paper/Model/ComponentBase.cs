@@ -6,11 +6,13 @@ using System.Drawing;
 
 namespace Paper.Model
 {
-    public class ComponentBase
+    public abstract class ComponentBase
     {
         public Point Location { get; set; }
         public ModeSelection ModeSelection { get; set; }
         public DateTime CreationDate { get; set; }
+        public int ColorIndex { get; set; }
+        public abstract Rectangle RectangleSelection { get; }
 
         public ComponentBase(int x, int y)
         {

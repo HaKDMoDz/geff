@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Paper.Model
 {
-    interface IResizableHeight : IResizable
+    interface IResizable
     {
-        int Height { get; set; }
+        List<Line> LineResizable { get; }
     }
 }

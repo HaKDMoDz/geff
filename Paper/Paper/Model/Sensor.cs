@@ -12,7 +12,15 @@ namespace Paper.Model
         public Sensor(int x, int y, SensorType sensorType)
             : base(x, y)
         {
-        this.SensorType = sensorType;
+            this.SensorType = sensorType;
+        }
+
+        public override System.Drawing.Rectangle RectangleSelection
+        {
+            get
+            {
+                return new System.Drawing.Rectangle(Location.X, Location.Y, 50, 50);
+            }
         }
     }
 

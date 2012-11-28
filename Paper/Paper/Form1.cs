@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using Paper.Properties;
 using Paper.Model;
+using System.Drawing.Imaging;
 
 namespace Paper
 {
@@ -65,8 +66,8 @@ namespace Paper
             btnSensorCamera.Tag = Tools.SensorCamera;
             btnSensorNearness.Tag = Tools.SensorNearness;
             btnSensorRemoteControl.Tag = Tools.SensorRemoteControl;
-            btnZoneCuttingH.Tag = Tools.ZoneCuttingH;
-            btnzoneCuttingV.Tag = Tools.ZoneMovingV;
+            btnZoneFoldingH.Tag = Tools.ZoneFoldingH;
+            btnZoneFoldingV.Tag = Tools.ZoneFoldingV;
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -77,6 +78,7 @@ namespace Paper
             Common.lineMidScreen = new Line();
             Common.lineMidScreen.P1 = new Point(0, pic.Height * 75 / 100);
             Common.lineMidScreen.P2 = new Point(pic.Width, pic.Height * 75 / 100);
+            Common.ScreenSize = new Size(pic.Width, pic.Height);
 
             penDotFar = new Pen(Color.Green, 1);
             penDotFar.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
@@ -90,42 +92,46 @@ namespace Paper
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                //--- Sélection des cuboids pour le déplacement et le redimensionnement
-                foreach (Folding cuboid in listComponent)
+                //--- Sélection des éléments pour le déplacement et le redimensionnement
+                foreach (ComponentBase component in listComponent)
                 {
-                    if (cuboid.ModeSelection == ModeSelection.NearMove)
+                    if (component.ModeSelection == ModeSelection.NearMove)
                     {
-                        cuboid.ModeSelection = ModeSelection.SelectedMove;
-                        curComponent = cuboid;
+                        component.ModeSelection = ModeSelection.SelectedMove;
+                        curComponent = component;
                     }
 
-                    if (cuboid.ModeSelection == ModeSelection.NearResize)
+                    if (component.ModeSelection == ModeSelection.NearResize)
                     {
-                        cuboid.ModeSelection = ModeSelection.SelectedResize;
-                        curComponent = cuboid;
+                        component.ModeSelection = ModeSelection.SelectedResize;
+                        curComponent = component;
                     }
                 }
                 //---
 
-                //---> Création du cuboid
+                //---> Création du pliage
                 if (Common.CurrentTool == Tools.Folding && curComponent == null)
                 {
                     curComponent = new Folding(e.X, e.Y, 50, 1);
                 }
 
-                if (Common.CurrentTool == Tools.ZoneCuttingH && curComponent == null)
+                //---> Création de la zone de pliage
+                if (Common.CurrentTool == Tools.ZoneFoldingH && curComponent == null)
                 {
-                    curComponent = new ZoneCutting(e.X, e.Y, ZoneCuttingType.Horizontal);
+                    curComponent = new ZoneFoldingH(e.X, e.Y, 50);
                 }
 
-                if (Common.CurrentTool == Tools.zonecuttingV && curComponent == null)
+                //---> Création de la zone de pliage
+                if (Common.CurrentTool == Tools.ZoneFoldingV && curComponent == null)
                 {
-                    curComponent = new ZoneCutting(e.X, e.Y, ZoneCuttingType.Vertical);
+                    curComponent = new ZoneFoldingV(e.X, e.Y, 50);
                 }
 
-                if (Common.CurrentTool != Tools.None)
+                //---> Stockage du nouvel élément
+                if (Common.CurrentTool != Tools.None && curComponent != null && curComponent.ModeSelection == ModeSelection.None)
                 {
                     curComponent.ModeSelection = ModeSelection.SelectedMove;
+                    curComponent.ColorIndex = Common.CurrentColorIndex;
                     listComponent.Add(curComponent);
                     SortCuboid();
                 }
@@ -161,6 +167,8 @@ namespace Paper
 
         private void pic_MouseMove(object sender, MouseEventArgs e)
         {
+            Point pointMouse = new Point(e.X, e.Y);
+
             if (e.Button == System.Windows.Forms.MouseButtons.Left && curComponent != null)
             {
                 if (curComponent.ModeSelection == ModeSelection.SelectedMove)
@@ -169,11 +177,18 @@ namespace Paper
                 if (curComponent.ModeSelection == ModeSelection.SelectedResize)
                 {
                     if (curResizeableWidthComponent != null)
+                    {
                         curResizeableWidthComponent.Width = e.X - curComponent.Location.X;
+                        curResizeableWidthComponent.Width = e.X - curComponent.Location.X;
+
+                        if (curResizeableWidthComponent.Width == 0)
+                            curResizeableWidthComponent.Width = 1;
+                    }
 
                     if (curResizeableHeightComponent != null)
                     {
-                        curResizeableHeightComponent.Height = (e.Y - Common.lineMidScreen.P1.Y) / Common.depthUnity;
+                        curResizeableHeightComponent.Height = e.Y - curComponent.Location.Y;
+                            //(e.Y - Common.lineMidScreen.P1.Y) / Common.depthUnity;
 
                         if (curResizeableHeightComponent.Height == 0)
                             curResizeableHeightComponent.Height = 1;
@@ -188,7 +203,7 @@ namespace Paper
             }
 
             //--- Calcul des poignées de redimensionnement
-            if ((Common.CurrentTool == Tools.None || Common.CurrentTool == Tools.Folding) && e.Button == System.Windows.Forms.MouseButtons.None)
+            if (e.Button == System.Windows.Forms.MouseButtons.None)
             {
                 int distanceNearestCuboid = int.MaxValue;
 
@@ -201,9 +216,7 @@ namespace Paper
                         component.ModeSelection = ModeSelection.None;
 
                     //--- Distance move
-                    int distance = Utils.Distance(new Point(e.X, e.Y), component.Location);
-
-                    if (distance < 10 && distance < distanceNearestCuboid)
+                    if (component.RectangleSelection.Contains(pointMouse))
                     {
                         nearestCuboid = component;
                         nearestModeSelection = ModeSelection.NearMove;
@@ -214,9 +227,20 @@ namespace Paper
                     IResizableWidth resizeableWComponent = component as IResizableWidth;
                     IResizableHeight resizeableHComponent = component as IResizableHeight;
 
-                    if (resizeableWComponent != null && resizeableHComponent != null)
+                    IResizable resizeableComponent = component as IResizable;
+
+                    if (resizeableComponent != null)
                     {
-                        distance = Utils.Distance(new Point(e.X, e.Y), new Point(component.Location.X + resizeableWComponent.Width, Common.lineMidScreen.P1.Y + Common.depthUnity * resizeableHComponent.Height));
+                        float distance = float.MaxValue / 2f;
+
+                        //---W Calcul la distance du point à chaque segment limite de redimensionnement
+                        foreach (Line lineResizeLimit in resizeableComponent.LineResizable)
+                        {
+                            //distance = Utils.DistanceToSegment(lineResizeLimit.P1, lineResizeLimit.P2, pointMouse);
+                            distance = Utils.DistancePaAB(pointMouse, lineResizeLimit.P1, lineResizeLimit.P2);
+                        }
+
+                        this.Text = distance.ToString();
 
                         if (distance < 10 && distance < distanceNearestCuboid)
                         {
@@ -230,9 +254,19 @@ namespace Paper
                 if (nearestCuboid != null)
                     nearestCuboid.ModeSelection = nearestModeSelection;
 
-                SortCuboid();
+                if (nearestModeSelection != ModeSelection.None)
+                {
+                    SortCuboid();
 
-                DrawScene();
+                    DrawScene();
+                }
+
+                if (nearestModeSelection == ModeSelection.None)
+                    pic.Cursor = Cursors.Default;
+                else if (nearestModeSelection == ModeSelection.NearResize)
+                    pic.Cursor = Cursors.Hand;
+                else if (nearestModeSelection == ModeSelection.NearMove)
+                    pic.Cursor = Cursors.SizeAll;
             }
             //---
         }
@@ -292,11 +326,35 @@ namespace Paper
             }
         }
 
+        private Color GetColorFromIndex(int index)
+        {
+            if (index == 1)
+                return Color.FromArgb(129, 242, 48);
+            if (index == 2)
+                return Color.FromArgb(42, 211, 211);
+            if (index == 3)
+                return Color.FromArgb(255, 143, 51);
+            if (index == 4)
+                return Color.FromArgb(245, 49, 101);
 
+            else return Color.White;
+        }
+
+        private float[][] GetScalingColorFromIndex(int index)
+        {
+            Color color = GetColorFromIndex(index);
+
+            return new float[][] { 
+                       new float[] {(float)color.R/255f,  0,  0,  0, 0},
+                       new float[] {0,  (float)color.G/255f,  0,  0, 0},
+                       new float[] {0,  0,  (float)color.B/255f,  0, 0},
+                       new float[] {0,  0,  0,  1f, 0},
+                       new float[] {0,  0,  0,  0f, 0},};
+        }
 
         private void DrawScene()
         {
-            gBmp.Clear(Color.White);
+            gBmp.Clear(Color.LightGray);
 
             SolidBrush brush = new SolidBrush(Color.FromArgb(91, 177, 255));
             gBmp.FillRectangle(brush, Common.lineMidScreen.P1.X, Common.lineMidScreen.P1.Y, Common.lineMidScreen.P2.X, 2 * Common.depthUnity);
@@ -314,8 +372,11 @@ namespace Paper
             foreach (ComponentBase component in listComponent)
             {
                 Folding folding = component as Folding;
-                ZoneCutting zoneCutting = component as ZoneCutting;
+                ZoneFoldingV zoneFoldingV = component as ZoneFoldingV;
+                ZoneFoldingH zoneFoldingH = component as ZoneFoldingH;
                 Sensor sensor = component as Sensor;
+
+                pen = new Pen(GetColorFromIndex(component.ColorIndex), 3f);
 
                 #region Folding
                 if (folding != null)
@@ -386,16 +447,57 @@ namespace Paper
                 }
                 #endregion
 
-                #region ZoneCutting
+                #region ZoneFolding
+                if (zoneFoldingV != null)
+                {
+                    DrawImageInRectangle(gBmp, Resources.Grid, zoneFoldingV.Rectangle, component.ColorIndex);
+
+                    gBmp.DrawLine(pen, zoneFoldingV.Location.X, 0, zoneFoldingV.Location.X, Common.ScreenSize.Height);
+                    gBmp.DrawLine(pen, zoneFoldingV.Location.X + zoneFoldingV.Width, 0, zoneFoldingV.Location.X + zoneFoldingV.Width, Common.ScreenSize.Height);
+                }
+                else if (zoneFoldingH != null)
+                {
+                    DrawImageInRectangle(gBmp, Resources.Grid, zoneFoldingH.Rectangle, component.ColorIndex);
+
+                    gBmp.DrawLine(pen, 0, zoneFoldingH.Location.Y, Common.ScreenSize.Width, zoneFoldingH.Location.Y);
+                    gBmp.DrawLine(pen, 0, zoneFoldingH.Location.Y + zoneFoldingH.Height, Common.ScreenSize.Width, zoneFoldingH.Location.Y + zoneFoldingH.Height);
+                }
                 #endregion
 
                 #region Sensor
                 #endregion
-
-
             }
 
             g.DrawImage(bmp, 0, 0);
+        }
+
+        private void DrawImageInRectangle(Graphics g, Image image, Rectangle rectangle, int indexColor)
+        {
+            float[][] colorMatrixElements = GetScalingColorFromIndex(indexColor);
+
+            ColorMatrix colorMatrix = new ColorMatrix(colorMatrixElements);
+
+            ImageAttributes imageAttributes = new ImageAttributes();
+            imageAttributes.SetColorMatrix(
+               colorMatrix,
+               ColorMatrixFlag.Default,
+               ColorAdjustType.Bitmap);
+
+            for (int i = 0; i < (int)Math.Ceiling((double)rectangle.Width / (double)image.Width); i++)
+            {
+                for (int j = 0; j < (int)Math.Ceiling((double)rectangle.Height / (double)image.Height); j++)
+                {
+                    Rectangle rec = new Rectangle(rectangle.X + i * image.Width, rectangle.Y + j * image.Height, Math.Min(image.Width, rectangle.Width), Math.Min(image.Height, rectangle.Height));
+
+                    if ((i + 1) * rec.Width > rectangle.Width)
+                        rec.Width -= (i + 1) * rec.Width - rectangle.Width;
+
+                    if ((j + 1) * rec.Height > rectangle.Height)
+                        rec.Height -= (j + 1) * rec.Height - rectangle.Height;
+
+                    g.DrawImage(image, rec, 0f, 0f, rec.Width, rec.Height, GraphicsUnit.Pixel, imageAttributes);
+                }
+            }
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -420,8 +522,8 @@ namespace Paper
             btnSensorCamera.Checked = false;
             btnSensorNearness.Checked = false;
             btnSensorRemoteControl.Checked = false;
-            btnZoneCuttingH.Checked = false;
-            btnzoneCuttingV.Checked = false;
+            btnZoneFoldingV.Checked = false;
+            btnZoneFoldingH.Checked = false;
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -457,6 +559,11 @@ namespace Paper
         private void btnEnregistrer_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Common.CurrentColorIndex = toolStripComboBox1.SelectedIndex + 1;
         }
     }
 }

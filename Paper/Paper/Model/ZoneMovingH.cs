@@ -5,13 +5,8 @@ using System.Text;
 
 namespace Paper.Model
 {
-    public class Platform : ComponentBase, IResizableWidth, IResizableHeight
+    public class ZoneMovingH : ComponentBase, IResizableWidth, IResizableHeight
     {
-        public Platform(int x, int y)
-            : base(x, y)
-        {
-        }
-
         public int Width
         {
             get;
@@ -22,6 +17,14 @@ namespace Paper.Model
         {
             get;
             set;
+        }
+
+        public ZoneMovingType ZoneMovingType { get; set; }
+
+        public ZoneMovingH(int x, int y)
+            : base(x, y)
+        {
+            this.ZoneMovingType = Model.ZoneMovingType.Horizontal;
         }
 
         public List<Line> LineResizable

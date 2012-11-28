@@ -5,13 +5,8 @@ using System.Text;
 
 namespace Paper.Model
 {
-    public class Platform : ComponentBase, IResizableWidth, IResizableHeight
+    public class ZoneMovingV : ComponentBase, IResizableWidth, IResizableHeight
     {
-        public Platform(int x, int y)
-            : base(x, y)
-        {
-        }
-
         public int Width
         {
             get;
@@ -22,6 +17,14 @@ namespace Paper.Model
         {
             get;
             set;
+        }
+
+        public ZoneMovingType ZoneMovingType { get; set; }
+
+        public ZoneMovingV(int x, int y)
+            : base(x, y)
+        {
+            this.ZoneMovingType = Model.ZoneMovingType.Vertical;
         }
 
         public List<Line> LineResizable
@@ -37,5 +40,11 @@ namespace Paper.Model
                 return new System.Drawing.Rectangle(Location.X, Location.Y, Width, Height);
             }
         }
+    }
+
+    public enum ZoneMovingType
+    {
+        Horizontal,
+        Vertical
     }
 }

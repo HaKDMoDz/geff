@@ -11,5 +11,19 @@ namespace Paper.Model
             : base(x, y)
         {
         }
+
+        public List<Line> LineResizable
+        {
+            get;
+            set;
+        }
+
+        public override System.Drawing.Rectangle RectangleSelection
+        {
+            get
+            {
+                return new System.Drawing.Rectangle(Location.X, Location.Y, 10, 10);
+            }
+        }
     }
 }

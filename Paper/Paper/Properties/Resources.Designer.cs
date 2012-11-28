@@ -67,6 +67,13 @@ namespace Paper.Properties {
             }
         }
         
+        public static System.Drawing.Bitmap Grid {
+            get {
+                object obj = ResourceManager.GetObject("Grid", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         public static System.Drawing.Bitmap Icon_CuttingZoneH {
             get {
                 object obj = ResourceManager.GetObject("Icon_CuttingZoneH", resourceCulture);
