@@ -8,7 +8,23 @@ namespace Paper.Model
 {
     public class Folding : ComponentBase, IResizableWidth, IResizableHeight
     {
-        public int Height { get; set; }
+        int _height = 0;
+        public int Height 
+        {
+            get
+            {
+                return _height;
+            }
+            set
+            {
+                _height = (int)Math.Ceiling((double)value / (double)Common.depthUnity);
+
+                if (_height > 6)
+                    _height = 6;
+                if (_height < 0)
+                    _height = 0;
+            }
+        }
         public int Width { get; set; }
 
         public List<Rectangle> ListCutting { get; set; }
@@ -37,17 +53,41 @@ namespace Paper.Model
             }
         }
 
-        public List<Line> LineResizable
+        public List<Line> LineResizableWidth
         {
-            get;
-            set;
+            get
+            {
+                List<Line> _lineResizeable = new List<Line>();
+
+                Line line = new Line(Location.X + Width, Location.Y - Height * Common.depthUnity, Location.X + Width, Common.lineMidScreen.P1.Y + (Height * Common.depthUnity));
+
+                _lineResizeable.Add(line);
+
+                return _lineResizeable;
+            }
+        }
+
+        public List<Line> LineResizableHeight
+        {
+            get
+            {
+                List<Line> _lineResizeable = new List<Line>();
+
+                Line line1 = new Line(Location.X, Location.Y, Location.X + Width, Location.Y);
+                Line line2 = new Line(Location.X, Common.lineMidScreen.P1.Y + Height * Common.depthUnity, Location.X + Width, Common.lineMidScreen.P1.Y + Height * Common.depthUnity);
+
+                _lineResizeable.Add(line1);
+                _lineResizeable.Add(line2);
+
+                return _lineResizeable;
+            }
         }
 
         public override System.Drawing.Rectangle RectangleSelection
         {
             get
             {
-                return new System.Drawing.Rectangle(Location.X, Location.Y, Width, Height);
+                return new System.Drawing.Rectangle(Location.X, Location.Y - Height * Common.depthUnity, Width, Common.lineMidScreen.P1.Y - Location.Y + 2*(Height * Common.depthUnity));
             }
         }
     }
@@ -100,8 +140,10 @@ namespace Paper.Model
     {
         None,
         NearMove,
-        NearResize,
+        NearResizeWidth,
+        NearResizeHeight,
         SelectedMove,
-        SelectedResize
+        SelectedResizeWidth,
+        SelectedResizeHeight
     }
 }

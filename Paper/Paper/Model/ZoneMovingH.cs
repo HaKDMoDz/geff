@@ -27,10 +27,28 @@ namespace Paper.Model
             this.ZoneMovingType = Model.ZoneMovingType.Horizontal;
         }
 
-        public List<Line> LineResizable
+        public List<Line> LineResizableWidth
         {
-            get;
-            set;
+            get
+            {
+                List<Line> _lineResizeable = new List<Line>();
+                Line line = new Line(0, Location.Y + Height, Common.ScreenSize.Width, Location.Y + Height);
+                _lineResizeable.Add(line);
+
+                return _lineResizeable;
+            }
+        }
+
+        public List<Line> LineResizableHeight
+        {
+            get
+            {
+                List<Line> _lineResizeable = new List<Line>();
+                Line line = new Line(0, Location.Y + Height, Common.ScreenSize.Width, Location.Y + Height);
+                _lineResizeable.Add(line);
+
+                return _lineResizeable;
+            }
         }
 
         public override System.Drawing.Rectangle RectangleSelection

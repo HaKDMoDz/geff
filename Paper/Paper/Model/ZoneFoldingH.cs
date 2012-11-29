@@ -27,14 +27,12 @@ namespace Paper.Model
             this.Height = size;
         }
 
-        public List<Line> LineResizable
+        public List<Line> LineResizableHeight
         {
             get
             {
                 List<Line> _lineResizeable = new List<Line>();
-
                 Line line = new Line(0, Location.Y + Height, Common.ScreenSize.Width, Location.Y + Height);
-
                 _lineResizeable.Add(line);
 
                 return _lineResizeable;

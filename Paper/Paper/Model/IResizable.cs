@@ -7,6 +7,5 @@ namespace Paper.Model
 {
     interface IResizable
     {
-        List<Line> LineResizable { get; }
     }
 }

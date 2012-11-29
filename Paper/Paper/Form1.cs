@@ -44,6 +44,11 @@ namespace Paper
 
         IResizableWidth curResizeableWidthComponent = null;
         IResizableHeight curResizeableHeightComponent = null;
+
+        int prevWidth = 0;
+        int prevHeight = 0;
+        Point prevLocation;
+        Point initialPointMouse;
         //---
 
         public Form1()
@@ -90,6 +95,8 @@ namespace Paper
 
         private void pic_MouseDown(object sender, MouseEventArgs e)
         {
+            initialPointMouse = e.Location;
+
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 //--- Sélection des éléments pour le déplacement et le redimensionnement
@@ -99,12 +106,19 @@ namespace Paper
                     {
                         component.ModeSelection = ModeSelection.SelectedMove;
                         curComponent = component;
+                        prevLocation = component.Location;
                     }
-
-                    if (component.ModeSelection == ModeSelection.NearResize)
+                    else if (component.ModeSelection == ModeSelection.NearResizeWidth)
                     {
-                        component.ModeSelection = ModeSelection.SelectedResize;
+                        component.ModeSelection = ModeSelection.SelectedResizeWidth;
                         curComponent = component;
+                        prevWidth = ((IResizableWidth)component).Width;
+                    }
+                    else if (component.ModeSelection == ModeSelection.NearResizeHeight)
+                    {
+                        component.ModeSelection = ModeSelection.SelectedResizeHeight;
+                        curComponent = component;
+                        prevHeight = ((IResizableHeight)component).Height;
                     }
                 }
                 //---
@@ -130,6 +144,7 @@ namespace Paper
                 //---> Stockage du nouvel élément
                 if (Common.CurrentTool != Tools.None && curComponent != null && curComponent.ModeSelection == ModeSelection.None)
                 {
+                    prevLocation = curComponent.Location;
                     curComponent.ModeSelection = ModeSelection.SelectedMove;
                     curComponent.ColorIndex = Common.CurrentColorIndex;
                     listComponent.Add(curComponent);
@@ -169,33 +184,39 @@ namespace Paper
         {
             Point pointMouse = new Point(e.X, e.Y);
 
+            this.Text = pointMouse.ToString();
+
             if (e.Button == System.Windows.Forms.MouseButtons.Left && curComponent != null)
             {
                 if (curComponent.ModeSelection == ModeSelection.SelectedMove)
-                    curComponent.Location = new Point(e.X, e.Y);
-
-                if (curComponent.ModeSelection == ModeSelection.SelectedResize)
+                {
+                    curComponent.Location = new Point(prevLocation.X + pointMouse.X - initialPointMouse.X,
+                                                      prevLocation.Y + pointMouse.Y - initialPointMouse.Y);
+                }
+                else if (curComponent.ModeSelection == ModeSelection.SelectedResizeWidth)
                 {
                     if (curResizeableWidthComponent != null)
                     {
-                        curResizeableWidthComponent.Width = e.X - curComponent.Location.X;
-                        curResizeableWidthComponent.Width = e.X - curComponent.Location.X;
+                        curResizeableWidthComponent.Width = prevWidth + pointMouse.X - initialPointMouse.X;
 
-                        if (curResizeableWidthComponent.Width == 0)
+                        if (curResizeableWidthComponent.Width <= 0)
                             curResizeableWidthComponent.Width = 1;
                     }
-
+                }
+                else if (curComponent.ModeSelection == ModeSelection.SelectedResizeHeight)
+                {
                     if (curResizeableHeightComponent != null)
                     {
-                        curResizeableHeightComponent.Height = e.Y - curComponent.Location.Y;
-                            //(e.Y - Common.lineMidScreen.P1.Y) / Common.depthUnity;
+                        curResizeableHeightComponent.Height = prevHeight + pointMouse.Y - initialPointMouse.Y;
 
-                        if (curResizeableHeightComponent.Height == 0)
+                        //(e.Y - Common.lineMidScreen.P1.Y) / Common.depthUnity;
+
+                        if (curResizeableHeightComponent.Height <= 0)
                             curResizeableHeightComponent.Height = 1;
                     }
-
-                    SortCuboid();
                 }
+
+                SortCuboid();
 
                 CalcCuboidIntersections();
 
@@ -227,25 +248,37 @@ namespace Paper
                     IResizableWidth resizeableWComponent = component as IResizableWidth;
                     IResizableHeight resizeableHComponent = component as IResizableHeight;
 
-                    IResizable resizeableComponent = component as IResizable;
-
-                    if (resizeableComponent != null)
+                    if (resizeableWComponent != null)
                     {
                         float distance = float.MaxValue / 2f;
 
-                        //---W Calcul la distance du point à chaque segment limite de redimensionnement
-                        foreach (Line lineResizeLimit in resizeableComponent.LineResizable)
+                        //--- Calcul la distance du point à chaque segment limite de redimensionnement
+                        foreach (Line lineResizeLimit in resizeableWComponent.LineResizableWidth)
                         {
-                            //distance = Utils.DistanceToSegment(lineResizeLimit.P1, lineResizeLimit.P2, pointMouse);
                             distance = Utils.DistancePaAB(pointMouse, lineResizeLimit.P1, lineResizeLimit.P2);
                         }
-
-                        this.Text = distance.ToString();
 
                         if (distance < 10 && distance < distanceNearestCuboid)
                         {
                             nearestCuboid = component;
-                            nearestModeSelection = ModeSelection.NearResize;
+                            nearestModeSelection = ModeSelection.NearResizeWidth;
+                        }
+                    }
+
+                    if (resizeableHComponent != null)
+                    {
+                        float distance = float.MaxValue / 2f;
+
+                        //--- Calcul la distance du point à chaque segment limite de redimensionnement
+                        foreach (Line lineResizeLimit in resizeableHComponent.LineResizableHeight)
+                        {
+                            distance = Utils.DistancePaAB(pointMouse, lineResizeLimit.P1, lineResizeLimit.P2);
+                        }
+
+                        if (distance < 10 && distance < distanceNearestCuboid)
+                        {
+                            nearestCuboid = component;
+                            nearestModeSelection = ModeSelection.NearResizeHeight;
                         }
                     }
                     //---
@@ -263,8 +296,10 @@ namespace Paper
 
                 if (nearestModeSelection == ModeSelection.None)
                     pic.Cursor = Cursors.Default;
-                else if (nearestModeSelection == ModeSelection.NearResize)
-                    pic.Cursor = Cursors.Hand;
+                else if (nearestModeSelection == ModeSelection.NearResizeWidth)
+                    pic.Cursor = Cursors.SizeWE;
+                else if (nearestModeSelection == ModeSelection.NearResizeHeight)
+                    pic.Cursor = Cursors.SizeNS;
                 else if (nearestModeSelection == ModeSelection.NearMove)
                     pic.Cursor = Cursors.SizeAll;
             }
@@ -354,15 +389,15 @@ namespace Paper
 
         private void DrawScene()
         {
-            gBmp.Clear(Color.LightGray);
+            gBmp.Clear(Color.FromArgb(50, 50, 50));
 
-            SolidBrush brush = new SolidBrush(Color.FromArgb(91, 177, 255));
+            SolidBrush brush = new SolidBrush(Color.FromArgb(65, 65, 65));
             gBmp.FillRectangle(brush, Common.lineMidScreen.P1.X, Common.lineMidScreen.P1.Y, Common.lineMidScreen.P2.X, 2 * Common.depthUnity);
 
-            brush = new SolidBrush(Color.FromArgb(128, 194, 255));
+            brush = new SolidBrush(Color.FromArgb(75, 75, 75));
             gBmp.FillRectangle(brush, Common.lineMidScreen.P1.X, Common.lineMidScreen.P1.Y + 2 * Common.depthUnity, Common.lineMidScreen.P2.X, 2 * Common.depthUnity);
 
-            brush = new SolidBrush(Color.FromArgb(181, 219, 255));
+            brush = new SolidBrush(Color.FromArgb(85, 85, 85));
             gBmp.FillRectangle(brush, Common.lineMidScreen.P1.X, Common.lineMidScreen.P1.Y + 4 * Common.depthUnity, Common.lineMidScreen.P2.X, 2 * Common.depthUnity);
 
             gBmp.DrawLine(penDotFar, Common.lineMidScreen.P1, Common.lineMidScreen.P2);
@@ -376,7 +411,7 @@ namespace Paper
                 ZoneFoldingH zoneFoldingH = component as ZoneFoldingH;
                 Sensor sensor = component as Sensor;
 
-                pen = new Pen(GetColorFromIndex(component.ColorIndex), 3f);
+                pen = new Pen(GetColorFromIndex(component.ColorIndex), 5f);
 
                 #region Folding
                 if (folding != null)
@@ -432,15 +467,15 @@ namespace Paper
                         gBmp.DrawLine(penDotFar, lineFolding.P1, lineFolding.P2);
                     }
 
-                    if (folding.ModeSelection != ModeSelection.None)
-                    {
-                        gBmp.DrawImage(Resources.Move, folding.Location.X - Resources.Move.Width / 2, folding.Location.Y - Resources.Move.Height / 2);
-                        gBmp.DrawImage(Resources.Circle, folding.Location.X - Resources.Circle.Width / 2, folding.Location.Y - Resources.Circle.Height / 2);
+                    //if (folding.ModeSelection != ModeSelection.None)
+                    //{
+                    //    gBmp.DrawImage(Resources.Move, folding.Location.X - Resources.Move.Width / 2, folding.Location.Y - Resources.Move.Height / 2);
+                    //    gBmp.DrawImage(Resources.Circle, folding.Location.X - Resources.Circle.Width / 2, folding.Location.Y - Resources.Circle.Height / 2);
 
-                        gBmp.DrawImage(Resources.Resize, folding.Location.X + folding.Width - Resources.Resize.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height - Resources.Resize.Height / 2);
-                        gBmp.DrawImage(Resources.Circle, folding.Location.X + folding.Width - Resources.Circle.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height - Resources.Circle.Height / 2);
-                    }
-                    else
+                    //    gBmp.DrawImage(Resources.Resize, folding.Location.X + folding.Width - Resources.Resize.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height - Resources.Resize.Height / 2);
+                    //    gBmp.DrawImage(Resources.Circle, folding.Location.X + folding.Width - Resources.Circle.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height - Resources.Circle.Height / 2);
+                    //}
+                    //else
                     {
                         gBmp.DrawRectangle(Pens.Blue, folding.Location.X - 1, folding.Location.Y - 1, 2, 2);
                     }
