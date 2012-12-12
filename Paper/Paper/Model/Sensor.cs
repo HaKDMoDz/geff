@@ -19,7 +19,7 @@ namespace Paper.Model
         {
             get
             {
-                return new System.Drawing.Rectangle(Location.X, Location.Y, 50, 50);
+                return new System.Drawing.Rectangle(Location.X, Location.Y, 32, 32);
             }
         }
     }

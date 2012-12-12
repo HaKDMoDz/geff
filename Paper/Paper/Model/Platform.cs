@@ -7,11 +7,6 @@ namespace Paper.Model
 {
     public class Platform : ComponentBase, IResizableWidth, IResizableHeight
     {
-        public Platform(int x, int y)
-            : base(x, y)
-        {
-        }
-
         public int Width
         {
             get;
@@ -23,13 +18,20 @@ namespace Paper.Model
             get;
             set;
         }
+        
+        public Platform(int x, int y, int width, int height)
+            : base(x, y)
+        {
+            this.Width = width;
+            this.Height = height;
+        }
 
         public List<Line> LineResizableWidth
         {
             get
             {
                 List<Line> _lineResizeable = new List<Line>();
-                Line line = new Line(0, Location.Y + Height, Common.ScreenSize.Width, Location.Y + Height);
+                Line line = new Line(Location.X + this.Width, Location.Y, Location.X + this.Width, Location.Y + Height);
                 _lineResizeable.Add(line);
 
                 return _lineResizeable;
@@ -41,7 +43,7 @@ namespace Paper.Model
             get
             {
                 List<Line> _lineResizeable = new List<Line>();
-                Line line = new Line(0, Location.Y + Height, Common.ScreenSize.Width, Location.Y + Height);
+                Line line = new Line(Location.X, Location.Y + Height, Location.X + this.Width, Location.Y + Height);
                 _lineResizeable.Add(line);
 
                 return _lineResizeable;

@@ -21,6 +21,8 @@ namespace Paper
         Pen penDotFar;
         Pen penDotNear;
 
+        ComponentBase nearestCuboid = null;
+
         List<Rec> listRec = new List<Rec>();
         List<ComponentBase> listComponent = new List<ComponentBase>();
 
@@ -129,16 +131,54 @@ namespace Paper
                     curComponent = new Folding(e.X, e.Y, 50, 1);
                 }
 
-                //---> Création de la zone de pliage
+                //---> Création de la zone de pliage H
                 if (Common.CurrentTool == Tools.ZoneFoldingH && curComponent == null)
                 {
                     curComponent = new ZoneFoldingH(e.X, e.Y, 50);
                 }
 
-                //---> Création de la zone de pliage
+                //---> Création de la zone de pliage V
                 if (Common.CurrentTool == Tools.ZoneFoldingV && curComponent == null)
                 {
                     curComponent = new ZoneFoldingV(e.X, e.Y, 50);
+                }
+
+                //---> Création de la zone de déplacement H
+                if (Common.CurrentTool == Tools.ZoneMovingH && curComponent == null)
+                {
+                    curComponent = new ZoneMovingH(e.X, e.Y, 100, 50);
+                }
+
+                //---> Création de la zone de déplacement V
+                if (Common.CurrentTool == Tools.ZoneMovingV && curComponent == null)
+                {
+                    curComponent = new ZoneMovingV(e.X, e.Y, 50, 100);
+                }
+
+                //---> Création de la platforme
+                if (Common.CurrentTool == Tools.Platform && curComponent == null)
+                {
+                    curComponent = new Platform(e.X, e.Y, 100, 50);
+                }
+
+                if (Common.CurrentTool == Tools.SensorButton && curComponent == null)
+                {
+                    curComponent = new Sensor(e.X, e.Y, SensorType.Button);
+                }
+
+                if (Common.CurrentTool == Tools.SensorCamera && curComponent == null)
+                {
+                    curComponent = new Sensor(e.X, e.Y, SensorType.Camera);
+                }
+
+                if (Common.CurrentTool == Tools.SensorNearness && curComponent == null)
+                {
+                    curComponent = new Sensor(e.X, e.Y, SensorType.Nearness);
+                }
+
+                if (Common.CurrentTool == Tools.SensorRemoteControl && curComponent == null)
+                {
+                    curComponent = new Sensor(e.X, e.Y, SensorType.RemoteControl);
                 }
 
                 //---> Stockage du nouvel élément
@@ -164,7 +204,7 @@ namespace Paper
             }
 
             //---> Suppression du cuboid proche
-            if (Common.CurrentTool == Tools.Folding && e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 for (int i = 0; i < listComponent.Count; i++)
                 {
@@ -228,7 +268,6 @@ namespace Paper
             {
                 int distanceNearestCuboid = int.MaxValue;
 
-                ComponentBase nearestCuboid = null;
                 ModeSelection nearestModeSelection = ModeSelection.None;
 
                 foreach (ComponentBase component in listComponent)
@@ -400,7 +439,7 @@ namespace Paper
             brush = new SolidBrush(Color.FromArgb(85, 85, 85));
             gBmp.FillRectangle(brush, Common.lineMidScreen.P1.X, Common.lineMidScreen.P1.Y + 4 * Common.depthUnity, Common.lineMidScreen.P2.X, 2 * Common.depthUnity);
 
-            gBmp.DrawLine(penDotFar, Common.lineMidScreen.P1, Common.lineMidScreen.P2);
+            //gBmp.DrawLine(penDotFar, Common.lineMidScreen.P1, Common.lineMidScreen.P2);
 
             Pen pen = Pens.Black;
 
@@ -409,6 +448,9 @@ namespace Paper
                 Folding folding = component as Folding;
                 ZoneFoldingV zoneFoldingV = component as ZoneFoldingV;
                 ZoneFoldingH zoneFoldingH = component as ZoneFoldingH;
+                ZoneMovingV zoneMovingV = component as ZoneMovingV;
+                ZoneMovingH zoneMovingH = component as ZoneMovingH;
+                Platform platform = component as Platform;
                 Sensor sensor = component as Sensor;
 
                 pen = new Pen(GetColorFromIndex(component.ColorIndex), 5f);
@@ -499,8 +541,64 @@ namespace Paper
                 }
                 #endregion
 
-                #region Sensor
+                #region ZoneMoving
+                if (zoneMovingV != null)
+                {
+                    DrawImageInRectangle(gBmp, Resources.GridV, zoneMovingV.RectangleSelection, component.ColorIndex);
+
+                    gBmp.DrawRectangle(pen, zoneMovingV.RectangleSelection);
+                }
+                else if (zoneMovingH != null)
+                {
+                    DrawImageInRectangle(gBmp, Resources.GridH, zoneMovingH.RectangleSelection, component.ColorIndex);
+
+                    gBmp.DrawRectangle(pen, zoneMovingH.RectangleSelection);
+                }
                 #endregion
+
+                #region Platform
+                if (platform != null)
+                {
+                    gBmp.DrawLine(pen, platform.Location.X, platform.Location.Y, platform.Location.X, platform.Location.Y + platform.Height);
+                    gBmp.DrawLine(pen, platform.Location.X-2, platform.Location.Y + platform.Height, platform.Location.X + platform.Width+3, platform.Location.Y + platform.Height);
+                    gBmp.DrawLine(pen, platform.Location.X + platform.Width, platform.Location.Y, platform.Location.X + platform.Width, platform.Location.Y + platform.Height);
+                }
+                #endregion
+
+                #region Sensor
+                if (sensor != null)
+                {
+                    Image sensorImage = null;
+
+                    switch (sensor.SensorType)
+                    {
+                        case SensorType.Button:
+                            sensorImage = Resources.Icon_SensorButton;
+                            break;
+                        case SensorType.Camera:
+                            sensorImage = Resources.Icon_SensorCamera;
+                            break;
+                        case SensorType.Nearness:
+                            sensorImage = Resources.Icon_SensorNearness;
+                            break;
+                        case SensorType.RemoteControl:
+                            sensorImage = Resources.Icon_SensorRemoteControl;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    DrawImageInRectangle(gBmp, sensorImage, sensor.RectangleSelection, component.ColorIndex);
+                }
+                #endregion
+
+                if (component.ModeSelection != ModeSelection.None)
+                {
+                    pen.Color = Color.White;
+                    pen.DashStyle = DashStyle.Dot;
+                    pen.Width = 7f;
+                    gBmp.DrawRectangle(pen, component.RectangleSelection);
+                }
             }
 
             g.DrawImage(bmp, 0, 0);
@@ -599,6 +697,12 @@ namespace Paper
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Common.CurrentColorIndex = toolStripComboBox1.SelectedIndex + 1;
+
+            if (nearestCuboid != null)
+            {
+                nearestCuboid.ColorIndex = Common.CurrentColorIndex;
+                DrawScene();
+            }
         }
     }
 }

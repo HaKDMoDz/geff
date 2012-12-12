@@ -21,10 +21,12 @@ namespace Paper.Model
 
         public ZoneMovingType ZoneMovingType { get; set; }
 
-        public ZoneMovingV(int x, int y)
+        public ZoneMovingV(int x, int y, int width, int height)
             : base(x, y)
         {
             this.ZoneMovingType = Model.ZoneMovingType.Vertical;
+            this.Width = width;
+            this.Height = height;
         }
 
         public List<Line> LineResizableWidth
@@ -32,7 +34,7 @@ namespace Paper.Model
             get
             {
                 List<Line> _lineResizeable = new List<Line>();
-                Line line = new Line(0, Location.Y + Height, Common.ScreenSize.Width, Location.Y + Height);
+                Line line = new Line(Location.X + this.Width, Location.Y, Location.X + this.Width, Location.Y + Height);
                 _lineResizeable.Add(line);
 
                 return _lineResizeable;
@@ -44,7 +46,7 @@ namespace Paper.Model
             get
             {
                 List<Line> _lineResizeable = new List<Line>();
-                Line line = new Line(0, Location.Y + Height, Common.ScreenSize.Width, Location.Y + Height);
+                Line line = new Line(Location.X, Location.Y + Height, Location.X + this.Width, Location.Y + Height);
                 _lineResizeable.Add(line);
 
                 return _lineResizeable;
