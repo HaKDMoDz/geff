@@ -81,8 +81,8 @@
             this.btnZoneFoldingV,
             this.btnZoneFoldingH,
             this.toolStripSeparator1,
-            this.btnMovingZoneH,
             this.btnMovingzoneV,
+            this.btnMovingZoneH,
             this.toolStripSeparator3,
             this.btnFolding,
             this.btnPlatform,
@@ -389,7 +389,7 @@
             // 
             // pic
             // 
-            this.pic.BackColor = System.Drawing.Color.White;
+            this.pic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
             this.pic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pic.Location = new System.Drawing.Point(0, 0);
             this.pic.Name = "pic";

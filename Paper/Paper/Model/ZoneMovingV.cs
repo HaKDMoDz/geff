@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Paper.Model
 {
+    [Serializable()]
     public class ZoneMovingV : ComponentBase, IResizableWidth, IResizableHeight
     {
         public int Width
@@ -21,6 +23,10 @@ namespace Paper.Model
 
         public ZoneMovingType ZoneMovingType { get; set; }
 
+        public ZoneMovingV()
+        {
+        }
+
         public ZoneMovingV(int x, int y, int width, int height)
             : base(x, y)
         {
@@ -29,6 +35,7 @@ namespace Paper.Model
             this.Height = height;
         }
 
+        [XmlIgnore]
         public List<Line> LineResizableWidth
         {
             get
@@ -41,6 +48,7 @@ namespace Paper.Model
             }
         }
 
+        [XmlIgnore]
         public List<Line> LineResizableHeight
         {
             get
@@ -53,6 +61,7 @@ namespace Paper.Model
             }
         }
 
+        [XmlIgnore]
         public override System.Drawing.Rectangle RectangleSelection
         {
             get

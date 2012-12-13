@@ -10,6 +10,9 @@ using System.Drawing.Drawing2D;
 using Paper.Properties;
 using Paper.Model;
 using System.Drawing.Imaging;
+using System.Xml.Serialization;
+using System.IO;
+using System.Xml;
 
 namespace Paper
 {
@@ -21,12 +24,9 @@ namespace Paper
         Pen penDotFar;
         Pen penDotNear;
 
+        Scene scene = new Scene();
+
         ComponentBase nearestCuboid = null;
-
-        List<Rec> listRec = new List<Rec>();
-        List<ComponentBase> listComponent = new List<ComponentBase>();
-
-        //---
         ComponentBase _curComponent = null;
 
         ComponentBase curComponent
@@ -51,7 +51,6 @@ namespace Paper
         int prevHeight = 0;
         Point prevLocation;
         Point initialPointMouse;
-        //---
 
         public Form1()
         {
@@ -87,9 +86,9 @@ namespace Paper
             Common.lineMidScreen.P2 = new Point(pic.Width, pic.Height * 75 / 100);
             Common.ScreenSize = new Size(pic.Width, pic.Height);
 
-            penDotFar = new Pen(Color.Green, 1);
+            penDotFar = new Pen(Color.White, 2f);
             penDotFar.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-            penDotNear = new Pen(Color.Blue, 1);
+            penDotNear = new Pen(Color.White, 2f);
             penDotNear.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
 
             DrawScene();
@@ -102,7 +101,7 @@ namespace Paper
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 //--- Sélection des éléments pour le déplacement et le redimensionnement
-                foreach (ComponentBase component in listComponent)
+                foreach (ComponentBase component in scene.listComponent)
                 {
                     if (component.ModeSelection == ModeSelection.NearMove)
                     {
@@ -187,7 +186,7 @@ namespace Paper
                     prevLocation = curComponent.Location;
                     curComponent.ModeSelection = ModeSelection.SelectedMove;
                     curComponent.ColorIndex = Common.CurrentColorIndex;
-                    listComponent.Add(curComponent);
+                    scene.listComponent.Add(curComponent);
                     SortCuboid();
                 }
 
@@ -206,11 +205,11 @@ namespace Paper
             //---> Suppression du cuboid proche
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
-                for (int i = 0; i < listComponent.Count; i++)
+                for (int i = 0; i < scene.listComponent.Count; i++)
                 {
-                    if (listComponent[i].ModeSelection == ModeSelection.NearMove)
+                    if (scene.listComponent[i].ModeSelection == ModeSelection.NearMove)
                     {
-                        this.listComponent.RemoveAt(i);
+                        this.scene.listComponent.RemoveAt(i);
                         i--;
                     }
                 }
@@ -270,7 +269,7 @@ namespace Paper
 
                 ModeSelection nearestModeSelection = ModeSelection.None;
 
-                foreach (ComponentBase component in listComponent)
+                foreach (ComponentBase component in scene.listComponent)
                 {
                     if (component.ModeSelection != ModeSelection.SelectedMove)
                         component.ModeSelection = ModeSelection.None;
@@ -353,16 +352,16 @@ namespace Paper
         private void SortCuboid(bool handleSelection)
         {
             if (handleSelection)
-                listComponent.Sort(new CuboidComparerWithSelection());
+                scene.listComponent.Sort(new CuboidComparerWithSelection());
             else
-                listComponent.Sort(new CuboidComparer());
+                scene.listComponent.Sort(new CuboidComparer());
         }
 
         private void CalcCuboidIntersections()
         {
             SortCuboid(false);
 
-            foreach (ComponentBase component in listComponent)
+            foreach (ComponentBase component in scene.listComponent)
             {
                 Folding folding = component as Folding;
 
@@ -371,7 +370,7 @@ namespace Paper
                     //Rectangle folding.RecTop = new Rectangle(folding.Location.X, folding.Location.Y - folding.Depth * Common.depthUnity, folding.Width, folding.Depth * Common.depthUnity);
                     folding.ListCutting = new List<Rectangle>();
 
-                    foreach (ComponentBase innerfolding in listComponent)
+                    foreach (ComponentBase innerfolding in scene.listComponent)
                     {
                         Folding innerFolding = component as Folding;
 
@@ -443,7 +442,7 @@ namespace Paper
 
             Pen pen = Pens.Black;
 
-            foreach (ComponentBase component in listComponent)
+            foreach (ComponentBase component in scene.listComponent)
             {
                 Folding folding = component as Folding;
                 ZoneFoldingV zoneFoldingV = component as ZoneFoldingV;
@@ -459,33 +458,36 @@ namespace Paper
                 if (folding != null)
                 {
 
-                    gBmp.FillRectangle(Brushes.White, folding.Location.X, folding.Location.Y - Common.depthUnity * folding.Height, folding.Width, 2 * Common.depthUnity * folding.Height + Common.lineMidScreen.P1.Y - folding.Location.Y);
 
-                    brush = new SolidBrush(Color.FromArgb(91, 177, 255));
+                    brush = new SolidBrush(Color.FromArgb(65, 65, 65));
                     int HeightFactor = folding.Height > 1 ? 2 : 1;
                     gBmp.FillRectangle(brush, folding.Location.X, folding.Location.Y - folding.Height * Common.depthUnity, folding.Width, HeightFactor * Common.depthUnity);
 
                     if (folding.Height > 2)
                     {
-                        brush = new SolidBrush(Color.FromArgb(128, 194, 255));
+                        brush = new SolidBrush(Color.FromArgb(75, 75, 75));
                         HeightFactor = folding.Height > 3 ? 2 : 1;
                         gBmp.FillRectangle(brush, folding.Location.X, folding.Location.Y + (2 - folding.Height) * Common.depthUnity, folding.Width, HeightFactor * Common.depthUnity);
                     }
 
                     if (folding.Height > 4)
                     {
-                        brush = new SolidBrush(Color.FromArgb(181, 219, 255));
+                        brush = new SolidBrush(Color.FromArgb(85, 85, 85));
                         HeightFactor = folding.Height > 5 ? 2 : 1;
                         gBmp.FillRectangle(brush, folding.Location.X, folding.Location.Y + (4 - folding.Height) * Common.depthUnity, folding.Width, HeightFactor * Common.depthUnity);
                     }
 
+                    brush.Color = Color.FromArgb(brush.Color.R + 20, brush.Color.G + 20, brush.Color.B + 20);
+
+                    gBmp.FillRectangle(brush, folding.Location.X, folding.Location.Y, folding.Width, 1 * Common.depthUnity * folding.Height + Common.lineMidScreen.P1.Y - folding.Location.Y);
+
                     gBmp.DrawLine(pen, folding.Location.X, folding.Location.Y - Common.depthUnity * folding.Height, folding.Location.X, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height);
                     gBmp.DrawLine(pen, folding.Location.X + folding.Width, folding.Location.Y - Common.depthUnity * folding.Height, folding.Location.X + folding.Width, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height);
 
-                    gBmp.DrawLine(penDotNear, folding.Location.X, folding.Location.Y, folding.Location.X + folding.Width, folding.Location.Y);
+                    //gBmp.DrawLine(penDotNear, folding.Location.X, folding.Location.Y, folding.Location.X + folding.Width, folding.Location.Y);
 
-                    gBmp.DrawLine(penDotFar, folding.Location.X, folding.Location.Y - Common.depthUnity * folding.Height, folding.Location.X + folding.Width, folding.Location.Y - Common.depthUnity * folding.Height);
-                    gBmp.DrawLine(penDotFar, folding.Location.X, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height, folding.Location.X + folding.Width, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height);
+                    //gBmp.DrawLine(penDotFar, folding.Location.X, folding.Location.Y - Common.depthUnity * folding.Height, folding.Location.X + folding.Width, folding.Location.Y - Common.depthUnity * folding.Height);
+                    //gBmp.DrawLine(penDotFar, folding.Location.X, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height, folding.Location.X + folding.Width, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height);
 
 
                     foreach (Rectangle recCutting in folding.ListCutting)
@@ -519,7 +521,7 @@ namespace Paper
                     //}
                     //else
                     {
-                        gBmp.DrawRectangle(Pens.Blue, folding.Location.X - 1, folding.Location.Y - 1, 2, 2);
+                        //gBmp.DrawRectangle(Pens.Blue, folding.Location.X - 1, folding.Location.Y - 1, 2, 2);
                     }
                 }
                 #endregion
@@ -560,7 +562,7 @@ namespace Paper
                 if (platform != null)
                 {
                     gBmp.DrawLine(pen, platform.Location.X, platform.Location.Y, platform.Location.X, platform.Location.Y + platform.Height);
-                    gBmp.DrawLine(pen, platform.Location.X-2, platform.Location.Y + platform.Height, platform.Location.X + platform.Width+3, platform.Location.Y + platform.Height);
+                    gBmp.DrawLine(pen, platform.Location.X - 2, platform.Location.Y + platform.Height, platform.Location.X + platform.Width + 3, platform.Location.Y + platform.Height);
                     gBmp.DrawLine(pen, platform.Location.X + platform.Width, platform.Location.Y, platform.Location.X + platform.Width, platform.Location.Y + platform.Height);
                 }
                 #endregion
@@ -638,7 +640,7 @@ namespace Paper
             //---> Suppression du cuboid courant
             if (e.KeyCode == Keys.Delete && curComponent != null)
             {
-                this.listComponent.Remove(curComponent);
+                this.scene.listComponent.Remove(curComponent);
                 curComponent = null;
                 DrawScene();
             }
@@ -680,18 +682,57 @@ namespace Paper
         private void btnNew_Click(object sender, EventArgs e)
         {
             //---> RAZ de la scène
-            listComponent = new List<ComponentBase>();
+            scene.listComponent = new List<ComponentBase>();
             DrawScene();
         }
 
         private void btnOuvrir_Click(object sender, EventArgs e)
         {
+            try
+            {
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Filter = "Papier (*.ppr)|*.ppr";
 
+                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(Scene), new Type[] 
+                    { typeof(ComponentBase), typeof(Folding), typeof(Link), typeof(Platform), typeof(Sensor), typeof(ZoneFoldingH), typeof(ZoneFoldingV), typeof(ZoneMovingH) , typeof(ZoneMovingV)
+                    });
+
+                    XmlReader reader = new XmlTextReader(dlg.FileName);
+
+                    scene = (Scene)serializer.Deserialize(reader);
+                    reader.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void btnEnregistrer_Click(object sender, EventArgs e)
         {
+            try
+            {
+                SaveFileDialog dlg = new SaveFileDialog();
+                dlg.Filter = "Papier (*.ppr)|*.ppr";
 
+                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(Scene), new Type[] 
+                    { typeof(ComponentBase), typeof(Folding), typeof(Link), typeof(Platform), typeof(Sensor), typeof(ZoneFoldingH), typeof(ZoneFoldingV), typeof(ZoneMovingH) , typeof(ZoneMovingV)
+                    });
+
+                    XmlWriter writer = new XmlTextWriter(dlg.FileName, Encoding.UTF8);
+                    serializer.Serialize(writer, scene);
+                    writer.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)

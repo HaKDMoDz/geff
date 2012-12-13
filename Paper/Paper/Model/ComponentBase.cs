@@ -6,6 +6,7 @@ using System.Drawing;
 
 namespace Paper.Model
 {
+    [Serializable()]
     public abstract class ComponentBase
     {
         public Point Location { get; set; }
@@ -13,6 +14,10 @@ namespace Paper.Model
         public DateTime CreationDate { get; set; }
         public int ColorIndex { get; set; }
         public abstract Rectangle RectangleSelection { get; }
+
+        public ComponentBase()
+        {
+        }
 
         public ComponentBase(int x, int y)
         {

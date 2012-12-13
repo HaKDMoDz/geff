@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Paper.Model
 {
+    [Serializable()]
     public class ZoneFoldingH : ComponentBase, IResizableHeight
     {
         public int Height
@@ -13,6 +15,7 @@ namespace Paper.Model
             set;
         }
 
+        [XmlIgnore]
         public System.Drawing.Rectangle Rectangle
         {
             get
@@ -21,12 +24,17 @@ namespace Paper.Model
             }
         }
 
+        public ZoneFoldingH()
+        {
+        }
+
         public ZoneFoldingH(int x, int y, int size)
             : base(x, y)
         {
             this.Height = size;
         }
 
+        [XmlIgnore]
         public List<Line> LineResizableHeight
         {
             get
@@ -39,6 +47,7 @@ namespace Paper.Model
             }
         }
 
+        [XmlIgnore]
         public override System.Drawing.Rectangle RectangleSelection
         {
             get

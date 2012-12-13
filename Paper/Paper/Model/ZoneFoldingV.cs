@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Paper.Model
 {
+    [Serializable()]
     public class ZoneFoldingV : ComponentBase, IResizableWidth
     {
         public int Width
@@ -13,6 +15,7 @@ namespace Paper.Model
             set;
         }
 
+        [XmlIgnore]
         public override System.Drawing.Rectangle RectangleSelection
         {
             get
@@ -21,6 +24,7 @@ namespace Paper.Model
             }
         }
 
+        [XmlIgnore]
         public System.Drawing.Rectangle Rectangle
         {
             get
@@ -29,12 +33,17 @@ namespace Paper.Model
             }
         }
 
+        public ZoneFoldingV()
+        {
+        }
+
         public ZoneFoldingV(int x, int y, int size)
             : base(x, y)
         {
             this.Width = size;
         }
 
+        [XmlIgnore]
         public List<Line> LineResizableWidth
         {
             get

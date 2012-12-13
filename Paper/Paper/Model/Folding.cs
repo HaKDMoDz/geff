@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Xml.Serialization;
 
 namespace Paper.Model
 {
+    [Serializable()]
     public class Folding : ComponentBase, IResizableWidth, IResizableHeight
     {
         int _height = 0;
-        public int Height 
+
+        [XmlIgnore]
+        public int Height
         {
             get
             {
@@ -25,9 +29,28 @@ namespace Paper.Model
                     _height = 0;
             }
         }
+
+        public int HeightSerializable
+        {
+            get
+            {
+                return _height;
+            }
+            set
+            {
+               _height = value;
+            }
+        }
+
         public int Width { get; set; }
 
+        [XmlIgnore]
         public List<Rectangle> ListCutting { get; set; }
+
+        public Folding()
+        {
+            this.ListCutting = new List<Rectangle>();
+        }
 
         public Folding(int x, int y, int width, int height)
             : base(x, y)
@@ -37,6 +60,7 @@ namespace Paper.Model
             this.ListCutting = new List<Rectangle>();
         }
 
+        [XmlIgnore]
         public Rectangle RecTop
         {
             get
@@ -45,6 +69,7 @@ namespace Paper.Model
             }
         }
 
+        [XmlIgnore]
         public Rectangle RecFace
         {
             get
@@ -53,6 +78,7 @@ namespace Paper.Model
             }
         }
 
+        [XmlIgnore]
         public List<Line> LineResizableWidth
         {
             get
@@ -67,6 +93,7 @@ namespace Paper.Model
             }
         }
 
+        [XmlIgnore]
         public List<Line> LineResizableHeight
         {
             get
@@ -83,11 +110,12 @@ namespace Paper.Model
             }
         }
 
+        [XmlIgnore]
         public override System.Drawing.Rectangle RectangleSelection
         {
             get
             {
-                return new System.Drawing.Rectangle(Location.X, Location.Y - Height * Common.depthUnity, Width, Common.lineMidScreen.P1.Y - Location.Y + 2*(Height * Common.depthUnity));
+                return new System.Drawing.Rectangle(Location.X, Location.Y - Height * Common.depthUnity, Width, Common.lineMidScreen.P1.Y - Location.Y + 2 * (Height * Common.depthUnity));
             }
         }
     }

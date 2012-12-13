@@ -49,6 +49,7 @@
     <Compile Include="Common.cs" />
     <Compile Include="Model\ComponentBase.cs" />
     <Compile Include="Model\IResizable.cs" />
+    <Compile Include="Model\Scene.cs" />
     <Compile Include="Model\ZoneFoldingH.cs" />
     <Compile Include="Model\ZoneMovingV.cs" />
     <Compile Include="Model\IResizableHeight.cs" />
