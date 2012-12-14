@@ -26,7 +26,7 @@ namespace Paper.Model
         {
             get
             {
-                return new System.Drawing.Rectangle(Location.X, Location.Y, 32, 32);
+                return new System.Drawing.Rectangle(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, 32, 32);
             }
         }
     }

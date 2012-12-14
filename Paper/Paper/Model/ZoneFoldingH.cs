@@ -20,7 +20,7 @@ namespace Paper.Model
         {
             get
             {
-                return new System.Drawing.Rectangle(0, Location.Y, Common.ScreenSize.Width, Height);
+                return new System.Drawing.Rectangle(0, Location.Y + Common.Delta.Y, Common.ScreenSize.Width, Height);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Paper.Model
             get
             {
                 List<Line> _lineResizeable = new List<Line>();
-                Line line = new Line(0, Location.Y + Height, Common.ScreenSize.Width, Location.Y + Height);
+                Line line = new Line(0, Location.Y + Height + Common.Delta.Y, Common.ScreenSize.Width, Location.Y + Height + Common.Delta.Y);
                 _lineResizeable.Add(line);
 
                 return _lineResizeable;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace Paper
 {
@@ -12,6 +13,7 @@ namespace Paper
         public static Tools CurrentTool = Tools.None;
         public static int CurrentColorIndex = 1;
         public static System.Drawing.Size ScreenSize { get; set; }
+        public static Point Delta { get; set; }
     }
 
     public enum Tools

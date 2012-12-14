@@ -37,8 +37,8 @@
             this.btnZoneFoldingV = new System.Windows.Forms.ToolStripButton();
             this.btnZoneFoldingH = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnMovingZoneH = new System.Windows.Forms.ToolStripButton();
             this.btnMovingzoneV = new System.Windows.Forms.ToolStripButton();
+            this.btnMovingZoneH = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnFolding = new System.Windows.Forms.ToolStripButton();
             this.btnPlatform = new System.Windows.Forms.ToolStripButton();
@@ -66,6 +66,8 @@
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.btnSensor = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton11 = new System.Windows.Forms.ToolStripButton();
+            this.hScrollBar = new System.Windows.Forms.HScrollBar();
+            this.vScrollBar = new System.Windows.Forms.VScrollBar();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pic)).BeginInit();
             this.SuspendLayout();
@@ -162,17 +164,6 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
             // 
-            // btnMovingZoneH
-            // 
-            this.btnMovingZoneH.CheckOnClick = true;
-            this.btnMovingZoneH.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnMovingZoneH.Image = global::Paper.Properties.Resources.Icon_MovingZoneH;
-            this.btnMovingZoneH.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnMovingZoneH.Name = "btnMovingZoneH";
-            this.btnMovingZoneH.Size = new System.Drawing.Size(36, 36);
-            this.btnMovingZoneH.Text = "toolStripButton3";
-            this.btnMovingZoneH.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
             // btnMovingzoneV
             // 
             this.btnMovingzoneV.CheckOnClick = true;
@@ -183,6 +174,17 @@
             this.btnMovingzoneV.Size = new System.Drawing.Size(36, 36);
             this.btnMovingzoneV.Text = "toolStripButton4";
             this.btnMovingzoneV.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // btnMovingZoneH
+            // 
+            this.btnMovingZoneH.CheckOnClick = true;
+            this.btnMovingZoneH.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnMovingZoneH.Image = global::Paper.Properties.Resources.Icon_MovingZoneH;
+            this.btnMovingZoneH.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnMovingZoneH.Name = "btnMovingZoneH";
+            this.btnMovingZoneH.Size = new System.Drawing.Size(36, 36);
+            this.btnMovingZoneH.Text = "toolStripButton3";
+            this.btnMovingZoneH.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripSeparator3
             // 
@@ -427,11 +429,40 @@
             this.toolStripButton11.Size = new System.Drawing.Size(36, 36);
             this.toolStripButton11.Text = "toolStripButton11";
             // 
+            // hScrollBar
+            // 
+            this.hScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.hScrollBar.LargeChange = 500;
+            this.hScrollBar.Location = new System.Drawing.Point(0, 677);
+            this.hScrollBar.Maximum = 10000;
+            this.hScrollBar.Name = "hScrollBar";
+            this.hScrollBar.Size = new System.Drawing.Size(792, 17);
+            this.hScrollBar.SmallChange = 100;
+            this.hScrollBar.TabIndex = 2;
+            this.hScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar_Scroll);
+            // 
+            // vScrollBar
+            // 
+            this.vScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.vScrollBar.LargeChange = 500;
+            this.vScrollBar.Location = new System.Drawing.Point(792, 39);
+            this.vScrollBar.Maximum = 10000;
+            this.vScrollBar.Name = "vScrollBar";
+            this.vScrollBar.Size = new System.Drawing.Size(17, 638);
+            this.vScrollBar.SmallChange = 100;
+            this.vScrollBar.TabIndex = 3;
+            this.vScrollBar.Value = 8000;
+            this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBar_Scroll);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(809, 694);
+            this.Controls.Add(this.vScrollBar);
+            this.Controls.Add(this.hScrollBar);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.pic);
             this.MinimumSize = new System.Drawing.Size(16, 44);
@@ -485,6 +516,8 @@
         private System.Windows.Forms.ToolStripButton toolStripButton13;
         private System.Windows.Forms.ToolStripButton toolStripButton14;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
+        private System.Windows.Forms.HScrollBar hScrollBar;
+        private System.Windows.Forms.VScrollBar vScrollBar;
     }
 }
 

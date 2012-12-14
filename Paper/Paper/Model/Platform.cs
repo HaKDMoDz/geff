@@ -38,7 +38,7 @@ namespace Paper.Model
             get
             {
                 List<Line> _lineResizeable = new List<Line>();
-                Line line = new Line(Location.X + this.Width, Location.Y, Location.X + this.Width, Location.Y + Height);
+                Line line = new Line(Location.X + this.Width + Common.Delta.X, Location.Y + Common.Delta.Y, Location.X + this.Width + Common.Delta.X, Location.Y + Height + Common.Delta.Y);
                 _lineResizeable.Add(line);
 
                 return _lineResizeable;
@@ -51,7 +51,7 @@ namespace Paper.Model
             get
             {
                 List<Line> _lineResizeable = new List<Line>();
-                Line line = new Line(Location.X, Location.Y + Height, Location.X + this.Width, Location.Y + Height);
+                Line line = new Line(Location.X + Common.Delta.X, Location.Y + Height + Common.Delta.Y, Location.X + this.Width + Common.Delta.X, Location.Y + Height + Common.Delta.Y);
                 _lineResizeable.Add(line);
 
                 return _lineResizeable;
@@ -63,7 +63,7 @@ namespace Paper.Model
         {
             get
             {
-                return new System.Drawing.Rectangle(Location.X, Location.Y, Width, Height);
+                return new System.Drawing.Rectangle(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, Width, Height);
             }
         }
     }

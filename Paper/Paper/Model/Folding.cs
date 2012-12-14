@@ -65,7 +65,7 @@ namespace Paper.Model
         {
             get
             {
-                return new Rectangle(Location.X, Location.Y - Height * Common.depthUnity, Width, Height * Common.depthUnity);
+                return new Rectangle(Location.X + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y, Width, Height * Common.depthUnity);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Paper.Model
         {
             get
             {
-                return new Rectangle(Location.X, Location.Y, Width, Common.lineMidScreen.P1.Y - Location.Y + Height * Common.depthUnity);
+                return new Rectangle(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, Width, Common.lineMidScreen.P1.Y - Location.Y + Height * Common.depthUnity);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Paper.Model
             {
                 List<Line> _lineResizeable = new List<Line>();
 
-                Line line = new Line(Location.X + Width, Location.Y - Height * Common.depthUnity, Location.X + Width, Common.lineMidScreen.P1.Y + (Height * Common.depthUnity));
+                Line line = new Line(Location.X + Width + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y, Location.X + Width + Common.Delta.X, Common.lineMidScreen.P1.Y + (Height * Common.depthUnity) + Common.Delta.Y);
 
                 _lineResizeable.Add(line);
 
@@ -100,8 +100,8 @@ namespace Paper.Model
             {
                 List<Line> _lineResizeable = new List<Line>();
 
-                Line line1 = new Line(Location.X, Location.Y, Location.X + Width, Location.Y);
-                Line line2 = new Line(Location.X, Common.lineMidScreen.P1.Y + Height * Common.depthUnity, Location.X + Width, Common.lineMidScreen.P1.Y + Height * Common.depthUnity);
+                Line line1 = new Line(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, Location.X + Width + Common.Delta.X, Location.Y + Common.Delta.Y);
+                Line line2 = new Line(Location.X + Common.Delta.X, Common.lineMidScreen.P1.Y + Height * Common.depthUnity + Common.Delta.Y, Location.X + Width + Common.Delta.X, Common.lineMidScreen.P1.Y + Height * Common.depthUnity + Common.Delta.Y);
 
                 _lineResizeable.Add(line1);
                 _lineResizeable.Add(line2);
@@ -115,7 +115,7 @@ namespace Paper.Model
         {
             get
             {
-                return new System.Drawing.Rectangle(Location.X, Location.Y - Height * Common.depthUnity, Width, Common.lineMidScreen.P1.Y - Location.Y + 2 * (Height * Common.depthUnity));
+                return new System.Drawing.Rectangle(Location.X + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y, Width, Common.lineMidScreen.P1.Y - Location.Y + 2 * (Height * Common.depthUnity));
             }
         }
     }
