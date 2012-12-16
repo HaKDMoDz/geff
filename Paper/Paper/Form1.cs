@@ -242,13 +242,10 @@ namespace Paper
         {
             Point pointMouse = new Point(e.X, e.Y);
 
-
             if (e.Button == System.Windows.Forms.MouseButtons.Middle)
             {
                 hScrollBar.Value = Math.Min(hScrollBar.Maximum, Math.Max(hScrollBar.Minimum, prevHScrollValue + (initialPointMouseWithoutDelta.X - pointMouse.X)));
                 vScrollBar.Value = Math.Min(vScrollBar.Maximum, Math.Max(vScrollBar.Minimum, prevVScrollValue + (initialPointMouseWithoutDelta.Y - pointMouse.Y)));
-
-                this.Text = (prevHScrollValue + pointMouse.X - initialPointMouse.X).ToString();
 
                 Common.Delta = new Point(-hScrollBar.Value, valMax - vScrollBar.Value);
                 DrawScene();
@@ -278,16 +275,14 @@ namespace Paper
                     {
                         curResizeableHeightComponent.Height = prevHeight + pointMouse.Y - initialPointMouse.Y;
 
-                        //(e.Y - Common.lineMidScreen.P1.Y) / Common.depthUnity;
-
                         if (curResizeableHeightComponent.Height <= 0)
                             curResizeableHeightComponent.Height = 1;
                     }
                 }
 
-                SortCuboid();
+                //SortCuboid();
 
-                CalcCuboidIntersections();
+                //CalcCuboidIntersections();
 
                 DrawScene();
             }
@@ -296,7 +291,7 @@ namespace Paper
             if (e.Button == System.Windows.Forms.MouseButtons.None)
             {
                 int distanceNearestCuboid = int.MaxValue;
-
+                nearestCuboid = null;
                 ModeSelection nearestModeSelection = ModeSelection.None;
 
                 foreach (ComponentBase component in scene.listComponent)
@@ -355,9 +350,9 @@ namespace Paper
                 if (nearestCuboid != null)
                     nearestCuboid.ModeSelection = nearestModeSelection;
 
-                if (nearestModeSelection != ModeSelection.None)
+                //if (nearestModeSelection != ModeSelection.None)
                 {
-                    SortCuboid();
+                    //SortCuboid();
 
                     DrawScene();
                 }
@@ -481,8 +476,15 @@ namespace Paper
 
             Pen pen = Pens.Black;
 
+            Rectangle recScreen = new Rectangle(Common.Delta, pic.Size);
+
             foreach (ComponentBase component in scene.listComponent)
             {
+                if (!component.RectangleSelection.IntersectsWith(recScreen))
+                    continue;
+
+                //TODO : érifier que le rectangle englobant du composant est dans la zone visible de l'écran
+
                 Folding folding = component as Folding;
                 ZoneFoldingV zoneFoldingV = component as ZoneFoldingV;
                 ZoneFoldingH zoneFoldingH = component as ZoneFoldingH;
@@ -491,7 +493,7 @@ namespace Paper
                 Platform platform = component as Platform;
                 Sensor sensor = component as Sensor;
 
-                pen = new Pen(GetColorFromIndex(component.ColorIndex), 5f);
+                pen = new Pen(GetColorFromIndex(component.ColorIndex), 2f);
 
                 #region Folding
                 if (folding != null)
@@ -601,7 +603,7 @@ namespace Paper
                 if (platform != null)
                 {
                     gBmp.DrawLine(pen, platform.Location.X + Common.Delta.X, platform.Location.Y + Common.Delta.Y, platform.Location.X + Common.Delta.X, platform.Location.Y + platform.Height + Common.Delta.Y);
-                    gBmp.DrawLine(pen, platform.Location.X - 2 + Common.Delta.X, platform.Location.Y + platform.Height + Common.Delta.Y, platform.Location.X + platform.Width + 3 + Common.Delta.X, platform.Location.Y + platform.Height + Common.Delta.Y);
+                    gBmp.DrawLine(pen, platform.Location.X - 1 + Common.Delta.X, platform.Location.Y + platform.Height + Common.Delta.Y, platform.Location.X + platform.Width + 1 + Common.Delta.X, platform.Location.Y + platform.Height + Common.Delta.Y);
                     gBmp.DrawLine(pen, platform.Location.X + platform.Width + Common.Delta.X, platform.Location.Y + Common.Delta.Y, platform.Location.X + platform.Width + Common.Delta.X, platform.Location.Y + platform.Height + Common.Delta.Y);
                 }
                 #endregion
@@ -637,7 +639,7 @@ namespace Paper
                 {
                     pen.Color = Color.White;
                     pen.DashStyle = DashStyle.Dot;
-                    pen.Width = 7f;
+                    pen.Width = 3f;
 
                     gBmp.DrawRectangle(pen, component.RectangleSelection);
                 }
