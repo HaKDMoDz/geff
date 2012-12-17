@@ -9,7 +9,9 @@ namespace Paper
     public static class Common
     {
         public static Line lineMidScreen = null;
-        public static int depthUnity = 20;
+        public static int Bottom = 0;
+        public static int MaxDepth = 9;
+        public static int depthUnity = 10;
         public static Tools CurrentTool = Tools.None;
         public static int CurrentColorIndex = 1;
         public static System.Drawing.Size ScreenSize { get; set; }

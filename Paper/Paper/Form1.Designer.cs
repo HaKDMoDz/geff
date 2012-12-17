@@ -467,6 +467,7 @@
             this.Controls.Add(this.pic);
             this.MinimumSize = new System.Drawing.Size(16, 44);
             this.Name = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.toolStrip1.ResumeLayout(false);

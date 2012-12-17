@@ -80,7 +80,7 @@ namespace Paper
             btnZoneFoldingH.Tag = Tools.ZoneFoldingH;
             btnZoneFoldingV.Tag = Tools.ZoneFoldingV;
 
-            valMax = vScrollBar.Maximum - Common.depthUnity * 22 * 2;
+            valMax = vScrollBar.Maximum - vScrollBar.LargeChange + 1; ;
 
             vScrollBar.Value = valMax;
         }
@@ -93,10 +93,16 @@ namespace Paper
             g = pic.CreateGraphics();
             bmp = new Bitmap(pic.Width, pic.Height);
             gBmp = Graphics.FromImage(bmp);
-            Common.lineMidScreen = new Line();
-            Common.lineMidScreen.P1 = new Point(0, pic.Height * 75 / 100);
-            Common.lineMidScreen.P2 = new Point(pic.Width, pic.Height * 75 / 100);
+
+            Common.Bottom = Common.MaxDepth * 2 * Common.depthUnity;
+
             Common.ScreenSize = new Size(pic.Width, pic.Height);
+
+            Common.lineMidScreen = new Line();
+            Common.lineMidScreen.P1 = new Point(0, Common.ScreenSize.Height - Common.Bottom);
+            Common.lineMidScreen.P2 = new Point(pic.Width, Common.ScreenSize.Height - Common.Bottom);
+
+            Common.Delta = new Point(-hScrollBar.Value, valMax - vScrollBar.Value + Common.lineMidScreen.P1.Y);
 
             penDotFar = new Pen(Color.White, 2f);
             penDotFar.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
@@ -245,9 +251,10 @@ namespace Paper
             if (e.Button == System.Windows.Forms.MouseButtons.Middle)
             {
                 hScrollBar.Value = Math.Min(hScrollBar.Maximum, Math.Max(hScrollBar.Minimum, prevHScrollValue + (initialPointMouseWithoutDelta.X - pointMouse.X)));
-                vScrollBar.Value = Math.Min(vScrollBar.Maximum, Math.Max(vScrollBar.Minimum, prevVScrollValue + (initialPointMouseWithoutDelta.Y - pointMouse.Y)));
+                vScrollBar.Value = Math.Min(valMax, Math.Max(vScrollBar.Minimum, prevVScrollValue + (initialPointMouseWithoutDelta.Y - pointMouse.Y)));
 
-                Common.Delta = new Point(-hScrollBar.Value, valMax - vScrollBar.Value);
+                Common.Delta = new Point(-hScrollBar.Value, valMax - vScrollBar.Value + Common.lineMidScreen.P1.Y);
+
                 DrawScene();
             }
             else if (e.Button == System.Windows.Forms.MouseButtons.Left && curComponent != null)
@@ -319,12 +326,12 @@ namespace Paper
                         foreach (Line lineResizeLimit in resizeableWComponent.LineResizableWidth)
                         {
                             distance = Utils.DistancePaAB(pointMouse, lineResizeLimit.P1, lineResizeLimit.P2);
-                        }
 
-                        if (distance < 10 && distance < distanceNearestCuboid)
-                        {
-                            nearestCuboid = component;
-                            nearestModeSelection = ModeSelection.NearResizeWidth;
+                            if (distance < 10 && distance < distanceNearestCuboid)
+                            {
+                                nearestCuboid = component;
+                                nearestModeSelection = ModeSelection.NearResizeWidth;
+                            }
                         }
                     }
 
@@ -336,12 +343,13 @@ namespace Paper
                         foreach (Line lineResizeLimit in resizeableHComponent.LineResizableHeight)
                         {
                             distance = Utils.DistancePaAB(pointMouse, lineResizeLimit.P1, lineResizeLimit.P2);
-                        }
 
-                        if (distance < 10 && distance < distanceNearestCuboid)
-                        {
-                            nearestCuboid = component;
-                            nearestModeSelection = ModeSelection.NearResizeHeight;
+                            if (distance < 10 && distance < distanceNearestCuboid)
+                            {
+                                nearestCuboid = component;
+                                nearestModeSelection = ModeSelection.NearResizeHeight;
+
+                            }
                         }
                     }
                     //---
@@ -456,34 +464,20 @@ namespace Paper
 
             SolidBrush brush = null;
 
-            for (int i = 0; i < 22; i++)
+            for (int i = 0; i < Common.MaxDepth; i++)
             {
                 brush = new SolidBrush(Color.FromArgb(35 + 10 * i, 35 + 10 * i, 35 + 10 * i));
-                gBmp.FillRectangle(brush, Common.lineMidScreen.P1.X, Common.lineMidScreen.P1.Y + 2 * i * Common.depthUnity + Common.Delta.Y, Common.lineMidScreen.P2.X, 2 * Common.depthUnity);
+                gBmp.FillRectangle(brush, 0f, 2 * i * Common.depthUnity + Common.Delta.Y, Common.ScreenSize.Width, 2 * Common.depthUnity);
             }
-
-
-            //SolidBrush brush = new SolidBrush(Color.FromArgb(65, 65, 65));
-            //gBmp.FillRectangle(brush, Common.lineMidScreen.P1.X, Common.lineMidScreen.P1.Y, Common.lineMidScreen.P2.X, 2 * Common.depthUnity);
-
-            //brush = new SolidBrush(Color.FromArgb(75, 75, 75));
-            //gBmp.FillRectangle(brush, Common.lineMidScreen.P1.X, Common.lineMidScreen.P1.Y + 2 * Common.depthUnity, Common.lineMidScreen.P2.X, 2 * Common.depthUnity);
-
-            //brush = new SolidBrush(Color.FromArgb(85, 85, 85));
-            //gBmp.FillRectangle(brush, Common.lineMidScreen.P1.X, Common.lineMidScreen.P1.Y + 4 * Common.depthUnity, Common.lineMidScreen.P2.X, 2 * Common.depthUnity);
-
-            //gBmp.DrawLine(penDotFar, Common.lineMidScreen.P1, Common.lineMidScreen.P2);
 
             Pen pen = Pens.Black;
 
-            Rectangle recScreen = new Rectangle(Common.Delta, pic.Size);
+            Rectangle recScreen = new Rectangle(-Common.Delta.X, -Common.Delta.Y, Common.ScreenSize.Width, Common.ScreenSize.Height);
 
             foreach (ComponentBase component in scene.listComponent)
             {
-                if (!component.RectangleSelection.IntersectsWith(recScreen))
-                    continue;
-
-                //TODO : érifier que le rectangle englobant du composant est dans la zone visible de l'écran
+                //if (!component.RectangleSelection.IntersectsWith(recScreen) && !recScreen.Contains(component.RectangleSelection))
+                //    continue;
 
                 Folding folding = component as Folding;
                 ZoneFoldingV zoneFoldingV = component as ZoneFoldingV;
@@ -498,37 +492,22 @@ namespace Paper
                 #region Folding
                 if (folding != null)
                 {
-
-
-                    brush = new SolidBrush(Color.FromArgb(65, 65, 65));
-                    int HeightFactor = folding.Height > 1 ? 2 : 1;
-                    gBmp.FillRectangle(brush, folding.Location.X + Common.Delta.X, folding.Location.Y - folding.Height * Common.depthUnity + +Common.Delta.Y, folding.Width, HeightFactor * Common.depthUnity);
-
-                    if (folding.Height > 2)
+                    for (int i = 0; i < folding.Height; i += 2)
                     {
-                        brush = new SolidBrush(Color.FromArgb(75, 75, 75));
-                        HeightFactor = folding.Height > 3 ? 2 : 1;
-                        gBmp.FillRectangle(brush, folding.Location.X + Common.Delta.X, folding.Location.Y + (2 - folding.Height) * Common.depthUnity + +Common.Delta.Y, folding.Width, HeightFactor * Common.depthUnity);
+                        brush = new SolidBrush(Color.FromArgb(65 + 10 * i, 65 + 10 * i, 65 + 10 * i));
+
+                        int HeightFactor = folding.Height > (i + 1) ? 2 : 1;
+
+                        gBmp.FillRectangle(brush, folding.Location.X + Common.Delta.X, folding.Location.Y + (i - folding.Height) * Common.depthUnity + +Common.Delta.Y, folding.Width, HeightFactor * Common.depthUnity);
                     }
 
-                    if (folding.Height > 4)
-                    {
-                        brush = new SolidBrush(Color.FromArgb(85, 85, 85));
-                        HeightFactor = folding.Height > 5 ? 2 : 1;
-                        gBmp.FillRectangle(brush, folding.Location.X + Common.Delta.X, folding.Location.Y + (4 - folding.Height) * Common.depthUnity + +Common.Delta.Y, folding.Width, HeightFactor * Common.depthUnity);
-                    }
 
                     brush.Color = Color.FromArgb(brush.Color.R + 20, brush.Color.G + 20, brush.Color.B + 20);
 
-                    gBmp.FillRectangle(brush, folding.Location.X + Common.Delta.X, folding.Location.Y + Common.Delta.Y, folding.Width, 1 * Common.depthUnity * folding.Height + Common.lineMidScreen.P1.Y - folding.Location.Y);
+                    gBmp.FillRectangle(brush, folding.RectangleSelection.Left, folding.Location.Y + Common.Delta.Y, folding.Width, -folding.Location.Y + folding.Height * Common.depthUnity);
 
-                    gBmp.DrawLine(pen, folding.Location.X + Common.Delta.X, folding.Location.Y - Common.depthUnity * folding.Height + Common.Delta.Y, folding.Location.X + Common.Delta.X, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height + Common.Delta.Y);
-                    gBmp.DrawLine(pen, folding.Location.X + folding.Width + Common.Delta.X, folding.Location.Y - Common.depthUnity * folding.Height + Common.Delta.Y, folding.Location.X + folding.Width + Common.Delta.X, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height + Common.Delta.Y);
-
-                    //gBmp.DrawLine(penDotNear, folding.Location.X, folding.Location.Y, folding.Location.X + folding.Width, folding.Location.Y);
-
-                    //gBmp.DrawLine(penDotFar, folding.Location.X, folding.Location.Y - Common.depthUnity * folding.Height, folding.Location.X + folding.Width, folding.Location.Y - Common.depthUnity * folding.Height);
-                    //gBmp.DrawLine(penDotFar, folding.Location.X, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height, folding.Location.X + folding.Width, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height);
+                    gBmp.DrawLine(pen, folding.RectangleSelection.Left, folding.RectangleSelection.Top, folding.RectangleSelection.Left, folding.RectangleSelection.Bottom);
+                    gBmp.DrawLine(pen, folding.RectangleSelection.Right, folding.RectangleSelection.Top, folding.RectangleSelection.Right, folding.RectangleSelection.Bottom);
 
 
                     foreach (Rectangle recCutting in folding.ListCutting)
@@ -557,8 +536,8 @@ namespace Paper
                     //    gBmp.DrawImage(Resources.Move, folding.Location.X - Resources.Move.Width / 2, folding.Location.Y - Resources.Move.Height / 2);
                     //    gBmp.DrawImage(Resources.Circle, folding.Location.X - Resources.Circle.Width / 2, folding.Location.Y - Resources.Circle.Height / 2);
 
-                    //    gBmp.DrawImage(Resources.Resize, folding.Location.X + folding.Width - Resources.Resize.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height - Resources.Resize.Height / 2);
-                    //    gBmp.DrawImage(Resources.Circle, folding.Location.X + folding.Width - Resources.Circle.Width / 2, Common.lineMidScreen.P1.Y + Common.depthUnity * folding.Height - Resources.Circle.Height / 2);
+                    //    gBmp.DrawImage(Resources.Resize, folding.Location.X + folding.Width - Resources.Resize.Width / 2, Common.Bottom + Common.depthUnity * folding.Height - Resources.Resize.Height / 2);
+                    //    gBmp.DrawImage(Resources.Circle, folding.Location.X + folding.Width - Resources.Circle.Width / 2, Common.Bottom + Common.depthUnity * folding.Height - Resources.Circle.Height / 2);
                     //}
                     //else
                     {
@@ -799,14 +778,20 @@ namespace Paper
 
         private void vScrollBar_Scroll(object sender, ScrollEventArgs e)
         {
-            Common.Delta = new Point(Common.Delta.X, valMax - vScrollBar.Value);
+            Common.Delta = new Point(-hScrollBar.Value, valMax - vScrollBar.Value + Common.lineMidScreen.P1.Y);
             DrawScene();
         }
 
         private void hScrollBar_Scroll(object sender, ScrollEventArgs e)
         {
-            Common.Delta = new Point(-hScrollBar.Value, Common.Delta.Y);
+            Common.Delta = new Point(-hScrollBar.Value, valMax - vScrollBar.Value + Common.lineMidScreen.P1.Y);
             DrawScene();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            if (Environment.MachineName.StartsWith("P64"))
+                this.Location = new Point(1500, 100);
         }
     }
 }
