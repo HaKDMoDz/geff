@@ -301,7 +301,7 @@ namespace Paper
                 DrawScene();
             }
             //--- Calcul des poignées de redimensionnement
-            else if (e.Button == System.Windows.Forms.MouseButtons.None && Common.CurrentTool == Tools.None)
+            else if (e.Button == System.Windows.Forms.MouseButtons.None)// && Common.CurrentTool == Tools.None)
             {
                 int distanceNearestCuboid = int.MaxValue;
                 nearestCuboid = null;
