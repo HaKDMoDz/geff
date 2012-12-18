@@ -98,7 +98,7 @@
             this.toolStripComboBox1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(809, 39);
+            this.toolStrip1.Size = new System.Drawing.Size(1079, 39);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -108,7 +108,7 @@
             this.btnNew.Image = ((System.Drawing.Image)(resources.GetObject("btnNew.Image")));
             this.btnNew.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(54, 36);
+            this.btnNew.Size = new System.Drawing.Size(72, 36);
             this.btnNew.Text = "Nouveau";
             this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
             // 
@@ -118,7 +118,7 @@
             this.btnOuvrir.Image = ((System.Drawing.Image)(resources.GetObject("btnOuvrir.Image")));
             this.btnOuvrir.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnOuvrir.Name = "btnOuvrir";
-            this.btnOuvrir.Size = new System.Drawing.Size(41, 36);
+            this.btnOuvrir.Size = new System.Drawing.Size(53, 36);
             this.btnOuvrir.Text = "Ouvrir";
             this.btnOuvrir.Click += new System.EventHandler(this.btnOuvrir_Click);
             // 
@@ -128,7 +128,7 @@
             this.btnEnregistrer.Image = ((System.Drawing.Image)(resources.GetObject("btnEnregistrer.Image")));
             this.btnEnregistrer.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnEnregistrer.Name = "btnEnregistrer";
-            this.btnEnregistrer.Size = new System.Drawing.Size(64, 36);
+            this.btnEnregistrer.Size = new System.Drawing.Size(84, 36);
             this.btnEnregistrer.Text = "Enregistrer";
             this.btnEnregistrer.Click += new System.EventHandler(this.btnEnregistrer_Click);
             // 
@@ -290,7 +290,7 @@
             "4",
             "5"});
             this.toolStripComboBox1.Name = "toolStripComboBox1";
-            this.toolStripComboBox1.Size = new System.Drawing.Size(121, 39);
+            this.toolStripComboBox1.Size = new System.Drawing.Size(160, 39);
             this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripButton2
@@ -394,8 +394,9 @@
             this.pic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
             this.pic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pic.Location = new System.Drawing.Point(0, 0);
+            this.pic.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pic.Name = "pic";
-            this.pic.Size = new System.Drawing.Size(809, 694);
+            this.pic.Size = new System.Drawing.Size(1079, 854);
             this.pic.TabIndex = 0;
             this.pic.TabStop = false;
             this.pic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pic_MouseDown);
@@ -431,26 +432,26 @@
             // 
             // hScrollBar
             // 
-            this.hScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.hScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.hScrollBar.LargeChange = 500;
-            this.hScrollBar.Location = new System.Drawing.Point(0, 677);
+            this.hScrollBar.Location = new System.Drawing.Point(0, 833);
             this.hScrollBar.Maximum = 10000;
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(792, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(1056, 17);
             this.hScrollBar.SmallChange = 100;
             this.hScrollBar.TabIndex = 2;
             this.hScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar_Scroll);
             // 
             // vScrollBar
             // 
-            this.vScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.vScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.vScrollBar.LargeChange = 500;
-            this.vScrollBar.Location = new System.Drawing.Point(792, 39);
+            this.vScrollBar.Location = new System.Drawing.Point(1056, 48);
             this.vScrollBar.Maximum = 10000;
             this.vScrollBar.Name = "vScrollBar";
-            this.vScrollBar.Size = new System.Drawing.Size(17, 638);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 785);
             this.vScrollBar.SmallChange = 100;
             this.vScrollBar.TabIndex = 3;
             this.vScrollBar.Value = 8000;
@@ -458,14 +459,16 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(809, 694);
+            this.ClientSize = new System.Drawing.Size(1079, 854);
             this.Controls.Add(this.vScrollBar);
             this.Controls.Add(this.hScrollBar);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.pic);
-            this.MinimumSize = new System.Drawing.Size(16, 44);
+            this.KeyPreview = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MinimumSize = new System.Drawing.Size(18, 47);
             this.Name = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);

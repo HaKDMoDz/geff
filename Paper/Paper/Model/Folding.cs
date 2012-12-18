@@ -17,7 +17,7 @@ namespace Paper.Model
         {
             get
             {
-                return _height;
+                return _height * Common.depthUnity;
             }
             set
             {
@@ -25,8 +25,8 @@ namespace Paper.Model
 
                 if (_height > Common.MaxDepth*2)
                     _height = Common.MaxDepth*2;
-                if (_height < 0)
-                    _height = 0;
+                if (_height < 1)
+                    _height = 1;
             }
         }
 
@@ -56,7 +56,7 @@ namespace Paper.Model
             : base(x, y)
         {
             this.Width = width;
-            this.Height = height;
+            _height = height;
             this.ListCutting = new List<Rectangle>();
         }
 
@@ -65,7 +65,7 @@ namespace Paper.Model
         {
             get
             {
-                return new Rectangle(Location.X + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y, Width, Height * Common.depthUnity);
+                return new Rectangle(Location.X + Common.Delta.X, Location.Y - _height * Common.depthUnity + Common.Delta.Y, Width, _height * Common.depthUnity);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Paper.Model
         {
             get
             {
-                return new Rectangle(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, Width, - Location.Y + Height * Common.depthUnity);
+                return new Rectangle(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, Width, -Location.Y + _height * Common.depthUnity);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Paper.Model
             {
                 List<Line> _lineResizeable = new List<Line>();
 
-                Line line = new Line(Location.X + Width + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y, Location.X + Width + Common.Delta.X, Common.Bottom + (Height * Common.depthUnity) + Common.Delta.Y);
+                Line line = new Line(Location.X + Width + Common.Delta.X, Location.Y - _height * Common.depthUnity + Common.Delta.Y, Location.X + Width + Common.Delta.X, Common.Bottom + (_height * Common.depthUnity) + Common.Delta.Y);
 
                 _lineResizeable.Add(line);
 
@@ -100,8 +100,10 @@ namespace Paper.Model
             {
                 List<Line> _lineResizeable = new List<Line>();
 
-                Line line1 = new Line(Location.X + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y, Location.X + Width + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y);
-                Line line2 = new Line(Location.X + Common.Delta.X, Height * Common.depthUnity + Common.Delta.Y, Location.X + Width + Common.Delta.X, Height * Common.depthUnity + Common.Delta.Y);
+                //Line line1 = new Line(Location.X + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y, Location.X + Width + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y);
+                Line line1 = new Line(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, Location.X + Width + Common.Delta.X, Location.Y + Common.Delta.Y);
+
+                Line line2 = new Line(Location.X + Common.Delta.X, _height * Common.depthUnity + Common.Delta.Y, Location.X + Width + Common.Delta.X, _height * Common.depthUnity + Common.Delta.Y);
 
                 _lineResizeable.Add(line1);
                 _lineResizeable.Add(line2);
@@ -115,7 +117,7 @@ namespace Paper.Model
         {
             get
             {
-                return new System.Drawing.Rectangle(Location.X + Common.Delta.X, Location.Y - Height * Common.depthUnity + Common.Delta.Y, Width, - Location.Y + 2 * (Height * Common.depthUnity));
+                return new System.Drawing.Rectangle(Location.X + Common.Delta.X, Location.Y - _height * Common.depthUnity + Common.Delta.Y, Width, -Location.Y + 2 * (_height * Common.depthUnity));
             }
         }
     }
