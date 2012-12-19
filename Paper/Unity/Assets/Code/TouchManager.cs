@@ -38,7 +38,7 @@ public class TouchManager : MonoBehaviour
         ITouchable touchableObject = null;
         RaycastHit hit = new RaycastHit();
 
-        if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)
+        if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.FlashPlayer)
         {
             if (Input.GetMouseButtonDown(0) && !leftMouseButtonWasPressed)
             {

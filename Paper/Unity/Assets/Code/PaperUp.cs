@@ -90,7 +90,7 @@ public class PaperUp : MonoBehaviour, ITouchable
         {
             float scaleY = initialPointerPosition.y - hit.point.y;
 
-            if(scaleY <= 0)
+            if (Game.InitialSizeCurrentCuboid.z + scaleY <= 0)
                 scaleY = 0.01f;
 
             Game.CurrentCuboid.transform.localScale = Game.InitialSizeCurrentCuboid + new Vector3(0f, 0f, scaleY);
