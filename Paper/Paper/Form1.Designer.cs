@@ -50,6 +50,10 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.btnLink = new System.Windows.Forms.ToolStripButton();
             this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnGrid = new System.Windows.Forms.ToolStripButton();
+            this.txtGridWidth = new System.Windows.Forms.ToolStripTextBox();
+            this.txtGridHeight = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
@@ -95,10 +99,14 @@
             this.btnSensorRemoteControl,
             this.toolStripSeparator4,
             this.btnLink,
-            this.toolStripComboBox1});
+            this.toolStripComboBox1,
+            this.toolStripSeparator6,
+            this.btnGrid,
+            this.txtGridWidth,
+            this.txtGridHeight});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1079, 39);
+            this.toolStrip1.Size = new System.Drawing.Size(1263, 39);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -293,6 +301,35 @@
             this.toolStripComboBox1.Size = new System.Drawing.Size(160, 39);
             this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 39);
+            // 
+            // btnGrid
+            // 
+            this.btnGrid.Checked = true;
+            this.btnGrid.CheckOnClick = true;
+            this.btnGrid.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.btnGrid.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGrid.Image = global::Paper.Properties.Resources.Icon_Grid;
+            this.btnGrid.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGrid.Name = "btnGrid";
+            this.btnGrid.Size = new System.Drawing.Size(36, 36);
+            this.btnGrid.Click += new System.EventHandler(this.btnGrid_Click);
+            // 
+            // txtGridWidth
+            // 
+            this.txtGridWidth.Name = "txtGridWidth";
+            this.txtGridWidth.Size = new System.Drawing.Size(100, 39);
+            this.txtGridWidth.Text = "20";
+            // 
+            // txtGridHeight
+            // 
+            this.txtGridHeight.Name = "txtGridHeight";
+            this.txtGridHeight.Size = new System.Drawing.Size(100, 39);
+            this.txtGridHeight.Text = "20";
+            // 
             // toolStripButton2
             // 
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -394,9 +431,9 @@
             this.pic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
             this.pic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pic.Location = new System.Drawing.Point(0, 0);
-            this.pic.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pic.Margin = new System.Windows.Forms.Padding(4);
             this.pic.Name = "pic";
-            this.pic.Size = new System.Drawing.Size(1079, 854);
+            this.pic.Size = new System.Drawing.Size(1263, 854);
             this.pic.TabIndex = 0;
             this.pic.TabStop = false;
             this.pic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pic_MouseDown);
@@ -438,7 +475,7 @@
             this.hScrollBar.Location = new System.Drawing.Point(0, 833);
             this.hScrollBar.Maximum = 10000;
             this.hScrollBar.Name = "hScrollBar";
-            this.hScrollBar.Size = new System.Drawing.Size(1056, 17);
+            this.hScrollBar.Size = new System.Drawing.Size(1240, 17);
             this.hScrollBar.SmallChange = 100;
             this.hScrollBar.TabIndex = 2;
             this.hScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar_Scroll);
@@ -448,7 +485,7 @@
             this.vScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vScrollBar.LargeChange = 500;
-            this.vScrollBar.Location = new System.Drawing.Point(1056, 48);
+            this.vScrollBar.Location = new System.Drawing.Point(1240, 48);
             this.vScrollBar.Maximum = 10000;
             this.vScrollBar.Name = "vScrollBar";
             this.vScrollBar.Size = new System.Drawing.Size(17, 785);
@@ -461,13 +498,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1079, 854);
+            this.ClientSize = new System.Drawing.Size(1263, 854);
             this.Controls.Add(this.vScrollBar);
             this.Controls.Add(this.hScrollBar);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.pic);
             this.KeyPreview = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(18, 47);
             this.Name = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -522,6 +559,10 @@
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
         private System.Windows.Forms.HScrollBar hScrollBar;
         private System.Windows.Forms.VScrollBar vScrollBar;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripButton btnGrid;
+        private System.Windows.Forms.ToolStripTextBox txtGridWidth;
+        private System.Windows.Forms.ToolStripTextBox txtGridHeight;
     }
 }
 

@@ -118,55 +118,64 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Grid" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\Grid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GridH" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\GridH.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GridV" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\GridV.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Icon_CuttingZoneH" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\Icon\Icon_CuttingZoneH.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Icon_CuttingZoneV" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Data\Icon\Icon_CuttingZoneV.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Icon_Folding" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\Icon\Icon_Folding.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Icon_Link" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\Icon\Icon_Link.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Icon_MovingZoneH" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Data\Icon\Icon_MovingZoneH.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Icon_MovingZoneV" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\Icon\Icon_MovingZoneV.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Icon_SensorRemoteControl" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\Icon\Icon_SensorRemoteControl.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Icon_Platform" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Data\Icon\Icon_Platform.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Icon_SensorButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\Icon\Icon_SensorButton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="FBX_Exporter_Template_Papier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\FBX_Exporter_Template_Papier.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Icon_SensorCamera" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Data\Icon\Icon_SensorCamera.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Icon_SensorNearness" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\Icon\Icon_SensorNearness.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Icon_MovingZoneV" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\Icon\Icon_MovingZoneV.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Icon_SensorRemoteControl" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Data\Icon\Icon_SensorRemoteControl.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Icon_SensorButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\Icon\Icon_SensorButton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Move" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Move.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="GridH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\GridH.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="COLLADA_Exporter_Template_Papier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\COLLADA_Exporter_Template_Papier.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Icon_CuttingZoneH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\Icon\Icon_CuttingZoneH.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Icon_Link" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\Icon\Icon_Link.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Icon_SensorNearness" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\Icon\Icon_SensorNearness.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Resize" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Grid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\Grid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Icon_Folding" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\Icon\Icon_Folding.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridV" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\GridV.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Icon_Grid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Data\Icon\Icon_Grid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

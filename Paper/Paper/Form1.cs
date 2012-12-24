@@ -358,7 +358,7 @@ namespace Paper
                 //--- Sélection NearMove
                 int localLevelSearch = curLevelSearch;
 
-                if (listComponentForMove.Count-1 < curLevelSearch && listComponentForMove.Count > 0)
+                if (listComponentForMove.Count - 1 < curLevelSearch && listComponentForMove.Count > 0)
                     localLevelSearch = listComponentForMove.Count - 1;
 
                 if (listComponentForMove.Count > localLevelSearch)
@@ -371,7 +371,7 @@ namespace Paper
                 //--- Sélection NearResizeWidth
                 localLevelSearch = curLevelSearch;
 
-                if (listComponentForWResize.Count-1 < curLevelSearch && listComponentForWResize.Count>0)
+                if (listComponentForWResize.Count - 1 < curLevelSearch && listComponentForWResize.Count > 0)
                     localLevelSearch = listComponentForWResize.Count - 1;
 
                 if (listComponentForWResize.Count > localLevelSearch)
@@ -384,7 +384,7 @@ namespace Paper
                 //--- Sélection NearResizeHeight
                 localLevelSearch = curLevelSearch;
 
-                if (listComponentForHResize.Count-1 < curLevelSearch && listComponentForHResize.Count > 0)
+                if (listComponentForHResize.Count - 1 < curLevelSearch && listComponentForHResize.Count > 0)
                     localLevelSearch = listComponentForHResize.Count - 1;
 
                 if (listComponentForHResize.Count > localLevelSearch)
@@ -512,6 +512,26 @@ namespace Paper
             Pen pen = Pens.Black;
 
             Rectangle recScreen = new Rectangle(-Common.Delta.X, -Common.Delta.Y, Common.ScreenSize.Width, Common.ScreenSize.Height);
+
+            if (btnGrid.Checked)
+            {
+                int gridWidth = int.Parse(txtGridWidth.Text);
+                int gridHeight = int.Parse(txtGridHeight.Text);
+                int dw = Common.Delta.X % gridWidth;
+                int dh = Common.Delta.Y % gridHeight;
+
+                pen = new Pen(Color.FromArgb(60, 60, 60), 1f);
+
+                for (int x = 0; x < Common.ScreenSize.Width / gridWidth + 1; x++)
+                {
+                    gBmp.DrawLine(pen, x * gridWidth + dw, 0, x * gridWidth + dw, Common.ScreenSize.Height);
+                }
+
+                for (int y = 0; y < Common.ScreenSize.Height / gridHeight + 1; y++)
+                {
+                    gBmp.DrawLine(pen, 0, y * gridHeight + dh, Common.ScreenSize.Width, y * gridHeight + dh);
+                }
+            }
 
             foreach (ComponentBase component in scene.listComponent)
             {
@@ -796,17 +816,30 @@ namespace Paper
             try
             {
                 SaveFileDialog dlg = new SaveFileDialog();
-                dlg.Filter = "Papier (*.ppr)|*.ppr";
+                dlg.Filter = "Papier (*.ppr)|*.ppr|Papier FBX (*.fbx)|*.fbx|Collada (*.dae)|*.dae";
 
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(Scene), new Type[] 
+                    string extension = Path.GetExtension(dlg.FileName).ToUpper();
+
+                    if (extension == ".PPR")
+                    {
+                        XmlSerializer serializer = new XmlSerializer(typeof(Scene), new Type[] 
                     { typeof(ComponentBase), typeof(Folding), typeof(Link), typeof(Platform), typeof(Sensor), typeof(ZoneFoldingH), typeof(ZoneFoldingV), typeof(ZoneMovingH) , typeof(ZoneMovingV)
                     });
 
-                    XmlWriter writer = new XmlTextWriter(dlg.FileName, Encoding.UTF8);
-                    serializer.Serialize(writer, scene);
-                    writer.Close();
+                        XmlWriter writer = new XmlTextWriter(dlg.FileName, Encoding.UTF8);
+                        serializer.Serialize(writer, scene);
+                        writer.Close();
+                    }
+                    else if (extension == ".FBX")
+                    {
+                        Utils.ExportToFBX(scene, dlg.FileName);
+                    }
+                    else if (extension == ".DAE")
+                    {
+                        Utils.ExportToCOLLADA(scene, dlg.FileName);
+                    }
                 }
             }
             catch (Exception ex)
@@ -851,6 +884,12 @@ namespace Paper
                 this.Location = new Point(1500, 100);
 
             Form1_Resize(null, null);
+        }
+
+        private void btnGrid_Click(object sender, EventArgs e)
+        {
+            txtGridWidth.Enabled = btnGrid.Checked;
+            txtGridHeight.Enabled = btnGrid.Checked;
         }
     }
 }

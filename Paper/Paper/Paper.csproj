@@ -11,7 +11,8 @@
     <RootNamespace>Paper</RootNamespace>
     <AssemblyName>Paper</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -86,6 +87,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -133,6 +135,9 @@
     <None Include="Data\Grid.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Icon\Icon_Grid.png" />
+    <None Include="Data\COLLADA_Exporter_Template_Papier.xml" />
+    <Content Include="Data\FBX_Exporter_Template_Papier.txt" />
     <Content Include="Data\GridH.png" />
     <Content Include="Data\GridV.png" />
   </ItemGroup>
