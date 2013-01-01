@@ -1,0 +1,1882 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>Geff</author>
+      <authoring_tool>Papier Level Editor</authoring_tool>
+    </contributor>
+    <created>23/12/2012 17:52:16</created>
+    <modified>23/12/2012 17:52:16</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images/>
+  <library_geometries>
+
+
+      <geometry id="Folding_0-mesh" name="Folding_0">
+		  <mesh>
+			<source id="Folding_0-mesh-positions">
+			  <float_array id="Folding_0-mesh-positions-array" count="18">2.575 0.25 0 1.325 0.25 0 2.575 0 7.475 2.575 0.25 7.475 1.325 0.25 7.475 1.325 0 7.475</float_array>
+			  <technique_common>
+				<accessor source="#Folding_0-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_0-mesh-normals">
+			  <float_array id="Folding_0-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_0-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_0-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_0-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_0-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_0-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_1-mesh" name="Folding_1">
+		  <mesh>
+			<source id="Folding_1-mesh-positions">
+			  <float_array id="Folding_1-mesh-positions-array" count="18">3.925 0.5 0 2.675 0.5 0 3.925 0 7.575 3.925 0.5 7.575 2.675 0.5 7.575 2.675 0 7.575</float_array>
+			  <technique_common>
+				<accessor source="#Folding_1-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_1-mesh-normals">
+			  <float_array id="Folding_1-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_1-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_1-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_1-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_1-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_1-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_2-mesh" name="Folding_2">
+		  <mesh>
+			<source id="Folding_2-mesh-positions">
+			  <float_array id="Folding_2-mesh-positions-array" count="18">5.275 0.75 0 4.025 0.75 0 5.275 0 7.575 5.275 0.75 7.575 4.025 0.75 7.575 4.025 0 7.575</float_array>
+			  <technique_common>
+				<accessor source="#Folding_2-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_2-mesh-normals">
+			  <float_array id="Folding_2-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_2-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_2-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_2-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_2-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_2-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_3-mesh" name="Folding_3">
+		  <mesh>
+			<source id="Folding_3-mesh-positions">
+			  <float_array id="Folding_3-mesh-positions-array" count="18">6.625 1 0 5.375 1 0 6.625 0 7.575 6.625 1 7.575 5.375 1 7.575 5.375 0 7.575</float_array>
+			  <technique_common>
+				<accessor source="#Folding_3-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_3-mesh-normals">
+			  <float_array id="Folding_3-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_3-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_3-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_3-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_3-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_3-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_4-mesh" name="Folding_4">
+		  <mesh>
+			<source id="Folding_4-mesh-positions">
+			  <float_array id="Folding_4-mesh-positions-array" count="18">7.95 1.25 0 6.7 1.25 0 7.95 0 7.55 7.95 1.25 7.55 6.7 1.25 7.55 6.7 0 7.55</float_array>
+			  <technique_common>
+				<accessor source="#Folding_4-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_4-mesh-normals">
+			  <float_array id="Folding_4-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_4-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_4-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_4-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_4-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_4-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_5-mesh" name="Folding_5">
+		  <mesh>
+			<source id="Folding_5-mesh-positions">
+			  <float_array id="Folding_5-mesh-positions-array" count="18">9.325 1.5 0 8.075 1.5 0 9.325 0 7.525 9.325 1.5 7.525 8.075 1.5 7.525 8.075 0 7.525</float_array>
+			  <technique_common>
+				<accessor source="#Folding_5-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_5-mesh-normals">
+			  <float_array id="Folding_5-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_5-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_5-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_5-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_5-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_5-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_6-mesh" name="Folding_6">
+		  <mesh>
+			<source id="Folding_6-mesh-positions">
+			  <float_array id="Folding_6-mesh-positions-array" count="18">10.725 1.75 0 9.475 1.75 0 10.725 0 7.475 10.725 1.75 7.475 9.475 1.75 7.475 9.475 0 7.475</float_array>
+			  <technique_common>
+				<accessor source="#Folding_6-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_6-mesh-normals">
+			  <float_array id="Folding_6-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_6-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_6-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_6-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_6-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_6-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_7-mesh" name="Folding_7">
+		  <mesh>
+			<source id="Folding_7-mesh-positions">
+			  <float_array id="Folding_7-mesh-positions-array" count="18">12.125 2 0 10.875 2 0 12.125 0 7.45 12.125 2 7.45 10.875 2 7.45 10.875 0 7.45</float_array>
+			  <technique_common>
+				<accessor source="#Folding_7-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_7-mesh-normals">
+			  <float_array id="Folding_7-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_7-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_7-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_7-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_7-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_7-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_8-mesh" name="Folding_8">
+		  <mesh>
+			<source id="Folding_8-mesh-positions">
+			  <float_array id="Folding_8-mesh-positions-array" count="18">13.55 2.25 0 12.3 2.25 0 13.55 0 7.425 13.55 2.25 7.425 12.3 2.25 7.425 12.3 0 7.425</float_array>
+			  <technique_common>
+				<accessor source="#Folding_8-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_8-mesh-normals">
+			  <float_array id="Folding_8-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_8-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_8-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_8-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_8-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_8-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_9-mesh" name="Folding_9">
+		  <mesh>
+			<source id="Folding_9-mesh-positions">
+			  <float_array id="Folding_9-mesh-positions-array" count="18">14.95 2.5 0 13.7 2.5 0 14.95 0 7.425 14.95 2.5 7.425 13.7 2.5 7.425 13.7 0 7.425</float_array>
+			  <technique_common>
+				<accessor source="#Folding_9-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_9-mesh-normals">
+			  <float_array id="Folding_9-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_9-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_9-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_9-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_9-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_9-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_10-mesh" name="Folding_10">
+		  <mesh>
+			<source id="Folding_10-mesh-positions">
+			  <float_array id="Folding_10-mesh-positions-array" count="18">19.125 3.25 0 17.875 3.25 0 19.125 0 7.475 19.125 3.25 7.475 17.875 3.25 7.475 17.875 0 7.475</float_array>
+			  <technique_common>
+				<accessor source="#Folding_10-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_10-mesh-normals">
+			  <float_array id="Folding_10-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_10-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_10-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_10-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_10-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_10-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_11-mesh" name="Folding_11">
+		  <mesh>
+			<source id="Folding_11-mesh-positions">
+			  <float_array id="Folding_11-mesh-positions-array" count="18">20.525 3.5 0 19.275 3.5 0 20.525 0 7.425 20.525 3.5 7.425 19.275 3.5 7.425 19.275 0 7.425</float_array>
+			  <technique_common>
+				<accessor source="#Folding_11-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_11-mesh-normals">
+			  <float_array id="Folding_11-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_11-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_11-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_11-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_11-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_11-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_12-mesh" name="Folding_12">
+		  <mesh>
+			<source id="Folding_12-mesh-positions">
+			  <float_array id="Folding_12-mesh-positions-array" count="18">24.65 4.25 0 23.4 4.25 0 24.65 0 7.5 24.65 4.25 7.5 23.4 4.25 7.5 23.4 0 7.5</float_array>
+			  <technique_common>
+				<accessor source="#Folding_12-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_12-mesh-normals">
+			  <float_array id="Folding_12-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_12-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_12-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_12-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_12-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_12-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_13-mesh" name="Folding_13">
+		  <mesh>
+			<source id="Folding_13-mesh-positions">
+			  <float_array id="Folding_13-mesh-positions-array" count="18">21.9 3.75 0 20.65 3.75 0 21.9 0 7.45 21.9 3.75 7.45 20.65 3.75 7.45 20.65 0 7.45</float_array>
+			  <technique_common>
+				<accessor source="#Folding_13-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_13-mesh-normals">
+			  <float_array id="Folding_13-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_13-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_13-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_13-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_13-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_13-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_14-mesh" name="Folding_14">
+		  <mesh>
+			<source id="Folding_14-mesh-positions">
+			  <float_array id="Folding_14-mesh-positions-array" count="18">23.275 4 0 22.025 4 0 23.275 0 7.425 23.275 4 7.425 22.025 4 7.425 22.025 0 7.425</float_array>
+			  <technique_common>
+				<accessor source="#Folding_14-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_14-mesh-normals">
+			  <float_array id="Folding_14-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_14-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_14-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_14-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_14-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_14-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_15-mesh" name="Folding_15">
+		  <mesh>
+			<source id="Folding_15-mesh-positions">
+			  <float_array id="Folding_15-mesh-positions-array" count="18">26.025 4.5 0 24.775 4.5 0 26.025 0 7.5 26.025 4.5 7.5 24.775 4.5 7.5 24.775 0 7.5</float_array>
+			  <technique_common>
+				<accessor source="#Folding_15-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_15-mesh-normals">
+			  <float_array id="Folding_15-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_15-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_15-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_15-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_15-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_15-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_16-mesh" name="Folding_16">
+		  <mesh>
+			<source id="Folding_16-mesh-positions">
+			  <float_array id="Folding_16-mesh-positions-array" count="18">16.325 2.75 0 15.075 2.75 0 16.325 0 7.45 16.325 2.75 7.45 15.075 2.75 7.45 15.075 0 7.45</float_array>
+			  <technique_common>
+				<accessor source="#Folding_16-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_16-mesh-normals">
+			  <float_array id="Folding_16-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_16-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_16-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_16-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_16-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_16-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_17-mesh" name="Folding_17">
+		  <mesh>
+			<source id="Folding_17-mesh-positions">
+			  <float_array id="Folding_17-mesh-positions-array" count="18">17.725 3 0 16.475 3 0 17.725 0 7.45 17.725 3 7.45 16.475 3 7.45 16.475 0 7.45</float_array>
+			  <technique_common>
+				<accessor source="#Folding_17-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_17-mesh-normals">
+			  <float_array id="Folding_17-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_17-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_17-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_17-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_17-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_17-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+  </library_geometries>
+  <library_controllers>
+
+
+
+      <controller id="Armature_0_Folding_0-skin" name="Armature_0">
+      <skin source="#Folding_0-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_0_Folding_0-skin-joints">
+          <Name_array id="Armature_0_Folding_0-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_0_Folding_0-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_0_Folding_0-skin-bind_poses">
+          <float_array id="Armature_0_Folding_0-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_0_Folding_0-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_0_Folding_0-skin-weights">
+          <float_array id="Armature_0_Folding_0-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_0_Folding_0-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_0_Folding_0-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_0_Folding_0-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_0_Folding_0-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_0_Folding_0-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_1_Folding_1-skin" name="Armature_1">
+      <skin source="#Folding_1-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_1_Folding_1-skin-joints">
+          <Name_array id="Armature_1_Folding_1-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_1_Folding_1-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_1_Folding_1-skin-bind_poses">
+          <float_array id="Armature_1_Folding_1-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_1_Folding_1-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_1_Folding_1-skin-weights">
+          <float_array id="Armature_1_Folding_1-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_1_Folding_1-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_1_Folding_1-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_1_Folding_1-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_1_Folding_1-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_1_Folding_1-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_2_Folding_2-skin" name="Armature_2">
+      <skin source="#Folding_2-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_2_Folding_2-skin-joints">
+          <Name_array id="Armature_2_Folding_2-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_2_Folding_2-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_2_Folding_2-skin-bind_poses">
+          <float_array id="Armature_2_Folding_2-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_2_Folding_2-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_2_Folding_2-skin-weights">
+          <float_array id="Armature_2_Folding_2-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_2_Folding_2-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_2_Folding_2-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_2_Folding_2-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_2_Folding_2-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_2_Folding_2-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_3_Folding_3-skin" name="Armature_3">
+      <skin source="#Folding_3-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_3_Folding_3-skin-joints">
+          <Name_array id="Armature_3_Folding_3-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_3_Folding_3-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_3_Folding_3-skin-bind_poses">
+          <float_array id="Armature_3_Folding_3-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_3_Folding_3-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_3_Folding_3-skin-weights">
+          <float_array id="Armature_3_Folding_3-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_3_Folding_3-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_3_Folding_3-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_3_Folding_3-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_3_Folding_3-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_3_Folding_3-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_4_Folding_4-skin" name="Armature_4">
+      <skin source="#Folding_4-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_4_Folding_4-skin-joints">
+          <Name_array id="Armature_4_Folding_4-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_4_Folding_4-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_4_Folding_4-skin-bind_poses">
+          <float_array id="Armature_4_Folding_4-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_4_Folding_4-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_4_Folding_4-skin-weights">
+          <float_array id="Armature_4_Folding_4-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_4_Folding_4-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_4_Folding_4-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_4_Folding_4-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_4_Folding_4-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_4_Folding_4-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_5_Folding_5-skin" name="Armature_5">
+      <skin source="#Folding_5-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_5_Folding_5-skin-joints">
+          <Name_array id="Armature_5_Folding_5-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_5_Folding_5-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_5_Folding_5-skin-bind_poses">
+          <float_array id="Armature_5_Folding_5-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_5_Folding_5-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_5_Folding_5-skin-weights">
+          <float_array id="Armature_5_Folding_5-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_5_Folding_5-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_5_Folding_5-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_5_Folding_5-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_5_Folding_5-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_5_Folding_5-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_6_Folding_6-skin" name="Armature_6">
+      <skin source="#Folding_6-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_6_Folding_6-skin-joints">
+          <Name_array id="Armature_6_Folding_6-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_6_Folding_6-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_6_Folding_6-skin-bind_poses">
+          <float_array id="Armature_6_Folding_6-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_6_Folding_6-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_6_Folding_6-skin-weights">
+          <float_array id="Armature_6_Folding_6-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_6_Folding_6-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_6_Folding_6-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_6_Folding_6-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_6_Folding_6-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_6_Folding_6-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_7_Folding_7-skin" name="Armature_7">
+      <skin source="#Folding_7-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_7_Folding_7-skin-joints">
+          <Name_array id="Armature_7_Folding_7-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_7_Folding_7-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_7_Folding_7-skin-bind_poses">
+          <float_array id="Armature_7_Folding_7-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_7_Folding_7-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_7_Folding_7-skin-weights">
+          <float_array id="Armature_7_Folding_7-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_7_Folding_7-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_7_Folding_7-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_7_Folding_7-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_7_Folding_7-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_7_Folding_7-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_8_Folding_8-skin" name="Armature_8">
+      <skin source="#Folding_8-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_8_Folding_8-skin-joints">
+          <Name_array id="Armature_8_Folding_8-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_8_Folding_8-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_8_Folding_8-skin-bind_poses">
+          <float_array id="Armature_8_Folding_8-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_8_Folding_8-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_8_Folding_8-skin-weights">
+          <float_array id="Armature_8_Folding_8-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_8_Folding_8-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_8_Folding_8-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_8_Folding_8-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_8_Folding_8-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_8_Folding_8-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_9_Folding_9-skin" name="Armature_9">
+      <skin source="#Folding_9-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_9_Folding_9-skin-joints">
+          <Name_array id="Armature_9_Folding_9-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_9_Folding_9-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_9_Folding_9-skin-bind_poses">
+          <float_array id="Armature_9_Folding_9-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_9_Folding_9-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_9_Folding_9-skin-weights">
+          <float_array id="Armature_9_Folding_9-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_9_Folding_9-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_9_Folding_9-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_9_Folding_9-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_9_Folding_9-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_9_Folding_9-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_10_Folding_10-skin" name="Armature_10">
+      <skin source="#Folding_10-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_10_Folding_10-skin-joints">
+          <Name_array id="Armature_10_Folding_10-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_10_Folding_10-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_10_Folding_10-skin-bind_poses">
+          <float_array id="Armature_10_Folding_10-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_10_Folding_10-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_10_Folding_10-skin-weights">
+          <float_array id="Armature_10_Folding_10-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_10_Folding_10-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_10_Folding_10-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_10_Folding_10-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_10_Folding_10-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_10_Folding_10-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_11_Folding_11-skin" name="Armature_11">
+      <skin source="#Folding_11-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_11_Folding_11-skin-joints">
+          <Name_array id="Armature_11_Folding_11-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_11_Folding_11-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_11_Folding_11-skin-bind_poses">
+          <float_array id="Armature_11_Folding_11-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_11_Folding_11-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_11_Folding_11-skin-weights">
+          <float_array id="Armature_11_Folding_11-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_11_Folding_11-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_11_Folding_11-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_11_Folding_11-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_11_Folding_11-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_11_Folding_11-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_12_Folding_12-skin" name="Armature_12">
+      <skin source="#Folding_12-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_12_Folding_12-skin-joints">
+          <Name_array id="Armature_12_Folding_12-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_12_Folding_12-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_12_Folding_12-skin-bind_poses">
+          <float_array id="Armature_12_Folding_12-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_12_Folding_12-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_12_Folding_12-skin-weights">
+          <float_array id="Armature_12_Folding_12-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_12_Folding_12-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_12_Folding_12-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_12_Folding_12-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_12_Folding_12-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_12_Folding_12-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_13_Folding_13-skin" name="Armature_13">
+      <skin source="#Folding_13-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_13_Folding_13-skin-joints">
+          <Name_array id="Armature_13_Folding_13-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_13_Folding_13-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_13_Folding_13-skin-bind_poses">
+          <float_array id="Armature_13_Folding_13-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_13_Folding_13-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_13_Folding_13-skin-weights">
+          <float_array id="Armature_13_Folding_13-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_13_Folding_13-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_13_Folding_13-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_13_Folding_13-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_13_Folding_13-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_13_Folding_13-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_14_Folding_14-skin" name="Armature_14">
+      <skin source="#Folding_14-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_14_Folding_14-skin-joints">
+          <Name_array id="Armature_14_Folding_14-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_14_Folding_14-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_14_Folding_14-skin-bind_poses">
+          <float_array id="Armature_14_Folding_14-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_14_Folding_14-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_14_Folding_14-skin-weights">
+          <float_array id="Armature_14_Folding_14-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_14_Folding_14-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_14_Folding_14-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_14_Folding_14-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_14_Folding_14-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_14_Folding_14-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_15_Folding_15-skin" name="Armature_15">
+      <skin source="#Folding_15-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_15_Folding_15-skin-joints">
+          <Name_array id="Armature_15_Folding_15-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_15_Folding_15-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_15_Folding_15-skin-bind_poses">
+          <float_array id="Armature_15_Folding_15-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_15_Folding_15-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_15_Folding_15-skin-weights">
+          <float_array id="Armature_15_Folding_15-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_15_Folding_15-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_15_Folding_15-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_15_Folding_15-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_15_Folding_15-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_15_Folding_15-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_16_Folding_16-skin" name="Armature_16">
+      <skin source="#Folding_16-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_16_Folding_16-skin-joints">
+          <Name_array id="Armature_16_Folding_16-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_16_Folding_16-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_16_Folding_16-skin-bind_poses">
+          <float_array id="Armature_16_Folding_16-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_16_Folding_16-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_16_Folding_16-skin-weights">
+          <float_array id="Armature_16_Folding_16-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_16_Folding_16-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_16_Folding_16-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_16_Folding_16-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_16_Folding_16-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_16_Folding_16-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+
+
+      <controller id="Armature_17_Folding_17-skin" name="Armature_17">
+      <skin source="#Folding_17-mesh">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_17_Folding_17-skin-joints">
+          <Name_array id="Armature_17_Folding_17-skin-joints-array" count="2">Bone Bone_001</Name_array>
+          <technique_common>
+            <accessor source="#Armature_17_Folding_17-skin-joints-array" count="2" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_17_Folding_17-skin-bind_poses">
+          <float_array id="Armature_17_Folding_17-skin-bind_poses-array" count="32">1 0 0 -3 0 0 1 0 0 -1 0 0.005888223 0 0 0 1 1 0 0 -3 0 0.9999972 -0.002412855 0.001832842 0 0.002412855 0.9999972 -3.200005 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_17_Folding_17-skin-bind_poses-array" count="2" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_17_Folding_17-skin-weights">
+          <float_array id="Armature_17_Folding_17-skin-weights-array" count="8">1 1 1 0.5 0.5 0.5 0.5 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_17_Folding_17-skin-weights-array" count="8" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_17_Folding_17-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_17_Folding_17-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="6">
+          <input semantic="JOINT" source="#Armature_17_Folding_17-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_17_Folding_17-skin-weights" offset="1"/>
+          <vcount>1 1 1 2 2 1 </vcount>
+          <v>0 0 0 1 1 2 0 3 1 4 0 5 1 6 1 7</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+
+</library_controllers>
+<library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+
+
+      <node id="Armature_0" name="Armature_0" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_0" name="Folding_0" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_0_Folding_0-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_1" name="Armature_1" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_1" name="Folding_1" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_1_Folding_1-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_2" name="Armature_2" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_2" name="Folding_2" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_2_Folding_2-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_3" name="Armature_3" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_3" name="Folding_3" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_3_Folding_3-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_4" name="Armature_4" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_4" name="Folding_4" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_4_Folding_4-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_5" name="Armature_5" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_5" name="Folding_5" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_5_Folding_5-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_6" name="Armature_6" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_6" name="Folding_6" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_6_Folding_6-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_7" name="Armature_7" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_7" name="Folding_7" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_7_Folding_7-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_8" name="Armature_8" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_8" name="Folding_8" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_8_Folding_8-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_9" name="Armature_9" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_9" name="Folding_9" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_9_Folding_9-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_10" name="Armature_10" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_10" name="Folding_10" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_10_Folding_10-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_11" name="Armature_11" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_11" name="Folding_11" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_11_Folding_11-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_12" name="Armature_12" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_12" name="Folding_12" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_12_Folding_12-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_13" name="Armature_13" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_13" name="Folding_13" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_13_Folding_13-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_14" name="Armature_14" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_14" name="Folding_14" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_14_Folding_14-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_15" name="Armature_15" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_15" name="Folding_15" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_15_Folding_15-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_16" name="Armature_16" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_16" name="Folding_16" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_16_Folding_16-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+
+      <node id="Armature_17" name="Armature_17" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="Bone" name="Bone" sid="Bone" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 -1.994112 0 1 7.54979e-8 -7.08451e-16 0 0 0 1</matrix>
+          <node id="Bone_001" name="Bone.001" sid="Bone_001" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 -0.002412837 0.9999971 3.2 0 -0.9999971 -0.002412837 0 0 0 0 1</matrix>
+          </node>
+        </node>
+      </node>
+      <node id="Folding_17" name="Folding_17" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_17_Folding_17-skin">
+          <skeleton>#Bone</skeleton>
+        </instance_controller>
+      </node>
+
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

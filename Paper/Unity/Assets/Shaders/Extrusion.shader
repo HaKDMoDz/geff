@@ -7,6 +7,8 @@ Properties {
 }
 
 CGINCLUDE
+// Upgrade NOTE: excluded shader from DX11 and Xbox360; has structs without semantics (struct appdata members vertex,normal)
+#pragma exclude_renderers d3d11 xbox360
 // Upgrade NOTE: excluded shader from OpenGL ES 2.0 because it does not contain a surface program or both vertex and fragment programs.
 #pragma exclude_renderers gles
 // Upgrade NOTE: excluded shader from Xbox360; has structs without semantics (struct appdata members vertex,normal)
