@@ -296,23 +296,9 @@ namespace Paper
         {
             String strTemplate = Resources.COLLADA_Exporter_Template_Papier;
 
-            //strTemplate = strTemplate.Replace("{YEAR}", DateTime.Now.Year.ToString());
-            //strTemplate = strTemplate.Replace("{MONTH}", DateTime.Now.Month.ToString());
-            //strTemplate = strTemplate.Replace("{DAY}", DateTime.Now.Day.ToString());
-            //strTemplate = strTemplate.Replace("{HOUR}", DateTime.Now.Hour.ToString());
-            //strTemplate = strTemplate.Replace("{MINUTE}", DateTime.Now.Minute.ToString());
-            //strTemplate = strTemplate.Replace("{SECOND}", DateTime.Now.Second.ToString());
-            //strTemplate = strTemplate.Replace("{MILLISECOND}", DateTime.Now.Millisecond.ToString());
-
             strTemplate = strTemplate.Replace("{DATETIME}", DateTime.Now.ToString());
 
             List<Folding> listFoldings = GetFoldings(scene);
-
-            //strTemplate = strTemplate.Replace("{OBJECT_COUNT}", (listFoldings.Count * 6 + 2).ToString());
-            //strTemplate = strTemplate.Replace("{MODEL_COUNT}", (listFoldings.Count * 4).ToString());
-            //strTemplate = strTemplate.Replace("{GEOMETRY_COUNT}", (listFoldings.Count).ToString());
-            //strTemplate = strTemplate.Replace("{DEFORMER_COUNT}", (listFoldings.Count * 3).ToString());
-
 
             int indexStart = strTemplate.IndexOf("{MODEL}");
             int indexEnd = strTemplate.IndexOf("{/MODEL}");
@@ -325,105 +311,100 @@ namespace Paper
             float d = 40f;
             float dh = d;
 
-            int nbFolding = 0;
-            foreach (Folding folding in listFoldings)
+            for (int i = 0; i < listFoldings.Count + 1; i++)
             {
                 string strFoldingModel = strSubTemplate;
 
-                strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + nbFolding.ToString());
-                strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + nbFolding.ToString());
+                if (i < listFoldings.Count)
+                {
+                    Folding folding = listFoldings[i];
+
+                    strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + i.ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + i.ToString());
+
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.X}", (float)folding.Location.X / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Z}", (float)-folding.Location.Y / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Y}", (float)-folding.Height / d);
+
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P1.X}", (float)folding.Location.X / d + (float)folding.Width / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P1.Z}", (float)-folding.Location.Y / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P1.Y}", (float)-folding.Height / dh);
+
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P2.X}", (float)folding.Location.X / d + (float)folding.Width / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P2.Z}", (0));
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P2.Y}", (float)-folding.Height / dh);
+
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P3.X}", (float)folding.Location.X / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P3.Z}", (0));
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P3.Y}", (float)-folding.Height / dh);
 
 
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P0.X}", (float)folding.Location.X / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Z}", (float)-folding.Location.Y / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Y}", (float)-folding.Height / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P4.X}", (float)folding.Location.X / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Z}", (float)-folding.Location.Y / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Y}", (0));
 
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P1.X}", (float)folding.Location.X / d + (float)folding.Width / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P1.Z}", (float)-folding.Location.Y / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P1.Y}", (float)-folding.Height / dh);
-
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P2.X}", (float)folding.Location.X / d + (float)folding.Width / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P2.Z}", (0));
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P2.Y}", (float)-folding.Height / dh);
-
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P3.X}", (float)folding.Location.X / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P3.Z}", (0));
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P3.Y}", (float)-folding.Height / dh);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P5.X}", (float)folding.Location.X / d + (float)folding.Width / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Z}", (float)-folding.Location.Y / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Y}", (0));
+                }
+                else
+                {
+                    strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + i.ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + i.ToString());
 
 
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P4.X}", (float)folding.Location.X / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Z}", (float)-folding.Location.Y / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Y}", (0));
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P1.X}", 0); //0
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P1.Z}", 0f);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P1.Y}", 0f);
 
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P5.X}", (float)folding.Location.X / d + (float)folding.Width / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Z}", (float)-folding.Location.Y / d);
-                strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Y}", (0));
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.X}", 20f); //1
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Z}", 0f);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Y}", 0f);
 
 
-                //strFoldingModel = strFoldingModel.Replace("{BONE1_NAME}", "Bone_" + (nbFolding * 2).ToString());
-                //strFoldingModel = ReplaceValue(strFoldingModel, "{FOLDING_DEEP}", (float)folding.Height / d);
-                //strFoldingModel = ReplaceValue(strFoldingModel, "{FOLDING_HEIGHT}", (float)folding.Location.Y / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P2.X}", 0f); //2
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P2.Z}", 20f);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P2.Y}", 0f);
 
-                //strFoldingModel = strFoldingModel.Replace("{BONE2_NAME}", "Bone_" + (nbFolding * 2 + 1).ToString());
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P3.X}", 20f); //3
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P3.Z}", 20f);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P3.Y}", 0f);
+
+
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P4.X}", 20f);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Z}", 0f);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Y}", -20f);
+                    
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P5.X}", 0f);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Z}", 0f);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Y}", -20f);
+
+                }
 
                 strFile.AppendLine();
                 strFile.Append(strFoldingModel);
-
-                nbFolding++;
             }
-
-
-            int indexStart2 = strTemplate.IndexOf("{CONTROLLER}");
-            int indexEnd2 = strTemplate.IndexOf("{/CONTROLLER}");
-
-            strSubTemplate = strTemplate.Substring(indexStart2 + 12, indexEnd2 - indexStart2 - 12);
-
-            strFile.Append(strTemplate.Substring(indexEnd + 8, indexStart2 - indexEnd - 8));
-
-            //strFile = strFile.Replace("{POSE_COUNT}", (nbFolding * 4).ToString());
-
-            nbFolding = 0;
-            foreach (Folding folding in listFoldings)
-            {
-                string strFoldingModel = strSubTemplate;
-
-                strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + nbFolding.ToString());
-                strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + nbFolding.ToString());
-                //strFoldingModel = strFoldingModel.Replace("{BONE1_NAME}", "Bone_" + (nbFolding * 2).ToString());
-                //strFoldingModel = strFoldingModel.Replace("{BONE2_NAME}", "Bone_" + (nbFolding * 2 + 1).ToString());
-
-                strFile.AppendLine();
-                strFile.Append(strFoldingModel);
-
-                nbFolding++;
-            }
-
-
 
             int indexStart3 = strTemplate.IndexOf("{SCENE}");
             int indexEnd3 = strTemplate.IndexOf("{/SCENE}");
 
             strSubTemplate = strTemplate.Substring(indexStart3 + 7, indexEnd3 - indexStart3 - 7);
 
-            strFile.Append(strTemplate.Substring(indexEnd2 + 13, indexStart3 - indexEnd2 - 13));
+            strFile.Append(strTemplate.Substring(indexEnd + 8, indexStart3 - indexEnd - 8));
 
-            nbFolding = 0;
-            foreach (Folding folding in listFoldings)
+            for (int i = 0; i < listFoldings.Count + 1; i++)
             {
                 string strFoldingModel = strSubTemplate;
 
-                strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + nbFolding.ToString());
-                strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + nbFolding.ToString());
+                //strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + nbFolding.ToString());
+                strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + i.ToString());
                 //strFoldingModel = strFoldingModel.Replace("{BONE1_NAME}", "Bone_" + (nbFolding * 2).ToString());
                 //strFoldingModel = strFoldingModel.Replace("{BONE2_NAME}", "Bone_" + (nbFolding * 2 + 1).ToString());
 
                 strFile.AppendLine();
                 strFile.Append(strFoldingModel);
-
-                nbFolding++;
             }
 
-       
 
             strFile.Append(strTemplate.Substring(indexEnd3 + 8));
 

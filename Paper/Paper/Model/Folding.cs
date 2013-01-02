@@ -8,9 +8,10 @@ using System.Xml.Serialization;
 namespace Paper.Model
 {
     [Serializable()]
-    public class Folding : ComponentBase, IResizableWidth, IResizableHeight
+    public class Folding : ComponentBase, IResizableWidth, IResizableHeight, IMoveable
     {
-        int _height = 0;
+        private int _height = 0;
+        private Point _location = Point.Empty;
 
         [XmlIgnore]
         public int Height
@@ -44,6 +45,25 @@ namespace Paper.Model
 
         public int Width { get; set; }
 
+
+        public Point Location {
+            get
+            {
+                return _location;
+            }
+            set
+            {
+                int y = _location.Y;
+
+                if (value.Y <= 0)
+                {
+                    y = value.Y;
+                }
+
+                _location = new Point(value.X, y);
+            }
+        }
+
         [XmlIgnore]
         public List<Rectangle> ListCutting { get; set; }
 
@@ -53,8 +73,9 @@ namespace Paper.Model
         }
 
         public Folding(int x, int y, int width, int height)
-            : base(x, y)
+            : base()
         {
+            this.Location = new Point(x, y);
             this.Width = width;
             _height = height;
             this.ListCutting = new List<Rectangle>();

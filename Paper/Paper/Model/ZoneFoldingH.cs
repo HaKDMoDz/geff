@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using System.Drawing;
 
 namespace Paper.Model
 {
     [Serializable()]
-    public class ZoneFoldingH : ComponentBase, IResizableHeight
+    public class ZoneFoldingH : ComponentBase, IResizableHeight, IMoveable
     {
         public int Height
         {
@@ -29,8 +30,9 @@ namespace Paper.Model
         }
 
         public ZoneFoldingH(int x, int y, int size)
-            : base(x, y)
+            : base()
         {
+            this.Location = new Point(x, y);
             this.Height = size;
         }
 
@@ -54,6 +56,12 @@ namespace Paper.Model
             {
                 return Rectangle;
             }
+        }
+
+        public Point Location
+        {
+            get;
+            set;
         }
     }
 }

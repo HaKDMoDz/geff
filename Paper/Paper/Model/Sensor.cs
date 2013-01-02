@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using System.Drawing;
 
 namespace Paper.Model
 {
     [Serializable()]
-    public class Sensor : ComponentBase
+    public class Sensor : ComponentBase, IMoveable
     {
         public SensorType SensorType { get; set; }
 
@@ -16,8 +17,9 @@ namespace Paper.Model
         }
 
         public Sensor(int x, int y, SensorType sensorType)
-            : base(x, y)
+            : base()
         {
+            this.Location = new Point(x, y);
             this.SensorType = sensorType;
         }
 
@@ -28,6 +30,12 @@ namespace Paper.Model
             {
                 return new System.Drawing.Rectangle(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, 32, 32);
             }
+        }
+
+        public Point Location
+        {
+            get;
+            set;
         }
     }
 

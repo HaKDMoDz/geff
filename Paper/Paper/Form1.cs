@@ -138,7 +138,7 @@ namespace Paper
                     {
                         component.ModeSelection = ModeSelection.SelectedMove;
                         curComponent = component;
-                        prevLocation = component.Location;
+                        prevLocation = ((IMoveable)component).Location;
                     }
                     else if (component == nearestCuboid && component.ModeSelection == ModeSelection.NearResizeWidth)
                     {
@@ -155,42 +155,43 @@ namespace Paper
                 }
                 //---
 
-
+                int gridWidth = int.Parse(txtGridWidth.Text);
+                int gridHeight = int.Parse(txtGridHeight.Text);
 
                 //---> Création du pliage
                 if (Common.CurrentTool == Tools.Folding && curComponent == null)
                 {
-                    curComponent = new Folding(initialPointMouse.X, initialPointMouse.Y, 50, 5);
+                    curComponent = new Folding(initialPointMouse.X, initialPointMouse.Y, gridWidth * 2, 5);
                 }
 
                 //---> Création de la zone de pliage H
                 if (Common.CurrentTool == Tools.ZoneFoldingH && curComponent == null)
                 {
-                    curComponent = new ZoneFoldingH(initialPointMouse.X, initialPointMouse.Y, 50);
+                    curComponent = new ZoneFoldingH(initialPointMouse.X, initialPointMouse.Y, gridHeight * 2);
                 }
 
                 //---> Création de la zone de pliage V
                 if (Common.CurrentTool == Tools.ZoneFoldingV && curComponent == null)
                 {
-                    curComponent = new ZoneFoldingV(initialPointMouse.X, initialPointMouse.Y, 50);
+                    curComponent = new ZoneFoldingV(initialPointMouse.X, initialPointMouse.Y, gridWidth * 2);
                 }
 
                 //---> Création de la zone de déplacement H
                 if (Common.CurrentTool == Tools.ZoneMovingH && curComponent == null)
                 {
-                    curComponent = new ZoneMovingH(initialPointMouse.X, initialPointMouse.Y, 100, 50);
+                    curComponent = new ZoneMovingH(initialPointMouse.X, initialPointMouse.Y, gridWidth * 3, gridHeight);
                 }
 
                 //---> Création de la zone de déplacement V
                 if (Common.CurrentTool == Tools.ZoneMovingV && curComponent == null)
                 {
-                    curComponent = new ZoneMovingV(initialPointMouse.X, initialPointMouse.Y, 50, 100);
+                    curComponent = new ZoneMovingV(initialPointMouse.X, initialPointMouse.Y, gridWidth, gridHeight * 3);
                 }
 
                 //---> Création de la platforme
                 if (Common.CurrentTool == Tools.Platform && curComponent == null)
                 {
-                    curComponent = new Platform(initialPointMouse.X, initialPointMouse.Y, 100, 50);
+                    curComponent = new Platform(initialPointMouse.X, initialPointMouse.Y, gridWidth*3, gridHeight*2);
                 }
 
                 if (Common.CurrentTool == Tools.SensorButton && curComponent == null)
@@ -216,7 +217,7 @@ namespace Paper
                 //---> Stockage du nouvel élément
                 if (Common.CurrentTool != Tools.None && curComponent != null && curComponent.ModeSelection == ModeSelection.None)
                 {
-                    prevLocation = curComponent.Location;
+                    prevLocation = ((IMoveable)curComponent).Location;
                     curComponent.ModeSelection = ModeSelection.SelectedMove;
                     curComponent.ColorIndex = Common.CurrentColorIndex;
                     scene.listComponent.Add(curComponent);
@@ -268,16 +269,36 @@ namespace Paper
             {
                 pointMouse.Offset(-Common.Delta.X, -Common.Delta.Y);
 
+
                 if (curComponent.ModeSelection == ModeSelection.SelectedMove)
                 {
-                    curComponent.Location = new Point(prevLocation.X + pointMouse.X - initialPointMouse.X,
-                                                      prevLocation.Y + pointMouse.Y - initialPointMouse.Y);
+                    int gridWidth = 1;
+                    int gridHeight = 1;
+
+                    if (btnGrid.Checked)
+                    {
+                        gridWidth = int.Parse(txtGridWidth.Text);
+                        gridHeight = int.Parse(txtGridHeight.Text);
+                    }
+
+                    
+                    
+                    ((IMoveable)curComponent).Location = new Point((prevLocation.X + pointMouse.X - initialPointMouse.X) / gridWidth * gridWidth,
+                                                  (prevLocation.Y + pointMouse.Y - initialPointMouse.Y) / gridHeight * gridHeight);
+
                 }
                 else if (curComponent.ModeSelection == ModeSelection.SelectedResizeWidth)
                 {
                     if (curResizeableWidthComponent != null)
                     {
-                        curResizeableWidthComponent.Width = prevWidth + pointMouse.X - initialPointMouse.X;
+                        int gridWidth = 1;
+
+                        if (btnGrid.Checked)
+                        {
+                            gridWidth = int.Parse(txtGridWidth.Text);
+                        }
+
+                        curResizeableWidthComponent.Width = (prevWidth + pointMouse.X - initialPointMouse.X) / gridWidth * gridWidth;
 
                         if (curResizeableWidthComponent.Width <= 0)
                             curResizeableWidthComponent.Width = 1;
@@ -287,7 +308,14 @@ namespace Paper
                 {
                     if (curResizeableHeightComponent != null)
                     {
-                        curResizeableHeightComponent.Height = prevHeight + pointMouse.Y - initialPointMouse.Y;
+                        int gridHeight = 1;
+
+                        if (btnGrid.Checked)
+                        {
+                            gridHeight = int.Parse(txtGridHeight.Text);
+                        }
+
+                        curResizeableHeightComponent.Height = (prevHeight + pointMouse.Y - initialPointMouse.Y) / gridHeight * gridHeight; ;
 
                         if (curResizeableHeightComponent.Height <= 0)
                             curResizeableHeightComponent.Height = 1;

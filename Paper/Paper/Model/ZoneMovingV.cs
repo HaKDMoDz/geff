@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using System.Drawing;
 
 namespace Paper.Model
 {
     [Serializable()]
-    public class ZoneMovingV : ComponentBase, IResizableWidth, IResizableHeight
+    public class ZoneMovingV : ComponentBase, IResizableWidth, IResizableHeight, IMoveable
     {
         public int Width
         {
@@ -28,8 +29,9 @@ namespace Paper.Model
         }
 
         public ZoneMovingV(int x, int y, int width, int height)
-            : base(x, y)
+            : base()
         {
+            this.Location = new Point(x, y);
             this.ZoneMovingType = Model.ZoneMovingType.Vertical;
             this.Width = width;
             this.Height = height;
@@ -68,6 +70,12 @@ namespace Paper.Model
             {
                 return new System.Drawing.Rectangle(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, Width, Height);
             }
+        }
+
+        public Point Location
+        {
+            get;
+            set;
         }
     }
 

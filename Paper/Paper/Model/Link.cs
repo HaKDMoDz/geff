@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using System.Drawing;
 
 namespace Paper.Model
 {
     [Serializable()]
-    public class Link : ComponentBase
+    public class Link : ComponentBase, IMoveable
     {
         public Link()
         {
         }
 
         public Link(int x, int y)
-            : base(x, y)
+            : base()
         {
+            this.Location = new Point(x, y);
         }
 
         [XmlIgnore]
@@ -32,6 +34,12 @@ namespace Paper.Model
             {
                 return new System.Drawing.Rectangle(Location.X, Location.Y, 10, 10);
             }
+        }
+
+        public Point Location
+        {
+            get;
+            set;
         }
     }
 }
