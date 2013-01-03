@@ -26,16 +26,14 @@ public class Folding : MonoBehaviour
 
     void Update()
     {
-		
         if (Actif && Time.realtimeSinceStartup - startAnimation < animationDuration)
         {
             p = Time.deltaTime / animationDuration;
 
             if(!IsScene)
-                Bone_001.Rotate(new Vector3(-90f * p * animationSens, 0f , 0f));
-
-            Bone_002.Rotate(new Vector3(90f * p * animationSens, 0f, 0f));
+            	Bone_002.Rotate(new Vector3(90f * p * animationSens, 0f, 0f));
+                
+			Bone_001.Rotate(new Vector3(-90f * p * animationSens, 0f , 0f));
         }
-        
     }
 }

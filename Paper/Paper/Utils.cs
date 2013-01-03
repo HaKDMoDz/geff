@@ -323,11 +323,11 @@ namespace Paper
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + i.ToString());
 
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P0.X}", (float)folding.Location.X / d);
-                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Z}", (float)-folding.Location.Y / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Z}", (float)-folding.Location.Y / d + folding.Height/d);
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Y}", (float)-folding.Height / d);
 
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P1.X}", (float)folding.Location.X / d + (float)folding.Width / d);
-                    strFoldingModel = ReplaceValue(strFoldingModel, "{P1.Z}", (float)-folding.Location.Y / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P1.Z}", (float)-folding.Location.Y / d + folding.Height / d);
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P1.Y}", (float)-folding.Height / dh);
 
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P2.X}", (float)folding.Location.X / d + (float)folding.Width / d);
@@ -340,11 +340,11 @@ namespace Paper
 
 
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P4.X}", (float)folding.Location.X / d);
-                    strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Z}", (float)-folding.Location.Y / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Z}", (float)-folding.Location.Y / d + folding.Height / d);
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Y}", (0));
 
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P5.X}", (float)folding.Location.X / d + (float)folding.Width / d);
-                    strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Z}", (float)-folding.Location.Y / d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Z}", (float)-folding.Location.Y / d + folding.Height / d);
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Y}", (0));
                 }
                 else

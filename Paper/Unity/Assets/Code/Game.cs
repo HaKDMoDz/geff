@@ -151,7 +151,12 @@ public class Game : MonoBehaviour
 					bones [0].localPosition = centerBones[0];
 					
 					bones [1] = new GameObject ("Upper").transform;
-					bones [1].parent = bones[0];
+					if(childTransform.gameObject.name.ToUpper().Contains("SCENE"))
+						bones [1].parent = childTransform;
+					else
+						bones [1].parent = bones[0];
+						
+					
 					bones [1].localRotation = Quaternion.identity;
 					bones [1].localPosition = centerBones[1] - centerBones[0];
 					
