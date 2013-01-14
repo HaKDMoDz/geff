@@ -55,12 +55,12 @@ namespace Paper.Model
             {
                 int y = _location.Y;
 
-                if (value.Y <= 0)
-                {
-                    y = value.Y;
-                }
+                //if (value.Y <= 0)
+                //{
+                //    y = value.Y;
+                //}
 
-                _location = new Point(value.X, y);
+                _location = new Point(value.X, value.Y);
             }
         }
 
@@ -186,6 +186,13 @@ namespace Paper.Model
         }
     }
 
+    public class Cutting
+    {
+        public Cutting[,] Cuttings { get; set; }
+
+
+
+    }
 
     public enum ModeSelection
     {

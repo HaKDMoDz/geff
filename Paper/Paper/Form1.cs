@@ -457,6 +457,33 @@ namespace Paper
                 scene.listComponent.Sort(new CuboidComparer());
         }
 
+        private void CalcFoldingIntersections()
+        {
+            scene.listComponent.Sort(new CuboidComparer());
+
+            int i = 0;
+            foreach (ComponentBase component in scene.listComponent)
+            {
+                i++;
+                Folding folding = component as Folding;
+
+                if (folding != null)
+                {
+                    for (int j = i; j < scene.listComponent.Count; j++)
+                    {
+                        Folding folding2 = scene.listComponent[j] as Folding;
+
+                        if (folding2 != null)
+                        {
+                            Rectangle recFace2 = new Rectangle(folding2.RecFace.Left, folding2.RecFace.Top + folding2.RecFace.Bottom - folding.RecFace.Bottom, folding2.Width, folding2.Height);
+
+
+                        }
+                    }
+                }
+            }
+        }
+
         private void CalcCuboidIntersections()
         {
             SortCuboid(false);
