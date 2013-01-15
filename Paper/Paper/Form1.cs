@@ -247,7 +247,7 @@ namespace Paper
                     }
                 }
 
-                CalcCuboidIntersections();
+                //CalcCuboidIntersections();
                 DrawScene();
             }
         }
@@ -325,6 +325,8 @@ namespace Paper
                 //SortCuboid();
 
                 //CalcCuboidIntersections();
+
+                CalcFoldingIntersections();
 
                 DrawScene();
             }
@@ -427,7 +429,7 @@ namespace Paper
 
                 //if (nearestModeSelection != ModeSelection.None)
                 {
-                    //SortCuboid();
+                    SortCuboid();
 
                     DrawScene();
                 }
@@ -464,65 +466,34 @@ namespace Paper
             int i = 0;
             foreach (ComponentBase component in scene.listComponent)
             {
-                i++;
                 Folding folding = component as Folding;
 
                 if (folding != null)
                 {
-                    for (int j = i; j < scene.listComponent.Count; j++)
+                    folding.Cutting = new Cutting();
+                    folding.Cutting.Rectangle = folding.RecFace;
+
+                    for (int j = i-1; j >= 0; j--)
                     {
                         Folding folding2 = scene.listComponent[j] as Folding;
 
                         if (folding2 != null)
                         {
-                            Rectangle recFace2 = new Rectangle(folding2.RecFace.Left, folding2.RecFace.Top + folding2.RecFace.Bottom - folding.RecFace.Bottom, folding2.Width, folding2.Height);
+                            Rectangle recFace2 = new Rectangle(folding2.RecFace.Left, folding2.RecFace.Top + folding2.RecFace.Height - folding.RecFace.Height, folding2.Width, folding2.Height);
 
+                            Rectangle recFace = folding.Cutting.Rectangle;
 
-                        }
-                    }
-                }
-            }
-        }
-
-        private void CalcCuboidIntersections()
-        {
-            SortCuboid(false);
-
-            foreach (ComponentBase component in scene.listComponent)
-            {
-                Folding folding = component as Folding;
-
-                if (folding != null && folding.Height > 1)
-                {
-                    //Rectangle folding.RecTop = new Rectangle(folding.Location.X, folding.Location.Y - folding.Depth * Common.depthUnity, folding.Width, folding.Depth * Common.depthUnity);
-                    folding.ListCutting = new List<Rectangle>();
-
-                    foreach (ComponentBase innerfolding in scene.listComponent)
-                    {
-                        Folding innerFolding = component as Folding;
-
-                        if (innerFolding.Height < folding.Height && innerFolding.Location.Y - innerFolding.Height * Common.depthUnity < folding.RecTop.Y)
-                        {
-                            Rectangle result = innerFolding.RecFace;
-
-                            result.Intersect(folding.RecTop);
-
-                            if (result.Width * result.Height > 0)
+                            if(recFace.IntersectsWith(recFace2))
                             {
-                                result.X = innerFolding.Location.X;
+                                recFace.Intersect(recFace2);
 
-                                if (innerFolding.RecFace.Y > folding.RecTop.Y)
-                                    result.Height = folding.RecTop.Y - innerFolding.RecTop.Y;
-                                else
-                                    result.Height = innerFolding.Height * Common.depthUnity;
 
-                                result.Width = innerFolding.Width;
-
-                                folding.ListCutting.Add(result);
                             }
                         }
                     }
                 }
+
+                i++;
             }
         }
 
@@ -624,26 +595,26 @@ namespace Paper
                     gBmp.DrawLine(pen, folding.RectangleSelection.Right, folding.RectangleSelection.Top, folding.RectangleSelection.Right, folding.RectangleSelection.Bottom);
 
 
-                    foreach (Rectangle recCutting in folding.ListCutting)
-                    {
-                        gBmp.FillRectangle(Brushes.White, recCutting);
+                    //foreach (Rectangle recCutting in folding.ListCutting)
+                    //{
+                    //    gBmp.FillRectangle(Brushes.White, recCutting);
 
-                        gBmp.DrawLine(pen, recCutting.Left + Common.Delta.X, recCutting.Top + Common.Delta.Y, recCutting.X + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
-                        gBmp.DrawLine(pen, recCutting.Right + Common.Delta.X, recCutting.Top + Common.Delta.Y, recCutting.Right + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
+                    //    gBmp.DrawLine(pen, recCutting.Left + Common.Delta.X, recCutting.Top + Common.Delta.Y, recCutting.X + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
+                    //    gBmp.DrawLine(pen, recCutting.Right + Common.Delta.X, recCutting.Top + Common.Delta.Y, recCutting.Right + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
 
-                        Line lineFolding = new Line();
-                        if (folding.Location.X < recCutting.X)
-                            lineFolding.P1 = new Point(recCutting.X + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
-                        else
-                            lineFolding.P1 = new Point(folding.Location.X + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
+                    //    Line lineFolding = new Line();
+                    //    if (folding.Location.X < recCutting.X)
+                    //        lineFolding.P1 = new Point(recCutting.X + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
+                    //    else
+                    //        lineFolding.P1 = new Point(folding.Location.X + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
 
-                        if (folding.Location.X + folding.Width < recCutting.Right)
-                            lineFolding.P2 = new Point(folding.Location.X + folding.Width + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
-                        else
-                            lineFolding.P2 = new Point(recCutting.Right + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
+                    //    if (folding.Location.X + folding.Width < recCutting.Right)
+                    //        lineFolding.P2 = new Point(folding.Location.X + folding.Width + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
+                    //    else
+                    //        lineFolding.P2 = new Point(recCutting.Right + Common.Delta.X, recCutting.Bottom + Common.Delta.Y);
 
-                        gBmp.DrawLine(penDotFar, lineFolding.P1, lineFolding.P2);
-                    }
+                    //    gBmp.DrawLine(penDotFar, lineFolding.P1, lineFolding.P2);
+                    //}
 
                     //if (folding.ModeSelection != ModeSelection.None)
                     //{

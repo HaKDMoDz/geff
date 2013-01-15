@@ -65,11 +65,11 @@ namespace Paper.Model
         }
 
         [XmlIgnore]
-        public List<Rectangle> ListCutting { get; set; }
+        public Cutting Cutting { get; set; }
 
         public Folding()
         {
-            this.ListCutting = new List<Rectangle>();
+            Cutting = new Cutting();
         }
 
         public Folding(int x, int y, int width, int height)
@@ -78,7 +78,7 @@ namespace Paper.Model
             this.Location = new Point(x, y);
             this.Width = width;
             _height = height;
-            this.ListCutting = new List<Rectangle>();
+            Cutting = new Cutting();
         }
 
         [XmlIgnore]
@@ -155,7 +155,7 @@ namespace Paper.Model
                 ret = -1;
 
             IResizableHeight xh = x as IResizableHeight;
-            IResizableHeight yh = x as IResizableHeight;
+            IResizableHeight yh = y as IResizableHeight;
 
             if (ret == 0 && xh != null && yh != null)
                 ret = xh.Height - yh.Height;
@@ -172,12 +172,12 @@ namespace Paper.Model
         public int Compare(ComponentBase x, ComponentBase y)
         {
             IResizableHeight xh = x as IResizableHeight;
-            IResizableHeight yh = x as IResizableHeight;
+            IResizableHeight yh = y as IResizableHeight;
 
             int ret = 0;
 
             if (xh != null && yh != null)
-                ret = xh.Height - yh.Height;
+                ret = -xh.Height + yh.Height;
 
             if (ret == 0)
                 ret = x.CreationDate.CompareTo(y.CreationDate);
@@ -188,10 +188,22 @@ namespace Paper.Model
 
     public class Cutting
     {
-        public Cutting[,] Cuttings { get; set; }
+        public List<Cutting> Cuttings { get; set; }
 
+        public Rectangle Rectangle { get; set; }
 
+        public bool[] Borders { get; set; }
 
+        public Cutting()
+        {
+            Cuttings = new List<Cutting>();
+            Borders = new bool[4];
+
+            Borders[0] = true;
+            Borders[1] = true;
+            Borders[2] = true;
+            Borders[3] = true;
+        }
     }
 
     public enum ModeSelection
