@@ -191,7 +191,7 @@ namespace Paper
                 //---> Création de la platforme
                 if (Common.CurrentTool == Tools.Platform && curComponent == null)
                 {
-                    curComponent = new Platform(initialPointMouse.X, initialPointMouse.Y, gridWidth*3, gridHeight*2);
+                    curComponent = new Platform(initialPointMouse.X, initialPointMouse.Y, gridWidth * 3, gridHeight * 2);
                 }
 
                 if (Common.CurrentTool == Tools.SensorButton && curComponent == null)
@@ -281,8 +281,8 @@ namespace Paper
                         gridHeight = int.Parse(txtGridHeight.Text);
                     }
 
-                    
-                    
+
+
                     ((IMoveable)curComponent).Location = new Point((prevLocation.X + pointMouse.X - initialPointMouse.X) / gridWidth * gridWidth,
                                                   (prevLocation.Y + pointMouse.Y - initialPointMouse.Y) / gridHeight * gridHeight);
 
@@ -453,9 +453,9 @@ namespace Paper
 
         private void SortCuboid(bool handleSelection)
         {
-            if (handleSelection)
-                scene.listComponent.Sort(new CuboidComparerWithSelection());
-            else
+            //if (handleSelection)
+            //    scene.listComponent.Sort(new CuboidComparerWithSelection());
+            //else
                 scene.listComponent.Sort(new CuboidComparer());
         }
 
@@ -472,28 +472,109 @@ namespace Paper
                 {
                     folding.Cutting = new Cutting();
                     folding.Cutting.Rectangle = folding.RecFace;
+                    folding.Cutting.IsEmpty = false;
 
-                    for (int j = i-1; j >= 0; j--)
+                    for (int j = i - 1; j >= 0; j--)
                     {
                         Folding folding2 = scene.listComponent[j] as Folding;
 
                         if (folding2 != null)
                         {
-                            Rectangle recFace2 = new Rectangle(folding2.RecFace.Left, folding2.RecFace.Top + folding2.RecFace.Height - folding.RecFace.Height, folding2.Width, folding2.Height);
+                            Rectangle recFace2 = new Rectangle(folding2.RecFace.Left, folding2.RecFace.Top - (folding2.Height - folding.Height), folding2.RecFace.Width, folding2.RecFace.Height);
 
-                            Rectangle recFace = folding.Cutting.Rectangle;
-
-                            if(recFace.IntersectsWith(recFace2))
-                            {
-                                recFace.Intersect(recFace2);
-
-
-                            }
+                            IntersectCutting(folding.Cutting, recFace2);
                         }
                     }
+
+                    i++;
                 }
 
-                i++;
+            }
+        }
+
+        private void IntersectCutting(Cutting parent, Rectangle recFace2)
+        {
+            if (!parent.IsEmpty)
+            {
+                Rectangle recFace = parent.Rectangle;
+
+                if (recFace.IntersectsWith(recFace2))
+                {
+                    if (parent.Cuttings.Count > 0)
+                    {
+                        foreach (Cutting cutting in parent.Cuttings)
+                        {
+                            IntersectCutting(cutting, recFace2);
+                        }
+                    }
+                    else
+                    {
+                        // Découpage du cutting
+
+                        //recFace.Intersect(recFace2);
+                        int nbligne = 1;
+                        int nbColonne = 1;
+
+                        int[] locW = new int[2]{recFace.Left, recFace.Right};
+                        int[] locH = new int[2]{recFace.Top, recFace.Bottom};
+
+                        bool[] visibleW = new bool[1] { false };
+                        bool[] visibleH = new bool[1]{false};
+
+                        if (recFace.Height > recFace2.Height)
+                        {
+                            nbligne = 2;
+
+                            locH = new int[3] { recFace.Top, recFace2.Top, recFace.Bottom };
+
+                            visibleH = new bool[2]{true,false};
+                        }
+
+                        if (recFace2.Left >= recFace.Left && recFace2.Left <= recFace.Right)
+                        {
+                            if (recFace2.Right >= recFace.Left && recFace2.Right <= recFace.Right)
+                            {
+                                nbColonne = 3;
+
+                                locW = new int[4] { recFace.Left, recFace2.Left, recFace2.Right, recFace.Right };
+
+                                visibleW = new bool[3] { true, false, true };
+                            }
+                            else
+                            {
+                                nbColonne = 2;
+
+                                locW = new int[3] { recFace.Left, recFace2.Left, recFace.Right };
+
+                                visibleW = new bool[2] {true, false };
+                            }
+                        }
+                        else if (recFace2.Right >= recFace.Left && recFace2.Right <= recFace.Right)
+                        {
+                            nbColonne = 2;
+
+                            locW = new int[3] { recFace.Left, recFace2.Right, recFace.Right };
+
+                            visibleW = new bool[2] { false, true };
+                        }
+
+
+                        for (int x = 0; x < locW.Length-1; x++)
+                        {
+                            for (int y = 0; y < locH.Length-1; y++)
+                            {
+                                Cutting cutting = new Cutting();
+                                cutting.Rectangle = new Rectangle(locW[x], locH[y], locW[x + 1] - locW[x], locH[y + 1] - locH[y]);
+                                cutting.IsEmpty = (!visibleW[x] && !visibleH[y]);
+
+                                parent.Cuttings.Add(cutting);
+                            }
+                        }
+
+
+                    }
+
+                }
             }
         }
 
@@ -521,6 +602,35 @@ namespace Paper
                        new float[] {0,  0,  (float)color.B/255f,  0, 0},
                        new float[] {0,  0,  0,  1f, 0},
                        new float[] {0,  0,  0,  0f, 0},};
+        }
+
+        private void DrawCutting(Cutting cutting, Brush brush)
+        {
+            if (cutting.Cuttings.Count == 0)
+            {
+                Rectangle rec2 = cutting.Rectangle;
+                rec2.X += 1;
+                rec2.Y += 1;
+                rec2.Width -= 2;
+                rec2.Height -= 2;
+
+                if (!cutting.IsEmpty)
+                {
+                    gBmp.FillRectangle(brush, cutting.Rectangle);
+                    gBmp.DrawRectangle(Pens.Red, rec2);
+                }
+                else
+                {
+                    gBmp.DrawRectangle(Pens.Yellow, rec2);
+                }
+            }
+            else
+            {
+                foreach (Cutting cuttingChild in cutting.Cuttings)
+                {
+                    DrawCutting(cuttingChild, brush);
+                }
+            }
         }
 
         private void DrawScene()
@@ -587,12 +697,16 @@ namespace Paper
                     }
 
 
-                    brush.Color = Color.FromArgb(brush.Color.R + 20, brush.Color.G + 20, brush.Color.B + 20);
+                    brush.Color = Color.FromArgb(brush.Color.R + 30, brush.Color.G + 30, brush.Color.B + 30);
 
-                    gBmp.FillRectangle(brush, folding.RectangleSelection.Left, folding.Location.Y + Common.Delta.Y, folding.Width, -folding.Location.Y + folding.HeightSerializable * Common.depthUnity);
+                    //gBmp.FillRectangle(brush, folding.RectangleSelection.Left, folding.Location.Y + Common.Delta.Y, folding.Width, -folding.Location.Y + folding.HeightSerializable * Common.depthUnity);
 
-                    gBmp.DrawLine(pen, folding.RectangleSelection.Left, folding.RectangleSelection.Top, folding.RectangleSelection.Left, folding.RectangleSelection.Bottom);
-                    gBmp.DrawLine(pen, folding.RectangleSelection.Right, folding.RectangleSelection.Top, folding.RectangleSelection.Right, folding.RectangleSelection.Bottom);
+                    //gBmp.DrawLine(pen, folding.RectangleSelection.Left, folding.RectangleSelection.Top, folding.RectangleSelection.Left, folding.RectangleSelection.Bottom);
+                    //gBmp.DrawLine(pen, folding.RectangleSelection.Right, folding.RectangleSelection.Top, folding.RectangleSelection.Right, folding.RectangleSelection.Bottom);
+
+
+                    DrawCutting(folding.Cutting, brush);
+
 
 
                     //foreach (Rectangle recCutting in folding.ListCutting)

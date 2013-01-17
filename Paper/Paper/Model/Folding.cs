@@ -192,6 +192,8 @@ namespace Paper.Model
 
         public Rectangle Rectangle { get; set; }
 
+        public bool IsEmpty { get; set; }
+
         public bool[] Borders { get; set; }
 
         public Cutting()
