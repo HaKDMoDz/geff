@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -521,7 +521,7 @@ namespace Paper
                         bool[] visibleW = new bool[1] { false };
                         bool[] visibleH = new bool[1]{false};
 
-                        if (recFace.Height > recFace2.Height)
+                        if (recFace.Top < recFace2.Top && recFace.Bottom > recFace2.Top)
                         {
                             nbligne = 2;
 
