@@ -24,8 +24,8 @@ namespace Paper.Model
             {
                 _height = (int)Math.Ceiling((double)value / (double)Common.depthUnity);
 
-                if (_height > Common.MaxDepth*2)
-                    _height = Common.MaxDepth*2;
+                if (_height > Common.MaxDepth * 2)
+                    _height = Common.MaxDepth * 2;
                 if (_height < 1)
                     _height = 1;
             }
@@ -39,14 +39,15 @@ namespace Paper.Model
             }
             set
             {
-               _height = value;
+                _height = value;
             }
         }
 
         public int Width { get; set; }
 
 
-        public Point Location {
+        public Point Location
+        {
             get
             {
                 return _location;
@@ -65,11 +66,15 @@ namespace Paper.Model
         }
 
         [XmlIgnore]
-        public Cutting Cutting { get; set; }
+        public Cutting CuttingFace { get; set; }
+
+        [XmlIgnore]
+        public Cutting CuttingTop { get; set; }
 
         public Folding()
         {
-            Cutting = new Cutting();
+            CuttingFace = new Cutting();
+            CuttingTop = new Cutting();
         }
 
         public Folding(int x, int y, int width, int height)
@@ -78,7 +83,8 @@ namespace Paper.Model
             this.Location = new Point(x, y);
             this.Width = width;
             _height = height;
-            Cutting = new Cutting();
+            CuttingFace = new Cutting();
+            CuttingTop = new Cutting();
         }
 
         [XmlIgnore]
@@ -159,6 +165,25 @@ namespace Paper.Model
 
             if (ret == 0 && xh != null && yh != null)
                 ret = xh.Height - yh.Height;
+
+            if (ret == 0)
+                ret = x.CreationDate.CompareTo(y.CreationDate);
+
+            return ret;
+        }
+    }
+
+    public class CuboidComparerTop : IComparer<ComponentBase>
+    {
+        public int Compare(ComponentBase x, ComponentBase y)
+        {
+            Folding xm = x as Folding;
+            Folding ym = y as Folding;
+
+            int ret = 0;
+
+            if (xm != null && ym != null)
+                ret = xm.RecFace.Height - ym.RecFace.Height;
 
             if (ret == 0)
                 ret = x.CreationDate.CompareTo(y.CreationDate);

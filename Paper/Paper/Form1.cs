@@ -470,9 +470,9 @@ namespace Paper
 
                 if (folding != null)
                 {
-                    folding.Cutting = new Cutting();
-                    folding.Cutting.Rectangle = folding.RecFace;
-                    folding.Cutting.IsEmpty = false;
+                    folding.CuttingFace = new Cutting();
+                    folding.CuttingFace.Rectangle = folding.RecFace;
+                    folding.CuttingFace.IsEmpty = false;
 
                     for (int j = i - 1; j >= 0; j--)
                     {
@@ -482,13 +482,117 @@ namespace Paper
                         {
                             Rectangle recFace2 = new Rectangle(folding2.RecFace.Left, folding2.RecFace.Top - (folding2.Height - folding.Height), folding2.RecFace.Width, folding2.RecFace.Height);
 
-                            IntersectCutting(folding.Cutting, recFace2);
+                            IntersectCutting(folding.CuttingFace, recFace2);
                         }
                     }
 
-                    i++;
                 }
+                i++;
 
+            }
+
+            scene.listComponent.Sort(new CuboidComparerTop());
+
+            i = 0;
+            foreach (ComponentBase component in scene.listComponent)
+            {
+                Folding folding = component as Folding;
+
+                if (folding != null)
+                {
+                    folding.CuttingTop = new Cutting();
+                    folding.CuttingTop.Rectangle = folding.RecTop;
+                    folding.CuttingTop.IsEmpty = false;
+
+                    for (int j = i+1; j < scene.listComponent.Count; j++)
+                    {
+                        Folding folding2 = scene.listComponent[j] as Folding;
+
+                        if (folding2 != null)
+                        {
+                            Rectangle recFace2 = new Rectangle(folding2.RecTop.Left, folding.RecTop.Top, folding2.RecTop.Width, folding2.RecTop.Height);
+
+                            IntersectCuttingTop(folding.CuttingTop, recFace2);
+                        }
+                    }
+
+                }
+                i++;
+
+            }
+        }
+
+        private void IntersectCuttingTop(Cutting parent, Rectangle recTop2)
+        {
+            if (!parent.IsEmpty)
+            {
+                Rectangle recTop = parent.Rectangle;
+
+                if (recTop.IntersectsWith(recTop2))
+                {
+                    if (parent.Cuttings.Count > 0)
+                    {
+                        foreach (Cutting cutting in parent.Cuttings)
+                        {
+                            IntersectCuttingTop(cutting, recTop2);
+                        }
+                    }
+                    else
+                    {
+                        // Découpage du cutting
+
+                        int[] locW = new int[2] { recTop.Left, recTop.Right };
+                        int[] locH = new int[2] { recTop.Top, recTop.Bottom };
+
+                        bool[] visibleW = new bool[1] { false };
+                        bool[] visibleH = new bool[1] { false };
+
+                        if (recTop2.Bottom  < recTop.Bottom)
+                        {
+                            locH = new int[3] { recTop.Top, recTop2.Bottom, recTop.Bottom };
+
+                            visibleH = new bool[2] { false, true };
+                        }
+
+                        if (recTop2.Left >= recTop.Left && recTop2.Left <= recTop.Right)
+                        {
+                            if (recTop2.Right >= recTop.Left && recTop2.Right <= recTop.Right)
+                            {
+                                locW = new int[4] { recTop.Left, recTop2.Left, recTop2.Right, recTop.Right };
+
+                                visibleW = new bool[3] { true, false, true };
+                            }
+                            else
+                            {
+                                locW = new int[3] { recTop.Left, recTop2.Left, recTop.Right };
+
+                                visibleW = new bool[2] { true, false };
+                            }
+                        }
+                        else if (recTop2.Right >= recTop.Left && recTop2.Right <= recTop.Right)
+                        {
+                            locW = new int[3] { recTop.Left, recTop2.Right, recTop.Right };
+
+                            visibleW = new bool[2] { false, true };
+                        }
+
+
+                        for (int x = 0; x < locW.Length - 1; x++)
+                        {
+                            for (int y = 0; y < locH.Length - 1; y++)
+                            {
+                                Cutting cutting = new Cutting();
+                                cutting.Rectangle = new Rectangle(locW[x], locH[y], locW[x + 1] - locW[x], locH[y + 1] - locH[y]);
+                                cutting.IsEmpty = (!visibleW[x] && !visibleH[y]);
+
+                                parent.Cuttings.Add(cutting);
+                            }
+                        }
+
+
+                    }
+
+                }
             }
         }
 
@@ -617,11 +721,11 @@ namespace Paper
                 if (!cutting.IsEmpty)
                 {
                     gBmp.FillRectangle(brush, cutting.Rectangle);
-                    gBmp.DrawRectangle(Pens.Red, rec2);
+                    //gBmp.DrawRectangle(Pens.Red, rec2);
                 }
                 else
                 {
-                    gBmp.DrawRectangle(Pens.Yellow, rec2);
+                    //gBmp.DrawRectangle(Pens.Yellow, rec2);
                 }
             }
             else
@@ -629,6 +733,35 @@ namespace Paper
                 foreach (Cutting cuttingChild in cutting.Cuttings)
                 {
                     DrawCutting(cuttingChild, brush);
+                }
+            }
+        }
+
+        private void DrawCuttingTop(Cutting cutting, Rectangle rec, Brush brush)
+        {
+            if (cutting.Cuttings.Count == 0)
+            {
+                Rectangle rec2 = cutting.Rectangle;
+
+                if (!cutting.IsEmpty)
+                {
+                    rec2.Intersect(rec);
+                    
+                    if(!rec2.IsEmpty)
+                        gBmp.FillRectangle(brush, rec2);
+                    
+                    //gBmp.DrawRectangle(Pens.Red, rec2);
+                }
+                else
+                {
+                    //gBmp.DrawRectangle(Pens.Yellow, rec2);
+                }
+            }
+            else
+            {
+                foreach (Cutting cuttingChild in cutting.Cuttings)
+                {
+                    DrawCuttingTop(cuttingChild, rec, brush);
                 }
             }
         }
@@ -693,7 +826,11 @@ namespace Paper
 
                         int HeightFactor = folding.Height > (i + 1) ? 2 : 1;
 
-                        gBmp.FillRectangle(brush, folding.Location.X + Common.Delta.X, folding.Location.Y + (i - folding.HeightSerializable) * Common.depthUnity + +Common.Delta.Y, folding.Width, HeightFactor * Common.depthUnity);
+                        Rectangle rec = new Rectangle(folding.Location.X + Common.Delta.X, folding.Location.Y + (i - folding.HeightSerializable) * Common.depthUnity + +Common.Delta.Y, folding.Width, HeightFactor * Common.depthUnity);
+
+                        //gBmp.FillRectangle(brush, folding.Location.X + Common.Delta.X, folding.Location.Y + (i - folding.HeightSerializable) * Common.depthUnity + +Common.Delta.Y, folding.Width, HeightFactor * Common.depthUnity);
+
+                        DrawCuttingTop(folding.CuttingTop, rec, brush);
                     }
 
 
@@ -705,8 +842,9 @@ namespace Paper
                     //gBmp.DrawLine(pen, folding.RectangleSelection.Right, folding.RectangleSelection.Top, folding.RectangleSelection.Right, folding.RectangleSelection.Bottom);
 
 
-                    DrawCutting(folding.Cutting, brush);
+                    DrawCutting(folding.CuttingFace, brush);
 
+                    //DrawCutting(folding.CuttingTop, brush);
 
 
                     //foreach (Rectangle recCutting in folding.ListCutting)
@@ -827,7 +965,7 @@ namespace Paper
                 pen.DashStyle = DashStyle.Dot;
                 pen.Width = 3f;
 
-                gBmp.DrawRectangle(pen, componentSelected.RectangleSelection);
+                //gBmp.DrawRectangle(pen, componentSelected.RectangleSelection);
             }
 
             g.DrawImage(bmp, 0, 0);
