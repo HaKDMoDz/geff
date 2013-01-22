@@ -22,12 +22,22 @@ namespace Paper.Model
             }
             set
             {
+                int prevHeight = _height;
+
                 _height = (int)Math.Ceiling((double)value / (double)Common.depthUnity);
 
                 if (_height > Common.MaxDepth * 2)
                     _height = Common.MaxDepth * 2;
                 if (_height < 1)
                     _height = 1;
+
+                if (prevHeight != _height)
+                {
+                    int a =0;
+                }
+
+                //this.Location.Offset(0,(prevHeight-_height) * Common.depthUnity);
+                _location = new Point(_location.X, _location.Y + (-prevHeight + _height) * Common.depthUnity);
             }
         }
 
@@ -102,6 +112,24 @@ namespace Paper.Model
             get
             {
                 return new Rectangle(Location.X + Common.Delta.X, Location.Y + Common.Delta.Y, Width, -Location.Y + _height * Common.depthUnity);
+            }
+        }
+
+        [XmlIgnore]
+        public Rectangle RecTopWithoutDelta
+        {
+            get
+            {
+                return new Rectangle(Location.X, Location.Y - _height * Common.depthUnity, Width, _height * Common.depthUnity);
+            }
+        }
+
+        [XmlIgnore]
+        public Rectangle RecFaceWithoutDelta
+        {
+            get
+            {
+                return new Rectangle(Location.X, Location.Y, Width, -Location.Y + _height * Common.depthUnity);
             }
         }
 
@@ -236,6 +264,7 @@ namespace Paper.Model
     public enum ModeSelection
     {
         None,
+        Selected,
         NearMove,
         NearResizeWidth,
         NearResizeHeight,
