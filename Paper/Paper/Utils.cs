@@ -410,5 +410,283 @@ namespace Paper
 
             File.WriteAllText(fileName, strFile.ToString());
         }
+
+        private static int AddVertexToList(ref List<Vertex> listVertex, Vertex vertex)
+        {
+            int index = listVertex.FindIndex(v=> v.X == vertex.X && v.Y == vertex.Y && v.Z == vertex.Z);
+
+            if(index == -1)
+            {
+                listVertex.Add(vertex);
+                index = listVertex.Count-1;
+            }
+
+            return index;
+        }
+
+        private static void ComputeVertexCuttingFace(Cutting cutting, ref List<Vertex> listVertex, ref List<int> listVertexIndex)
+        {
+            if (cutting.Cuttings.Count == 0 && !cutting.IsEmpty)
+            {
+
+                float d = 40f;
+                float height = cutting.ParentFolding.Height /d;
+                //---
+                Vertex vertex = new Vertex();
+
+                vertex.X = cutting.Rectangle.Right / d;
+                vertex.Z = -cutting.Rectangle.Top / d + height;
+                vertex.Y = -height;
+
+                int index = AddVertexToList(ref listVertex, vertex);
+
+                listVertexIndex.Add(index);
+                //---
+
+                //---
+                vertex = new Vertex();
+
+                vertex.X = cutting.Rectangle.Left / d;
+                vertex.Z = -cutting.Rectangle.Top / d + height;
+                vertex.Y = -height;
+
+                index = AddVertexToList(ref listVertex, vertex);
+
+                listVertexIndex.Add(index);
+                //---
+
+                //---
+                vertex = new Vertex();
+
+                vertex.X = cutting.Rectangle.Left / d;
+                vertex.Z = -cutting.Rectangle.Bottom / d + height;
+                vertex.Y = -height;
+
+                index = AddVertexToList(ref listVertex, vertex);
+
+                listVertexIndex.Add(index);
+                //---
+
+                //---
+                vertex = new Vertex();
+
+                vertex.X = cutting.Rectangle.Right / d;
+                vertex.Z = -cutting.Rectangle.Bottom / d + height;
+                vertex.Y = -height;
+
+                index = AddVertexToList(ref listVertex, vertex);
+
+                listVertexIndex.Add(index);
+                //---
+            }
+            else
+            {
+                foreach (Cutting cuttingChild in cutting.Cuttings)
+                {
+                    ComputeVertexCuttingFace(cuttingChild, ref listVertex, ref listVertexIndex);
+                }
+            }
+        }
+
+        private static void ComputeVertexCuttingTop(Cutting cutting, ref List<Vertex> listVertex, ref List<int> listVertexIndex)
+        {
+            if (cutting.Cuttings.Count == 0 && !cutting.IsEmpty)
+            {
+
+                float d = 40f;
+                float deep = (cutting.ParentFolding.RecFace.Top - cutting.ParentFolding.Height) / d - 12f;
+                float height = -cutting.ParentFolding.RecFace.Top / d;// -cutting.ParentFolding.Height / d;
+
+                //--- 1
+                Vertex vertex = new Vertex();
+
+                vertex.X = cutting.Rectangle.Right / d;
+                vertex.Z = -deep;
+                vertex.Y = -cutting.Rectangle.Top / d-deep;
+
+                int index = AddVertexToList(ref listVertex, vertex);
+
+                listVertexIndex.Add(index);
+                //---
+
+                //--- 2
+                vertex = new Vertex();
+
+                vertex.X = cutting.Rectangle.Left / d;
+                vertex.Z = -deep;
+                vertex.Y = -cutting.Rectangle.Top / d - deep;
+
+                index = AddVertexToList(ref listVertex, vertex);
+
+                listVertexIndex.Add(index);
+                //---
+
+                //--- 3
+                vertex = new Vertex();
+
+                vertex.X = cutting.Rectangle.Left / d;
+                vertex.Z = -deep;
+                vertex.Y = -cutting.Rectangle.Bottom / d - deep;
+
+                index = AddVertexToList(ref listVertex, vertex);
+
+                listVertexIndex.Add(index);
+                //---
+
+                //--- 4
+                vertex = new Vertex();
+
+                vertex.X = cutting.Rectangle.Right / d;
+                vertex.Z = -deep;
+                vertex.Y = -cutting.Rectangle.Bottom / d - deep;
+
+                index = AddVertexToList(ref listVertex, vertex);
+
+                listVertexIndex.Add(index);
+                //---
+            }
+            else
+            {
+                foreach (Cutting cuttingChild in cutting.Cuttings)
+                {
+                    ComputeVertexCuttingTop(cuttingChild, ref listVertex, ref listVertexIndex);
+                }
+            }
+        }
+
+        public static void ExportToCOLLADA2(Scene scene, string fileName)
+        {
+            String strTemplate = Resources.COLLADA_Exporter_Template_Papier2;
+
+            strTemplate = strTemplate.Replace("{DATETIME}", DateTime.Now.ToString());
+
+            List<Folding> listFoldings = GetFoldings(scene);
+
+            int indexStart = strTemplate.IndexOf("{MODEL}");
+            int indexEnd = strTemplate.IndexOf("{/MODEL}");
+
+            string strSubTemplate = strTemplate.Substring(indexStart + 7, indexEnd - indexStart - 7);
+            StringBuilder strFile = new StringBuilder();
+
+            strFile.Append(strTemplate.Substring(0, indexStart));
+
+            float d = 40f;
+            float dh = d;
+
+            for (int i = 0; i < listFoldings.Count + 1; i++)
+            {
+                string strFoldingModel = strSubTemplate;
+
+                if (i < listFoldings.Count)
+                {
+                    Folding folding = listFoldings[i];
+
+                    strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + i.ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + i.ToString());
+
+                    //----
+                    List<Vertex> listVertex = new List<Vertex>();
+                    List<int> listVertexIndex = new List<int>();
+
+                    ComputeVertexCuttingFace(folding.CuttingFace, ref listVertex, ref listVertexIndex);
+                    int t = listVertexIndex.Count;
+                    ComputeVertexCuttingTop(folding.CuttingTop, ref listVertex, ref listVertexIndex);
+
+                    string FOLDING_FACE_CONFIGURATION = String.Empty;
+                    string FOLDING_VERTEX_NORMAL_INDEX = String.Empty;
+                    string FOLDING_VERTEX = String.Empty;
+
+                    for (int j = 0; j < listVertex.Count; j++)
+                    {
+                        Vertex vertex = listVertex[j];
+                        FOLDING_VERTEX += vertex.ToString() + " ";
+                    }
+
+                    for (int j = 0; j < listVertexIndex.Count; j++)
+                    {
+                        if(j%4==0)
+                            FOLDING_FACE_CONFIGURATION += "4 ";
+
+                        FOLDING_VERTEX_NORMAL_INDEX += listVertexIndex[j] + (j<t ?" 0 ": " 1 ");
+                    }
+                    //-----
+
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT}", (listVertex.Count*3).ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_COUNT}", (listVertexIndex.Count / 4).ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX}", FOLDING_VERTEX);
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_CONFIGURATION}", FOLDING_FACE_CONFIGURATION);
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_NORMAL_INDEX}", FOLDING_VERTEX_NORMAL_INDEX);
+                }
+                else
+                {
+                    //---> Construction de la scène
+                    strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + i.ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + i.ToString());
+                    string t = "{P2.X} {P2.Y} {P2.Z} {P3.X} {P3.Y} {P3.Z} {P5.X} {P5.Y} {P5.Z} {P1.X} {P1.Y} {P1.Z} {P0.X} {P0.Y} {P0.Z} {P4.X} {P4.Y} {P4.Z}";
+
+
+                    t = ReplaceValue(t, "{P1.X}", 0); //0
+                    t = ReplaceValue(t, "{P1.Z}", 0f);
+                    t = ReplaceValue(t, "{P1.Y}", 0f);
+
+                    t = ReplaceValue(t, "{P0.X}", 20f); //1
+                    t = ReplaceValue(t, "{P0.Z}", 0f);
+                    t = ReplaceValue(t, "{P0.Y}", 0f);
+
+
+                    t = ReplaceValue(t, "{P2.X}", 0f); //2
+                    t = ReplaceValue(t, "{P2.Z}", 20f);
+                    t = ReplaceValue(t, "{P2.Y}", 0f);
+
+                    t = ReplaceValue(t, "{P3.X}", 20f); //3
+                    t = ReplaceValue(t, "{P3.Z}", 20f);
+                    t = ReplaceValue(t, "{P3.Y}", 0f);
+
+
+                    t = ReplaceValue(t, "{P4.X}", 20f);
+                    t = ReplaceValue(t, "{P4.Z}", 0f);
+                    t = ReplaceValue(t, "{P4.Y}", -20f);
+
+                    t = ReplaceValue(t, "{P5.X}", 0f);
+                    t = ReplaceValue(t, "{P5.Z}", 0f);
+                    t = ReplaceValue(t, "{P5.Y}", -20f);
+
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT}", "18");
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_COUNT}", "2");
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX}", t);
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_CONFIGURATION}", "4 4 ");
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_NORMAL_INDEX}", "2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1");
+
+                }
+
+                strFile.AppendLine();
+                strFile.Append(strFoldingModel);
+            }
+
+            int indexStart3 = strTemplate.IndexOf("{SCENE}");
+            int indexEnd3 = strTemplate.IndexOf("{/SCENE}");
+
+            strSubTemplate = strTemplate.Substring(indexStart3 + 7, indexEnd3 - indexStart3 - 7);
+
+            strFile.Append(strTemplate.Substring(indexEnd + 8, indexStart3 - indexEnd - 8));
+
+            for (int i = 0; i < listFoldings.Count + 1; i++)
+            {
+                string strFoldingModel = strSubTemplate;
+
+                //strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + nbFolding.ToString());
+                strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + i.ToString());
+                //strFoldingModel = strFoldingModel.Replace("{BONE1_NAME}", "Bone_" + (nbFolding * 2).ToString());
+                //strFoldingModel = strFoldingModel.Replace("{BONE2_NAME}", "Bone_" + (nbFolding * 2 + 1).ToString());
+
+                strFile.AppendLine();
+                strFile.Append(strFoldingModel);
+            }
+
+
+            strFile.Append(strTemplate.Substring(indexEnd3 + 8));
+
+            File.WriteAllText(fileName, strFile.ToString());
+        }
     }
 }

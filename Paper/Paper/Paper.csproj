@@ -81,6 +81,7 @@
     <Compile Include="Utils.cs" />
     <Compile Include="Triangulation.cs" />
     <Compile Include="Vector2.cs" />
+    <Compile Include="Vertex.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -138,6 +139,7 @@
   <ItemGroup>
     <None Include="Data\Icon\Icon_Grid.png" />
     <None Include="Data\COLLADA_Exporter_Template_Papier.xml" />
+    <None Include="Data\COLLADA_Exporter_Template_Papier2.xml" />
     <Content Include="Data\FBX_Exporter_Template_Papier.txt" />
     <Content Include="Data\GridH.png" />
     <Content Include="Data\GridV.png" />

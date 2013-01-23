@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>Geff</author>
+      <authoring_tool>Papier Level Editor</authoring_tool>
+    </contributor>
+    <created>{DATETIME}</created>
+    <modified>{DATETIME}</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images/>
+  <library_geometries>
+{MODEL}
+      <geometry id="{FOLDING_NAME}-mesh" name="{FOLDING_NAME}">
+		  <mesh>
+			<source id="{FOLDING_NAME}-mesh-positions">
+			  <float_array id="{FOLDING_NAME}-mesh-positions-array" count="{FOLDING_VERTEX_COUNT}">{FOLDING_VERTEX}</float_array>
+			  <technique_common>
+				<accessor source="#{FOLDING_NAME}-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="{FOLDING_NAME}-mesh-normals">
+			  <float_array id="{FOLDING_NAME}-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#{FOLDING_NAME}-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="{FOLDING_NAME}-mesh-vertices">
+			  <input semantic="POSITION" source="#{FOLDING_NAME}-mesh-positions"/>
+			</vertices>
+			<polylist count="{FOLDING_FACE_COUNT}">
+			  <input semantic="VERTEX" source="#{FOLDING_NAME}-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#{FOLDING_NAME}-mesh-normals" offset="1"/>
+			  <vcount>{FOLDING_FACE_CONFIGURATION}</vcount>
+			  <p>{FOLDING_VERTEX_NORMAL_INDEX}</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+{/MODEL}
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+{SCENE}
+      <node id="{FOLDING_NAME}" name="{FOLDING_NAME}" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#{FOLDING_NAME}-mesh"/>
+      </node>
+{/SCENE}
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

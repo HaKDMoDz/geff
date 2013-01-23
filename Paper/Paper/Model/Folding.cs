@@ -83,8 +83,8 @@ namespace Paper.Model
 
         public Folding()
         {
-            CuttingFace = new Cutting();
-            CuttingTop = new Cutting();
+            CuttingFace = new Cutting(this);
+            CuttingTop = new Cutting(this);
         }
 
         public Folding(int x, int y, int width, int height)
@@ -93,8 +93,8 @@ namespace Paper.Model
             this.Location = new Point(x, y);
             this.Width = width;
             _height = height;
-            CuttingFace = new Cutting();
-            CuttingTop = new Cutting();
+            CuttingFace = new Cutting(this);
+            CuttingTop = new Cutting(this);
         }
 
         [XmlIgnore]
@@ -241,6 +241,8 @@ namespace Paper.Model
 
     public class Cutting
     {
+        public Folding ParentFolding { get; set; }
+
         public List<Cutting> Cuttings { get; set; }
 
         public Rectangle Rectangle { get; set; }
@@ -249,8 +251,9 @@ namespace Paper.Model
 
         public bool[] Borders { get; set; }
 
-        public Cutting()
+        public Cutting(Folding parentFolding)
         {
+            ParentFolding = parentFolding;
             Cuttings = new List<Cutting>();
             Borders = new bool[4];
 

@@ -472,7 +472,7 @@ namespace Paper
 
                 if (folding != null)
                 {
-                    folding.CuttingFace = new Cutting();
+                    folding.CuttingFace = new Cutting(folding);
                     folding.CuttingFace.Rectangle = folding.RecFaceWithoutDelta;
                     folding.CuttingFace.IsEmpty = false;
 
@@ -502,7 +502,7 @@ namespace Paper
 
                 if (folding != null)
                 {
-                    folding.CuttingTop = new Cutting();
+                    folding.CuttingTop = new Cutting(folding);
                     folding.CuttingTop.Rectangle = folding.RecTopWithoutDelta;
                     folding.CuttingTop.IsEmpty = false;
 
@@ -588,7 +588,7 @@ namespace Paper
                         {
                             for (int y = 0; y < locH.Length - 1; y++)
                             {
-                                Cutting cutting = new Cutting();
+                                Cutting cutting = new Cutting(parent.ParentFolding);
                                 cutting.Rectangle = new Rectangle(locW[x], locH[y], locW[x + 1] - locW[x], locH[y + 1] - locH[y]);
                                 cutting.IsEmpty = (!visibleW[x] && !visibleH[y]);
 
@@ -993,7 +993,7 @@ namespace Paper
                     }
                     else if (extension == ".DAE")
                     {
-                        Utils.ExportToCOLLADA(scene, dlg.FileName);
+                        Utils.ExportToCOLLADA2(scene, dlg.FileName);
                     }
                 }
             }
