@@ -16,7 +16,7 @@ using System.Xml;
 
 namespace Paper
 {
-    public partial class Form1 : Form
+    public partial class FrmPapierEditor : Form
     {
         Graphics g;
         Graphics gBmp;
@@ -59,7 +59,7 @@ namespace Paper
         Point pointMouse;
         int curLevelSearch = 0;
 
-        public Form1()
+        public FrmPapierEditor()
         {
             InitializeComponent();
 
@@ -81,6 +81,7 @@ namespace Paper
             btnSensorRemoteControl.Tag = Tools.SensorRemoteControl;
             btnZoneFoldingH.Tag = Tools.ZoneFoldingH;
             btnZoneFoldingV.Tag = Tools.ZoneFoldingV;
+            btnHole.Tag = Tools.Hole;
 
             valMax = vScrollBar.Maximum - vScrollBar.LargeChange + 1; ;
 
@@ -212,6 +213,11 @@ namespace Paper
                 if (Common.CurrentTool == Tools.SensorRemoteControl && curComponent == null)
                 {
                     curComponent = new Sensor(initialPointMouse.X, initialPointMouse.Y, SensorType.RemoteControl);
+                }
+
+                if (Common.CurrentTool == Tools.Hole && curComponent == null)
+                {
+                    curComponent = new Hole(initialPointMouse.X, initialPointMouse.Y, gridWidth * 3, gridHeight * 3);
                 }
 
                 //---> Stockage du nouvel élément
@@ -600,6 +606,73 @@ namespace Paper
             }
         }
 
+        private void IntersectSceneBackground()
+        {
+            this.scene.CuttingFront = new Cutting(null);
+            this.scene.CuttingTop = new Cutting(null);
+
+            int maxX = 0;
+            int maxY = int.MaxValue;
+
+            foreach (ComponentBase component in scene.listComponent)
+            {
+                IMoveable moveable = component as IMoveable;
+                IResizableWidth resizeableWidth = component as IResizableWidth;
+
+                if (moveable != null)
+                {
+                    int x = moveable.Location.X;
+                    int y = moveable.Location.Y;
+
+                    if (resizeableWidth != null)
+                    {
+                        x += resizeableWidth.Width;
+                    }
+
+                    if (x > maxX)
+                        maxX = x;
+
+                    if (y < maxY)
+                        maxY = y;
+                }
+            }
+
+            maxY -= 5 * Common.depthUnity;
+            maxX += 5 * Common.depthUnity;
+
+            this.scene.CuttingFront.Rectangle = new Rectangle(0, maxY, maxX, Math.Abs(maxY));
+            this.scene.CuttingTop.Rectangle = new Rectangle(0, 0, maxX, Common.MaxDepth * 2 * Common.depthUnity);
+
+            scene.listComponent.Sort(new CuboidComparer());
+
+            foreach (ComponentBase component in scene.listComponent)
+            {
+                Folding folding2 = component as Folding;
+
+                if (folding2 != null)
+                {
+                    Rectangle recFace2 = new Rectangle(folding2.RecFaceWithoutDelta.Left, folding2.RecFaceWithoutDelta.Top - (folding2.Height - 0), folding2.RecFaceWithoutDelta.Width, folding2.RecFaceWithoutDelta.Height);
+
+                    IntersectCutting(this.scene.CuttingFront, recFace2, false);
+                }
+            }
+
+            scene.listComponent.Sort(new CuboidComparerTop());
+
+            foreach (ComponentBase component in scene.listComponent)
+            {
+
+                Folding folding2 = component as Folding;
+
+                if (folding2 != null)
+                {
+                    Rectangle recFace2 = new Rectangle(folding2.RecTopWithoutDelta.Left, 0, folding2.RecTopWithoutDelta.Width, folding2.RecTopWithoutDelta.Height);
+
+                    IntersectCutting(this.scene.CuttingTop, recFace2, true);
+                }
+            }
+        }
+
         private Color GetColorFromIndex(int index)
         {
             if (index == 1)
@@ -734,6 +807,7 @@ namespace Paper
                 ZoneMovingH zoneMovingH = component as ZoneMovingH;
                 Platform platform = component as Platform;
                 Sensor sensor = component as Sensor;
+                Hole hole = component as Hole;
 
                 pen = new Pen(GetColorFromIndex(component.ColorIndex), 2f);
 
@@ -823,6 +897,14 @@ namespace Paper
                     }
 
                     DrawImageInRectangle(gBmp, sensorImage, sensor.RectangleSelection, component.ColorIndex, true, true);
+                }
+                #endregion
+
+                #region Hole
+                if (hole != null)
+                {
+                    brush = new SolidBrush(Color.FromArgb(40, 40, 40));
+                    gBmp.FillRectangle(brush, hole.RectangleSelection);
                 }
                 #endregion
             }
@@ -949,7 +1031,17 @@ namespace Paper
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     XmlSerializer serializer = new XmlSerializer(typeof(Scene), new Type[] 
-                    { typeof(ComponentBase), typeof(Folding), typeof(Link), typeof(Platform), typeof(Sensor), typeof(ZoneFoldingH), typeof(ZoneFoldingV), typeof(ZoneMovingH) , typeof(ZoneMovingV)
+                    { 
+                        typeof(ComponentBase), 
+                        typeof(Folding),
+                        typeof(Link), 
+                        typeof(Platform), 
+                        typeof(Sensor), 
+                        typeof(ZoneFoldingH), 
+                        typeof(ZoneFoldingV), 
+                        typeof(ZoneMovingH) ,
+                        typeof(ZoneMovingV),
+                        typeof(Hole)
                     });
 
                     XmlReader reader = new XmlTextReader(dlg.FileName);
@@ -980,7 +1072,17 @@ namespace Paper
                     if (extension == ".PPR")
                     {
                         XmlSerializer serializer = new XmlSerializer(typeof(Scene), new Type[] 
-                    { typeof(ComponentBase), typeof(Folding), typeof(Link), typeof(Platform), typeof(Sensor), typeof(ZoneFoldingH), typeof(ZoneFoldingV), typeof(ZoneMovingH) , typeof(ZoneMovingV)
+                    { 
+                        typeof(ComponentBase), 
+                        typeof(Folding), 
+                        typeof(Link), 
+                        typeof(Platform), 
+                        typeof(Sensor), 
+                        typeof(ZoneFoldingH), 
+                        typeof(ZoneFoldingV), 
+                        typeof(ZoneMovingH) , 
+                        typeof(ZoneMovingV),
+                        typeof(Hole)
                     });
 
                         XmlWriter writer = new XmlTextWriter(dlg.FileName, Encoding.UTF8);
@@ -993,6 +1095,7 @@ namespace Paper
                     }
                     else if (extension == ".DAE")
                     {
+                        IntersectSceneBackground();
                         Utils.ExportToCOLLADA2(scene, dlg.FileName);
                     }
                 }

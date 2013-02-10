@@ -31,6 +31,7 @@ namespace Paper
         SensorNearness,
         SensorCamera,
         SensorRemoteControl,
-        Link
+        Link,
+        Hole
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Paper
 {
-    partial class Form1
+    partial class FrmPapierEditor
     {
         /// <summary>
         /// Variable nécessaire au concepteur.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPapierEditor));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnNew = new System.Windows.Forms.ToolStripButton();
             this.btnOuvrir = new System.Windows.Forms.ToolStripButton();
@@ -42,6 +42,7 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnFolding = new System.Windows.Forms.ToolStripButton();
             this.btnPlatform = new System.Windows.Forms.ToolStripButton();
+            this.btnHole = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.btnSensorButton = new System.Windows.Forms.ToolStripButton();
             this.btnSensorNearness = new System.Windows.Forms.ToolStripButton();
@@ -92,6 +93,7 @@
             this.toolStripSeparator3,
             this.btnFolding,
             this.btnPlatform,
+            this.btnHole,
             this.toolStripSeparator2,
             this.btnSensorButton,
             this.btnSensorNearness,
@@ -220,6 +222,17 @@
             this.btnPlatform.Size = new System.Drawing.Size(36, 36);
             this.btnPlatform.Text = "toolStripButton6";
             this.btnPlatform.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // btnHole
+            // 
+            this.btnHole.CheckOnClick = true;
+            this.btnHole.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnHole.Image = global::Paper.Properties.Resources.Icon_Hole;
+            this.btnHole.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnHole.Name = "btnHole";
+            this.btnHole.Size = new System.Drawing.Size(36, 36);
+            this.btnHole.Text = "Hole";
+            this.btnHole.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripSeparator2
             // 
@@ -494,7 +507,7 @@
             this.vScrollBar.Value = 8000;
             this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBar_Scroll);
             // 
-            // Form1
+            // FrmPapierEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -506,7 +519,7 @@
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(18, 47);
-            this.Name = "Form1";
+            this.Name = "FrmPapierEditor";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.Resize += new System.EventHandler(this.Form1_Resize);
@@ -563,6 +576,7 @@
         private System.Windows.Forms.ToolStripButton btnGrid;
         private System.Windows.Forms.ToolStripTextBox txtGridWidth;
         private System.Windows.Forms.ToolStripTextBox txtGridHeight;
+        private System.Windows.Forms.ToolStripButton btnHole;
     }
 }
 

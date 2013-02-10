@@ -323,7 +323,7 @@ namespace Paper
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + i.ToString());
 
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P0.X}", (float)folding.Location.X / d);
-                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Z}", (float)-folding.Location.Y / d + folding.Height/d);
+                    strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Z}", (float)-folding.Location.Y / d + folding.Height / d);
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P0.Y}", (float)-folding.Height / d);
 
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P1.X}", (float)folding.Location.X / d + (float)folding.Width / d);
@@ -374,7 +374,7 @@ namespace Paper
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P4.X}", 20f);
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Z}", 0f);
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P4.Y}", -20f);
-                    
+
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P5.X}", 0f);
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Z}", 0f);
                     strFoldingModel = ReplaceValue(strFoldingModel, "{P5.Y}", -20f);
@@ -413,12 +413,12 @@ namespace Paper
 
         private static int AddVertexToList(ref List<Vertex> listVertex, Vertex vertex)
         {
-            int index = listVertex.FindIndex(v=> v.X == vertex.X && v.Y == vertex.Y && v.Z == vertex.Z);
+            int index = listVertex.FindIndex(v => v.X == vertex.X && v.Y == vertex.Y && v.Z == vertex.Z);
 
-            if(index == -1)
+            if (index == -1)
             {
                 listVertex.Add(vertex);
-                index = listVertex.Count-1;
+                index = listVertex.Count - 1;
             }
 
             return index;
@@ -430,7 +430,9 @@ namespace Paper
             {
 
                 float d = 40f;
-                float height = cutting.ParentFolding.Height /d;
+                float height = 0f;
+                if (cutting.ParentFolding != null)
+                    height = cutting.ParentFolding.Height / d;
                 //---
                 Vertex vertex = new Vertex();
 
@@ -494,15 +496,22 @@ namespace Paper
             {
 
                 float d = 40f;
-                float deep = (cutting.ParentFolding.RecFace.Top - cutting.ParentFolding.Height) / d - 12f;
-                float height = -cutting.ParentFolding.RecFace.Top / d;// -cutting.ParentFolding.Height / d;
+                float height = 0f;
+                if (cutting.ParentFolding != null)
+                    height = cutting.ParentFolding.Height / d;
+
+                float deep = 0f;
+
+                if (cutting.ParentFolding != null)
+                    deep = -cutting.ParentFolding.RecFaceWithoutDelta.Top / d + height;
+
 
                 //--- 1
                 Vertex vertex = new Vertex();
 
                 vertex.X = cutting.Rectangle.Right / d;
-                vertex.Z = -deep;
-                vertex.Y = -cutting.Rectangle.Top / d-deep;
+                vertex.Z = deep;
+                vertex.Y = -cutting.Rectangle.Top / d - deep;
 
                 int index = AddVertexToList(ref listVertex, vertex);
 
@@ -513,7 +522,7 @@ namespace Paper
                 vertex = new Vertex();
 
                 vertex.X = cutting.Rectangle.Left / d;
-                vertex.Z = -deep;
+                vertex.Z = deep;
                 vertex.Y = -cutting.Rectangle.Top / d - deep;
 
                 index = AddVertexToList(ref listVertex, vertex);
@@ -525,7 +534,7 @@ namespace Paper
                 vertex = new Vertex();
 
                 vertex.X = cutting.Rectangle.Left / d;
-                vertex.Z = -deep;
+                vertex.Z = deep;
                 vertex.Y = -cutting.Rectangle.Bottom / d - deep;
 
                 index = AddVertexToList(ref listVertex, vertex);
@@ -537,7 +546,7 @@ namespace Paper
                 vertex = new Vertex();
 
                 vertex.X = cutting.Rectangle.Right / d;
-                vertex.Z = -deep;
+                vertex.Z = deep;
                 vertex.Y = -cutting.Rectangle.Bottom / d - deep;
 
                 index = AddVertexToList(ref listVertex, vertex);
@@ -604,14 +613,14 @@ namespace Paper
 
                     for (int j = 0; j < listVertexIndex.Count; j++)
                     {
-                        if(j%4==0)
+                        if (j % 4 == 0)
                             FOLDING_FACE_CONFIGURATION += "4 ";
 
-                        FOLDING_VERTEX_NORMAL_INDEX += listVertexIndex[j] + (j<t ?" 0 ": " 1 ");
+                        FOLDING_VERTEX_NORMAL_INDEX += listVertexIndex[j] + (j < t ? " 0 " : " 1 ");
                     }
                     //-----
 
-                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT}", (listVertex.Count*3).ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT}", (listVertex.Count * 3).ToString());
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_COUNT}", (listVertexIndex.Count / 4).ToString());
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX}", FOLDING_VERTEX);
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_CONFIGURATION}", FOLDING_FACE_CONFIGURATION);
@@ -619,44 +628,41 @@ namespace Paper
                 }
                 else
                 {
-                    //---> Construction de la scène
                     strFoldingModel = strFoldingModel.Replace("{ARMATURE_NAME}", "Armature_" + i.ToString());
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_NAME}", "Folding_" + i.ToString());
-                    string t = "{P2.X} {P2.Y} {P2.Z} {P3.X} {P3.Y} {P3.Z} {P5.X} {P5.Y} {P5.Z} {P1.X} {P1.Y} {P1.Z} {P0.X} {P0.Y} {P0.Z} {P4.X} {P4.Y} {P4.Z}";
 
+                    //----
+                    List<Vertex> listVertex = new List<Vertex>();
+                    List<int> listVertexIndex = new List<int>();
 
-                    t = ReplaceValue(t, "{P1.X}", 0); //0
-                    t = ReplaceValue(t, "{P1.Z}", 0f);
-                    t = ReplaceValue(t, "{P1.Y}", 0f);
+                    ComputeVertexCuttingFace(scene.CuttingFront, ref listVertex, ref listVertexIndex);
+                    int t = listVertexIndex.Count;
+                    ComputeVertexCuttingTop(scene.CuttingTop, ref listVertex, ref listVertexIndex);
 
-                    t = ReplaceValue(t, "{P0.X}", 20f); //1
-                    t = ReplaceValue(t, "{P0.Z}", 0f);
-                    t = ReplaceValue(t, "{P0.Y}", 0f);
+                    string FOLDING_FACE_CONFIGURATION = String.Empty;
+                    string FOLDING_VERTEX_NORMAL_INDEX = String.Empty;
+                    string FOLDING_VERTEX = String.Empty;
 
+                    for (int j = 0; j < listVertex.Count; j++)
+                    {
+                        Vertex vertex = listVertex[j];
+                        FOLDING_VERTEX += vertex.ToString() + " ";
+                    }
 
-                    t = ReplaceValue(t, "{P2.X}", 0f); //2
-                    t = ReplaceValue(t, "{P2.Z}", 20f);
-                    t = ReplaceValue(t, "{P2.Y}", 0f);
+                    for (int j = 0; j < listVertexIndex.Count; j++)
+                    {
+                        if (j % 4 == 0)
+                            FOLDING_FACE_CONFIGURATION += "4 ";
 
-                    t = ReplaceValue(t, "{P3.X}", 20f); //3
-                    t = ReplaceValue(t, "{P3.Z}", 20f);
-                    t = ReplaceValue(t, "{P3.Y}", 0f);
+                        FOLDING_VERTEX_NORMAL_INDEX += listVertexIndex[j] + (j < t ? " 0 " : " 1 ");
+                    }
+                    //-----
 
-
-                    t = ReplaceValue(t, "{P4.X}", 20f);
-                    t = ReplaceValue(t, "{P4.Z}", 0f);
-                    t = ReplaceValue(t, "{P4.Y}", -20f);
-
-                    t = ReplaceValue(t, "{P5.X}", 0f);
-                    t = ReplaceValue(t, "{P5.Z}", 0f);
-                    t = ReplaceValue(t, "{P5.Y}", -20f);
-
-                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT}", "18");
-                    strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_COUNT}", "2");
-                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX}", t);
-                    strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_CONFIGURATION}", "4 4 ");
-                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_NORMAL_INDEX}", "2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1");
-
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT}", (listVertex.Count * 3).ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_COUNT}", (listVertexIndex.Count / 4).ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX}", FOLDING_VERTEX);
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_CONFIGURATION}", FOLDING_FACE_CONFIGURATION);
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_NORMAL_INDEX}", FOLDING_VERTEX_NORMAL_INDEX);
                 }
 
                 strFile.AppendLine();

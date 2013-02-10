@@ -229,7 +229,13 @@ namespace Paper.Model
 
             int ret = 0;
 
-            if (xh != null && yh != null)
+            if (x is Hole && !(y is Hole))
+                ret = 1;
+
+            if (ret == 0 && !(x is Hole) && y is Hole)
+                ret = -1;
+
+            if (ret == 0 & xh != null && yh != null)
                 ret = -xh.Height + yh.Height;
 
             if (ret == 0)

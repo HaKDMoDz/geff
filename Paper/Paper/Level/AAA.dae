@@ -5,8 +5,8 @@
       <author>Geff</author>
       <authoring_tool>Papier Level Editor</authoring_tool>
     </contributor>
-    <created>09/02/2013 16:36:02</created>
-    <modified>09/02/2013 16:36:02</modified>
+    <created>09/02/2013 18:17:58</created>
+    <modified>09/02/2013 18:17:58</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -17,7 +17,7 @@
       <geometry id="Folding_0-mesh" name="Folding_0">
 		  <mesh>
 			<source id="Folding_0-mesh-positions">
-			  <float_array id="Folding_0-mesh-positions-array" count="36">14 -3 4.5 8.5 -3 4.5 8.5 -3 0 14 -3 0 11.5 -0.3249998 -4.825 8.5 -0.3249998 -4.825 8.5 -1.825 -4.825 11.5 -1.825 -4.825 8.5 -3.325 -4.825 11.5 -3.325 -4.825 14 -1.825 -4.825 14 -3.325 -4.825 </float_array>
+			  <float_array id="Folding_0-mesh-positions-array" count="30">9 -1.5 4 5.5 -1.5 4 5.5 -1.5 0 9 -1.5 0 8 0 4 5.5 0 4 5.5 -1 4 8 -1 4 8 -1.5 4 9 -1 4 </float_array>
 			  <technique_common>
 				<accessor source="#Folding_0-mesh-positions-array" count="6" stride="3">
 				  <param name="X" type="float"/>
@@ -43,7 +43,7 @@
 			  <input semantic="VERTEX" source="#Folding_0-mesh-vertices" offset="0"/>
 			  <input semantic="NORMAL" source="#Folding_0-mesh-normals" offset="1"/>
 			  <vcount>4 4 4 4 </vcount>
-			  <p>0 0 1 0 2 0 3 0 4 1 5 1 6 1 7 1 7 1 6 1 8 1 9 1 10 1 7 1 9 1 11 1 </p>
+			  <p>0 0 1 0 2 0 3 0 4 1 5 1 6 1 7 1 7 1 6 1 1 1 8 1 9 1 7 1 8 1 0 1 </p>
 			</polylist>
 		  </mesh>
 		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
@@ -53,7 +53,7 @@
       <geometry id="Folding_1-mesh" name="Folding_1">
 		  <mesh>
 			<source id="Folding_1-mesh-positions">
-			  <float_array id="Folding_1-mesh-positions-array" count="36">14 -1.5 9.5 11.5 -1.5 9.5 11.5 -1.5 4.5 14 -1.5 4.5 16.5 -1.5 9.5 16.5 -1.5 4.5 14 -1.5 0 16.5 -1.5 0 16.5 9.675 0.175 11.5 9.675 0.175 11.5 8.175 0.175 16.5 8.175 0.175 </float_array>
+			  <float_array id="Folding_1-mesh-positions-array" count="30">9 -1 7.5 8 -1 7.5 8 -1 4 9 -1 4 11 -1 7.5 11 -1 4 9 -1 0 11 -1 0 11 0 7.5 8 0 7.5 </float_array>
 			  <technique_common>
 				<accessor source="#Folding_1-mesh-positions-array" count="6" stride="3">
 				  <param name="X" type="float"/>
@@ -79,7 +79,7 @@
 			  <input semantic="VERTEX" source="#Folding_1-mesh-vertices" offset="0"/>
 			  <input semantic="NORMAL" source="#Folding_1-mesh-normals" offset="1"/>
 			  <vcount>4 4 4 4 </vcount>
-			  <p>0 0 1 0 2 0 3 0 4 0 0 0 3 0 5 0 5 0 3 0 6 0 7 0 8 1 9 1 10 1 11 1 </p>
+			  <p>0 0 1 0 2 0 3 0 4 0 0 0 3 0 5 0 5 0 3 0 6 0 7 0 8 1 9 1 1 1 4 1 </p>
 			</polylist>
 		  </mesh>
 		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
@@ -89,7 +89,7 @@
       <geometry id="Folding_2-mesh" name="Folding_2">
 		  <mesh>
 			<source id="Folding_2-mesh-positions">
-			  <float_array id="Folding_2-mesh-positions-array" count="18">0 0 20 20 0 20 0 -20 0 0 0 0 20 0 0 20 -20 0</float_array>
+			  <float_array id="Folding_2-mesh-positions-array" count="60">5.5 0 7.75 0 0 7.75 0 0 4 5.5 0 4 0 0 0 5.5 0 0 8 0 7.75 5.5 0 7.5 8 0 7.5 8 0 4 9 0 7.75 9 0 7.5 11 0 7.75 11 0 7.5 12.25 0 7.75 12.25 0 7.5 11 0 4 12.25 0 4 11 0 0 12.25 0 0 </float_array>
 			  <technique_common>
 				<accessor source="#Folding_2-mesh-positions-array" count="6" stride="3">
 				  <param name="X" type="float"/>
@@ -111,11 +111,11 @@
 			<vertices id="Folding_2-mesh-vertices">
 			  <input semantic="POSITION" source="#Folding_2-mesh-positions"/>
 			</vertices>
-			<polylist count="2">
+			<polylist count="9">
 			  <input semantic="VERTEX" source="#Folding_2-mesh-vertices" offset="0"/>
 			  <input semantic="NORMAL" source="#Folding_2-mesh-normals" offset="1"/>
-			  <vcount>4 4 </vcount>
-			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			  <vcount>4 4 4 4 4 4 4 4 4 </vcount>
+			  <p>0 0 1 0 2 0 3 0 3 0 2 0 4 0 5 0 6 0 0 0 7 0 8 0 8 0 7 0 3 0 9 0 10 0 6 0 8 0 11 0 12 0 10 0 11 0 13 0 14 0 12 0 13 0 15 0 15 0 13 0 16 0 17 0 17 0 16 0 18 0 19 0 </p>
 			</polylist>
 		  </mesh>
 		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>

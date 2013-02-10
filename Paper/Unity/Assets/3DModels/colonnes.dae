@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>Geff</author>
+      <authoring_tool>Papier Level Editor</authoring_tool>
+    </contributor>
+    <created>03/01/2013 00:43:44</created>
+    <modified>03/01/2013 00:43:44</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images/>
+  <library_geometries>
+
+
+      <geometry id="Folding_0-mesh" name="Folding_0">
+		  <mesh>
+			<source id="Folding_0-mesh-positions">
+			  <float_array id="Folding_0-mesh-positions-array" count="18">7 -2.5 0 1.5 -2.5 0 7 0 3.5 7 -2.5 3.5 1.5 -2.5 3.5 1.5 0 3.5</float_array>
+			  <technique_common>
+				<accessor source="#Folding_0-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_0-mesh-normals">
+			  <float_array id="Folding_0-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_0-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_0-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_0-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_0-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_0-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_1-mesh" name="Folding_1">
+		  <mesh>
+			<source id="Folding_1-mesh-positions">
+			  <float_array id="Folding_1-mesh-positions-array" count="18">6 -1.25 0 2.5 -1.25 0 6 0 8.75 6 -1.25 8.75 2.5 -1.25 8.75 2.5 0 8.75</float_array>
+			  <technique_common>
+				<accessor source="#Folding_1-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_1-mesh-normals">
+			  <float_array id="Folding_1-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_1-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_1-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_1-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_1-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_1-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_2-mesh" name="Folding_2">
+		  <mesh>
+			<source id="Folding_2-mesh-positions">
+			  <float_array id="Folding_2-mesh-positions-array" count="18">8 -2.5 0 7 -2.5 0 8 0 3 8 -2.5 3 7 -2.5 3 7 0 3</float_array>
+			  <technique_common>
+				<accessor source="#Folding_2-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_2-mesh-normals">
+			  <float_array id="Folding_2-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_2-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_2-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_2-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_2-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_2-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_3-mesh" name="Folding_3">
+		  <mesh>
+			<source id="Folding_3-mesh-positions">
+			  <float_array id="Folding_3-mesh-positions-array" count="18">9 -2 0 8 -2 0 9 0 3 9 -2 3 8 -2 3 8 0 3</float_array>
+			  <technique_common>
+				<accessor source="#Folding_3-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_3-mesh-normals">
+			  <float_array id="Folding_3-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_3-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_3-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_3-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_3-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_3-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_4-mesh" name="Folding_4">
+		  <mesh>
+			<source id="Folding_4-mesh-positions">
+			  <float_array id="Folding_4-mesh-positions-array" count="18">19 -1 0 9.5 -1 0 19 0 3 19 -1 3 9.5 -1 3 9.5 0 3</float_array>
+			  <technique_common>
+				<accessor source="#Folding_4-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_4-mesh-normals">
+			  <float_array id="Folding_4-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_4-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_4-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_4-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_4-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_4-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_5-mesh" name="Folding_5">
+		  <mesh>
+			<source id="Folding_5-mesh-positions">
+			  <float_array id="Folding_5-mesh-positions-array" count="18">13 -0.5 0 9.5 -0.5 0 13 0 6.5 13 -0.5 6.5 9.5 -0.5 6.5 9.5 0 6.5</float_array>
+			  <technique_common>
+				<accessor source="#Folding_5-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_5-mesh-normals">
+			  <float_array id="Folding_5-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_5-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_5-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_5-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_5-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_5-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_6-mesh" name="Folding_6">
+		  <mesh>
+			<source id="Folding_6-mesh-positions">
+			  <float_array id="Folding_6-mesh-positions-array" count="18">17.275 -0.25 0 14.1 -0.25 0 17.275 0 6.55 17.275 -0.25 6.55 14.1 -0.25 6.55 14.1 0 6.55</float_array>
+			  <technique_common>
+				<accessor source="#Folding_6-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_6-mesh-normals">
+			  <float_array id="Folding_6-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_6-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_6-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_6-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_6-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_6-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_7-mesh" name="Folding_7">
+		  <mesh>
+			<source id="Folding_7-mesh-positions">
+			  <float_array id="Folding_7-mesh-positions-array" count="18">17.875 -0.75 0 13.525 -0.75 0 17.875 0 3.35 17.875 -0.75 3.35 13.525 -0.75 3.35 13.525 0 3.35</float_array>
+			  <technique_common>
+				<accessor source="#Folding_7-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_7-mesh-normals">
+			  <float_array id="Folding_7-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_7-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_7-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_7-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_7-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_7-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_8-mesh" name="Folding_8">
+		  <mesh>
+			<source id="Folding_8-mesh-positions">
+			  <float_array id="Folding_8-mesh-positions-array" count="18">17.7 -0.5 0 13.75 -0.5 0 17.7 0 3.55 17.7 -0.5 3.55 13.75 -0.5 3.55 13.75 0 3.55</float_array>
+			  <technique_common>
+				<accessor source="#Folding_8-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_8-mesh-normals">
+			  <float_array id="Folding_8-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_8-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_8-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_8-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_8-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_8-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_9-mesh" name="Folding_9">
+		  <mesh>
+			<source id="Folding_9-mesh-positions">
+			  <float_array id="Folding_9-mesh-positions-array" count="18">9.5 -1.5 0 9 -1.5 0 9.5 0 3 9.5 -1.5 3 9 -1.5 3 9 0 3</float_array>
+			  <technique_common>
+				<accessor source="#Folding_9-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_9-mesh-normals">
+			  <float_array id="Folding_9-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_9-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_9-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_9-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_9-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_9-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_10-mesh" name="Folding_10">
+		  <mesh>
+			<source id="Folding_10-mesh-positions">
+			  <float_array id="Folding_10-mesh-positions-array" count="18">10 -1.5 0 9.5 -1.5 0 10 0 2.5 10 -1.5 2.5 9.5 -1.5 2.5 9.5 0 2.5</float_array>
+			  <technique_common>
+				<accessor source="#Folding_10-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_10-mesh-normals">
+			  <float_array id="Folding_10-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_10-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_10-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_10-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_10-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_10-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_11-mesh" name="Folding_11">
+		  <mesh>
+			<source id="Folding_11-mesh-positions">
+			  <float_array id="Folding_11-mesh-positions-array" count="18">10.5 -1.5 0 10 -1.5 0 10.5 0 2 10.5 -1.5 2 10 -1.5 2 10 0 2</float_array>
+			  <technique_common>
+				<accessor source="#Folding_11-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_11-mesh-normals">
+			  <float_array id="Folding_11-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_11-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_11-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_11-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_11-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_11-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_12-mesh" name="Folding_12">
+		  <mesh>
+			<source id="Folding_12-mesh-positions">
+			  <float_array id="Folding_12-mesh-positions-array" count="18">19 -1.5 0 10.5 -1.5 0 19 0 1.5 19 -1.5 1.5 10.5 -1.5 1.5 10.5 0 1.5</float_array>
+			  <technique_common>
+				<accessor source="#Folding_12-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_12-mesh-normals">
+			  <float_array id="Folding_12-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_12-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_12-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_12-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_12-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_12-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+
+      <geometry id="Folding_13-mesh" name="Folding_13">
+		  <mesh>
+			<source id="Folding_13-mesh-positions">
+			  <float_array id="Folding_13-mesh-positions-array" count="18">0 0 20 20 0 20 0 -20 0 0 0 0 20 0 0 20 -20 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_13-mesh-positions-array" count="6" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<source id="Folding_13-mesh-normals">
+			  <float_array id="Folding_13-mesh-normals-array" count="6">0 0 1 0 -1 0</float_array>
+			  <technique_common>
+				<accessor source="#Folding_13-mesh-normals-array" count="2" stride="3">
+				  <param name="X" type="float"/>
+				  <param name="Y" type="float"/>
+				  <param name="Z" type="float"/>
+				</accessor>
+			  </technique_common>
+			</source>
+			<vertices id="Folding_13-mesh-vertices">
+			  <input semantic="POSITION" source="#Folding_13-mesh-positions"/>
+			</vertices>
+			<polylist count="2">
+			  <input semantic="VERTEX" source="#Folding_13-mesh-vertices" offset="0"/>
+			  <input semantic="NORMAL" source="#Folding_13-mesh-normals" offset="1"/>
+			  <vcount>4 4 </vcount>
+			  <p>2 0 5 0 4 0 3 0 0 1 3 1 4 1 1 1</p>
+			</polylist>
+		  </mesh>
+		  <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+
+
+      <node id="Folding_0" name="Folding_0" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_0-mesh"/>
+      </node>
+
+
+      <node id="Folding_1" name="Folding_1" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_1-mesh"/>
+      </node>
+
+
+      <node id="Folding_2" name="Folding_2" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_2-mesh"/>
+      </node>
+
+
+      <node id="Folding_3" name="Folding_3" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_3-mesh"/>
+      </node>
+
+
+      <node id="Folding_4" name="Folding_4" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_4-mesh"/>
+      </node>
+
+
+      <node id="Folding_5" name="Folding_5" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_5-mesh"/>
+      </node>
+
+
+      <node id="Folding_6" name="Folding_6" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_6-mesh"/>
+      </node>
+
+
+      <node id="Folding_7" name="Folding_7" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_7-mesh"/>
+      </node>
+
+
+      <node id="Folding_8" name="Folding_8" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_8-mesh"/>
+      </node>
+
+
+      <node id="Folding_9" name="Folding_9" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_9-mesh"/>
+      </node>
+
+
+      <node id="Folding_10" name="Folding_10" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_10-mesh"/>
+      </node>
+
+
+      <node id="Folding_11" name="Folding_11" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_11-mesh"/>
+      </node>
+
+
+      <node id="Folding_12" name="Folding_12" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_12-mesh"/>
+      </node>
+
+
+      <node id="Folding_13" name="Folding_13" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Folding_13-mesh"/>
+      </node>
+
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

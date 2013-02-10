@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Common.cs" />
     <Compile Include="Model\ComponentBase.cs" />
+    <Compile Include="Model\Hole.cs" />
     <Compile Include="Model\IMoveable.cs" />
     <Compile Include="Model\IResizable.cs" />
     <Compile Include="Model\Scene.cs" />
@@ -57,11 +58,11 @@
     <Compile Include="Model\IResizableHeight.cs" />
     <Compile Include="Model\Folding.cs" />
     <Compile Include="Fold.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="FrmPapierEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="FrmPapierEditor.Designer.cs">
+      <DependentUpon>FrmPapierEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\IDepth.cs" />
     <Compile Include="Model\IResizableWidth.cs" />
@@ -82,8 +83,8 @@
     <Compile Include="Triangulation.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Vertex.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="FrmPapierEditor.resx">
+      <DependentUpon>FrmPapierEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -137,6 +138,7 @@
     <None Include="Data\Grid.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Icon\Icon_Hole.png" />
     <None Include="Data\Icon\Icon_Grid.png" />
     <None Include="Data\COLLADA_Exporter_Template_Papier.xml" />
     <None Include="Data\COLLADA_Exporter_Template_Papier2.xml" />
