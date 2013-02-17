@@ -469,7 +469,73 @@ namespace Paper
 
         private void CalcFoldingIntersections()
         {
+            CalcHoleIntersections();
+
             scene.listComponent.Sort(new CuboidComparer());
+
+            int i = 0;
+            foreach (ComponentBase component in scene.listComponent)
+            {
+                Folding folding = component as Folding;
+
+                if (folding != null)
+                {
+                    //folding.CuttingFace = new Cutting(folding);
+                    //folding.CuttingFace.Rectangle = folding.RecFaceWithoutDelta;
+                    //folding.CuttingFace.IsEmpty = false;
+
+                    for (int j = i - 1; j >= 0; j--)
+                    {
+                        Folding folding2 = scene.listComponent[j] as Folding;
+
+                        if (folding2 != null)
+                        {
+                            Rectangle recFace2 = new Rectangle(folding2.RecFaceWithoutDelta.Left, folding2.RecFaceWithoutDelta.Top - (folding2.Height - folding.Height), folding2.RecFaceWithoutDelta.Width, folding2.RecFaceWithoutDelta.Height);
+
+                            IntersectCutting(folding.CuttingFace, recFace2);
+                        }
+                    }
+
+                }
+                i++;
+
+            }
+
+            scene.listComponent.Sort(new CuboidComparerTop());
+
+            i = 0;
+            foreach (ComponentBase component in scene.listComponent)
+            {
+                Folding folding = component as Folding;
+
+                if (folding != null)
+                {
+                    //folding.CuttingTop = new Cutting(folding);
+                    //folding.CuttingTop.Rectangle = folding.RecTopWithoutDelta;
+                    //folding.CuttingTop.IsEmpty = false;
+
+                    for (int j = i + 1; j < scene.listComponent.Count; j++)
+                    {
+                        Folding folding2 = scene.listComponent[j] as Folding;
+
+                        if (folding2 != null)
+                        {
+                            Rectangle recFace2 = new Rectangle(folding2.RecTopWithoutDelta.Left, folding.RecTopWithoutDelta.Top, folding2.RecTopWithoutDelta.Width, folding2.RecTopWithoutDelta.Height);
+
+                            IntersectCutting(folding.CuttingTop, recFace2);
+                        }
+                    }
+
+                }
+                i++;
+            }
+
+        }
+
+        private void CalcHoleIntersections()
+        {
+            scene.listComponent.Sort(new CuboidComparer());
+            scene.listComponent.Reverse();
 
             int i = 0;
             foreach (ComponentBase component in scene.listComponent)
@@ -484,13 +550,14 @@ namespace Paper
 
                     for (int j = i - 1; j >= 0; j--)
                     {
-                        Folding folding2 = scene.listComponent[j] as Folding;
+                        Hole hole = scene.listComponent[j] as Hole;
 
-                        if (folding2 != null)
+                        if (hole != null)
                         {
-                            Rectangle recFace2 = new Rectangle(folding2.RecFaceWithoutDelta.Left, folding2.RecFaceWithoutDelta.Top - (folding2.Height - folding.Height), folding2.RecFaceWithoutDelta.Width, folding2.RecFaceWithoutDelta.Height);
+                            Rectangle recFace2 = hole.RectangleSelection;
+                            recFace2.Y -= Common.lineMidScreen.P1.Y;
 
-                            IntersectCutting(folding.CuttingFace, recFace2, false);
+                            IntersectCutting(folding.CuttingFace, recFace2);
                         }
                     }
 
@@ -514,13 +581,14 @@ namespace Paper
 
                     for (int j = i + 1; j < scene.listComponent.Count; j++)
                     {
-                        Folding folding2 = scene.listComponent[j] as Folding;
+                        Hole hole = scene.listComponent[j] as Hole;
 
-                        if (folding2 != null)
+                        if (hole != null)
                         {
-                            Rectangle recFace2 = new Rectangle(folding2.RecTopWithoutDelta.Left, folding.RecTopWithoutDelta.Top, folding2.RecTopWithoutDelta.Width, folding2.RecTopWithoutDelta.Height);
+                            Rectangle recFace2 = hole.RectangleSelection;
+                            recFace2.Y -= Common.lineMidScreen.P1.Y;
 
-                            IntersectCutting(folding.CuttingTop, recFace2, true);
+                            IntersectCutting(folding.CuttingFace, recFace2);
                         }
                     }
 
@@ -529,7 +597,7 @@ namespace Paper
             }
         }
 
-        private void IntersectCutting(Cutting parent, Rectangle rec2, bool isTopIntersecting)
+        private void IntersectCutting(Cutting parent, Rectangle rec2)
         {
             if (!parent.IsEmpty)
             {
@@ -541,7 +609,7 @@ namespace Paper
                     {
                         foreach (Cutting cutting in parent.Cuttings)
                         {
-                            IntersectCutting(cutting, rec2, isTopIntersecting);
+                            IntersectCutting(cutting, rec2);
                         }
                     }
                     else
@@ -553,42 +621,74 @@ namespace Paper
                         bool[] visibleW = new bool[1] { false };
                         bool[] visibleH = new bool[1] { false };
 
-                        if (isTopIntersecting)
+                        // _____
+                        //|.....|
+                        //|.....|
+                        //|_____|
+                        //|     |
+                        //|     |
+                        //|_____|
+                        if (rec2.Top <= rec.Top && rec2.Bottom < rec.Bottom && rec2.Bottom > rec.Top)
                         {
-                            if (rec2.Bottom < rec.Bottom)
-                            {
-                                locH = new int[3] { rec.Top, rec2.Bottom, rec.Bottom };
-                                visibleH = new bool[2] { false, true };
-                            }
+                            locH = new int[3] { rec.Top, rec2.Bottom, rec.Bottom };
+                            visibleH = new bool[2] { false, true };
                         }
-                        else
+                        // _____
+                        //|     |
+                        //|     |
+                        //|_____|
+                        //|.....|
+                        //|.....|
+                        //|_____|
+                        //|     |
+                        //|     |
+                        //|_____|
+                        else if(rec2.Top > rec.Top && rec2.Bottom < rec.Bottom)
                         {
-                            if (rec.Top < rec2.Top && rec.Bottom > rec2.Top)
-                            {
-                                locH = new int[3] { rec.Top, rec2.Top, rec.Bottom };
-                                visibleH = new bool[2] { true, false };
-                            }
+                            locH = new int[4] { rec.Top, rec2.Top, rec2.Bottom, rec.Bottom };
+                            visibleH = new bool[3] { true, false, true };
+                        }
+                        // _____
+                        //|     |
+                        //|     |
+                        //|_____|
+                        //|.....|
+                        //|.....|
+                        //|_____|
+                        else if (rec2.Top > rec.Top && rec2.Top < rec.Bottom && rec2.Bottom >= rec.Bottom)
+                        {
+                            locH = new int[3] { rec.Top, rec2.Top, rec.Bottom };
+                            visibleH = new bool[2] { true, false };
                         }
 
-                        if (rec2.Left >= rec.Left && rec2.Left <= rec.Right)
-                        {
-                            if (rec2.Right >= rec.Left && rec2.Right <= rec.Right)
-                            {
-                                locW = new int[4] { rec.Left, rec2.Left, rec2.Right, rec.Right };
-                                visibleW = new bool[3] { true, false, true };
-                            }
-                            else
-                            {
-                                locW = new int[3] { rec.Left, rec2.Left, rec.Right };
-                                visibleW = new bool[2] { true, false };
-                            }
-                        }
-                        else if (rec2.Right >= rec.Left && rec2.Right <= rec.Right)
+
+                        // _____  ____
+                        //|.....|     |
+                        //|.....|     |
+                        //|_____|_____|
+                        if (rec2.Left <= rec.Left && rec2.Right < rec.Right && rec2.Right > rec.Left)
                         {
                             locW = new int[3] { rec.Left, rec2.Right, rec.Right };
                             visibleW = new bool[2] { false, true };
                         }
-
+                        // _____ _____ _____
+                        //|     |.....|     |
+                        //|     |.....|     |
+                        //|_____|_____|_____|
+                        else if (rec2.Left > rec.Left && rec2.Right < rec.Right)
+                        {
+                            locW = new int[4] { rec.Left, rec2.Left, rec2.Right, rec.Right };
+                            visibleW = new bool[3] { true, false, true };
+                        }
+                        // _____  ____
+                        //|     |.....|
+                        //|     |.....|
+                        //|_____|_____|
+                        else if (rec2.Left > rec.Left && rec2.Left < rec.Right && rec2.Right >= rec.Right)
+                        {
+                            locW = new int[3] { rec.Left, rec2.Left, rec.Right };
+                            visibleW = new bool[2] { true, false };
+                        }
 
                         for (int x = 0; x < locW.Length - 1; x++)
                         {
@@ -605,7 +705,7 @@ namespace Paper
                 }
             }
         }
-
+        
         private void IntersectSceneBackground()
         {
             this.scene.CuttingFront = new Cutting(null);
@@ -653,7 +753,7 @@ namespace Paper
                 {
                     Rectangle recFace2 = new Rectangle(folding2.RecFaceWithoutDelta.Left, folding2.RecFaceWithoutDelta.Top - (folding2.Height - 0), folding2.RecFaceWithoutDelta.Width, folding2.RecFaceWithoutDelta.Height);
 
-                    IntersectCutting(this.scene.CuttingFront, recFace2, false);
+                    IntersectCutting(this.scene.CuttingFront, recFace2);
                 }
             }
 
@@ -668,7 +768,7 @@ namespace Paper
                 {
                     Rectangle recFace2 = new Rectangle(folding2.RecTopWithoutDelta.Left, 0, folding2.RecTopWithoutDelta.Width, folding2.RecTopWithoutDelta.Height);
 
-                    IntersectCutting(this.scene.CuttingTop, recFace2, true);
+                    IntersectCutting(this.scene.CuttingTop, recFace2);
                 }
             }
         }
@@ -703,10 +803,10 @@ namespace Paper
         {
             if (cutting.Cuttings.Count == 0)
             {
-                /*
+               /* 
                 Rectangle rec2 = cutting.Rectangle;
                 rec2.X += 1;
-                rec2.Y += 1;
+                rec2.Y += 1+Common.lineMidScreen.P1.Y;
                 rec2.Width -= 2;
                 rec2.Height -= 2;
                 */

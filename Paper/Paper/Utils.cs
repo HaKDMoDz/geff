@@ -621,6 +621,7 @@ namespace Paper
                     //-----
 
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT}", (listVertex.Count * 3).ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT_DIV3}", listVertex.Count.ToString());
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_COUNT}", (listVertexIndex.Count / 4).ToString());
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX}", FOLDING_VERTEX);
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_CONFIGURATION}", FOLDING_FACE_CONFIGURATION);
@@ -659,6 +660,7 @@ namespace Paper
                     //-----
 
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT}", (listVertex.Count * 3).ToString());
+                    strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX_COUNT_DIV3}", listVertex.Count.ToString());
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_COUNT}", (listVertexIndex.Count / 4).ToString());
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_VERTEX}", FOLDING_VERTEX);
                     strFoldingModel = strFoldingModel.Replace("{FOLDING_FACE_CONFIGURATION}", FOLDING_FACE_CONFIGURATION);

@@ -1,1 +1,1 @@
-Assets/3DModels/Palissade.dae
+Assets/3DModels/AAA.dae

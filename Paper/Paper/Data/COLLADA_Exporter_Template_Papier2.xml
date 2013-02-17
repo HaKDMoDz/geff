@@ -18,7 +18,7 @@
 			<source id="{FOLDING_NAME}-mesh-positions">
 			  <float_array id="{FOLDING_NAME}-mesh-positions-array" count="{FOLDING_VERTEX_COUNT}">{FOLDING_VERTEX}</float_array>
 			  <technique_common>
-				<accessor source="#{FOLDING_NAME}-mesh-positions-array" count="6" stride="3">
+				<accessor source="#{FOLDING_NAME}-mesh-positions-array" count="{FOLDING_VERTEX_COUNT_DIV3}" stride="3">
 				  <param name="X" type="float"/>
 				  <param name="Y" type="float"/>
 				  <param name="Z" type="float"/>
