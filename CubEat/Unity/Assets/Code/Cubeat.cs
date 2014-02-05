@@ -11,7 +11,7 @@ public class Cubeat : MonoBehaviour
 
     void Start()
     {
-        map = new Map("Bass");
+        map = new Map("Rapman");
         Speed = 150f;
 
         //theForwardDirection = Camera.main.transform.TransformDirection(Vector3.forward);
@@ -23,23 +23,28 @@ public class Cubeat : MonoBehaviour
         ComputeCameraPosition();
     }
 
-    private void ComputeCameraPosition()
+    public void ComputeCameraPosition()
     {
         float halfHeight = map.Size / 2.0f;
 
-        float halfFov = Camera.main.fov / 2.0f;
+        float halfFov = Camera.main.fieldOfView / 2.0f;
 
         float fovTan = Mathf.Tan(halfFov * Mathf.Deg2Rad);
 
         theForwardDirection = Camera.main.transform.TransformDirection(Vector3.forward);
         theForwardDirection.Normalize();
-        Camera.main.transform.Translate(-theForwardDirection * halfHeight / fovTan/1000f);
+        //Camera.main.transform.Translate(-theForwardDirection * halfHeight / fovTan/10f);
 
+        Camera.main.transform.position = new Vector3(1f,map.Size*0.9f,-2.5f);
 
-        Debug.Log(halfHeight / fovTan);
-        Debug.Log(theForwardDirection);
+        //Debug.Log(halfHeight / fovTan);
+        //Debug.Log(theForwardDirection);
 
         Camera.main.transform.LookAt(Vector3.zero);
+
+        Camera.main.transform.rotation = Quaternion.Euler(new Vector3(Camera.main.transform.rotation.eulerAngles.x, 0f, 0f));
+
+
     }
 
     void Update()
@@ -48,6 +53,11 @@ public class Cubeat : MonoBehaviour
         {
             lastTime = Time.time;
             map.Update();
+        }
+
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            this.transform.rotation = Quaternion.Euler(Input.acceleration);
         }
     }
 

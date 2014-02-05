@@ -18,38 +18,57 @@ public class Map
 
     public Map(string audioLibrary)
     {
-        this.LayerCubes = new Dictionary<int, List<Cube>>();
-        AudioSamples = Resource.GetAudioSamples(audioLibrary);
-        this.LayerCount = 3;// AudioSamples.Count;
-        this.Size = LayerCount * 2 - 1;
 
-        for (int i = 0; i < this.LayerCount; i++)
-        {
-            _audioSources.Add(GameObject.Find("Audio").GetComponents<AudioSource>()[i]);
+        _audioSources.AddRange(GameObject.Find("Audio").GetComponents<AudioSource>());
 
-            if (AudioSamples.ContainsKey(i + 1))
-            {
-                _audioSources[i].clip = AudioSamples[i + 1];
 
-                _audioSources[i].rolloffMode = AudioRolloffMode.Linear;
-
-            }
-        }
-
-        this.LayerCount = 10;
-
-        channelColors.Add(Color.blue);
+        channelColors.Add(Color.white);
         channelColors.Add(Color.green);
         channelColors.Add(Color.yellow);
         channelColors.Add(Color.Lerp(Color.yellow, Color.red, 0.3f));
         channelColors.Add(Color.red);
         channelColors.Add(Color.Lerp(Color.red, Color.blue, 0.5f));
+        channelColors.Add(new Color(0.2f, 0.6f, 0.8f));
+        channelColors.Add(new Color(0.6f, 0.6f, 0.6f));
 
+        this.LayerCount = 8;
         CreateMap();
+
+        ReadSamples(audioLibrary);
+    }
+
+    public void ReadSamples(string audioLibrary)
+    {
+        AudioSamples = Resource.GetAudioSamples(audioLibrary);
+        this.LayerCount = AudioSamples.Count+1;
+        this.Size = LayerCount * 2 - 1;
+
+        for (int i = 0; i < this.LayerCount; i++)
+        {
+            if (AudioSamples.ContainsKey(i + 1))
+            {
+                _audioSources[i].clip = AudioSamples[i + 1];
+
+                _audioSources[i].rolloffMode = AudioRolloffMode.Linear;
+            }
+        }
+
+        if (this.LayerCubes != null)
+        {
+            foreach (int prevLayer in this.LayerCubes.Keys)
+            {
+                foreach (Cube cube in this.LayerCubes[prevLayer])
+                {
+                    cube.gameObject.SetActive(cube.Layer < this.LayerCount);
+                }
+            }
+        }
     }
 
     public void CreateMap()
     {
+        this.LayerCubes = new Dictionary<int, List<Cube>>();
+
         System.Random rnd = new System.Random();
 
         for (int layer = 0; layer < LayerCount; layer++)
@@ -72,8 +91,8 @@ public class Map
                     cube.Layer = layer;
                     cube.NumberOnLayer = numberOnLayer;
                     cube.IsOnMeasure = cube.NumberOnLayer % 4 == 0;
-                    
-                    if(channelColors.Count > layer)
+
+                    if (channelColors.Count > layer)
                         cube.Color = channelColors[layer];
 
                     cube.IsEmpty = true;
@@ -163,13 +182,13 @@ public class Map
 
         cube.animation.wrapMode = WrapMode.Once;
         cube.animation.Play();
-        
-        if (AudioSamples.ContainsKey(cube.Layer+1))
-        {
-            if (_audioSources[cube.Layer].isPlaying)
-                _audioSources[cube.Layer].Stop();
 
-            _audioSources[cube.Layer].Play();
+        if (AudioSamples.ContainsKey(cube.Layer))
+        {
+            if (_audioSources[cube.Layer - 1].isPlaying)
+                _audioSources[cube.Layer - 1].Stop();
+
+            _audioSources[cube.Layer - 1].Play();
         }
     }
 }
