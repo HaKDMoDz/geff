@@ -17,10 +17,14 @@ namespace Assets.Code
             _initialPos = this.transform.localPosition;
         }
 
+        public void OnMouseDown()
+        {
+        }
+
         public void OnMouseUp()
         {
-            if (IsPressed)
-                return;
+            //if (IsPressed)
+            //    return;
 
             Press();
 

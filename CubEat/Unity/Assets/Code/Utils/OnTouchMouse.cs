@@ -24,19 +24,20 @@ public class OnTouchMouse : MonoBehaviour
         //}
         //else
         //{
-        for (int i = 0; i < Input.touchCount; ++i)
+        for (int i = 0; i < Input.touchCount; i++)
         {
-            if (Input.GetTouch(i).phase.Equals(TouchPhase.Began))
+            Touch touch = Input.GetTouch(i);
+            if (touch.phase.Equals(TouchPhase.Began))
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(i).position);
+                Ray ray = Camera.main.ScreenPointToRay(touch.position);
                 if (Physics.Raycast(ray, out hit))
                 {
                     hit.transform.gameObject.SendMessage("OnMouseDown");
                 }
             }
-            else if (Input.GetTouch(i).phase.Equals(TouchPhase.Ended))
+            else if (touch.phase.Equals(TouchPhase.Ended))
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(i).position);
+                Ray ray = Camera.main.ScreenPointToRay(touch.position);
                 if (Physics.Raycast(ray, out hit))
                 {
                     hit.transform.gameObject.SendMessage("OnMouseUp");

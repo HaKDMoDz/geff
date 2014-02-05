@@ -8,6 +8,7 @@ public class Cubeat : MonoBehaviour
     public float Speed;
     private float lastTime;
     Vector3 theForwardDirection;
+    Quaternion _initialRotation;
 
     void Start()
     {
@@ -19,7 +20,6 @@ public class Cubeat : MonoBehaviour
 
         //Camera.main.transform.Translate(-theForwardDirection * (layer-3)*4);
         //Camera.main.transform.LookAt(Vector3.zero);
-
         ComputeCameraPosition();
     }
 
@@ -44,6 +44,7 @@ public class Cubeat : MonoBehaviour
 
         Camera.main.transform.rotation = Quaternion.Euler(new Vector3(Camera.main.transform.rotation.eulerAngles.x, 0f, 0f));
 
+        _initialRotation = Camera.main.transform.rotation;
 
     }
 
@@ -55,9 +56,11 @@ public class Cubeat : MonoBehaviour
             map.Update();
         }
 
-        if (Application.platform == RuntimePlatform.Android)
+        //if (Application.platform == RuntimePlatform.Android)
         {
-            this.transform.rotation = Quaternion.Euler(Input.acceleration);
+            //this.transform.rotation = Quaternion.Euler(Input.acceleration);
+
+            this.transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles + new Vector3(Input.acceleration.y, Input.acceleration.x, 0f) * 3f);
         }
     }
 
