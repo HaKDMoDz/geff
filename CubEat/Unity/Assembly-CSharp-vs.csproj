@@ -49,6 +49,7 @@
      <Compile Include="Assets\Code\Cube.cs" />
      <Compile Include="Assets\Code\Cubeat.cs" />
      <Compile Include="Assets\Code\InputController.cs" />
+     <Compile Include="Assets\Code\Layer.cs" />
      <Compile Include="Assets\Code\Map.cs" />
      <Compile Include="Assets\Code\Point.cs" />
      <Compile Include="Assets\Code\Resource.cs" />

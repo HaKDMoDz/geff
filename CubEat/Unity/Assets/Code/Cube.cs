@@ -11,6 +11,7 @@ public class Cube : MonoBehaviour
     public bool IsInPlayedTime;// { get; set; }
     public bool IsOnMeasure;// { get; set; }
     public Color Color { get; set; }
+    public double PlayNextTime;
 
     public bool IsEmpty 
     {

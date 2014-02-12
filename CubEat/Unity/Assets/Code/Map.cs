@@ -12,12 +12,19 @@ public class Map
     public int LayerCount { get; set; }
     public Dictionary<int, AudioClip> AudioSamples { get; set; }
 
-    public Dictionary<int, List<Cube>> LayerCubes { get; set; }
+    //public Dictionary<int, List<Cube>> LayerCubes { get; set; }
+
+    public List<Layer> Layers { get; set; }
+
     private List<AudioSource> _audioSources = new List<AudioSource>();
     private List<Color> channelColors = new List<Color>();
+    double _initialTime;
+    private Cubeat _cubeat;
 
-    public Map(string audioLibrary)
+    public Map(string audioLibrary, Cubeat cubeat)
     {
+        _cubeat = cubeat;
+        _initialTime = AudioSettings.dspTime;
 
         _audioSources.AddRange(GameObject.Find("Audio").GetComponents<AudioSource>());
 
@@ -40,7 +47,7 @@ public class Map
     public void ReadSamples(string audioLibrary)
     {
         AudioSamples = Resource.GetAudioSamples(audioLibrary);
-        this.LayerCount = AudioSamples.Count+1;
+        this.LayerCount = AudioSamples.Count + 1;
         this.Size = LayerCount * 2 - 1;
 
         for (int i = 0; i < this.LayerCount; i++)
@@ -53,11 +60,11 @@ public class Map
             }
         }
 
-        if (this.LayerCubes != null)
+        if (this.Layers != null)
         {
-            foreach (int prevLayer in this.LayerCubes.Keys)
+            foreach (Layer layer in this.Layers)
             {
-                foreach (Cube cube in this.LayerCubes[prevLayer])
+                foreach (Cube cube in layer.Cubes)
                 {
                     cube.gameObject.SetActive(cube.Layer < this.LayerCount);
                 }
@@ -67,33 +74,36 @@ public class Map
 
     public void CreateMap()
     {
-        this.LayerCubes = new Dictionary<int, List<Cube>>();
+        this.Layers = new List<Layer>();
 
         System.Random rnd = new System.Random();
 
-        for (int layer = 0; layer < LayerCount; layer++)
+        for (int layerID = 0; layerID < LayerCount; layerID++)
         {
+            Layer layer = new Layer();
+            this.Layers.Add(layer);
+
             int numberOnLayer = 0;
             for (int side = 0; side < 4; side++)
             {
-                for (int step = 0; step < layer * 2 || (layer == 0 && step == 0); step++)
+                for (int step = 0; step < layerID * 2 || (layerID == 0 && step == 0); step++)
                 {
-                    if (layer == 0 && side > 0)
+                    if (layerID == 0 && side > 0)
                         continue;
 
-                    int p0 = Size / 2 - layer;
-                    int p1 = Size / 2 + layer;
+                    int p0 = Size / 2 - layerID;
+                    int p1 = Size / 2 + layerID;
                     int x = 0;
                     int y = 0;
 
                     GameObject cubeObject = (GameObject)GameObject.Instantiate(Resource.Cube);
                     Cube cube = cubeObject.GetComponentInChildren<Cube>();
-                    cube.Layer = layer;
+                    cube.Layer = layerID;
                     cube.NumberOnLayer = numberOnLayer;
                     cube.IsOnMeasure = cube.NumberOnLayer % 4 == 0;
 
-                    if (channelColors.Count > layer)
-                        cube.Color = channelColors[layer];
+                    if (channelColors.Count > layerID)
+                        cube.Color = channelColors[layerID];
 
                     cube.IsEmpty = true;
 
@@ -102,19 +112,21 @@ public class Map
 
                     numberOnLayer++;
 
-                    List<Cube> cubesOnLayer = null;
+                    //List<Cube> cubesOnLayer = null;
 
-                    if (LayerCubes.ContainsKey(layer))
-                    {
-                        cubesOnLayer = LayerCubes[layer];
-                    }
-                    else
-                    {
-                        cubesOnLayer = new List<Cube>();
-                        LayerCubes.Add(layer, cubesOnLayer);
-                    }
+                    layer.Cubes.Add(cube);
 
-                    cubesOnLayer.Add(cube);
+                    //if (LayerCubes.ContainsKey(layer))
+                    //{
+                    //    cubesOnLayer = LayerCubes[layer];
+                    //}
+                    //else
+                    //{
+                    //    cubesOnLayer = new List<Cube>();
+                    //    LayerCubes.Add(layer, cubesOnLayer);
+                    //}
+
+                    //cubesOnLayer.Add(cube);
 
                     if (side == 0)
                     {
@@ -123,7 +135,7 @@ public class Map
                     }
                     else if (side == 1)
                     {
-                        x = p0 + 2 * layer;
+                        x = p0 + 2 * layerID;
                         y = p0 + step;
                     }
                     else if (side == 2)
@@ -145,50 +157,61 @@ public class Map
         }
     }
 
-    public void Update()
+    double prevTime = 0;
+    
+    public void Update(double time)
     {
-        Beat++;
+        //Beat++;
 
-        for (int i = 0; i < LayerCount; i++)
+        double curTime = time - _initialTime;
+        if (prevTime == 0)
+            prevTime = curTime;
+
+        for (int i = 0; i < Layers.Count; i++)
         {
-            foreach (Cube cube in LayerCubes[i])
+            //double curLayerTime = curTime % (double)Layers[i].Cubes.Count;
+            double layerDuration = (double)Layers[i].Cubes.Count * 60.0 / _cubeat.BPM;
+
+            foreach (Cube cube in Layers[i].Cubes)
             {
                 if (!cube.IsEmpty)
                 {
+                        
                     cube.IsEmitting = false;
                     cube.IsInPlayedTime = false;
 
-                    //=== Détermination des cubes joués dans le temps courant
+                    double cubeBeatTime = (double)cube.NumberOnLayer * 60.0 / _cubeat.BPM;
+                    double playNextTime = _initialTime + cubeBeatTime + layerDuration * (int)(curTime / layerDuration);
 
-                    //--- Nombre de cases sur la couche
-                    int numberOfCubeOnLayer = i * 8;
+                    //Debug.Log((prevTime + _initialTime) + " ___ " + playNextTime + " ___ " + (curTime + _initialTime));
 
-                    if (numberOfCubeOnLayer == 0)
-                        numberOfCubeOnLayer = 1;
+                    if (prevTime+_initialTime <= playNextTime+0.05F && playNextTime+0.05F < curTime+_initialTime)
+                    {
+                        cube.PlayNextTime = playNextTime;
 
-                    //--- Beat  de la couche
-                    int layerBeat = Beat % numberOfCubeOnLayer;
+                        PlayCube(cube, cube.PlayNextTime);
+                    }
 
-                    if (cube.NumberOnLayer == layerBeat)
-                        PlayCube(cube);
                 }
             }
         }
+
+        prevTime = curTime;
     }
 
-    public void PlayCube(Cube cube)
+    public void PlayCube(Cube cube, double time)
     {
-        //int index = this.LayerCubes[cube.Layer].IndexOf(cube);
+        _audioSources[cube.Layer - 1].PlayScheduled(time);
 
-        cube.animation.wrapMode = WrapMode.Once;
+        //cube.animation.wrapMode = WrapMode.Once;
         cube.animation.Play();
 
-        if (AudioSamples.ContainsKey(cube.Layer))
-        {
-            if (_audioSources[cube.Layer - 1].isPlaying)
-                _audioSources[cube.Layer - 1].Stop();
+        //if (AudioSamples.ContainsKey(cube.Layer))
+        //{
+        //    if (_audioSources[cube.Layer - 1].isPlaying)
+        //        _audioSources[cube.Layer - 1].Stop();
 
-            _audioSources[cube.Layer - 1].Play();
-        }
+        //    _audioSources[cube.Layer - 1].Play();
+        //}
     }
 }

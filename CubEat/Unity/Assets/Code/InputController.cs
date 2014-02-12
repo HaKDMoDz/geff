@@ -11,9 +11,11 @@ namespace Assets
     {
         bool mouseLeftButtonPressed = false;
         RaycastHit[] hits = new RaycastHit[3];
+        Cubeat Cubeat;
 
         void Start()
         {
+            Cubeat = Camera.main.GetComponent<Cubeat>();
         }
 
         /// <summary>
@@ -93,8 +95,6 @@ namespace Assets
 
                 hits = Physics.RaycastAll(ray);
 
-                Debug.Log(hits.Length);
-
                 //--- Détection du collider le plus proche du pointeur
                 int indexNearestCollider = -1;
                 float distanceNearestCollider = float.MaxValue;
@@ -126,6 +126,7 @@ namespace Assets
                 if (cubeTouched != null && currentTouch.TouchPhase == TouchPhase.Ended)
                 {
                     cubeTouched.OnMouseUp();
+                    Cubeat.ComputePartition(cubeTouched);
                 }
             }
         }

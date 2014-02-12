@@ -1,19 +1,20 @@
 using UnityEngine;
 using System.Collections;
 using Assets.Code;
+using System.Collections.Generic;
 
 public class Cubeat : MonoBehaviour
 {
     public Map map;
-    public float Speed;
-    private float lastTime;
+    public double BPM;
+    private double lastTime;
     Vector3 theForwardDirection;
     Quaternion _initialRotation;
 
     void Start()
     {
-        map = new Map("Rapman");
-        Speed = 150f;
+        map = new Map("Rapman", this);
+        BPM = 240.0;
 
         //theForwardDirection = Camera.main.transform.TransformDirection(Vector3.forward);
         //theForwardDirection.Normalize();
@@ -48,18 +49,23 @@ public class Cubeat : MonoBehaviour
 
     }
 
+    public int numBeatsPerSegment = 16;
+    public AudioClip[] clips = new AudioClip[2];
+    private double nextEventTime;
+
     void Update()
     {
-        if (Time.time - lastTime > Speed / 1000f)
-        {
-            lastTime = Time.time;
-            map.Update();
-        }
+        double time = AudioSettings.dspTime;
+        map.Update(time);
+        //if (time - lastTime + 1.0F > Speed / 1000f)
+        //{
+        //    lastTime = time;
+        //    map.Update(time);
+        //    Debug.Log(time);
+        //}
 
         //if (Application.platform == RuntimePlatform.Android)
         {
-            //this.transform.rotation = Quaternion.Euler(Input.acceleration);
-
             this.transform.rotation = Quaternion.Euler(_initialRotation.eulerAngles + new Vector3(Input.acceleration.y, Input.acceleration.x, 0f) * 3f);
         }
     }
@@ -74,5 +80,10 @@ public class Cubeat : MonoBehaviour
 
         ////GUI.Toolbar(new Rect(0,Screen.height-50, Screen.width, 50), -1, buttons)
         //GUI.EndGroup();
+    }
+
+    internal static void ComputePartition(Cube cubeTouched)
+    {
+        throw new System.NotImplementedException();
     }
 }
