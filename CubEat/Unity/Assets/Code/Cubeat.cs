@@ -22,6 +22,8 @@ public class Cubeat : MonoBehaviour
         //Camera.main.transform.Translate(-theForwardDirection * (layer-3)*4);
         //Camera.main.transform.LookAt(Vector3.zero);
         ComputeCameraPosition();
+
+        CreateGUI();
     }
 
     public void ComputeCameraPosition()
@@ -36,7 +38,7 @@ public class Cubeat : MonoBehaviour
         theForwardDirection.Normalize();
         //Camera.main.transform.Translate(-theForwardDirection * halfHeight / fovTan/10f);
 
-        Camera.main.transform.position = new Vector3(1f,map.Size*0.9f,-2.5f);
+        Camera.main.transform.position = new Vector3(1f, map.Size * 0.9f, -2.5f);
 
         //Debug.Log(halfHeight / fovTan);
         //Debug.Log(theForwardDirection);
@@ -70,16 +72,70 @@ public class Cubeat : MonoBehaviour
         }
     }
 
-    void OnGUI()
+    UIButton btnMargeArrow;
+    UISprite spriteMarge;
+    bool margeCollapsed = true;
+
+    private void CreateGUI()
     {
-        //GUI.color = Color.yellow;
+        UIToolkit ui = GameObject.Find("UIToolkit").GetComponent<UIToolkit>();
 
-        //GUI.BeginGroup(new Rect(0, Screen.height-50 , Screen.width, 50));
-        //GUI.Box(new Rect(10, 10, 50, 50), "Menu");
+        float buttonSize = Screen.width * 0.06f;
 
+        btnMargeArrow = UIButton.create(ui, "MargeArrow.png", "MargeArrow.png", 0, 0);
+        btnMargeArrow.setSize(buttonSize, buttonSize);
+        btnMargeArrow.positionFromTopLeft(0f, 0.01f);
+        btnMargeArrow.onTouchUpInside += btnMargeArrow_onTouchUpInside;
 
-        ////GUI.Toolbar(new Rect(0,Screen.height-50, Screen.width, 50), -1, buttons)
-        //GUI.EndGroup();
+        spriteMarge = ui.addSprite("Marge.png", 0, 0, 2);
+        spriteMarge.setSize(0.01f * Screen.width, 1 * Screen.height);
+        spriteMarge.positionFromTopLeft(0f, 0f);
+
+        //btnValidation.onTouchUpInside += btnValidation_onTouchUpInside;
+
+        //buttonSize = Screen.width * 0.04f;
+
+        //UIButton btnSaveFileLocalAndServer = UIButton.create(ui, "SaveIcon.png", "SaveIcon.png", 0, 0, 0);
+        //btnSaveFileLocalAndServer.setSize(buttonSize, buttonSize);
+        //btnSaveFileLocalAndServer.positionFromTopRight(0.02f, 0.15f);
+        ////btnSaveFileLocalAndServer.onTouchUpInside += btnSaveFileLocalAndServer_onTouchUpInside;
+
+        //UIButton btnSaveFileLocal = UIButton.create(ui, "SaveIcon.png", "SaveIcon.png", 0, 0, 0);
+        //btnSaveFileLocal.setSize(buttonSize, buttonSize);
+        //btnSaveFileLocal.positionFromTopRight(0.02f, 0.25f);
+        //btnSaveFileLocal.color = Color.green;
+        ////btnSaveFileLocal.onTouchUpInside += btnSaveFileLocal_onTouchUpInside;
+
+        //UISprite spriteHeaderHolo = ui.addSprite("HeaderHolo.png", (int)(0.6f * Screen.width), (int)(Repository.Instance.HeaderHeight * Screen.height), 1);
+        //spriteHeaderHolo.setSize(0.4f * Screen.width, Repository.Instance.HeaderHeight * Screen.height);
+        //spriteHeaderHolo.positionFromTopRight(0f, 0f);
+        //spriteHeaderHolo.color = new Color(0f, 0.31f, 0.4f);
+
+        //UISprite spriteBackground = ui.addSprite("background.jpg", 0, 0, 2);
+        //spriteBackground.positionFromTopLeft(0f, 0f);
+        //spriteBackground.setSize(Screen.width, Screen.height);
+        //spriteBackground.color = new Color(0f, 0.2f, 0.27f);
+
+        //_eyeCursor = uiCursor.addSprite("eye_cursor.png", 0, 0);
+        //float sizeCursor = Repository.Instance.HeaderHeight * Screen.height * 2f;
+        //_eyeCursor.setSize(sizeCursor, sizeCursor);
+
+    }
+
+    void btnMargeArrow_onTouchUpInside(UIButton obj)
+    {
+        margeCollapsed = !margeCollapsed;
+
+        if (margeCollapsed)
+        {
+            btnMargeArrow.positionFromTopLeft(0f, 0.01f);
+            spriteMarge.setSize(0.01f * Screen.width, 1 * Screen.height);
+        }
+        else
+        {
+            btnMargeArrow.positionFromTopLeft(0f, 0.5f);
+            spriteMarge.setSize(0.5f * Screen.width, 1 * Screen.height);
+        }
     }
 
     internal static void ComputePartition(Cube cubeTouched)

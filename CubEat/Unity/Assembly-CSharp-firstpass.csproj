@@ -12,13 +12,14 @@
 	<AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_3_5_3;UNITY_3_5;UNITY_EDITOR;ENABLE_PROFILER;UNITY_STANDALONE_WIN;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_WEBCAM;ENABLE_MICROPHONE;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW;ENABLE_SUBSTANCE</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_ANDROID;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;UNITY_ANDROID_API;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_1;UNITY_4_3;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -36,18 +37,82 @@
 	<Reference Include="System" />
     <Reference Include="System.XML" />
 	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>D:/Prog/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>D:/Prog/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Standard Assets\Water (Basic)\Sources\Scripts\WaterSimple.cs" />
-     <None Include="Assets\Scene\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
-     <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
-     <None Include="Assets\Scene\Skyboxes\_skybox info.txt" />
+     <Compile Include="Assets\Plugins\MiniJSON.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\IPositionable.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\ITouchable.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UIAbstractContainer.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UIAbstractTouchableContainer.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UIControlTemplate.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UIElement.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UIObject.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UISprite.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UISpriteAnimation.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UISpriteManager.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\BaseElements\UITouchableSprite.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Containers\UIAbsoluteLayout.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Containers\UIBackgroundLayout.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Containers\UIHorizontalLayout.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Containers\UIScrollableHorizontalLayout.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Containers\UIScrollableVerticalLayout.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Containers\UIVerticalLayout.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Containers\UIVerticalPanel.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Structs\UIAnchorInfo.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Structs\UIClippingPlane.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Structs\UIEdgeInsets.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Structs\UIEdgeOffsets.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Structs\UITouchMaker.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Structs\UIUVRect.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Structs\UIVertexIndices.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Support\IPositionablePositioningExtensions.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Support\UIObjectAnimationExtensions.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\Support\UIRelative.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UI.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIAnimation\Easing.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIAnimation\UIAnimation.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\TouchInfo.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIButton.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIColorPicker.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIContinuousButton.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIGhostJoystick.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIGridLayout.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIJoystick.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIKnob.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UILanguageManager.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIProgressBar.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIRadioButtonGroup.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UISlice9.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UISlider.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UISpacer.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIStateButton.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIStateSprite.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UISwipeDetector.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIText.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UITextInstance.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIToggleButton.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIElements\UIZoomButton.cs" />
+     <Compile Include="Assets\Plugins\UIToolkit\UIToolkit.cs" />
+     <None Include="Assets\UIToolkit\DemoAssets\Resources\joystickSheet.txt" />
+     <None Include="Assets\Plugins\UIToolkit\Shaders\UIToolkit Premultiplied Alpha.shader" />
+     <None Include="Assets\UIToolkit\DemoAssets\Resources\kitchenSinkSheet.txt" />
+     <None Include="Assets\UIToolkit\DemoAssets\Resources\textDemoSheet2x.txt" />
+     <None Include="Assets\UIToolkit\DemoAssets\Resources\kitchenSinkSheet2x.txt" />
+     <None Include="Assets\UIToolkit\DemoAssets\Resources\joystickSheet2x.txt" />
+     <None Include="Assets\Plugins\UIToolkit\Shaders\UIToolkit Alpha Enabled (Default).shader" />
+     <None Include="Assets\UIToolkit\DemoAssets\Resources\colorPickerSheet.txt" />
+     <None Include="Assets\UIToolkit\DemoAssets\Resources\prototype.txt" />
+     <None Include="Assets\UIToolkit\DemoAssets\Resources\prototype2x.txt" />
+     <None Include="Assets\Plugins\UIToolkit\Shaders\UIToolkit No Alpha.shader" />
+     <None Include="Assets\Resources\Atlas\Cubeat_UI.txt" />
+     <None Include="Assets\UIToolkit\DemoAssets\Resources\textDemoSheet.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
