@@ -111,6 +111,7 @@
      <None Include="Assets\UIToolkit\DemoAssets\Resources\prototype.txt" />
      <None Include="Assets\UIToolkit\DemoAssets\Resources\prototype2x.txt" />
      <None Include="Assets\Plugins\UIToolkit\Shaders\UIToolkit No Alpha.shader" />
+     <None Include="Assets\Resources\Atlas\textDemoSheet.txt" />
      <None Include="Assets\Resources\Atlas\Cubeat_UI.txt" />
      <None Include="Assets\UIToolkit\DemoAssets\Resources\textDemoSheet.txt" />
   </ItemGroup>

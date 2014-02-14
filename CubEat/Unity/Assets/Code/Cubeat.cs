@@ -10,6 +10,7 @@ public class Cubeat : MonoBehaviour
     private double lastTime;
     Vector3 theForwardDirection;
     Quaternion _initialRotation;
+    public UIToolkit textManager;
 
     void Start()
     {
@@ -75,6 +76,7 @@ public class Cubeat : MonoBehaviour
     UIButton btnMargeArrow;
     UISprite spriteMarge;
     bool margeCollapsed = true;
+    List<UIHorizontalLayout> listHLayout = new List<UIHorizontalLayout>();
 
     private void CreateGUI()
     {
@@ -91,35 +93,58 @@ public class Cubeat : MonoBehaviour
         spriteMarge.setSize(0.01f * Screen.width, 1 * Screen.height);
         spriteMarge.positionFromTopLeft(0f, 0f);
 
-        //btnValidation.onTouchUpInside += btnValidation_onTouchUpInside;
+        //--- Conteneur
+        var scrollable = new UIScrollableVerticalLayout(10);
 
-        //buttonSize = Screen.width * 0.04f;
+        scrollable.alignMode = UIAbstractContainer.UIContainerAlignMode.Center;
+        scrollable.position = new Vector3(Screen.width * 0.05f, -Screen.height * 0.1f, 0);
+        var width = UI.scaleFactor * 150;
+        scrollable.setSize(width, Screen.height * 0.8f);
+        //---
 
-        //UIButton btnSaveFileLocalAndServer = UIButton.create(ui, "SaveIcon.png", "SaveIcon.png", 0, 0, 0);
-        //btnSaveFileLocalAndServer.setSize(buttonSize, buttonSize);
-        //btnSaveFileLocalAndServer.positionFromTopRight(0.02f, 0.15f);
-        ////btnSaveFileLocalAndServer.onTouchUpInside += btnSaveFileLocalAndServer_onTouchUpInside;
+        //UIGridLayout grid = new UIGridLayout(4, map.Layers.Count, 0);
+        //grid.edgeInsets = new UIEdgeInsets(0);
+        //grid.alignMode = UIAbstractContainer.UIContainerAlignMode.Left;
+        //grid.layoutType = UIAbstractContainer.UILayoutType.AbsoluteLayout
+        int i = 0;
+        foreach (Layer layer in map.Layers)
+        {
+            UIHorizontalLayout hLayout = new UIHorizontalLayout(0);
 
-        //UIButton btnSaveFileLocal = UIButton.create(ui, "SaveIcon.png", "SaveIcon.png", 0, 0, 0);
-        //btnSaveFileLocal.setSize(buttonSize, buttonSize);
-        //btnSaveFileLocal.positionFromTopRight(0.02f, 0.25f);
-        //btnSaveFileLocal.color = Color.green;
-        ////btnSaveFileLocal.onTouchUpInside += btnSaveFileLocal_onTouchUpInside;
+            listHLayout.Add(hLayout);
 
-        //UISprite spriteHeaderHolo = ui.addSprite("HeaderHolo.png", (int)(0.6f * Screen.width), (int)(Repository.Instance.HeaderHeight * Screen.height), 1);
-        //spriteHeaderHolo.setSize(0.4f * Screen.width, Repository.Instance.HeaderHeight * Screen.height);
-        //spriteHeaderHolo.positionFromTopRight(0f, 0f);
-        //spriteHeaderHolo.color = new Color(0f, 0.31f, 0.4f);
+            //int posY = 10 + i * 20;
+            //int margeX = 10;
+            //int deltaX = 10;
+            //int spaceX = 5;
 
-        //UISprite spriteBackground = ui.addSprite("background.jpg", 0, 0, 2);
-        //spriteBackground.positionFromTopLeft(0f, 0f);
-        //spriteBackground.setSize(Screen.width, Screen.height);
-        //spriteBackground.color = new Color(0f, 0.2f, 0.27f);
+            //UIText text = new UIText(textManager, "prototype", "prototype.png");
 
-        //_eyeCursor = uiCursor.addSprite("eye_cursor.png", 0, 0);
-        //float sizeCursor = Repository.Instance.HeaderHeight * Screen.height * 2f;
-        //_eyeCursor.setSize(sizeCursor, sizeCursor);
+            UIButton btnBrowse = UIButton.create(ui, "Browse.png", "Browse.png", 0, 0, 2);
+            UIButton btnMute = UIButton.create(ui, "Mute.png", "Mute.png", 0, 0, 2);
+            UIButton btnSolo = UIButton.create(ui, "Solo.png", "Solo.png", 0, 0, 2);
+            UIButton btnQuarter = UIButton.create(ui, "Quarter.png", "Quarter.png", 0, 0, 2);
+            UIButton btnHalf = UIButton.create(ui, "Half.png", "Half.png", 0, 0, 2);
+            UIButton btnNormal = UIButton.create(ui, "Normal.png", "Double.png", 0, 0, 2);
+            UIButton btnDouble = UIButton.create(ui, "Double.png", "Double.png", 0, 0, 2);
+            UIButton btnFourth = UIButton.create(ui, "Fourth.png", "Fourth.png", 0, 0, 2);
 
+
+            btnBrowse.setSize(buttonSize, buttonSize);
+            btnMute.setSize(buttonSize, buttonSize);
+            btnSolo.setSize(buttonSize, buttonSize);
+            btnQuarter.setSize(buttonSize, buttonSize);
+            btnHalf.setSize(buttonSize, buttonSize);
+            btnNormal.setSize(buttonSize, buttonSize);
+            btnDouble.setSize(buttonSize, buttonSize);
+            btnFourth.setSize(buttonSize, buttonSize);
+
+            hLayout.addChild(btnBrowse, btnMute, btnSolo, btnQuarter, btnHalf, btnNormal, btnDouble, btnFourth);
+
+            hLayout.positionFromTopLeft(i * 0.1f, -0.5f);
+
+            i++;
+        }
     }
 
     void btnMargeArrow_onTouchUpInside(UIButton obj)
@@ -128,13 +153,23 @@ public class Cubeat : MonoBehaviour
 
         if (margeCollapsed)
         {
-            btnMargeArrow.positionFromTopLeft(0f, 0.01f);
-            spriteMarge.setSize(0.01f * Screen.width, 1 * Screen.height);
+            btnMargeArrow.positionTo(0.5f, new Vector3(0.01f * Screen.width, 0.01f * Screen.height), Easing.Sinusoidal.easeOut);
+            spriteMarge.scaleTo(0.5f, new Vector3(1f, 1f, 1f), Easing.Sinusoidal.easeOut);
+
+            foreach (UIHorizontalLayout hLayout in listHLayout)
+            {
+                hLayout.positionTo(0.5f, new Vector3(-Screen.width / 2, hLayout.localPosition.y, -20), Easing.Sinusoidal.easeOut);
+            }
         }
         else
         {
-            btnMargeArrow.positionFromTopLeft(0f, 0.5f);
-            spriteMarge.setSize(0.5f * Screen.width, 1 * Screen.height);
+            btnMargeArrow.positionTo(0.5f, new Vector3(0.5f * Screen.width, 0.01f * Screen.height), Easing.Sinusoidal.easeIn);
+            spriteMarge.scaleTo(0.5f, new Vector3(50f, 1f, 1f), Easing.Sinusoidal.easeIn);
+
+            foreach (UIHorizontalLayout hLayout in listHLayout)
+            {
+                hLayout.positionTo(0.5f, new Vector3(0.01f * Screen.width, hLayout.localPosition.y, -20), Easing.Sinusoidal.easeIn);
+            }
         }
     }
 
