@@ -13,6 +13,15 @@ namespace Assets
         RaycastHit[] hits = new RaycastHit[3];
         Cubeat Cubeat;
 
+        public static InputController Instance;
+
+        void OnEnable()
+        {
+            //---> Création du singleton
+            if (Instance == null)
+                Instance = this;
+        }
+
         void Start()
         {
             Cubeat = Camera.main.GetComponent<Cubeat>();
@@ -80,7 +89,7 @@ namespace Assets
             return listToucheMouse;
         }
 
-        void Update()
+        public void UpdateTouch()
         {
             List<TouchMouse> listTouch = ConvertTouchtoTouchMouse();
 
